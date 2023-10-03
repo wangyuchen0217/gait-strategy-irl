@@ -1,0 +1,27 @@
+<mujoco model="cricket">
+
+  <asset>
+    <texture name="grid" type="2d" builtin="checker" rgb1=".1 .2 .3"
+     rgb2=".2 .3 .4" width="300" height="300"/>
+    <material name="grid" texture="grid" texrepeat="8 8" reflectance=".2"/>
+  </asset>
+
+  <default>
+    <default class="visual">
+      <geom group="2" type="mesh" contype="0" conaffinity="0"/>
+    </default>
+    <default class="collision">
+      <geom group="3" type="mesh"/>
+    </default>
+  </default>
+  <asset>
+    <mesh file="cricket.obj"/>
+  </asset>
+  <worldbody>
+  <geom size=".2 .2 .01" type="plane" material="grid"/>
+    <body name="cricket">
+      <geom mesh="cricket" class="visual"/>
+      <geom mesh="cricket" class="collision"/>
+    </body>
+  </worldbody>
+</mujoco>

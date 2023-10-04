@@ -43,10 +43,10 @@
         <geom fromto="0.0 0.0 0.0 0.0 0.2 0.0" name="LM_aux_geom" size="0.08" type="capsule"/>
         <body name="LM_aux" pos="0.0 0.2 0">
           <joint axis="0 0 1" name="LM_hip" pos="0.0 0.0 0.0" range="-30 30" type="hinge"/>
-          <geom fromto="0.0 0.0 0.0 0.0 0.2 0.1" name="LM_femur_geom" size="0.08" type="capsule"/>
-          <body pos="0.0 0.2 0.1">
+          <geom fromto="0.0 0.0 0.0 0.0 0.21 0.1" name="LM_femur_geom" size="0.08" type="capsule"/>
+          <body pos="0.0 0.21 0.1">
             <joint axis="1 0 0" name="LM_knee" pos="0.0 0.0 0.0" range="-70 -30" type="hinge"/>
-            <geom fromto="0.0 0.0 0.0 0.0 0.5 0.0" name="LM_tibia_geom" size="0.08" type="capsule"/>
+            <geom fromto="0.0 0.0 0.0 0.0 0.51 0.0" name="LM_tibia_geom" size="0.08" type="capsule"/>
           </body>
         </body>
       </body>
@@ -79,10 +79,10 @@
         <geom fromto="0.0 0.0 0.0 0.0 -0.2 0.0" name="RM_aux_geom" size="0.08" type="capsule"/>
         <body name="RM_aux" pos="0.0 -0.2 0">
           <joint axis="0 0 1" name="RM_hip" pos="0.0 0.0 0.0" range="-30 30" type="hinge"/>
-          <geom fromto="0.0 0.0 0.0 0.0 -0.2 0.1" name="RM_femur_geom" size="0.08" type="capsule"/>
-          <body pos="0.0 -0.2 0.1">
+          <geom fromto="0.0 0.0 0.0 0.0 -0.21 0.1" name="RM_femur_geom" size="0.08" type="capsule"/>
+          <body pos="0.0 -0.21 0.1">
             <joint axis="1 0 0" name="RM_knee" pos="0.0 0.0 0.0" range="30 70" type="hinge"/>
-            <geom fromto="0.0 0.0 0.0 0.0 -0.5 0.0" name="RM_tibia_geom" size="0.08" type="capsule"/>
+            <geom fromto="0.0 0.0 0.0 0.0 -0.51 0.0" name="RM_tibia_geom" size="0.08" type="capsule"/>
           </body>
         </body>
       </body>

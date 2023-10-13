@@ -3,7 +3,7 @@ IS: false
 seed: 1
 cuda: -1
 env:
-  env_name: cricket_env
+  env_name: CricketEnv-v0
   T: 1000
   state_indices: all
 irl:

@@ -3,9 +3,12 @@ from gym import utils
 from gym.envs.mujoco import mujoco_env
 import mujoco_py
 
-class my_env():
-    def __init__(self, max_timesteps=1000, reward_network=None):
+class CricketEnv(mujoco_env.MujocoEnv, utils.EzPickle):
+    def __init__(self, max_timesteps=500, r=None):
         # super(lab_env, self).__init__(env)
+        utils.EzPickle.__init__(self)
+        self.timesteps = 0
+        self.max_timesteps=max_timesteps
         # Import xml document
         self.model = mujoco_py.load_model_from_path("/home/yuchen/Crickets_Walking_IRL/envs/assets/cricket.xml")
         # Call MjSim to build a basic simulation
@@ -68,8 +71,8 @@ class my_env():
 
 
 if __name__ == "__main__":
-    env = my_env()
+    env = CricketEnv(max_timesteps=500, r=None)
 
     for _ in range(1000):
-        env.render()
+        #env.render()
         env.step(env.action_space.sample())

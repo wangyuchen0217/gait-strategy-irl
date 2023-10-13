@@ -1,21 +1,72 @@
+'''
+f-IRL: Extract policy/reward from specified expert samples
+'''
 import sys, os, time
 import numpy as np
 import torch
 import gym
 from ruamel.yaml import YAML
-import mujoco_py
 
+from firl.divs.f_div_disc import f_div_disc_loss
+from firl.divs.f_div import maxentirl_loss
+from firl.divs.ipm import ipm_loss
+from firl.models.reward import MLPReward
+from firl.models.discrim import SMMIRLDisc as Disc
+from firl.models.discrim import SMMIRLCritic as Critic
+from common.sac import ReplayBuffer, SAC
+
+import envs
 from utils import system, collect, logger, eval
-from envs import cricket_env
+from utils.plots.train_plot_high_dim import plot_disc
+from utils.plots.train_plot import plot_disc as visual_disc
 
 import datetime
 import dateutil.tz
 import json, copy
 
+def try_evaluate(itr: int, policy_type: str, sac_info):
+    assert policy_type in ["Running"]
+    update_time = itr * v['reward']['gradient_step']
+    env_steps = itr * v['sac']['epochs'] * v['env']['T']
+    agent_emp_states = samples[0].copy()
+    assert agent_emp_states.shape[0] == v['irl']['training_trajs']
+
+    metrics = eval.KL_summary(expert_samples, agent_emp_states.reshape(-1, agent_emp_states.shape[2]), 
+                         env_steps, policy_type)
+    # eval real reward
+    real_return_det = eval.evaluate_real_return(sac_agent.get_action, env_fn(), 
+                                            v['irl']['eval_episodes'], v['env']['T'], True)
+    metrics['Real Det Return'] = real_return_det
+    print(f"real det return avg: {real_return_det:.2f}")
+    logger.record_tabular("Real Det Return", round(real_return_det, 2))
+
+    real_return_sto = eval.evaluate_real_return(sac_agent.get_action, env_fn(), 
+                                            v['irl']['eval_episodes'], v['env']['T'], False)
+    metrics['Real Sto Return'] = real_return_sto
+    print(f"real sto return avg: {real_return_sto:.2f}")
+    logger.record_tabular("Real Sto Return", round(real_return_sto, 2))
+
+    if v['obj'] in ["emd"]:
+        eval_len = int(0.1 * len(critic_loss["main"]))
+        emd = -np.array(critic_loss["main"][-eval_len:]).mean()
+        metrics['emd'] = emd
+        logger.record_tabular(f"{policy_type} EMD", emd)
+    
+    # plot_disc(v['obj'], log_folder, env_steps, 
+    #     sac_info, critic_loss if v['obj'] in ["emd"] else disc_loss, metrics)
+    if "PointMaze" in env_name:
+        visual_disc(agent_emp_states, reward_func.get_scalar_reward, disc.log_density_ratio, v['obj'],
+                log_folder, env_steps, gym_env.range_lim,
+                sac_info, disc_loss, metrics)
+
+    logger.record_tabular(f"{policy_type} Update Time", update_time)
+    logger.record_tabular(f"{policy_type} Env Steps", env_steps)
+
+    return real_return_det, real_return_sto
+
 if __name__ == "__main__":
     yaml = YAML()
-    # v = yaml.load(open(sys.argv[1]))
-    v = yaml.load(open('configs/agent.yml'))
+    v = yaml.load(open(sys.argv[1]))
 
     # common parameters
     env_name = v['env']['env_name']
@@ -44,9 +95,8 @@ if __name__ == "__main__":
     log_folder = exp_id + '/' + now.strftime('%Y_%m_%d_%H_%M_%S')
     logger.configure(dir=log_folder)            
     print(f"Logging to directory: {log_folder}")
-    os.system(f'cp irl_samples.py {log_folder}')
-    #os.system(f'cp {sys.argv[1]} {log_folder}/variant_{pid}.yml')
-    os.system(f'cp configs/agent.yml {log_folder}/variant_{pid}.yml')
+    os.system(f'cp firl/irl_samples.py {log_folder}')
+    os.system(f'cp {sys.argv[1]} {log_folder}/variant_{pid}.yml')
     with open(os.path.join(logger.get_dir(), 'variant.json'), 'w') as f:
         json.dump(v, f, indent=2, sort_keys=True)
     print('pid', pid)

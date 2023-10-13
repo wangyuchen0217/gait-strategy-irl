@@ -5,11 +5,13 @@ import numpy as np
 from gym import utils
 from gym.envs.mujoco import mujoco_env
 import sys
-from envs.dynamic_mjc.model_builder import MJCModel
+import mujoco_py
+# from envs.dynamic_mjc.model_builder import MJCModel
 
 
 def ant_env(gear=150, eyes=True):
-    mjcmodel = MJCModel('ant_maze')
+    #mjcmodel = MJCModel('ant_maze')
+    mjcmodel = mujoco_py.load_model_from_path('"envs/assets/Ant.xml"')
     mjcmodel.root.compiler(inertiafromgeom="true", angle="degree", coordinate="local")
     mjcmodel.root.option(timestep="0.01", integrator="RK4")
     mjcmodel.root.custom().numeric(data="0.0 0.0 0.55 1.0 0.0 0.0 0.0 0.0 1.0 0.0 -1.0 0.0 -1.0 0.0 1.0",name="init_qpos")

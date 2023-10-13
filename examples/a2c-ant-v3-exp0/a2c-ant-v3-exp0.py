@@ -6,8 +6,7 @@ import torch
 
 # Path hack as we don't need this to be an installable package
 root_path = os.path.dirname(
-        os.path.dirname(os.path.abspath(__file__)
-    )  # a2c-ant-v3-exp0
+        os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  # a2c-ant-v3-exp0 # examples
 )  # Cricket_Walking_IRL
 sys.path.insert(0, root_path)
 

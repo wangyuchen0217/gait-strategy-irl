@@ -6,7 +6,7 @@ from ruamel.yaml import YAML
 import mujoco_py
 
 from utils import system, collect, logger, eval
-from envs import cricket_env
+from envs import CricketEnv
 
 import datetime
 import dateutil.tz

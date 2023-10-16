@@ -9,6 +9,5 @@ register(
 
 register(
     id='CricketEnv-v0',
-    entry_point='envs.point_maze_env:CricketEnv',
-    kwargs={'sparse_reward': False, 'direction': 1}
+    entry_point='envs.CricketEnv:CricketEnv'
 )

@@ -8,7 +8,7 @@ register(
 )
 
 register(
-    id='Cricket-v0',
+    id='CricketEnv-v0',
     entry_point='envs.point_maze_env:CricketEnv',
     kwargs={'sparse_reward': False, 'direction': 1}
 )

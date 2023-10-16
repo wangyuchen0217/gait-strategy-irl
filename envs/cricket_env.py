@@ -9,25 +9,23 @@ class CricketEnv(mujoco_env.MujocoEnv, utils.EzPickle):
         utils.EzPickle.__init__(self)
         self.timesteps = 0
         self.max_timesteps=max_timesteps
+        # Set up the reward network
+        self.r = r
+        self.prev_obs = None
         # Import xml document
         self.model = mujoco_py.load_model_from_path("/home/yuchen/Crickets_Walking_IRL/envs/assets/cricket.xml")
+        mujoco_env.MujocoEnv.__init__(self, '/home/yuchen/Crickets_Walking_IRL/envs/assets/cricket.xml', 2)
         # Call MjSim to build a basic simulation
         self.sim = mujoco_py.MjSim(self.model)
         # Set up the viewer
         self.viewer = mujoco_py.MjViewer(self.sim)
         # Set up the action space
-        self.action_space = mujoco_env.MujocoEnv(self.model).action_space
+        #self.action_space = mujoco_env.MujocoEnv(self.model).action_space
         # Set up the observation space
-        self.observation_space = mujoco_env.MujocoEnv(self.model).observation_space
+        #self.observation_space = mujoco_env.MujocoEnv(self.model).observation_space
         # Set up the initial position and velocity
         self.init_qpos = self.sim.data.qpos.ravel().copy()
         self.init_qvel = self.sim.data.qvel.ravel().copy()
-        # Set up the reward network
-        self.r = r
-        # self.prev_obs = None
-        # self.prev_action = None
-        # self.prev_reward = None
-        # self.prev_done = None】
 
     def step(self, action):
         vel = self.sim.data.qvel.flat[0]
@@ -86,7 +84,7 @@ class CricketEnv(mujoco_env.MujocoEnv, utils.EzPickle):
 
 
 if __name__ == "__main__":
-    env = CricketEnv(max_timesteps=500, r=None)
+    env = CricketEnv(max_timesteps=500)
 
     for _ in range(1000):
         env.render()

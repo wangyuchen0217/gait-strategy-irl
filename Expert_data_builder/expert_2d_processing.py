@@ -1,11 +1,12 @@
 '''
 This code will calculate the direction and leg joint angle of crickets from DeepLabCut results, and generate csv file(s) to record the data. 
-The DeepLabCut skeleton data is from /DeepLabCut/videos/.
-The generate skeleton analysis csv. data will be stored at /DataPreparation/Skeleton_data/.
+It is supposed to be run in the path of /home/yuchen/Crickets_Walking_Motion_Prediction/Expert_data_builder.
+The DeepLabCut skeleton data is from /home/yuchen/Crickets_Walking_Motion_Prediction/DeepLabCut/videos/.
+The generate skeleton and joint movement csv. data will be stored at /home/yuchen/Crickets_Walking_IRL/ExpertDataBuilder/
+Original_skeleton_data/, and /home/yuchen/Crickets_Walking_IRL/ExpertDataBuilder/Joint_movement/, respectively.
 '''
 import os
 import json
-import math
 import numpy as np
 import pandas as pd
 

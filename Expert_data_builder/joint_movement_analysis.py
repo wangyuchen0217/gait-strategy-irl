@@ -11,7 +11,7 @@ import numpy as np
 import pandas as pd
 
 def get_joint_movement(subject:str, fold_path):
-    with open("trail_details.json", "r") as f:
+    with open(fold_path+"/trail_details.json", "r") as f:
         trail_details = json.load(f)
         cricket_number =  trail_details[f"T{subject}"]["cricket_number"]
         video_number = trail_details[f"T{subject}"]["video_number"]
@@ -21,7 +21,7 @@ def get_joint_movement(subject:str, fold_path):
     return df_joint
 
 subjects = 33
-fold_path = os.getcwd()
+fold_path = os.getcwd() + '/Expert_data_builder'
 joint_range = pd.DataFrame(columns=['ThC_LF', 'ThC_LM', 'ThC_LH', 'ThC_RF', 'ThC_RM',
                                                             'ThC_RH', 'FTi_LF', 'FTi_LM', 'FTi_LH', 'FTi_RF', 'FTi_RM', 'FTi_RH'])
 
@@ -31,7 +31,7 @@ for i in range(subjects):
         subject_number = "0" + str(i)
     else:
         subject_number = str(i)
-    with open("trail_details.json", "r") as f:
+    with open(fold_path+"/trail_details.json", "r") as f:
         trail_details = json.load(f)
         cricket_number =  trail_details[f"T{subject_number}"]["cricket_number"]
         video_number = trail_details[f"T{subject_number}"]["video_number"]
@@ -47,4 +47,4 @@ joint_min = joint_range.min()
 joint_max = joint_range.max()
 joint_range.loc['min'] = joint_min
 joint_range.loc['max'] = joint_max
-joint_range.to_csv('Joint_movement/joint_range_analysis.csv')
+joint_range.to_csv(fold_path+'/Joint_movement/joint_range_analysis.csv')

@@ -6,8 +6,6 @@ Analysis results will be used as the refernce to set the joint range of mujoco m
 '''
 import os
 import json
-import math
-import numpy as np
 import pandas as pd
 
 def get_joint_movement(subject:str, fold_path):

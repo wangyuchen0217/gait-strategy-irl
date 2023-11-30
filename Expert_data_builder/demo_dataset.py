@@ -22,4 +22,4 @@ for i in range(subjects):
     else:
         ds = pd.concat([ds, joint_movement], axis=0, ignore_index=True)
 
-ds.to_csv(fold_path+'/demo_dataset.csv', index=False)
+ds.to_csv(fold_path+'/demo_dataset.csv', index=True, header=True)

@@ -63,7 +63,7 @@ class MaxEntIRL:
         plt.ylabel("Norm of Reward Weights")
         plt.title("Training Progress")
         plt.show()
-        savefig("training_progress.png")   
+        plt.savefig("training_progress.png")   
 
 # Example usage
 if __name__ == "__main__":

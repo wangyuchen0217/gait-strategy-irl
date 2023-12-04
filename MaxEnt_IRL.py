@@ -11,6 +11,7 @@ class MaxEntIRL:
         self.state_dim = state_dim
         self.learning_rate = learning_rate
         self.epochs = epochs
+        self.reward_history = []
         # Initialize the reward weights randomly
         self.weights = np.random.rand(state_dim)
 
@@ -29,7 +30,9 @@ class MaxEntIRL:
         return state_action_count / len(trajectories)
 
     def compute_softmax_policy(self, weights, state):
-        exponentiated_values = np.exp(weights.dot(state))
+        logits = weights.dot(state)
+        max_logit = np.max(logits)
+        exponentiated_values = np.exp(logits - max_logit)
         return exponentiated_values / np.sum(exponentiated_values)
 
     def compute_expected_feature_counts(self, policy, state_action_visitation):
@@ -52,6 +55,8 @@ class MaxEntIRL:
             gradient = self.compute_gradient(expert_feature_expectations, expected_feature_counts)
             # Update the reward weights
             self.weights += self.learning_rate * gradient.mean(axis=0)
+            # Save the reward weights
+            self.reward_history.append(np.copy(self.weights))
             # Print progress
             if epoch % 10 == 0:
                 print(f"Epoch {epoch}, Reward Weights: {self.weights}")

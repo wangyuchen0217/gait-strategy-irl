@@ -1,5 +1,6 @@
 import os
 import gym
+from envs import *
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd

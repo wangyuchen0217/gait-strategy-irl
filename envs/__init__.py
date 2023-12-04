@@ -11,3 +11,8 @@ register(
     id='CricketEnv-v0',
     entry_point='envs.CricketEnv:CricketEnv'
 )
+
+register(
+    id='CricketEnv2D-v0',
+    entry_point='envs.CricketEnv:CricketEnv'
+)

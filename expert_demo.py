@@ -1,42 +1,44 @@
 import gym
 from envs import *
 import numpy as np
-
-# Import your MaxEnt IRL code or module
+import matplotlib.pyplot as plt
+import pandas as pd
+import mujoco_py
 from MaxEnt_IRL import MaxEntIRL
+from sklearn.preprocessing import MinMaxScaler
 
-# Step 2: Define and set up the Mujoco environment
-env = gym.make('CricketEnv2D-v0')  
-state_dim = env.observation_space.shape[0]
+def dataset_scaled(data):
+    data_scaler = MinMaxScaler(feature_range=(-1, 1)).fit(data)
+    data_scaled = data_scaler.transform(y)
+    # de-normalization
+    # predict = scaler.inverse_transform(all_data_scaled)
+    return data_scaler, data_scaled
 
-# Step 3: Collect expert demonstration data
-def collect_expert_data(env, num_episodes=100):
-    expert_data = []
-    for _ in range(num_episodes):
-        state = env.reset()
-        trajectory = []
-        done = False
-        while not done:
-            # Assuming the state directly provides joint angles
-            joint_angles = state
-            # Replace this with your own logic for selecting actions based on the current policy
-            action = env.action_space.sample()
-            # Take a step in the environment
-            next_state, _, done, _ = env.step(action)
-            # Collect joint angles for the expert data
-            trajectory.append(joint_angles)
-            state = next_state
-        expert_data.append(trajectory)
-    return expert_data
+# Load joint angle data from the CSV file
+csv_file_path = 'Expert_data_builder/demo_dataset.csv'  
+dataset = pd.read_csv(csv_file_path, header=0, usecols=[1,2,3,4,5,6,7,8,9,10,11,12]).to_numpy()
+# normalize the dataset by each column
 
-expert_data = collect_expert_data(env)
+#  check the shape of the dataset
+print("dataset shape:", dataset.shape)
+print("len(dataset):", len(dataset))
 
-# Step 4: Use MaxEnt IRL with Mujoco Data
-maxent_irl = MaxEntIRL(expert_data, state_dim)
-learned_weights = maxent_irl.maxent_irl()
+# Define the MuJoCo model and set initial state
+model = mujoco_py.load_model_from_path('envs/assets/Cricket2D.xml')  
+sim = mujoco_py.MjSim(model)
+viewer = mujoco_py.MjViewer(sim)
 
-# Save the learned reward weights
-maxent_irl.save_reward_weights("learned_reward_weights.npy")
+# Apply joint angles from the CSV data to the MuJoCo model
+for i in range(len(dataset)):
+    joint_angle = np.deg2rad(dataset[i])
+    sim.data.ctrl[:] = joint_angle
+    sim.step()
+    viewer.render()
 
-# Plot training progress
-maxent_irl.plot_training_progress()
+viewer.close()
+
+# Now, you can use the final state of the MuJoCo simulation, 
+# or continue interacting with the environment as needed
+#final_state = sim.get_state()
+
+

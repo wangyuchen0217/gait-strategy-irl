@@ -3,13 +3,13 @@ from envs import *
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
-import mujoco_py
+#import mujoco_py
 from MaxEnt_IRL import MaxEntIRL
 from sklearn.preprocessing import MinMaxScaler
 
-def dataset_scaled(data):
+def normalization(data):
     data_scaler = MinMaxScaler(feature_range=(-1, 1)).fit(data)
-    data_scaled = data_scaler.transform(y)
+    data_scaled = data_scaler.transform(data)
     # de-normalization
     # predict = scaler.inverse_transform(all_data_scaled)
     return data_scaler, data_scaled
@@ -18,6 +18,9 @@ def dataset_scaled(data):
 csv_file_path = 'Expert_data_builder/demo_dataset.csv'  
 dataset = pd.read_csv(csv_file_path, header=0, usecols=[1,2,3,4,5,6,7,8,9,10,11,12]).to_numpy()
 # normalize the dataset by each column
+for i in range(dataset.shape[1]):
+    scaled_data = normalization(dataset[:,i].reshape(-1,1)
+    print("scaled_data:", scaled_data.shape)
 
 #  check the shape of the dataset
 print("dataset shape:", dataset.shape)

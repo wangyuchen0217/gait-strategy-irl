@@ -18,14 +18,13 @@ def run_simulation(sim, dataset, viewer=None, learned_weights=None):
         joint_angle = np.deg2rad(dataset[i])
         sim.data.ctrl[:] = joint_angle
         sim.step()
-        
+        # Render frames if viewer is provided
         if viewer:
             viewer.render()
-            
+        # Compute reward if reward weights are provided
         if learned_weights is not None:
             reward = learned_weights.dot(sim.get_state().qpos)
             rewards.append(reward)
-    
     return rewards
 
 # Load joint angle data from the CSV file
@@ -35,7 +34,6 @@ dataset = dataset[5200:6200, :]
 
 # Set up simulation without rendering
 sim, _ = setup_simulation('envs/assets/Cricket2D.xml')
-
 # Apply joint angles from the CSV data to the MuJoCo model
 for i in range(len(dataset)):
     joint_angle = np.deg2rad(dataset[i])
@@ -60,9 +58,6 @@ irl_agent.plot_training_progress()
 sim, viewer = setup_simulation('envs/assets/Cricket2D.xml')
 rewards = run_simulation(sim, dataset, viewer, learned_weights)
 
-# Print rewards
-# for i, reward in enumerate(rewards):
-#     print(f"Step {i+1}: Reward = {reward}")
 # plot the reward
 plt.plot(rewards)
 plt.xlabel("Step")

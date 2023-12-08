@@ -63,9 +63,6 @@ class MaxEntIRL:
                 print(f"Epoch {epoch}, Reward Weights: {self.weights}")
         return self.weights
     
-    def get_learned_weights(self):
-        return self.weights
-    
     def plot_training_progress(self):
         plt.plot(range(self.epochs), [np.linalg.norm(weights) for weights in self.reward_history])
         plt.xlabel("Epoch")

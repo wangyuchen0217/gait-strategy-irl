@@ -1,10 +1,10 @@
-import gym
 from envs import *
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 import mujoco_py
 from MaxEnt_IRL import MaxEntIRL
+from RL import QLearningAgent
 
 def setup_simulation(model_path):
     model = mujoco_py.load_model_from_path(model_path)
@@ -33,16 +33,13 @@ dataset = pd.read_csv(csv_file_path, header=0, usecols=[1,2,3,4,5,6,7,8,9,10,11,
 dataset = dataset[5200:6200, :]
 
 # Set up simulation without rendering
-sim, viewer = setup_simulation('envs/assets/Cricket2D.xml')
+sim, _ = setup_simulation('envs/assets/Cricket2D.xml')
 # Apply joint angles from the CSV data to the MuJoCo model
 for i in range(len(dataset)):
     joint_angle = np.deg2rad(dataset[i])
     sim.data.ctrl[:] = joint_angle
     sim.step()
-    viewer.render()
-# record the video of  the simulation
-viewer.save_video('demo_1.mp4')
-
+    #viewer.render()
 
 # Extract state trajectories from the simulation
 state_trajectories = [sim.get_state().qpos.copy() for _ in range(len(dataset))]
@@ -52,24 +49,36 @@ state_trajectories = np.array(state_trajectories)
 state_dim = state_trajectories.shape[1]
 epochs = 1000
 irl_agent = MaxEntIRL(state_trajectories, state_dim, epochs)
-irl_agent.maxent_irl()
-
-# Access the learned reward weights and plot training progress
-learned_weights = irl_agent.get_learned_weights()
+learned_weights = irl_agent.maxent_irl()
 irl_agent.plot_training_progress()
+np.save("learned_weights.npy", learned_weights)
 
-# Run the simulation again with the learned reward weights and render frames
-sim, viewer = setup_simulation('envs/assets/Cricket2D.xml')
-rewards = run_simulation(sim, dataset, viewer, learned_weights)
-# record the video of  the simulation
-viewer.save_video('demo_2.mp4')
 
-# plot the reward
-plt.plot(rewards)
-plt.xlabel("Step")
-plt.ylabel("Reward")
-plt.title("Reward vs. Step")
-plt.show()
-plt.savefig("reward.png")
+# # Set up RL agent using Q-learning
+# num_actions =  12# specify the number of actions in your environment
+# rl_agent = QLearningAgent(state_dim, num_actions)
+
+# # RL training loop
+# num_episodes = 500
+# for episode in range(num_episodes):
+#     state = 0  # specify the initial state
+#     total_reward = 0
+
+#     while not done:  # replace with your own termination condition
+#         action = rl_agent.choose_action(state)
+        
+#         # Apply the learned reward weights to calculate the shaped reward
+#         shaped_reward = learned_weights.dot(state_trajectories[state])
+        
+#         next_state, reward, done, _ = env.step(action)
+        
+#         # Update Q-values using the shaped reward
+#         rl_agent.update_q_values(state, action, shaped_reward, next_state)
+
+#         state = next_state
+#         total_reward += shaped_reward
+
+#     print(f"Episode {episode + 1}, Total Reward: {total_reward}")
+
 
 

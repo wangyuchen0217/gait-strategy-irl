@@ -33,12 +33,16 @@ dataset = pd.read_csv(csv_file_path, header=0, usecols=[1,2,3,4,5,6,7,8,9,10,11,
 dataset = dataset[5200:6200, :]
 
 # Set up simulation without rendering
-sim, _ = setup_simulation('envs/assets/Cricket2D.xml')
+sim, viewer = setup_simulation('envs/assets/Cricket2D.xml')
 # Apply joint angles from the CSV data to the MuJoCo model
 for i in range(len(dataset)):
     joint_angle = np.deg2rad(dataset[i])
     sim.data.ctrl[:] = joint_angle
     sim.step()
+    viewer.render()
+# record the video of  the simulation
+viewer.save_video('demo_1.mp4')
+
 
 # Extract state trajectories from the simulation
 state_trajectories = [sim.get_state().qpos.copy() for _ in range(len(dataset))]
@@ -57,6 +61,8 @@ irl_agent.plot_training_progress()
 # Run the simulation again with the learned reward weights and render frames
 sim, viewer = setup_simulation('envs/assets/Cricket2D.xml')
 rewards = run_simulation(sim, dataset, viewer, learned_weights)
+# record the video of  the simulation
+viewer.save_video('demo_2.mp4')
 
 # plot the reward
 plt.plot(rewards)

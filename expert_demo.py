@@ -32,14 +32,9 @@ csv_file_path = 'Expert_data_builder/demo_dataset.csv'
 dataset = pd.read_csv(csv_file_path, header=0, usecols=[1,2,3,4,5,6,7,8,9,10,11,12]).to_numpy()
 dataset = dataset[5200:6200, :]
 
-# Set up simulation without rendering
+#  Train: Set up simulation without rendering
 sim, viewer = setup_simulation('envs/assets/Cricket2D.xml')
-# Apply joint angles from the CSV data to the MuJoCo model
-for i in range(len(dataset)):
-    joint_angle = np.deg2rad(dataset[i])
-    sim.data.ctrl[:] = joint_angle
-    sim.step()
-    viewer.render()
+run_simulation(sim, dataset)
 
 # Extract state trajectories from the simulation
 state_trajectories = [sim.get_state().qpos.copy() for _ in range(len(dataset))]
@@ -53,6 +48,10 @@ learned_weights = irl_agent.maxent_irl()
 irl_agent.plot_training_progress()
 np.save("learned_weights.npy", learned_weights)
 
+# Test: Set up simulation with rendering
+weights = np.load("learned_weights.npy")
+sim, viewer = setup_simulation('envs/assets/Cricket2D.xml')
+run_simulation(sim, dataset, viewer, learned_weights)
 
 # # Set up RL agent using Q-learning
 # num_actions =  12# specify the number of actions in your environment

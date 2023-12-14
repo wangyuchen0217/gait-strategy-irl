@@ -61,8 +61,10 @@ class MaxEntIRL:
         return self.weights
     
     def plot_training_progress(self):
+        plt.figure()
         plt.plot(range(self.epochs), [np.linalg.norm(weights) for weights in self.reward_history])
         plt.xlabel("Epoch")
         plt.ylabel("Norm of Reward Weights")
         plt.title("Training Progress")
         plt.savefig("training_progress.png")   
+        

@@ -1,10 +1,10 @@
+import os
+os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 from envs import *
 import numpy as np
-import matplotlib.pyplot as plt
 import pandas as pd
 import mujoco_py
 from MaxEnt_IRL import MaxEntIRL
-from RL import QLearningAgent
 
 def setup_simulation(model_path):
     model = mujoco_py.load_model_from_path(model_path)

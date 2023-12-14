@@ -53,31 +53,6 @@ weights = np.load("learned_weights.npy")
 sim, viewer = setup_simulation('envs/assets/Cricket2D.xml')
 run_simulation(sim, dataset, viewer, learned_weights)
 
-# # Set up RL agent using Q-learning
-# num_actions =  12# specify the number of actions in your environment
-# rl_agent = QLearningAgent(state_dim, num_actions)
-
-# # RL training loop
-# num_episodes = 500
-# for episode in range(num_episodes):
-#     state = 0  # specify the initial state
-#     total_reward = 0
-
-#     while not done:  # replace with your own termination condition
-#         action = rl_agent.choose_action(state)
-        
-#         # Apply the learned reward weights to calculate the shaped reward
-#         shaped_reward = learned_weights.dot(state_trajectories[state])
-        
-#         next_state, reward, done, _ = env.step(action)
-        
-#         # Update Q-values using the shaped reward
-#         rl_agent.update_q_values(state, action, shaped_reward, next_state)
-
-#         state = next_state
-#         total_reward += shaped_reward
-
-#     print(f"Episode {episode + 1}, Total Reward: {total_reward}")
 
 
 

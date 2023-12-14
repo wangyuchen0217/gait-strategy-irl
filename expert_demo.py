@@ -49,9 +49,10 @@ irl_agent.plot_training_progress()
 np.save("learned_weights.npy", learned_weights)
 
 # Test: Set up simulation with rendering
-weights = np.load("learned_weights.npy")
+learned_weights = np.load("learned_weights.npy")
 sim, viewer = setup_simulation('envs/assets/Cricket2D.xml')
 run_simulation(sim, dataset, viewer, learned_weights)
+
 
 
 

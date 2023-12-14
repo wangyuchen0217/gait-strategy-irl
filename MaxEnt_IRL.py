@@ -1,5 +1,4 @@
 import os
-import gym
 from envs import *
 import numpy as np
 import matplotlib.pyplot as plt
@@ -7,7 +6,7 @@ import pandas as pd
 from scipy.optimize import minimize
 
 class MaxEntIRL:
-    def __init__(self, expert_data, state_dim, learning_rate=0.01, epochs=100):
+    def __init__(self, expert_data, state_dim, epochs, learning_rate=0.01):
         self.expert_data = expert_data
         self.state_dim = state_dim
         self.learning_rate = learning_rate
@@ -59,7 +58,7 @@ class MaxEntIRL:
             # Save the reward weights
             self.reward_history.append(np.copy(self.weights))
             # Print progress
-            if epoch % 10 == 0:
+            if epoch % 100 == 0:
                 print(f"Epoch {epoch}, Reward Weights: {self.weights}")
         return self.weights
     
@@ -68,26 +67,4 @@ class MaxEntIRL:
         plt.xlabel("Epoch")
         plt.ylabel("Norm of Reward Weights")
         plt.title("Training Progress")
-        plt.show()
         plt.savefig("training_progress.png")   
-
-# Example usage
-if __name__ == "__main__":
-    fold_path = os.getcwd()
-    data_path = os.path.join(fold_path, "Expert_data_builder","demo_dataset.csv")
-    expert_data  = pd.read_csv(data_path, header=[0], index_col=[0]).to_numpy()
-
-    # Define the state and action dimensions
-    state_dim = 12
-    epochs = 100
-
-    # Create MaxEntIRL object
-    maxent_irl = MaxEntIRL(expert_data, state_dim, epochs)
-    # Run MaxEnt IRL
-    learned_weights = maxent_irl.maxent_irl()
-    # Print the learned reward weights
-    print("Learned Reward Weights:", learned_weights)
-    # Save the learned reward weights
-    np.save("learned_weights.npy", learned_weights)
-    # Plot the training progress
-    maxent_irl.plot_training_progress()

@@ -42,6 +42,9 @@ learned_weights = irl_agent.maxent_irl()
 irl_agent.plot_training_progress()
 np.save("learned_weights.npy", learned_weights)
 
+learned_weights = np.array(learned_weights)
+pd.DataFrame(learned_weights).to_csv("reward_history.csv", header=None, index=None)
+
 
 
 

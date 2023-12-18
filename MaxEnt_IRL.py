@@ -60,6 +60,25 @@ class MaxEntIRL:
                 print(f"Epoch {epoch}, Reward Weights: {self.weights}")
         return self.weights
     
+    # def plot_training_progress(self):
+    #         fig = plt.figure()
+    #         ax = fig.add_subplot(111, projection='3d')
+            
+    #         rewards = np.array(self.reward_history)
+    #         epochs = np.arange(0, self.epochs, 1)
+
+    #         # Plotting the training progress in 3D space (you can adjust this based on your state_dim)
+    #         for i in range(self.state_dim):
+    #             ax.plot(epochs, rewards[:, i], label=f'Weight {i + 1}')
+
+    #         ax.set_xlabel('Epoch')
+    #         ax.set_ylabel('Reward Weights')
+    #         ax.set_zlabel('Weight Value')
+    #         ax.legend()
+    #         plt.title("Training Progress")
+    #         plt.savefig("training_progress.png")
+
+
     def plot_training_progress(self):
         plt.figure()
         plt.plot(range(self.epochs), [np.linalg.norm(weights) for weights in self.reward_history])

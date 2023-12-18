@@ -42,21 +42,26 @@ scaler, ds_scaled = dataset_normalization(dataset)
 #dataset = dataset[5200:6200, :]
 
 #  Train: Set up simulation without rendering
-sim = setup_simulation('envs/assets/Cricket2D.xml')
-run_simulation(sim, dataset)
-
-# Extract state trajectories from the simulation
-state_trajectories = [sim.get_state().qpos.copy() for _ in range(len(ds_scaled))]
-state_trajectories = np.array(state_trajectories)
-np.save("state_trajectories.csv", state_trajectories)
+model_path = 'envs/assets/Cricket2D.xml'
+model = mujoco_py.load_model_from_path(model_path)
+sim = mujoco_py.MjSim(model)
+# viewer = mujoco_py.MjViewer(sim)
+state_trajectories = []
+for i in range(len(dataset)):
+    joint_angle = np.deg2rad(dataset[i])
+    sim.data.ctrl[:] = joint_angle
+    sim.step()
+    state_trajectory = sim.get_state().qpos.copy()
+    state_trajectories.append(state_trajectory)
+pd.DataFrame(state_trajectories).to_csv("state_trajectories.csv", header=None, index=None)
 
 # Perform MaxEnt IRL training
-state_dim = state_trajectories.shape[1]
-epochs = 100
-irl_agent = MaxEntIRL(state_trajectories, state_dim, epochs)
-learned_weights = irl_agent.maxent_irl()
-irl_agent.plot_training_progress()
-np.save("learned_weights.npy", learned_weights)
+# state_dim = state_trajectories.shape[1]
+# epochs = 100
+# irl_agent = MaxEntIRL(state_trajectories, state_dim, epochs)
+# learned_weights = irl_agent.maxent_irl()
+# irl_agent.plot_training_progress()
+# np.save("learned_weights.npy", learned_weights)
 
 # Test: Set up simulation with rendering
 # learned_weights = np.load("learned_weights.npy")

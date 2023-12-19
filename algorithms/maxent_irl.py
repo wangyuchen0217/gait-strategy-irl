@@ -1,7 +1,7 @@
 from envs import *
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy.optimize import minimize
+import pandas as pd
 
 class MaxEntIRL:
     def __init__(self, expert_data, state_dim, epochs, learning_rate):
@@ -70,11 +70,11 @@ class MaxEntIRL:
     
     def save_reward_history(self, save_path):
         reward_history = np.array(self.reward_history)
-        np.array(reward_history).to_csv(save_path, header=None, index=None)
+        pd.DataFrame(reward_history).to_csv(save_path, header=None, index=None)
     
     def save_learned_weights(self, save_path, format="npy"):
         if format == "npy":
             np.save(save_path, self.weights)
         elif format == "csv":
             learned_weights = np.array(self.weights)
-            np.array(learned_weights).to_csv(save_path, header=None, index=None)
+            pd.DataFrame(learned_weights).to_csv(save_path, header=None, index=None)

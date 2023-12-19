@@ -35,6 +35,8 @@ model_path = 'envs/assets/' + model_name + '.xml'
 model = mujoco_py.load_model_from_path(model_path)
 sim = mujoco_py.MjSim(model)
 # viewer = mujoco_py.MjViewer(sim)
+
+# Get the state trajectories
 state_trajectories = []
 for i in range(len(dataset)):
     joint_angle = np.deg2rad(dataset[i])
@@ -45,6 +47,8 @@ for i in range(len(dataset)):
 state_trajectories = np.array(state_trajectories)
 pd.DataFrame(state_trajectories).to_csv("state_trajectories.csv", 
                                                                                     header=None, index=None)
+# Normalize the state trajectories
+scaler, state_trajectories = dataset_normalization(state_trajectories)
 
 # Perform MaxEnt IRL training
 state_dim = state_trajectories.shape[1]

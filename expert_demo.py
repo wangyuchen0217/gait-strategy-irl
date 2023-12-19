@@ -17,20 +17,6 @@ def dataset_normalization(dataset):
     # ds_rescaled = scaler.inverse_transform(ds_scaled)
     return scaler, ds_scaled
 
-# logs
-exp_id = f"logs/{env_name}/exp-{num_expert_trajs}/{v['obj']}" # task/obj/date structure
-# exp_id = 'debug'
-if not os.path.exists(exp_id):
-    os.makedirs(exp_id)
-
-now = datetime.datetime.now(dateutil.tz.tzlocal())
-log_folder = exp_id + '/' + now.strftime('%Y_%m_%d_%H_%M_%S')
-logger.configure(dir=log_folder)            
-print(f"Logging to directory: {log_folder}")
-print('pid', pid)
-os.makedirs(os.path.join(log_folder, 'plt'))
-os.makedirs(os.path.join(log_folder, 'model'))
-
 # Load joint angle data from the CSV file
 csv_file_path = 'Expert_data_builder/demo_dataset.csv'  
 dataset = pd.read_csv(csv_file_path, header=0, usecols=[1,2,3,4,5,6,7,8,9,10,11,12]).to_numpy()
@@ -61,6 +47,16 @@ np.save("learned_weights.npy", learned_weights)
 
 learned_weights = np.array(learned_weights)
 pd.DataFrame(learned_weights).to_csv("reward_history.csv", header=None, index=None)
+
+# logs
+# make a folder under logs named current env name
+exp_id = os.path.join('logs', current_env_name)
+if not os.path.exists(exp_id):
+    os.makedirs(exp_id)
+now = datetime.datetime.now(dateutil.tz.tzlocal())
+log_folder = os.path.join(exp_id, now.strftime('%Y_%m_%d_%H_%M'))
+# save the learned weights
+# save the training progress
 
 
 

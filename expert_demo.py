@@ -6,6 +6,9 @@ import pandas as pd
 import mujoco_py
 from sklearn.preprocessing import MinMaxScaler
 from MaxEnt_IRL import MaxEntIRL
+import sys
+import datetime
+import dateutil.tz
 
 def dataset_normalization(dataset):
     scaler = MinMaxScaler(feature_range=(-1, 1)).fit(dataset)
@@ -13,6 +16,20 @@ def dataset_normalization(dataset):
     # denormalize the dataset
     # ds_rescaled = scaler.inverse_transform(ds_scaled)
     return scaler, ds_scaled
+
+# logs
+exp_id = f"logs/{env_name}/exp-{num_expert_trajs}/{v['obj']}" # task/obj/date structure
+# exp_id = 'debug'
+if not os.path.exists(exp_id):
+    os.makedirs(exp_id)
+
+now = datetime.datetime.now(dateutil.tz.tzlocal())
+log_folder = exp_id + '/' + now.strftime('%Y_%m_%d_%H_%M_%S')
+logger.configure(dir=log_folder)            
+print(f"Logging to directory: {log_folder}")
+print('pid', pid)
+os.makedirs(os.path.join(log_folder, 'plt'))
+os.makedirs(os.path.join(log_folder, 'model'))
 
 # Load joint angle data from the CSV file
 csv_file_path = 'Expert_data_builder/demo_dataset.csv'  

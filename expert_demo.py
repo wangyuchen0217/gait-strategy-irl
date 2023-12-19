@@ -9,7 +9,6 @@ from MaxEnt_IRL import MaxEntIRL
 import yaml
 import datetime
 import dateutil.tz
-import subprocess
 
 def dataset_normalization(dataset):
     scaler = MinMaxScaler(feature_range=(-1, 1)).fit(dataset)

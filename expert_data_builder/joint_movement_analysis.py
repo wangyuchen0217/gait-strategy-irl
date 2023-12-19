@@ -13,13 +13,13 @@ def get_joint_movement(subject:str, fold_path):
         trail_details = json.load(f)
         cricket_number =  trail_details[f"T{subject}"]["cricket_number"]
         video_number = trail_details[f"T{subject}"]["video_number"]
-    joint_path = fold_path + '/Joint_movement/' + cricket_number + '/PIC' + video_number + '_Joint_movement.csv'
+    joint_path = fold_path + '/joint_movement/' + cricket_number + '/PIC' + video_number + '_joint_movement.csv'
     joint_movement = pd.read_csv(joint_path, header=[0], index_col=[0])
     df_joint = pd.DataFrame(data=joint_movement)
     return df_joint
 
 subjects = 33
-fold_path = os.getcwd() + '/Expert_data_builder'
+fold_path = os.getcwd() + '/expert_data_builder'
 joint_range = pd.DataFrame(columns=['ThC_LF', 'ThC_LM', 'ThC_LH', 'ThC_RF', 'ThC_RM',
                                                             'ThC_RH', 'FTi_LF', 'FTi_LM', 'FTi_LH', 'FTi_RF', 'FTi_RM', 'FTi_RH'])
 
@@ -45,4 +45,4 @@ joint_min = joint_range.min()
 joint_max = joint_range.max()
 joint_range.loc['min'] = joint_min
 joint_range.loc['max'] = joint_max
-joint_range.to_csv(fold_path+'/Joint_movement/joint_range_analysis.csv')
+joint_range.to_csv(fold_path+'/joint_movement/joint_range_analysis.csv')

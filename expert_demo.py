@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 import mujoco_py
 from sklearn.preprocessing import MinMaxScaler
-from MaxEnt_IRL import MaxEntIRL
+from maxent_irl import MaxEntIRL
 import yaml
 import datetime
 import dateutil.tz

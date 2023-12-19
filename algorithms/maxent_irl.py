@@ -17,15 +17,21 @@ class MaxEntIRL:
         total_feature_expectations = np.zeros(self.state_dim)
         for trajectory in trajectories:
             for state in trajectory:
-                total_feature_expectations[state] += 1
+                total_feature_expectations += state
         return total_feature_expectations / len(trajectories)
 
+    # def compute_state_action_visitation(self, trajectories):
+    #     state_action_count = np.zeros([self.state_dim])
+    #     for trajectory in trajectories:
+    #         for state in trajectory:
+    #             state_action_count[state] += 1
+    #     return state_action_count / len(trajectories)
+    
     def compute_state_action_visitation(self, trajectories):
-        T = len(trajectories[0])
-        state_action_count = np.zeros([self.state_dim, T])
+        state_action_count = np.zeros([self.state_dim, trajectories[0].shape[0]])
         for trajectory in trajectories:
-            for state in trajectory:
-                state_action_count[state, 0] += 1
+            for t, state in enumerate(trajectory):
+                state_action_count[:, t] += state
         return state_action_count / len(trajectories)
 
     def compute_softmax_policy(self, weights, state):
@@ -53,7 +59,7 @@ class MaxEntIRL:
             # Compute the gradient of the reward function
             gradient = self.compute_gradient(expert_feature_expectations, expected_feature_counts)
             # Update the reward weights
-            self.weights += self.learning_rate * gradient.mean(axis=0)
+            self.weights += self.learning_rate * gradient.mean(axis=0).flatten()
             # Save the reward weights
             self.reward_history.append(np.copy(self.weights))
             # Print progress

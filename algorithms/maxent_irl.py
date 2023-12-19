@@ -17,14 +17,15 @@ class MaxEntIRL:
         total_feature_expectations = np.zeros(self.state_dim)
         for trajectory in trajectories:
             for state in trajectory:
-                total_feature_expectations += state
+                total_feature_expectations[state] += 1
         return total_feature_expectations / len(trajectories)
 
     def compute_state_action_visitation(self, trajectories):
-        state_action_count = np.zeros(self.state_dim)
+        T = len(trajectories[0])
+        state_action_count = np.zeros([self.state_dim, T])
         for trajectory in trajectories:
             for state in trajectory:
-                state_action_count += state
+                state_action_count[state, 0] += 1
         return state_action_count / len(trajectories)
 
     def compute_softmax_policy(self, weights, state):

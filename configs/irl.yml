@@ -1,0 +1,4 @@
+model: Cricket2D
+env: CricketEnv2D-v0
+lr: 1e-3
+epochs: 100

@@ -6,9 +6,10 @@ import pandas as pd
 import mujoco_py
 from sklearn.preprocessing import MinMaxScaler
 from MaxEnt_IRL import MaxEntIRL
-import sys
+import yaml
 import datetime
 import dateutil.tz
+import subprocess
 
 def dataset_normalization(dataset):
     scaler = MinMaxScaler(feature_range=(-1, 1)).fit(dataset)
@@ -17,13 +18,21 @@ def dataset_normalization(dataset):
     # ds_rescaled = scaler.inverse_transform(ds_scaled)
     return scaler, ds_scaled
 
+def fold_configure(folder):
+    if not os.path.exists(folder):
+        os.makedirs(folder)  
+
 # Load joint angle data from the CSV file
 csv_file_path = 'Expert_data_builder/demo_dataset.csv'  
 dataset = pd.read_csv(csv_file_path, header=0, usecols=[1,2,3,4,5,6,7,8,9,10,11,12]).to_numpy()
 #dataset = dataset[5200:6200, :]
+# open config file
+with open("configs/irl.yml", "r") as f:
+    config_data = yaml.safe_load(f)
 
 #  Set up simulation without rendering
-model_path = 'envs/assets/Cricket2D.xml'
+model_name = config_data.get("model")
+model_path = 'envs/assets/' + model_name + '.xml'
 model = mujoco_py.load_model_from_path(model_path)
 sim = mujoco_py.MjSim(model)
 # viewer = mujoco_py.MjViewer(sim)
@@ -35,28 +44,36 @@ for i in range(len(dataset)):
     state_trajectory = sim.get_state().qpos.copy()
     state_trajectories.append(state_trajectory)
 state_trajectories = np.array(state_trajectories)
-pd.DataFrame(state_trajectories).to_csv("state_trajectories.csv", header=None, index=None)
+pd.DataFrame(state_trajectories).to_csv("state_trajectories.csv", 
+                                                                                    header=None, index=None)
 
 # Perform MaxEnt IRL training
 state_dim = state_trajectories.shape[1]
-epochs = 1000
+epochs = config_data.get("epochs")
 irl_agent = MaxEntIRL(state_trajectories, state_dim, epochs)
 learned_weights = irl_agent.maxent_irl()
-irl_agent.plot_training_progress()
-np.save("learned_weights.npy", learned_weights)
-
-learned_weights = np.array(learned_weights)
-pd.DataFrame(learned_weights).to_csv("reward_history.csv", header=None, index=None)
 
 # logs
 # make a folder under logs named current env name
-exp_id = os.path.join('logs', current_env_name)
-if not os.path.exists(exp_id):
-    os.makedirs(exp_id)
+env = config_data.get("env")
+exp_id = os.path.join('logs', env)
+fold_configure(exp_id)
 now = datetime.datetime.now(dateutil.tz.tzlocal())
-log_folder = os.path.join(exp_id, now.strftime('%Y_%m_%d_%H_%M'))
-# save the learned weights
+log_folder = exp_id + "/" + now.strftime('%Y%m%d_%H%M')
+fold_configure(log_folder)
+# copy the config file 
+os.system("cp configs/irl.yml " + log_folder + "/config.yml")
 # save the training progress
+irl_agent.plot_training_progress(log_folder + "/training_progress.png")
+# save the learned weights
+np.save(log_folder + "/learned_weights.npy", learned_weights)
+learned_weights = np.array(learned_weights)
+pd.DataFrame(learned_weights).to_csv(log_folder + "/learned_weights.csv", 
+                                                                                    header=None, index=None)
+# save the training log and pid
+command = "python3 train.py >> {}/train.log 2>&1 & echo $! > {}/run.pid".format(log_folder, log_folder)
+subprocess.run(command, shell=True, executable="/bin/bash", check=True)
+
 
 
 

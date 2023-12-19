@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 import mujoco_py
 from sklearn.preprocessing import MinMaxScaler
-from irl.maxent_irl import MaxEntIRL
+from algorithms.maxent_irl import MaxEntIRL
 
 csv_file_path = 'Expert_data_builder/demo_dataset.csv'  
 dataset = pd.read_csv(csv_file_path, header=0, usecols=[1,2,3,4,5,6,7,8,9,10,11,12]).to_numpy()

@@ -1,5 +1,5 @@
 import gym
-from irl.rl import QLearningAgent 
+from algorithms.rl import QLearningAgent 
 import numpy as np
 
 

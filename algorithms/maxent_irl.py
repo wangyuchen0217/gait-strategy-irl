@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from scipy.optimize import minimize
 
 class MaxEntIRL:
-    def __init__(self, expert_data, state_dim, epochs, learning_rate=0.01):
+    def __init__(self, expert_data, state_dim, epochs, learning_rate):
         self.expert_data = expert_data
         self.state_dim = state_dim
         self.learning_rate = learning_rate
@@ -69,7 +69,8 @@ class MaxEntIRL:
         plt.savefig(save_path)   
     
     def save_reward_history(self, save_path):
-        np.array(self.reward_history).to_csv(save_path, header=None, index=None)
+        reward_history = np.array(self.reward_history)
+        np.array(reward_history).to_csv(save_path, header=None, index=None)
     
     def save_learned_weights(self, save_path, format="npy"):
         if format == "npy":

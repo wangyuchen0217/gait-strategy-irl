@@ -22,7 +22,7 @@ def fold_configure(folder):
         os.makedirs(folder)  
 
 # Load joint angle data from the CSV file
-csv_file_path = 'Expert_data_builder/demo_dataset.csv'  
+csv_file_path = 'expert_data_builder/demo_dataset.csv'  
 dataset = pd.read_csv(csv_file_path, header=0, usecols=[1,2,3,4,5,6,7,8,9,10,11,12]).to_numpy()
 #dataset = dataset[5200:6200, :]
 # open config file
@@ -49,7 +49,8 @@ pd.DataFrame(state_trajectories).to_csv("state_trajectories.csv",
 # Perform MaxEnt IRL training
 state_dim = state_trajectories.shape[1]
 epochs = config_data.get("epochs")
-irl_agent = MaxEntIRL(state_trajectories, state_dim, epochs)
+learning_rate = config_data.get("learning_rate")
+irl_agent = MaxEntIRL(state_trajectories, state_dim, epochs, learning_rate)
 learned_weights = irl_agent.maxent_irl()
 
 # logs

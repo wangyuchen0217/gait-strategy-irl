@@ -65,14 +65,11 @@ fold_configure(log_folder)
 os.system("cp configs/irl.yml " + log_folder + "/config.yml")
 # save the training progress
 irl_agent.plot_training_progress(log_folder + "/training_progress.png")
+# save the reward history
+irl_agent.save_reward_history(log_folder + "/reward_history.csv")
 # save the learned weights
-np.save(log_folder + "/learned_weights.npy", learned_weights)
-learned_weights = np.array(learned_weights)
-pd.DataFrame(learned_weights).to_csv(log_folder + "/learned_weights.csv", 
-                                                                                    header=None, index=None)
-# save the training log and pid
-command = "python3 train.py >> {}/train.log 2>&1 & echo $! > {}/run.pid".format(log_folder, log_folder)
-subprocess.run(command, shell=True, executable="/bin/bash", check=True)
+irl_agent.save_learned_weights(log_folder + "/learned_weights.csv", format="csv")
+irl_agent.save_learned_weights(log_folder + "/learned_weights.npy", format="npy")
 
 
 

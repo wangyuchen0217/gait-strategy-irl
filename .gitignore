@@ -3,6 +3,7 @@ __pycache__/
 
 .vscode/
 
-temp/
+train.log
+run.pid
 
 algorithms/__pycache__/

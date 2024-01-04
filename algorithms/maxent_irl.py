@@ -4,6 +4,23 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 class MaxEntIRL:
+    """
+    Maximum Entropy Inverse Reinforcement Learning (Maxent IRL)
+    inputs:
+        feat_map    NxD matrix - the features for each state
+        P_a         NxNxN_ACTIONS matrix - P_a[s0, s1, a] is the transition prob of 
+                                        landing at state s1 when taking action 
+                                        a at state s0
+        gamma       float - RL discount factor
+        trajs       a list of demonstrations
+        lr          float - learning rate
+        n_iters     int - number of optimization steps
+
+    returns
+        rewards     Nx1 vector - recoverred state rewards
+    """
+    N_STATES, _, N_ACTIONS = np.shape(P_a)
+
     def __init__(self, expert_data, state_dim, epochs, learning_rate):
         self.expert_data = expert_data
         self.state_dim = state_dim
@@ -16,15 +33,13 @@ class MaxEntIRL:
     def compute_feature_expectations(self, trajectories):
         total_feature_expectations = np.zeros(self.state_dim)
         for trajectory in trajectories:
-            for state in trajectory:
-                total_feature_expectations += state
+                total_feature_expectations += trajectory
         return total_feature_expectations / len(trajectories)
 
     def compute_state_action_visitation(self, trajectories):
         state_action_count = np.zeros(self.state_dim)
         for trajectory in trajectories:
-            for state in trajectory:
-                state_action_count += state
+                state_action_count += trajectory
         return state_action_count / len(trajectories)
 
     def compute_softmax_policy(self, weights, state):

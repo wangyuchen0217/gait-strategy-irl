@@ -54,4 +54,4 @@ for trajectory in state_trajectories:
         state_action_count[:,i] += trajectory
         i += 1
 state_action_count = state_action_count / len(state_trajectories)
-print(state_action_count)
+print(state_action_count.shape)

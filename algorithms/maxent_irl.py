@@ -4,22 +4,6 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 class MaxEntIRL:
-    """
-    Maximum Entropy Inverse Reinforcement Learning (Maxent IRL)
-    inputs:
-        feat_map    NxD matrix - the features for each state
-        P_a         NxNxN_ACTIONS matrix - P_a[s0, s1, a] is the transition prob of 
-                                        landing at state s1 when taking action 
-                                        a at state s0
-        gamma       float - RL discount factor
-        trajs       a list of demonstrations
-        lr          float - learning rate
-        n_iters     int - number of optimization steps
-
-    returns
-        rewards     Nx1 vector - recoverred state rewards
-    """
-
     def __init__(self, expert_data, state_dim, epochs, learning_rate):
         self.expert_data = expert_data
         self.state_dim = state_dim
@@ -36,11 +20,9 @@ class MaxEntIRL:
         return total_feature_expectations / len(trajectories)
     
     def compute_state_action_visitation(self, trajectories):
-        '''Revised 01/04/2021 from the original code: 
-        state_action_count = np.zeros([self.state_dim, trajectories[0].shape[0]])
+        '''state_action_count = np.zeros([self.state_dim, trajectories[0].shape[0]])
         for trajectory in trajectories:
-                state_action_count += trajectory
-        '''
+                state_action_count += trajectory'''
         state_action_count = np.zeros([self.state_dim, trajectories[:,0].shape[0]])
         i = 0
         for trajectory in trajectories:
@@ -67,7 +49,8 @@ class MaxEntIRL:
             # Compute feature expectations from the expert data
             expert_feature_expectations = self.compute_feature_expectations(self.expert_data)
             # Compute policy using the current reward weights
-            policy = np.array([self.compute_softmax_policy(self.weights, state) for state in state_action_visitation])
+            '''policy = np.array([self.compute_softmax_policy(self.weights, state) for state in state_action_visitation])'''
+            policy = np.array([self.compute_softmax_policy(self.weights, state) for state in state_action_visitation.swapaxes(0,1)])
             # Compute expected feature counts under the current policy
             expected_feature_counts = self.compute_expected_feature_counts(policy, state_action_visitation)
             # Compute the gradient of the reward function

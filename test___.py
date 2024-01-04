@@ -47,30 +47,9 @@ for i in range(len(dataset)):
 state_trajectories = np.array(state_trajectories)
 pd.DataFrame(state_trajectories).to_csv("state_trajectories.csv", 
                                                                                     header=None, index=None)
-# Normalize the state trajectories
-scaler, state_trajectories = dataset_normalization(state_trajectories)
 
-# Perform MaxEnt IRL training
 state_dim = state_trajectories.shape[1]
-epochs = config_data.get("epochs")
-learning_rate = config_data.get("learning_rate")
-irl_agent = MaxEntIRL(state_trajectories, state_dim, epochs, learning_rate)
-learned_weights = irl_agent.maxent_irl()
-
-# logs
-# make a folder under logs named current env name
-env = config_data.get("env")
-exp_id = os.path.join('logs', env)
-fold_configure(exp_id)
-now = datetime.datetime.now(dateutil.tz.tzlocal())
-log_folder = exp_id + "/" + now.strftime('%Y%m%d_%H%M')
-fold_configure(log_folder)
-# copy the config file 
-os.system("cp configs/irl.yml " + log_folder + "/config.yml")
-# save the training progress
-irl_agent.plot_training_progress(log_folder + "/training_progress.png")
-# save the reward history
-irl_agent.save_reward_history(log_folder + "/reward_history.csv")
-# save the learned weights
-irl_agent.save_learned_weights(log_folder + "/learned_weights.csv", format="csv")
-irl_agent.save_learned_weights(log_folder + "/learned_weights.npy", format="npy")
+total_feature_expectations = np.zeros(state_dim)
+for trajectory in state_trajectories:
+        total_feature_expectations += trajectory
+print(total_feature_expectations)

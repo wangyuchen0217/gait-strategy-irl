@@ -19,7 +19,6 @@ class MaxEntIRL:
     returns
         rewards     Nx1 vector - recoverred state rewards
     """
-    N_STATES, _, N_ACTIONS = np.shape(P_a)
 
     def __init__(self, expert_data, state_dim, epochs, learning_rate):
         self.expert_data = expert_data
@@ -37,9 +36,16 @@ class MaxEntIRL:
         return total_feature_expectations / len(trajectories)
     
     def compute_state_action_visitation(self, trajectories):
+        '''Revised 01/04/2021 from the original code: 
         state_action_count = np.zeros([self.state_dim, trajectories[0].shape[0]])
         for trajectory in trajectories:
                 state_action_count += trajectory
+        '''
+        state_action_count = np.zeros([self.state_dim, trajectories[:,0].shape[0]])
+        i = 0
+        for trajectory in trajectories:
+                state_action_count[:,i] += trajectory
+                i += 1
         return state_action_count / len(trajectories)
 
     def compute_softmax_policy(self, weights, state):

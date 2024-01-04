@@ -48,8 +48,10 @@ state_trajectories = np.array(state_trajectories)
 pd.DataFrame(state_trajectories).to_csv("state_trajectories.csv", 
                                                                                     header=None, index=None)
 
-state_dim = state_trajectories.shape[1]
-total_feature_expectations = np.zeros(state_dim)
+state_action_count = np.zeros([12, state_trajectories[:,0].shape[0]])
+i = 0
 for trajectory in state_trajectories:
-        total_feature_expectations += trajectory
-print(total_feature_expectations)
+        state_action_count[:,i] += trajectory
+        i += 1
+state_action_count = state_action_count / len(state_trajectories)
+print(state_action_count)

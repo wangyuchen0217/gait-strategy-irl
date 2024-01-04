@@ -1,4 +1,0 @@
-model: Cricket2D
-env: CricketEnv2D-v0
-learning_rate: 0.001
-epochs: 1000

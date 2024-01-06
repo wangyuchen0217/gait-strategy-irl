@@ -37,21 +37,17 @@ sim = mujoco_py.MjSim(model)
 # viewer = mujoco_py.MjViewer(sim)
 
 # Get the state trajectories
-state_trajectories = []
+trajectories = []
 for i in range(len(dataset)):
     joint_angle = np.deg2rad(dataset[i])
     sim.data.ctrl[:] = joint_angle
     sim.step()
-    state_trajectory = sim.get_state().qpos.copy()
-    state_trajectories.append(state_trajectory)
-state_trajectories = np.array(state_trajectories)
-pd.DataFrame(state_trajectories).to_csv("state_trajectories.csv", 
-                                                                                    header=None, index=None)
+    # qpos: joint positions
+    state_pos = sim.get_state().qpos.copy()
+    state_vel = sim.get_state().qvel.copy()
+    action = sim.data.ctrl.copy()
+    trajectory = np.concatenate((state_pos, state_vel, action))
+    trajectories.append(trajectory)
+trajectories = np.array(trajectories)
 
-state_action_count = np.zeros([12, state_trajectories[:,0].shape[0]])
-i = 0
-for trajectory in state_trajectories:
-        state_action_count[:,i] += trajectory
-        i += 1
-state_action_count = state_action_count / len(state_trajectories)
-print(state_action_count.shape)
+print("trajectory", trajectories.shape)

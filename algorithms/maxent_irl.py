@@ -4,14 +4,26 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 class MaxEntIRL:
-    def __init__(self, expert_data, state_dim, epochs, learning_rate):
-        self.expert_data = expert_data
-        self.state_dim = state_dim
+    def __init__(self, num_states, num_actions, transition_prob, feature_matrix, 
+                                learning_rate,expert_trajectories, epochs):
+        self.num_states = num_states
+        self.num_actions = num_actions
+        self.transition_prob = transition_prob
+        self.feature_matrix = feature_matrix
+        self.expert_trajectories = expert_trajectories
         self.learning_rate = learning_rate
         self.epochs = epochs
+        self.weights = np.random.rand(feature_matrix.shape[1])
+
         self.reward_history = []
-        # Initialize the reward weights randomly
-        self.weights = np.random.rand(state_dim)
+
+    def calculate_expected_feature_counts(self, policy):
+        expected_feature_counts = np.zeros(self.feature_matrix.shape[1])
+        for trajectory in self.expert_trajectories:
+            for state, action in trajectory:
+                state_feature = self.feature_matrix[state]
+                expected_feature_counts += policy[state, action] * state_feature
+        return expected_feature_counts
 
     def compute_feature_expectations(self, trajectories):
         total_feature_expectations = np.zeros(self.state_dim)

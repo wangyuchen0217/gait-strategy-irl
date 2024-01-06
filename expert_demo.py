@@ -37,18 +37,22 @@ sim = mujoco_py.MjSim(model)
 # viewer = mujoco_py.MjViewer(sim)
 
 # Get the state trajectories
-state_trajectories = []
+trajectories = []
 for i in range(len(dataset)):
     joint_angle = np.deg2rad(dataset[i])
     sim.data.ctrl[:] = joint_angle
     sim.step()
-    state_trajectory = sim.get_state().qpos.copy()
-    state_trajectories.append(state_trajectory)
-state_trajectories = np.array(state_trajectories)
-pd.DataFrame(state_trajectories).to_csv("state_trajectories.csv", 
+    # qpos: joint positions
+    state_pos = sim.get_state().qpos.copy()
+    state_vel = sim.get_state().qvel.copy()
+    action = sim.data.ctrl.copy()
+    trajectory = np.concatenate((state_pos, state_vel, action))
+    trajectories.append(trajectory)
+trajectories = np.array(trajectories)
+pd.DataFrame(trajectories).to_csv("state_trajectories.csv", 
                                                                                     header=None, index=None)
 # Normalize the state trajectories
-scaler, state_trajectories = dataset_normalization(state_trajectories)
+scaler, state_trajectories = dataset_normalization(trajectories)
 
 # Perform MaxEnt IRL training
 state_dim = state_trajectories.shape[1]

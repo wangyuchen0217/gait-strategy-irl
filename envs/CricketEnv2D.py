@@ -3,7 +3,7 @@ from gym import utils
 from gym.envs.mujoco import mujoco_env
 import mujoco_py
 
-class CricketEnv(mujoco_env.MujocoEnv, utils.EzPickle):
+class CricketEnv2D(mujoco_env.MujocoEnv, utils.EzPickle):
     def __init__(self, max_timesteps=500, r=None):
         # super(lab_env, self).__init__(env)
         utils.EzPickle.__init__(self)
@@ -84,7 +84,7 @@ class CricketEnv(mujoco_env.MujocoEnv, utils.EzPickle):
 
 
 if __name__ == "__main__":
-    env = CricketEnv(max_timesteps=500)
+    env = CricketEnv2D(max_timesteps=500)
 
     for _ in range(1000):
         env.render()

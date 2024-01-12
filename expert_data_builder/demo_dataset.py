@@ -14,7 +14,7 @@ for i in range(subjects):
         cricket_number =  trail_details[f"T{subject_number}"]["cricket_number"]
         video_number = trail_details[f"T{subject_number}"]["video_number"]
     # read the joint movement data
-    joint_path = os.path.join(fold_path, 'joint_movement', cricket_number, f'PIC{video_number}_jpint_movement.csv')
+    joint_path = os.path.join(fold_path, 'joint_movement', cricket_number, f'PIC{video_number}_Joint_movement.csv')
     #joint_path = fold_path + '/joint_movement/' + cricket_number + '/PIC' + video_number + '_Joint_movement.csv'
     joint_movement = pd.read_csv(joint_path, header=[0], index_col=[0])
     if ds is None:

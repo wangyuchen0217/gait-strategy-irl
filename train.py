@@ -5,7 +5,6 @@ import numpy as np
 import pandas as pd
 import mujoco_py
 from sklearn.preprocessing import MinMaxScaler
-from algorithms.maxent_irl import MaxEntIRL
 import yaml
 import datetime
 import dateutil.tz
@@ -40,7 +39,7 @@ def idx_demo(env, one_feature):
     env_high = env.observation_space.high   
     env_distance = (env_high - env_low) / one_feature  
 
-    raw_demo = np.load(file="expert_demo/expert_demo.npy")
+    raw_demo = np.load(file="expert_demo.npy")
     demonstrations = np.zeros((len(raw_demo), len(raw_demo[0]), 3))
 
     for x in range(len(raw_demo)):

@@ -73,14 +73,15 @@ def find_feature_expectations(feature_matrix, trajectories):
     trajectories: 3D array of state/action pairs. States are ints, actions
                             are ints. NumPy array with shape (T, L, 2) where T is the number of
                             trajectories and L is the trajectory length.
-                            -> Feature expectations vector with shape (D,).
+    -> Feature expectations vector with shape (D,).
     """
 
-    feature_expectations = np.zeros(feature_matrix.shape[1])
-    for trajectory in trajectories: # trajectories: (33, 1270, 2, 12)
-        for idx, (_, _) in enumerate(trajectory):  # trajectory: (1270, 2, 12)
-            feature_expectations += feature_matrix[idx]
+    feature_expectations = np.zeros(feature_matrix.shape[0])
+    for trajectory in trajectories: # trajectory: (1270, 2, 12)
+        for state, _ in trajectory:  # _ is action
+            feature_expectations += state
     feature_expectations /= trajectories.shape[0]
+    print("feature_expectations: {}".format(feature_expectations))
     return feature_expectations
 
 def find_expected_svf(n_states, r, n_actions, discount,
@@ -94,24 +95,22 @@ def find_expected_svf(n_states, r, n_actions, discount,
     n_actions: Number of actions A. int.
     discount: Discount factor of the MDP. float.
     transition_probability: NumPy array mapping (state_i, action, state_k) to
-        the probability of transitioning from state_i to state_k under action.
-        Shape (N, A, N).
+                                                the probability of transitioning from state_i to state_k 
+                                                under action. Shape (N, A, N).
     trajectories: 3D array of state/action pairs. States are ints, actions
-        are ints. NumPy array with shape (T, L, 2) where T is the number of
-        trajectories and L is the trajectory length.
+                            are ints. NumPy array with shape (T, L, 2) where T is the number of
+                            trajectories and L is the trajectory length.
     -> Expected state visitation frequencies vector with shape (N,).
     """
 
     n_trajectories = trajectories.shape[0]
     trajectory_length = trajectories.shape[1]
-
-    # policy = find_policy(n_states, r, n_actions, discount,
-    #                                 transition_probability)
-    policy = value_iteration.find_policy(n_states, n_actions,
-                                         transition_probability, r, discount)
-
+    print("n_trajectories: {}".format(n_trajectories))
+    print("trajectory_length: {}".format(trajectory_length))
+    policy = value_iteration.find_policy(n_states, n_actions, transition_probability, 
+                                                                        r, discount)
     start_state_count = np.zeros(n_states)
-    for trajectory in trajectories:
+    for trajectory in trajectories: 
         start_state_count[trajectory[0, 0]] += 1
     p_start_state = start_state_count/n_trajectories
 

@@ -16,14 +16,13 @@ def maxent_irl(feature_matrix, n_actions, discount, transition_probability,
     n_actions: Number of actions A. int.
     discount: Discount factor of the MDP. float.
     transition_probability: NumPy array mapping (state_i, action, state_k) to
-                                                the probability of transitioning from state_i to state_k 
-                                                under action. Shape (N, A, N).
+                                                the probability of transitioning from state_i to state_k under action. 
+                                                Shape (N, A, N).
     trajectories: 3D array of state/action pairs. States are ints, actions are ints. 
                             NumPy array with shape (T, L, 2) where T is the number of
                             trajectories and L is the trajectory length.
     epochs: Number of gradient descent steps. int.
     learning_rate: Gradient descent learning rate. float.
-    
     -> Reward vector with shape (N,).
     """
 

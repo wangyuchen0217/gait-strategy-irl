@@ -23,6 +23,7 @@ def maxent_irl(feature_matrix, n_actions, discount, transition_probability,
                             trajectories and L is the trajectory length.
     epochs: Number of gradient descent steps. int.
     learning_rate: Gradient descent learning rate. float.
+    
     -> Reward vector with shape (N,).
     """
 

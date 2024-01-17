@@ -29,7 +29,7 @@ for i in range(subjects):
         video_number = trail_details[f"T{subject_number}"]["video_number"]
     # read the joint movement data
     csv_file_path = os.path.join("expert_data_builder/joint_movement", cricket_number, 
-                                                            f"PIC{video_number}_Joint_movement.csv")
+                                                f"PIC{video_number}_Joint_movement.csv")
     trail = pd.read_csv(csv_file_path, header=[0], 
                                         index_col=[1,2,3,4,5,6,7,8,9,10,11,12]).to_numpy()
     trajecroty = []

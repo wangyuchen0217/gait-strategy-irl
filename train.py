@@ -13,8 +13,9 @@ from algorithms.maxent_irl import *
 
 # feature parameters
 state_num = 12  # 12 joint positions
+state_dim = 1  # 12 joint positions
 action_num = 12  # 12 joint actuators
-feature_matrix = np.eye((state_num)) # (12, 12)
+feature_matrix = np.zeros((state_num, state_dim))
 # expert demonstration parameters
 traj_num = 33
 traj_len = 1270
@@ -27,10 +28,6 @@ discount_factor = 0.9
 transition_probability = np.random.rand(state_num, action_num, state_num) # (12, 12, 12)
 epochs = 100
 np.random.seed(1)
-
-a, b = feature_matrix.shape
-print(a)
-print(b)
 
 # train: maxent_irl
 reward = maxent_irl(feature_matrix, action_num, discount_factor, transition_probability, 

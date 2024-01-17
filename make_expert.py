@@ -30,7 +30,8 @@ for i in range(subjects):
     # read the joint movement data
     csv_file_path = os.path.join("expert_data_builder/joint_movement", cricket_number, 
                                                             f"PIC{video_number}_Joint_movement.csv")
-    trail = pd.read_csv(csv_file_path, header=[0], index_col=[1,2,3,4,5,6,7,8,9,10,11,12]).to_numpy()
+    trail = pd.read_csv(csv_file_path, header=[0], 
+                                        index_col=[1,2,3,4,5,6,7,8,9,10,11,12]).to_numpy()
     trajecroty = []
     for j in range(1270): # 1270 is the length of each trajectory
         joint_angle = np.deg2rad(trail[j])

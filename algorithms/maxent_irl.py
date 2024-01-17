@@ -16,8 +16,8 @@ def maxent_irl(feature_matrix, n_actions, discount, transition_probability,
     n_actions: Number of actions A. int.
     discount: Discount factor of the MDP. float.
     transition_probability: NumPy array mapping (state_i, action, state_k) to
-                                                the probability of transitioning from state_i to state_k under action. 
-                                                Shape (N, A, N).
+                                                the probability of transitioning from state_i to state_k 
+                                                under action. Shape (N, A, N).
     trajectories: 3D array of state/action pairs. States are ints, actions are ints. 
                             NumPy array with shape (T, L, 2) where T is the number of
                             trajectories and L is the trajectory length.
@@ -77,10 +77,9 @@ def find_feature_expectations(feature_matrix, trajectories):
     """
 
     feature_expectations = np.zeros(feature_matrix.shape[1])
-    for trajectory in trajectories: # trajectory: (1270, 2, 12)
-        for state, _ in trajectory: 
-            state_index = int(state)  # Convert state to integer index if needed
-            feature_expectations += feature_matrix[state_index]
+    for trajectory in trajectories: # trajectories: (33, 1270, 2, 12)
+        for idx, (_, _) in enumerate(trajectory):  # trajectory: (1270, 2, 12)
+            feature_expectations += feature_matrix[idx]
     feature_expectations /= trajectories.shape[0]
     return feature_expectations
 

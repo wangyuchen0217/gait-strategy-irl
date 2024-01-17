@@ -1,10 +1,17 @@
 import numpy as np
 
-fearure_matrix = np.eye(4)
 # random numpy array with all integers
-trajectory = np.random.randint(10, size=(3, 2, 4))
-print(trajectory)
+trajecroty = np.random.randint(10, size=(3, 2, 4))
+print(trajecroty)
 
-a = np.random.randint(10, size=(2, 5))
-print(a)
-print(a.shape[1])
+for state, action in trajecroty:
+    print(state)
+    print(action)
+    print()
+
+#enumerate
+for i, (state, action) in enumerate(trajecroty):
+    print(i)
+    print(state)
+    print(action)
+    print()

@@ -12,20 +12,21 @@ import dateutil.tz
 from algorithms.maxent_irl import *
 
 # feature parameters
-state_num = 12  # 12 joint positions
-state_dim = 1  # 12 joint positions
-action_num = 12  # 12 joint actuators
+state_num = 1270*33  # 33 trajectories, 1270 timesteps each
+action_num = 1270*33  # 33 trajectories, 1270 timesteps each
+state_dim = 12  # 12 joint positions
+action_dim = 12  # 12 joint actuators
 feature_matrix = np.zeros((state_num, state_dim))
 # expert demonstration parameters
 traj_num = 33
 traj_len = 1270
 trajectories = np.load('expert_demo.npy') # (33, 1270, 2, 12)
 observed_states = np.random.rand(traj_num, traj_len, state_num)
-observed_actions = np.random.rand(traj_num, traj_len, action_num)
+observed_actions = np.random.rand(traj_num, traj_len, action_dim)
 # hyperparameters
 learning_rate = 0.01
 discount_factor = 0.9
-transition_probability = np.random.rand(state_num, action_num, state_num) # (12, 12, 12)
+transition_probability = np.random.rand(state_num, state_num, state_num) # (12, 12, 12)
 epochs = 100
 np.random.seed(1)
 

@@ -1,4 +1,4 @@
-from envs import *
+# from envs import *
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -21,25 +21,12 @@ class MaxEntIRL:
                 total_feature_expectations += state
         return total_feature_expectations / len(trajectories)
 
-##################################################
     def compute_state_action_visitation(self, trajectories):
-        '''state_action_count = np.zeros([self.state_dim, trajectories[0].shape[0]])
-        for trajectory in trajectories:
-                state_action_count += trajectory'''
         state_action_count = np.zeros([self.state_dim, trajectories[:,0].shape[0]])
         i = 0
         for trajectory in trajectories:
                 state_action_count[:,i] += trajectory
                 i += 1
-        return state_action_count / len(trajectories)
-##################################################
-
-    def compute_state_action_visitation(self, trajectories):
-        # [s, t] is the prob of visiting state s at time t
-        state_action_count = np.zeros([self.state_dim, trajectories[:,0].shape[0]])
-        for trajectory in trajectories:
-            for state_action_pair in trajectory:
-                state_action_count += state_action_pair
         return state_action_count / len(trajectories)
 
     def compute_softmax_policy(self, weights, state_action):

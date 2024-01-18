@@ -17,6 +17,9 @@ def irl_continuous_state(state_dim, trajectories, epochs, learning_rate):
 
     # Define a simple neural network model for reward function approximation
     class RewardModel(tf.keras.Model):
+        '''
+        This model is designed to approximate the unknown reward function.
+        '''
         def __init__(self, state_dim):
             super(RewardModel, self).__init__()
             self.dense1 = tf.keras.layers.Dense(64, activation='relu', input_shape=(state_dim,))
@@ -27,11 +30,9 @@ def irl_continuous_state(state_dim, trajectories, epochs, learning_rate):
             return self.dense2(x)
 
     n_trajectories = trajectories.shape[0] # 33
-
     # Create the reward model
     reward_model = RewardModel(state_dim)
     optimizer = tf.keras.optimizers.Adam(learning_rate)
-
     # Lists to store the training loss for plotting
     losses = []
 
@@ -42,21 +43,23 @@ def irl_continuous_state(state_dim, trajectories, epochs, learning_rate):
             states = trajectory[:, 0, :]  # trajectory[:, 0, :]: (1270, 12)
             with tf.GradientTape() as tape:
                 predicted_rewards = reward_model(states)
-                true_rewards = np.sum(predicted_rewards, axis=-1)
+                # Initializing with zeros for continuous states
+                true_rewards = tf.constant(0.0, shape=predicted_rewards.shape)  
                 loss = tf.reduce_mean(tf.square(true_rewards - predicted_rewards))
             gradients = tape.gradient(loss, reward_model.trainable_variables)
             optimizer.apply_gradients(zip(gradients, reward_model.trainable_variables))
             total_loss += loss
-
         average_loss = total_loss / n_trajectories
         losses.append(average_loss.numpy())
         print(f"Epoch {epoch + 1}/{epochs}, Loss: {average_loss.numpy()}")
 
     # Get the learned reward function
     learned_reward = reward_model(np.eye(state_dim, dtype=np.float32))
-
-    # Plot the training process
+    # save the training loss
+    np.save('losses.npy', np.array(losses))
+    # Plot the training process and zoom in the first 100 epochs
     plot_training_process(losses)
+    plot_training_process(losses[:100])
 
     return learned_reward.numpy().reshape((state_dim,))
 
@@ -64,7 +67,6 @@ def irl_continuous_state(state_dim, trajectories, epochs, learning_rate):
 def plot_training_process(losses):
     """
     Plot the training loss over epochs.
-
     losses: List of training losses. List[float].
     """
     plt.plot(losses)
@@ -76,12 +78,9 @@ def plot_training_process(losses):
 
 # Example usage:
 state_dim = 12  # Example state dimension (qpos of 12 joints)
-n_actions = 12  # Example number of actions (assuming it's the same as state_dim)
-discount = 0.9  # Example discount factor
 trajectories = np.load("expert_demo.npy")  #  (33, 1270, 2, 12)
 epochs = 1000  # Example number of epochs
 learning_rate = 0.01  # Example learning rate
 
 learned_reward = irl_continuous_state(state_dim, trajectories, epochs, learning_rate)
-
 print("Learned Reward:", learned_reward)

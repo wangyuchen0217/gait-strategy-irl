@@ -2,20 +2,14 @@ import numpy as np
 import tensorflow as tf
 import matplotlib.pyplot as plt
 
-def irl_continuous_state(state_dim, n_actions, discount, transition_probability,
-                          trajectories, epochs, learning_rate):
+def irl_continuous_state(state_dim, trajectories, epochs, learning_rate):
     """
     Find the reward function for the given trajectories with continuous states.
 
     state_dim: Dimensionality of the state space. int.
-    n_actions: Number of actions A. int.
-    discount: Discount factor of the MDP. float.
-    transition_probability: NumPy array mapping (state_i, action, state_k) to
-        the probability of transitioning from state_i to state_k under action.
-        Shape (state_dim, A, state_dim).
-    trajectories: 3D array of state/action pairs. States and actions are vectors.
-        NumPy array with shape (T, L, 2) where T is the number of trajectories
-        and L is the trajectory length.
+    trajectories: 4D array of state/action pairs. States and actions are vectors.
+                            NumPy array with shape (T, L, 2, state_dim) where 
+                            T is the number of trajectories and L is the trajectory length.
     epochs: Number of gradient descent steps. int.
     learning_rate: Gradient descent learning rate. float.
     -> Reward vector with shape (state_dim,).
@@ -32,7 +26,7 @@ def irl_continuous_state(state_dim, n_actions, discount, transition_probability,
             x = self.dense1(state)
             return self.dense2(x)
 
-    n_trajectories = trajectories.shape[0]
+    n_trajectories = trajectories.shape[0] # 33
 
     # Create the reward model
     reward_model = RewardModel(state_dim)
@@ -44,11 +38,11 @@ def irl_continuous_state(state_dim, n_actions, discount, transition_probability,
     # Training loop
     for epoch in range(epochs):
         total_loss = 0
-        for trajectory in trajectories:
-            states = trajectory[:, 0, :]  # Extract states from trajectory
+        for trajectory in trajectories: # trajectories: (33, 1270, 2, 12)
+            states = trajectory[:, 0, :]  # trajectory[:, 0, :]: (1270, 12)
             with tf.GradientTape() as tape:
                 predicted_rewards = reward_model(states)
-                true_rewards = np.sum(predicted_rewards)
+                true_rewards = np.sum(predicted_rewards, axis=-1)
                 loss = tf.reduce_mean(tf.square(true_rewards - predicted_rewards))
             gradients = tape.gradient(loss, reward_model.trainable_variables)
             optimizer.apply_gradients(zip(gradients, reward_model.trainable_variables))
@@ -84,13 +78,10 @@ def plot_training_process(losses):
 state_dim = 12  # Example state dimension (qpos of 12 joints)
 n_actions = 12  # Example number of actions (assuming it's the same as state_dim)
 discount = 0.9  # Example discount factor
-trajectories = np.random.rand(10, 5, 2, state_dim)  # Example trajectories
+trajectories = np.load("expert_demo.npy")  #  (33, 1270, 2, 12)
 epochs = 1000  # Example number of epochs
 learning_rate = 0.01  # Example learning rate
-transition_probability = np.random.rand(state_dim, n_actions, state_dim)  # Example transition probability
 
-learned_reward = irl_continuous_state(state_dim, n_actions, discount,
-                                       transition_probability, trajectories,
-                                       epochs, learning_rate)
+learned_reward = irl_continuous_state(state_dim, trajectories, epochs, learning_rate)
 
 print("Learned Reward:", learned_reward)

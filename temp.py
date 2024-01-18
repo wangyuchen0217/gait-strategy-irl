@@ -1,6 +1,5 @@
 import numpy as np
 import tensorflow as tf
-from tensorflow.keras import layers
 import matplotlib.pyplot as plt
 
 def irl_continuous_state(state_dim, n_actions, discount, transition_probability,
@@ -26,8 +25,8 @@ def irl_continuous_state(state_dim, n_actions, discount, transition_probability,
     class RewardModel(tf.keras.Model):
         def __init__(self, state_dim):
             super(RewardModel, self).__init__()
-            self.dense1 = layers.Dense(64, activation='relu', input_shape=(state_dim,))
-            self.dense2 = layers.Dense(1, activation='linear')
+            self.dense1 = tf.keras.layers.Dense(64, activation='relu', input_shape=(state_dim,))
+            self.dense2 = tf.keras.layers.Dense(1, activation='linear')
 
         def call(self, state):
             x = self.dense1(state)

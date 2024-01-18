@@ -21,8 +21,6 @@ feature_matrix = np.zeros((state_num, state_dim))
 traj_num = 33
 traj_len = 1270
 trajectories = np.load('expert_demo.npy') # (33, 1270, 2, 12)
-observed_states = np.random.rand(traj_num, traj_len, state_num)
-observed_actions = np.random.rand(traj_num, traj_len, action_dim)
 # hyperparameters
 learning_rate = 0.01
 discount_factor = 0.9

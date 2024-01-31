@@ -42,7 +42,7 @@ def valley_detection(data):
             valley_indices.append(i)
     return valley_indices
 
-def plot_gait_phase(data):
+def plot_gait_phase(data, side='left'):
     peak_indices = peak_detection(data)
     valley_indices = valley_detection(data)
     if peak_indices[0] < valley_indices[0]:
@@ -57,6 +57,13 @@ def plot_gait_phase(data):
     else:
         # add the last data point as a valley
         valley_indices.append(len(data)-1)
+    
+    if side == 'left':
+        pass
+    elif side == 'right':
+        temp = peak_indices
+        peak_indices = valley_indices
+        valley_indices = temp
 
     t = np.arange(len(data))
     plt.plot(t, data)
@@ -86,7 +93,8 @@ def plot_gait_phase(data):
 fold_path = os.getcwd() + '/expert_data_builder'
 cricket_number = 'c21'
 video_number = '0680'
-joint_path = os.path.join(fold_path, 'joint_movement', cricket_number, f'PIC{video_number}_Joint_movement.csv')
+joint_path = os.path.join(fold_path, 'joint_movement', cricket_number, 
+                          f'PIC{video_number}_Joint_movement.csv')
 joint_movement = pd.read_csv(joint_path, header=[0], index_col=[0])
 joint_movement = joint_movement.values
 joint_movement = data_smooth(joint_movement)
@@ -94,11 +102,20 @@ joint_movement = data_smooth(joint_movement)
 # plt.show()
 
 # subplot for all joints
-plt.figure(figsize=(20,8))
-for i in range(joint_movement.shape[1]):
-    plt.subplot(6,2,i+1)
-    plot_gait_phase(joint_movement[:,i])
+joint_movement = joint_movement[100:400,:]
+plt.figure(figsize=(10,8))
+ylabel = ['LF', 'LM', 'LH', 'RF', 'RM', 'RH']
+for i in range(3):
+    plt.subplot(6,1,i+1)
+    plot_gait_phase(joint_movement[:,i], side='left')
+    plt.ylabel(ylabel[i])
+    plt.xticks([])
+for i in range(3):
+    plt.subplot(6,1,i+4)
+    plot_gait_phase(joint_movement[:,i+3], side='right')
+    plt.ylabel(ylabel[i+3])
+    plt.xticks([])
+plt.xlabel('Frame')
 plt.tight_layout()
 plt.subplots_adjust(hspace=0.07)
 plt.show()
-

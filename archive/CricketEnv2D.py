@@ -9,7 +9,6 @@ class CricketEnv2D(mujoco_env.MujocoEnv, utils.EzPickle):
         utils.EzPickle.__init__(self)
         self.timesteps = 0
         self.max_timesteps=max_timesteps
-        self.T = T
         self.r = r
         self.prev_obs = None
         # Import xml document

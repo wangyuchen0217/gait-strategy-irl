@@ -10,8 +10,7 @@ import mujoco_py
 
 
 def ant_env(gear=150, eyes=True):
-    #mjcmodel = MJCModel('ant_maze')
-    mjcmodel = mujoco_py.load_model_from_path('"envs/assets/Ant.xml"')
+    mjcmodel = MJCModel('ant_maze')
     mjcmodel.root.compiler(inertiafromgeom="true", angle="degree", coordinate="local")
     mjcmodel.root.option(timestep="0.01", integrator="RK4")
     mjcmodel.root.custom().numeric(data="0.0 0.0 0.55 1.0 0.0 0.0 0.0 0.0 1.0 0.0 -1.0 0.0 -1.0 0.0 1.0",name="init_qpos")

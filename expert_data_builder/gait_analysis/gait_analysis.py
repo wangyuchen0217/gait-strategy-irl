@@ -42,7 +42,7 @@ def valley_detection(data):
             valley_indices.append(i)
     return valley_indices
 
-def plot_gait_phase(data, side='left'):
+def plot_gait_phase(data, reverse=False):
     peak_indices = peak_detection(data)
     valley_indices = valley_detection(data)
     if peak_indices[0] < valley_indices[0]:
@@ -57,14 +57,14 @@ def plot_gait_phase(data, side='left'):
     else:
         # add the last data point as a valley
         valley_indices.append(len(data)-1)
-    
-    if side == 'left':
+    # left legs or right legs
+    if not reverse:
         pass
-    elif side == 'right':
+    elif reverse:
         temp = peak_indices
         peak_indices = valley_indices
         valley_indices = temp
-
+    # plot the data
     t = np.arange(len(data))
     plt.plot(t, data)
     # draw vertical lines at peak indices to show the gait cycle
@@ -101,21 +101,32 @@ joint_movement = data_smooth(joint_movement)
 # plot_gait_phase(joint_movement[:,1])
 # plt.show()
 
-# subplot for all joints
+# subplot for ThC joints
 joint_movement = joint_movement[100:400,:]
-plt.figure(figsize=(10,8))
 ylabel = ['LF', 'LM', 'LH', 'RF', 'RM', 'RH']
-for i in range(3):
+reverse_list_ThC = [False, False, False, True, True, True]
+plt.figure(figsize=(10,8))
+for i in range(6):
     plt.subplot(6,1,i+1)
-    plot_gait_phase(joint_movement[:,i], side='left')
+    plot_gait_phase(joint_movement[:,i], reverse=reverse_list_ThC[i])
     plt.ylabel(ylabel[i])
     plt.xticks([])
-for i in range(3):
-    plt.subplot(6,1,i+4)
-    plot_gait_phase(joint_movement[:,i+3], side='right')
-    plt.ylabel(ylabel[i+3])
+plt.xlabel('Frame')
+plt.suptitle('Gait Phase of ThC Joints')
+plt.tight_layout()
+plt.subplots_adjust(hspace=0.07)
+plt.show()
+
+# subplot for FTi joints
+plt.figure(figsize=(10,8))
+reverse_list_FTi = [True, False, True, False, True, False]
+for i in range(6):
+    plt.subplot(6,1,i+1)
+    plot_gait_phase(joint_movement[:,i+6], reverse=reverse_list_FTi[i])
+    plt.ylabel(ylabel[i])
     plt.xticks([])
 plt.xlabel('Frame')
+plt.suptitle('Gait Phase of FTi Joints')
 plt.tight_layout()
 plt.subplots_adjust(hspace=0.07)
 plt.show()

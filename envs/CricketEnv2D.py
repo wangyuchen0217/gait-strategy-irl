@@ -4,28 +4,15 @@ from gym.envs.mujoco import mujoco_env
 import mujoco_py
 
 class CricketEnv2D(mujoco_env.MujocoEnv, utils.EzPickle):
-    def __init__(self, max_timesteps=500, r=None):
-        # super(lab_env, self).__init__(env)
+    def __init__(self, max_timesteps=500, T=None,  r=None):
         utils.EzPickle.__init__(self)
         self.timesteps = 0
         self.max_timesteps=max_timesteps
         self.T = T
         self.r = r
         self.prev_obs = None
-        # Import xml document
         self.model = mujoco_py.load_model_from_path("/home/yuchen/Crickets_Walking_IRL/envs/assets/Cricket2D.xml")
         mujoco_env.MujocoEnv.__init__(self, '/home/yuchen/Crickets_Walking_IRL/envs/assets/Cricket2D.xml', 2)
-        # Call MjSim to build a basic simulation
-        self.sim = mujoco_py.MjSim(self.model)
-        # Set up the viewer
-        self.viewer = mujoco_py.MjViewer(self.sim)
-        # Set up the action space
-        #self.action_space = mujoco_env.MujocoEnv(self.model).action_space
-        # Set up the observation space
-        #self.observation_space = mujoco_env.MujocoEnv(self.model).observation_space
-        # Set up the initial position and velocity
-        self.init_qpos = self.sim.data.qpos.ravel().copy()
-        self.init_qvel = self.sim.data.qvel.ravel().copy()
 
     def step(self, action):
         vel = self.sim.data.qvel.flat[0]

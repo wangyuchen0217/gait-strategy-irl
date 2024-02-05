@@ -14,5 +14,5 @@ register(
 
 register(
     id='CricketEnv2D-v0',
-    entry_point='envs.CricketEnv:CricketEnv'
+    entry_point='envs.CricketEnv2D:CricketEnv2D'
 )

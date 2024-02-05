@@ -16,7 +16,7 @@ model_name = config_data.get("model")
 model_path = 'envs/assets/' + model_name + '.xml'
 model = mujoco_py.load_model_from_path(model_path)
 sim = mujoco_py.MjSim(model)
-viewer = mujoco_py.MjViewer(sim)
+#viewer = mujoco_py.MjViewer(sim)
 
 '''let's do irl'''
 # # Get the state trajectories
@@ -38,6 +38,7 @@ viewer = mujoco_py.MjViewer(sim)
 #         joint_angle = np.deg2rad(trail[j])
 #         sim.data.ctrl[:] = joint_angle
 #         sim.step()
+#         viewer.render()
 #         state = sim.get_state().qpos.copy()
 #         action = sim.data.ctrl.copy()
 #         # record the state and action of each step
@@ -61,14 +62,13 @@ for i in range(subjects):
     # read the joint movement data
     csv_file_path = os.path.join("expert_data_builder/joint_movement", cricket_number, 
                                                 f"PIC{video_number}_Joint_movement.csv")
-    trail = pd.read_csv(csv_file_path, header=[0], 
-                                        index_col=[1,2,3,4,5,6,7,8,9,10,11,12]).to_numpy()
+    trail = pd.read_csv(csv_file_path, header=[0], index_col=[0]).to_numpy()
     trajecroty = []
     for j in range(1270): # 1270 is the length of each trajectory
         joint_angle = np.deg2rad(trail[j])
         sim.data.ctrl[:] = joint_angle
         sim.step()
-        viewer.render()
+        #viewer.render()
         state = np.hstack((sim.get_state().qpos.copy(), 
                                             sim.get_state().qvel.copy()))
         # record the state of each step

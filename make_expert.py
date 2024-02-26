@@ -16,7 +16,7 @@ model_name = config_data.get("model")
 model_path = 'envs/assets/' + model_name + '.xml'
 model = mujoco_py.load_model_from_path(model_path)
 sim = mujoco_py.MjSim(model)
-#viewer = mujoco_py.MjViewer(sim)
+viewer = mujoco_py.MjViewer(sim)
 
 '''let's do irl'''
 # # Get the state trajectories
@@ -97,7 +97,7 @@ for i in range(subjects):
         joint_angle = np.deg2rad(trail[j])
         sim.data.ctrl[:] = joint_angle
         sim.step()
-        #viewer.render()
+        viewer.render()
         state = np.hstack((sim.get_state().qpos.copy(), 
                                             sim.get_state().qvel.copy()))
         # record the state of each step
@@ -105,5 +105,5 @@ for i in range(subjects):
     # record each trails
     trajectories.append(trajecroty) # [33, 1270, 24]
 trajectories = np.array(trajectories)
-print("expert_demo:", trajectories.shape)
-np.save("CricketEnv2D-v0.npy", trajectories)
+# print("expert_demo:", trajectories.shape)
+# np.save("CricketEnv2D-v0.npy", trajectories)

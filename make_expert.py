@@ -50,7 +50,36 @@ sim = mujoco_py.MjSim(model)
 # print("expert_demo:", trajectories.shape)
 # np.save("expert_demo.npy", trajectories)
 
-'''firl'''
+'''firl-2d resting position'''
+# subjects = 33 
+# trajectories = [] # [33, 1270, 24]   
+# for i in range(subjects):
+#     subject_number = f"{i+1:02d}"
+#     with open("expert_data_builder/trail_details.json", "r") as f:
+#         trail_details = json.load(f)
+#         cricket_number =  trail_details[f"T{subject_number}"]["cricket_number"]
+#         video_number = trail_details[f"T{subject_number}"]["video_number"]
+#     # read the joint movement data
+#     csv_file_path = os.path.join("expert_data_builder/joint_movement", cricket_number, 
+#                                                 f"PIC{video_number}_Joint_movement.csv")
+#     trail = pd.read_csv(csv_file_path, header=[0], index_col=[0]).to_numpy()
+#     trajecroty = []
+#     for j in range(1270): # 1270 is the length of each trajectory
+#         joint_angle = np.deg2rad(trail[j])
+#         sim.data.ctrl[:] = joint_angle
+#         sim.step()
+#         #viewer.render()
+#         state = np.hstack((sim.get_state().qpos.copy(), 
+#                                             sim.get_state().qvel.copy()))
+#         # record the state of each step
+#         trajecroty.append(state) # [1270, 24]
+#     # record each trails
+#     trajectories.append(trajecroty) # [33, 1270, 24]
+# trajectories = np.array(trajectories)
+# print("expert_demo:", trajectories.shape)
+# np.save("CricketEnv2D-v0.npy", trajectories)
+
+'''firl-2d moving position'''
 subjects = 33 
 trajectories = [] # [33, 1270, 24]   
 for i in range(subjects):

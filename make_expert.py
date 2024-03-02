@@ -86,7 +86,7 @@ csv_file_path = os.path.join("expert_data_builder/joint_movement", cricket_numbe
                                                 f"PIC{video_number}_Joint_movement.csv")
 trail = pd.read_csv(csv_file_path, header=[0], index_col=[0]).to_numpy()
 trajecroty = []
-for j in range(1270): # 1270 is the length of each trajectory
+for j in range(7100): # 7100 is the length of each trajectory
     joint_angle = np.deg2rad(trail[j])
     sim.data.ctrl[:12] = joint_angle
     sim.step()

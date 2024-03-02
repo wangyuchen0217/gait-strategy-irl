@@ -80,15 +80,39 @@ viewer = mujoco_py.MjViewer(sim)
 # np.save("CricketEnv2D-v0.npy", trajectories)
 
 '''firl-2d moving position'''
+def trajectory_calculation(vel):
+    # vel: [vel.x, vel.y]
+    # scale velocity: mm/s
+    vel = vel * 0.224077
+    # frequency: 119.88(120)Hz
+    # trajectory calculation
+    traj_x = [0]; x=0
+    traj_y = [0]; y=0
+    for i in range(1, len(vel)):
+        x = x + vel[i][0]*1/119.88/1000
+        y = y + vel[i][1]*1/119.88/1000
+        traj_x.append(x)
+        traj_y.append(y)
+    return traj_x, traj_y
+
 cricket_number = 'c21'
 video_number = '0680'
-csv_file_path = os.path.join("expert_data_builder/joint_movement", cricket_number, 
+joint_path = os.path.join("expert_data_builder/joint_movement", cricket_number, 
                                                 f"PIC{video_number}_Joint_movement.csv")
-trail = pd.read_csv(csv_file_path, header=[0], index_col=[0]).to_numpy()
+direction_path = os.path.join("expert_data_builder/joint_movement", cricket_number,
+                                                f"PIC{video_number}_Heading_direction.csv")
+vel_path = os.path.join("expert_data_builder/velocity_data", cricket_number, 
+                                                f"{video_number}_Velocity_Smooth.csv")
+joint_movement = pd.read_csv(joint_path, header=[0], index_col=[0]).to_numpy()
+direction = pd.read_csv(direction_path, header=[0], index_col=[0]).to_numpy()
+vel = pd.read_csv(vel_path, header=None, usecols=[1,2]).to_numpy() # vel.x and vel.y
 trajecroty = []
-for j in range(7100): # 7100 is the length of each trajectory
-    joint_angle = np.deg2rad(trail[j])
+for i in range(7100): # 7100 is the length of each trajectory
+    joint_angle = np.deg2rad(joint_movement[i])
+    direction = np.deg2rad(direction[i])
     sim.data.ctrl[:12] = joint_angle
+    sim.data.ctrl[12:14] = vel[i, :]
+    sim.data.ctrl[14] = direction
     sim.step()
     viewer.render()
     state = np.hstack((sim.get_state().qpos.copy(), 

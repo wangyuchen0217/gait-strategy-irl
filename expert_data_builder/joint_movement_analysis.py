@@ -33,6 +33,7 @@ for i in range(subjects):
         trail_details = json.load(f)
         cricket_number =  trail_details[f"T{subject_number}"]["cricket_number"]
         video_number = trail_details[f"T{subject_number}"]["video_number"]
+    # skip the trail with missing joint movement data c16, c18, c20
     if cricket_number=="c16"or cricket_number=="c18"or cricket_number=="c20":
         continue
     else:

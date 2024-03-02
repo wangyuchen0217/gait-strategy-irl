@@ -53,7 +53,7 @@ def save_original_skeleton_data(subject:str, fold_path):
         trail_details = json.load(f)
         cricket_number =  trail_details[f"T{subject}"]["cricket_number"]
         video_number = trail_details[f"T{subject}"]["video_number"]
-    skeleton_path = fold_path + '/ExpertDataBuilder/original_skeleton_data/' + cricket_number + '/PIC' + video_number + '_Skeleton.csv'
+    skeleton_path = fold_path + '/expert_data_builder/original_skeleton_data/' + cricket_number + '/PIC' + video_number + '_Skeleton.csv'
     df_skeleton.to_csv(path_or_buf = skeleton_path, header=True, index=True)
 
 '''
@@ -136,7 +136,7 @@ def save_joint_movement(subject:str, fold_path):
         trail_details = json.load(f)
         cricket_number =  trail_details[f"T{subject}"]["cricket_number"]
         video_number = trail_details[f"T{subject}"]["video_number"]
-    joint_movement_path = fold_path + '/ExpertDataBuilder/joint_movement/' + cricket_number + '/PIC' + video_number + '_Joint_movement.csv'
+    joint_movement_path = fold_path + '/expert_data_builder/joint_movement/' + cricket_number + '/PIC' + video_number + '_Joint_movement.csv'
     df_joint_movement.to_csv(path_or_buf = joint_movement_path, header=True, index=True)
 
 if __name__ == '__main__':
@@ -150,5 +150,9 @@ if __name__ == '__main__':
             subject_number = "0" + str(i)
         else:
             subject_number = str(i)
+        # with open("trail_details.json", "r") as f:
+        # trail_details = json.load(f)
+        # cricket_number =  trail_details[f"T{subject}"]["cricket_number"]
+
         save_original_skeleton_data(subject_number, fold_path)
         save_joint_movement(subject_number, fold_path)

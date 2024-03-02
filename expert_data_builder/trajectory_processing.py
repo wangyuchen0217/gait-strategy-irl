@@ -23,5 +23,4 @@ for i in range(subjects):
     csv_file_path = os.path.join("expert_data_builder/velocity_data", cricket_number, 
                                                 f"{video_number}_Velocity_Smooth.csv")
     vel = pd.read_csv(csv_file_path, header=None, index_col=[1,2]).to_numpy() # vel.x and vel.y
-    trajecroty = []
     

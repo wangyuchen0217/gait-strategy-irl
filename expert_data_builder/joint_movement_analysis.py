@@ -1,7 +1,7 @@
 '''
 This code is used to analyse the joint movement of the expert cricketers.
 The minimum and maximum data of the joint movement are saved in
-'Expert_data_builder/Joint_movement/joint_range_analysis.csv'
+'expert_data_builder/movement/joint_range_analysis.csv'
 Analysis results will be used as the refernce to set the joint range of mujoco model.
 '''
 import os
@@ -13,7 +13,7 @@ def get_joint_movement(subject:str, fold_path):
         trail_details = json.load(f)
         cricket_number =  trail_details[f"T{subject}"]["cricket_number"]
         video_number = trail_details[f"T{subject}"]["video_number"]
-    joint_path = fold_path + '/joint_movement/' + cricket_number + '/PIC' + video_number + '_Joint_movement.csv'
+    joint_path = fold_path + '/movement/' + cricket_number + '/PIC' + video_number + '_Joint_movement.csv'
     joint_movement = pd.read_csv(joint_path, header=[0], index_col=[0])
     df_joint = pd.DataFrame(data=joint_movement)
     return df_joint
@@ -49,4 +49,4 @@ joint_min = joint_range.min()
 joint_max = joint_range.max()
 joint_range.loc['min'] = joint_min
 joint_range.loc['max'] = joint_max
-joint_range.to_csv(fold_path+'/joint_movement/joint_range_analysis.csv')
+joint_range.to_csv(fold_path+'/movement/joint_range_analysis.csv')

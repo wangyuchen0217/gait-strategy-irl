@@ -6,6 +6,7 @@ import pandas as pd
 import mujoco_py
 import yaml
 import json
+import matplotlib.pyplot as plt
 
 # open config file
 with open("configs/irl.yml", "r") as f:
@@ -98,9 +99,9 @@ def trajectory_calculation(vel):
 
 cricket_number = 'c21'
 video_number = '0680'
-joint_path = os.path.join("expert_data_builder/joint_movement", cricket_number, 
+joint_path = os.path.join("expert_data_builder/movement", cricket_number, 
                                                 f"PIC{video_number}_Joint_movement.csv")
-direction_path = os.path.join("expert_data_builder/joint_movement", cricket_number,
+direction_path = os.path.join("expert_data_builder/movement", cricket_number,
                                                 f"PIC{video_number}_Heading_direction.csv")
 vel_path = os.path.join("expert_data_builder/velocity_data", cricket_number, 
                                                 f"{video_number}_Velocity_Smooth.csv")
@@ -112,15 +113,16 @@ trajecroty = []
 for i in range(7100): # 7100 is the length of each trajectory
     joint_angle = np.deg2rad(joint_movement[i])
     direction = np.deg2rad(heading_direction[i])
-    sim.data.ctrl[:12] = joint_angle
-    #sim.data.ctrl[12:14] = traj[i, :]
-    sim.data.ctrl[14] = direction
+    #sim.data.ctrl[:12] = joint_angle
+    #sim.data.ctrl[12] = traj[i, 0]
+    sim.data.ctrl[13] = traj[i, 1]
+    #sim.data.ctrl[14] = direction
     sim.step()
-    #viewer.render()
+    viewer.render()
     state = np.hstack((sim.get_state().qpos[:12].copy(), 
                                         sim.get_state().qvel[:12].copy()))
     # record the state of each step
     trajecroty.append(state) # [7100, 24]
 trajectories = np.array([trajecroty]) # [1, 7100, 24]
 print("expert_demo:", trajectories.shape)
-np.save("CricketEnv2D-v0.npy", trajectories)
+#np.save("CricketEnv2D-v0.npy", trajectories)

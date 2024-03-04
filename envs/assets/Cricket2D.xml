@@ -120,8 +120,8 @@
     <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="RF_knee" gear="1" kp="30000"/>
     <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="RM_knee" gear="1" kp="30000"/>
     <position ctrllimited="true" ctrlrange="0.0 3.141592654" joint="RH_knee" gear="1" kp="30000"/>
-    <position ctrllimited="false" joint="slide_x" gear="1" kp="50000"/>
-    <position ctrllimited="false" joint="slide_y" gear="1" kp="50000"/>
-    <position ctrllimited="false" joint="abdomen_z" gear="1" kp="30000"/>
+    <position ctrllimited="false" joint="slide_x" gear="1" kp="70000"/>
+    <position ctrllimited="false" joint="slide_y" gear="1" kp="70000"/>
+    <position ctrllimited="false" joint="abdomen_z" gear="1" kp="70000"/>
     </actuator>
 </mujoco>

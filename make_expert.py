@@ -89,11 +89,12 @@ def trajectory_calculation(vel):
     traj_x = [0]; x=0
     traj_y = [0]; y=0
     for i in range(1, len(vel)):
-        x = x + vel[i][0]*1/119.88/1000
-        y = y + vel[i][1]*1/119.88/1000
+        x = x + vel[i][0]*1/119.88/100 # dm
+        y = y + vel[i][1]*1/119.88/100 # dm
         traj_x.append(x)
         traj_y.append(y)
-    return traj_x, traj_y
+    traj = np.array([traj_x, traj_y]).reshape(-1, 2)
+    return traj
 
 cricket_number = 'c21'
 video_number = '0680'
@@ -106,19 +107,20 @@ vel_path = os.path.join("expert_data_builder/velocity_data", cricket_number,
 joint_movement = pd.read_csv(joint_path, header=[0], index_col=[0]).to_numpy()
 heading_direction = pd.read_csv(direction_path, header=[0], index_col=[0]).to_numpy()
 vel = pd.read_csv(vel_path, header=None, usecols=[1,2]).to_numpy() # vel.x and vel.y
+traj = trajectory_calculation(vel)
 trajecroty = []
 for i in range(7100): # 7100 is the length of each trajectory
     joint_angle = np.deg2rad(joint_movement[i])
     direction = np.deg2rad(heading_direction[i])
     sim.data.ctrl[:12] = joint_angle
-    sim.data.ctrl[12:14] = vel[i, :]
+    #sim.data.ctrl[12:14] = traj[i, :]
     sim.data.ctrl[14] = direction
     sim.step()
     viewer.render()
     state = np.hstack((sim.get_state().qpos.copy(), 
                                         sim.get_state().qvel.copy()))
     # record the state of each step
-    trajecroty.append(state) # [1270, 24]
-trajectories = np.array([trajecroty]) # [1, 1270, 24]
+    trajecroty.append(state) # [7100, 24]
+trajectories = np.array([trajecroty]) # [1, 7100, 24]
 print("expert_demo:", trajectories.shape)
-#np.save("CricketEnv2D-v0.npy", trajectories)
+np.save("CricketEnv2D-v0.npy", trajectories)

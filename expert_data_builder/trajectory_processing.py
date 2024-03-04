@@ -26,10 +26,12 @@ for i in range(1, len(vel)):
     traj_y.append(y)
 
 plt.figure(figsize=(6, 6))
-plt.plot(traj_x[:100], traj_y[:100])
+plt.plot(traj_x[:], traj_y[:])
 plt.xticks(fontsize=8)
 plt.yticks(fontsize=8)
 plt.xlabel('X Corodinate [m]',fontsize=8)
 plt.ylabel('Y Corodinate [m]',fontsize=8)
+plt.xlim(-2.5, 2.5)
+plt.ylim(-4.8, 0.2)
 plt.grid(True)
 plt.show()

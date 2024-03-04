@@ -47,9 +47,8 @@ class CricketEnv2D(mujoco_env.MujocoEnv, utils.EzPickle):
 
     def _get_obs(self):
         return np.concatenate([
-            self.sim.data.qpos.flat[2:],
-            self.sim.data.qvel.flat,
-            np.clip(self.sim.data.cfrc_ext, -1, 1).flat,
+            self.sim.data.qpos[:12].flat,
+            self.sim.data.qvel[:12].flat,
         ])
     
     def reset_model(self):
@@ -73,6 +72,6 @@ class CricketEnv2D(mujoco_env.MujocoEnv, utils.EzPickle):
 if __name__ == "__main__":
     env = CricketEnv2D(max_timesteps=500)
 
-    for _ in range(1000):
+    for _ in range(500):
         env.render()
         env.step(env.action_space.sample())

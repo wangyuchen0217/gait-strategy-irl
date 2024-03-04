@@ -116,9 +116,9 @@ for i in range(7100): # 7100 is the length of each trajectory
     #sim.data.ctrl[12:14] = traj[i, :]
     sim.data.ctrl[14] = direction
     sim.step()
-    viewer.render()
-    state = np.hstack((sim.get_state().qpos.copy(), 
-                                        sim.get_state().qvel.copy()))
+    #viewer.render()
+    state = np.hstack((sim.get_state().qpos[:12].copy(), 
+                                        sim.get_state().qvel[:12].copy()))
     # record the state of each step
     trajecroty.append(state) # [7100, 24]
 trajectories = np.array([trajecroty]) # [1, 7100, 24]

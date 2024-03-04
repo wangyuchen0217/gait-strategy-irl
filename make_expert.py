@@ -104,12 +104,12 @@ direction_path = os.path.join("expert_data_builder/joint_movement", cricket_numb
 vel_path = os.path.join("expert_data_builder/velocity_data", cricket_number, 
                                                 f"{video_number}_Velocity_Smooth.csv")
 joint_movement = pd.read_csv(joint_path, header=[0], index_col=[0]).to_numpy()
-direction = pd.read_csv(direction_path, header=[0], index_col=[0]).to_numpy()
+heading_direction = pd.read_csv(direction_path, header=[0], index_col=[0]).to_numpy()
 vel = pd.read_csv(vel_path, header=None, usecols=[1,2]).to_numpy() # vel.x and vel.y
 trajecroty = []
 for i in range(7100): # 7100 is the length of each trajectory
     joint_angle = np.deg2rad(joint_movement[i])
-    direction = np.deg2rad(direction[i])
+    direction = np.deg2rad(heading_direction[i])
     sim.data.ctrl[:12] = joint_angle
     sim.data.ctrl[12:14] = vel[i, :]
     sim.data.ctrl[14] = direction

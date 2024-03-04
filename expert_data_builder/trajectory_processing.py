@@ -24,9 +24,25 @@ for i in range(1, len(vel)):
     y = y + vel[i][1]*1/119.88/1000
     traj_x.append(x)
     traj_y.append(y)
+traj_x = np.array(traj_x).reshape(-1,1)
+traj_y = np.array(traj_y).reshape(-1,1)
+traj = np.hstack((traj_x, traj_y))
+print(traj_x.shape, traj_y.shape)
+print(traj.shape)
+save_path = f"expert_data_builder/{cricket_number}_{video_number}_trajectory.csv"
+pd.DataFrame(traj, columns=["x","y"]).to_csv(save_path, header=True, index=True)
+
+# cricket_number = 'c21'
+# video_number = '0680'
+# # read the joint movement data
+# csv_file_path = os.path.join("expert_data_builder/movement", cricket_number, 
+#                                             f"PIC{video_number}_Trajectory.csv")
+# traj = pd.read_csv(csv_file_path, header=0, usecols=[1,2]).to_numpy() # traj.x and traj.y
+# traj_x = traj[:, 0]
+# traj_y = traj[:, 1]
 
 plt.figure(figsize=(6, 6))
-plt.plot(traj_x[:], traj_y[:])
+plt.plot(traj[:,0], traj[:,1])
 plt.xticks(fontsize=8)
 plt.yticks(fontsize=8)
 plt.xlabel('X Corodinate [m]',fontsize=8)
@@ -44,3 +60,4 @@ plt.ylabel('Position [m]')
 plt.legend(['x', 'y'])
 plt.grid(True)
 plt.savefig(f"expert_data_builder/{cricket_number}_{video_number}_trajectory_x_y.png")
+

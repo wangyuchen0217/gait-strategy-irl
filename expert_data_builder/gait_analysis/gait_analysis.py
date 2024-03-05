@@ -132,7 +132,7 @@ def gait_generate(data, reverse=False):
 fold_path = os.getcwd() + '/expert_data_builder'
 cricket_number = 'c21'
 video_number = '0680'
-joint_path = os.path.join(fold_path, 'joint_movement', cricket_number, 
+joint_path = os.path.join(fold_path, 'movement', cricket_number, 
                           f'PIC{video_number}_Joint_movement.csv')
 joint_movement = pd.read_csv(joint_path, header=[0], index_col=[0])
 joint_movement = joint_movement.values
@@ -148,8 +148,9 @@ for i in range(6):
 gait_phase_FTi = np.zeros((300,6))
 for i in range(6):
     gait_phase_FTi[:,i] = gait_generate(joint_movement[100:400,i+6], reverse=reverse_list_FTi)
+gait_phase = np.concatenate((gait_phase_ThC, gait_phase_FTi), axis=1)
 save_path = os.path.join(fold_path, 'gait_analysis', cricket_number, f'PIC{video_number}_gait_phase_ThC.csv')
-pd.DataFrame(gait_phase_ThC).to_csv(save_path, header=None, index=None)
+pd.DataFrame(gait_phase).to_csv(save_path, header=None, index=None)
 
 # subplot for ThC joints
 joint_movement = joint_movement[100:400,:]

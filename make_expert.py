@@ -3,10 +3,11 @@ os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 from envs import *
 import numpy as np
 import pandas as pd
-import mujoco_py
+import mujoco_py    
 import yaml
 import json
 import matplotlib.pyplot as plt
+import imageio
 
 # open config file
 with open("configs/irl.yml", "r") as f:
@@ -18,6 +19,8 @@ model_path = 'envs/assets/' + model_name + '.xml'
 model = mujoco_py.load_model_from_path(model_path)
 sim = mujoco_py.MjSim(model)
 viewer = mujoco_py.MjViewer(sim)
+# video_file = "output_video.mp4"
+# writer = imageio.get_writer(video_file, fps=120)
 
 '''let's do irl'''
 # # Get the state trajectories
@@ -102,11 +105,15 @@ for i in range(7100): # 7100 is the length of each trajectory
     sim.data.ctrl[12:14] = traj[i, :]
     sim.data.ctrl[14] = direction
     sim.step()
-    #viewer.render()
+    viewer.render()
+    # record the video
+    # frame = viewer._read_pixels_as_in_window()
+    # writer.append_data(frame)
+    # record the state
     state = np.hstack((sim.get_state().qpos[:12].copy(), 
                                         sim.get_state().qvel[:12].copy()))
-    # record the state of each step
     trajecroty.append(state) # [7100, 24]
+# writer.close()
 trajectories = np.array([trajecroty]) # [1, 7100, 24]
 print("expert_demo:", trajectories.shape)
-np.save("CricketEnv2D-v0-moving.npy", trajectories)
+# np.save("CricketEnv2D-v0-moving.npy", trajectories)

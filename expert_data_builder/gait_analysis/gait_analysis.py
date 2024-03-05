@@ -89,6 +89,45 @@ def plot_gait_phase(data, reverse=False):
     # plt.title('Gait Phase')
     #plt.show()
 
+def gait_generate(data, reverse=False):
+    peak_indices = peak_detection(data)
+    valley_indices = valley_detection(data)
+    if peak_indices[0] < valley_indices[0]:
+        # add the first data point as a valley
+        valley_indices.insert(0, 0)
+    else:
+        # add the first data point as a peak
+        peak_indices.insert(0, 0)
+    if peak_indices[-1] < valley_indices[-1]:
+        # add the last data point as a peak
+        peak_indices.append(len(data)-1)
+    else:
+        # add the last data point as a valley
+        valley_indices.append(len(data)-1)
+    # left legs or right legs
+    if not reverse:
+        pass
+    elif reverse:
+        temp = peak_indices
+        peak_indices = valley_indices
+        valley_indices = temp
+    # generate gait phase 
+    # if it is stance, append 1, if it is swing, append 0
+    gait_phase = []
+    if peak_indices[0] < valley_indices[0]:
+        for i in range(len(peak_indices)-1):
+            gait_phase.extend([1]*(valley_indices[i]-peak_indices[i]))
+            gait_phase.extend([0]*(peak_indices[i+1]-valley_indices[i]))
+        if peak_indices[-1] < valley_indices[-1]:
+            gait_phase.extend([1]*(valley_indices[-1]-peak_indices[-1]))
+    else:
+        for i in range(len(valley_indices)-1):
+            gait_phase.extend([0]*(peak_indices[i]-valley_indices[i]))
+            gait_phase.extend([1]*(valley_indices[i+1]-peak_indices[i]))
+        if peak_indices[-1] > valley_indices[-1]:
+            gait_phase.extend([0]*(valley_indices[-1]-peak_indices[-1]))
+    return gait_phase
+
 # temperary test for c21-0680 data
 fold_path = os.getcwd() + '/expert_data_builder'
 cricket_number = 'c21'
@@ -98,8 +137,19 @@ joint_path = os.path.join(fold_path, 'joint_movement', cricket_number,
 joint_movement = pd.read_csv(joint_path, header=[0], index_col=[0])
 joint_movement = joint_movement.values
 joint_movement = data_smooth(joint_movement)
-# plot_gait_phase(joint_movement[:,1])
-# plt.show()
+
+# generate gait phase for ThC joints
+reverse_list_ThC = [False, False, False, True, True, True]
+reverse_list_FTi = [True, False, True, False, True, False]
+gait_phase_ThC = np.zeros((300,6))
+for i in range(6):
+    gait_phase_ThC[:,i] = gait_generate(joint_movement[100:400,i], reverse=reverse_list_ThC)
+# generate gait phase for FTi joints
+gait_phase_FTi = np.zeros((300,6))
+for i in range(6):
+    gait_phase_FTi[:,i] = gait_generate(joint_movement[100:400,i+6], reverse=reverse_list_FTi)
+save_path = os.path.join(fold_path, 'gait_analysis', cricket_number, f'PIC{video_number}_gait_phase_ThC.csv')
+pd.DataFrame(gait_phase_ThC).to_csv(save_path, header=None, index=None)
 
 # subplot for ThC joints
 joint_movement = joint_movement[100:400,:]

@@ -96,8 +96,6 @@ traj = pd.read_csv(traj_path, header=[0], index_col=[0]).to_numpy() # traj.x and
 # traj scale
 traj = traj * 100 # original measurement is in meters m->cm
 trajecroty = []
-# video_file = "output_video.mp4"
-# writer = imageio.get_writer(video_file, fps=120)
 for i in range(7100): # 7100 is the length of each trajectory
     joint_angle = np.deg2rad(joint_movement[i])
     direction = np.deg2rad(heading_direction[i])
@@ -106,14 +104,10 @@ for i in range(7100): # 7100 is the length of each trajectory
     sim.data.ctrl[14] = direction
     sim.step()
     viewer.render()
-    # record the video
-    # frame = viewer._read_pixels_as_in_window()
-    # writer.append_data(frame)
     # record the state
     state = np.hstack((sim.get_state().qpos[:12].copy(), 
                                         sim.get_state().qvel[:12].copy()))
     trajecroty.append(state) # [7100, 24]
-# writer.close()
 trajectories = np.array([trajecroty]) # [1, 7100, 24]
 print("expert_demo:", trajectories.shape)
 # np.save("CricketEnv2D-v0-moving.npy", trajectories)

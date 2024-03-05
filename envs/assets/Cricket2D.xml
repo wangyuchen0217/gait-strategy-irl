@@ -105,6 +105,7 @@
         </body>
     </body>
     <camera name="track" mode="trackcom" target="aux" pos="0 0 30" xyaxes="1 0 0 0 1 0"/>
+    <camera name="fix" mode="fixed" pos="0 -7 15" xyaxes="1 0 0 0 2 1"/>
   </worldbody>
 
   <actuator>

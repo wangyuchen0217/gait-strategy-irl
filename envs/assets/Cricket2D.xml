@@ -1,6 +1,6 @@
 <mujoco model="cricket2d">
   <compiler angle="degree" coordinate="local" inertiafromgeom="true"/>
-  <option integrator="RK4" timestep="0.01"/>
+  <option integrator="RK4" timestep="0.008342"/>
 
   <custom>
     <numeric data="0.0 0.0 0.55 1.0 0.0 0.0 0.0 0.0 1.0 0.0 -1.0 0.0 -1.0 0.0 1.0" name="init_qpos"/>
@@ -25,7 +25,7 @@
     <body name="aux" pos="0 0 0.75">
       <joint axis="1 0 0" name="slide_x" pos="0 0 0" limited="false" type="slide"/>
       <joint axis="0 1 0" name="slide_y" pos="0 0 0" limited="false" type="slide"/>
-      <camera name="track" mode="trackcom" pos="0 -3 0.3" xyaxes="1 0 0 0 0 1"/>
+      
       <geom name="aux_geom" size="0.08" type="sphere"/>
         <body name="torso" pos="0 0 0">
             <joint axis="0 0 -1" name="abdomen_z" pos="0 0 0" limited="false" type="hinge"/>
@@ -105,6 +105,7 @@
     
         </body>
     </body>
+    <camera name="track" mode="track" target="aux" pos="0 0 5" fovy="45" xyaxes="1 0 0 0 0 1"/>
   </worldbody>
 
   <actuator>

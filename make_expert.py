@@ -19,8 +19,6 @@ model_path = 'envs/assets/' + model_name + '.xml'
 model = mujoco_py.load_model_from_path(model_path)
 sim = mujoco_py.MjSim(model)
 viewer = mujoco_py.MjViewer(sim)
-# video_file = "output_video.mp4"
-# writer = imageio.get_writer(video_file, fps=120)
 
 '''let's do irl'''
 # # Get the state trajectories
@@ -98,6 +96,8 @@ traj = pd.read_csv(traj_path, header=[0], index_col=[0]).to_numpy() # traj.x and
 # traj scale
 traj = traj * 100 # original measurement is in meters m->cm
 trajecroty = []
+# video_file = "output_video.mp4"
+# writer = imageio.get_writer(video_file, fps=120)
 for i in range(7100): # 7100 is the length of each trajectory
     joint_angle = np.deg2rad(joint_movement[i])
     direction = np.deg2rad(heading_direction[i])

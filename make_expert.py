@@ -93,7 +93,11 @@ joint_movement = pd.read_csv(joint_path, header=[0], index_col=[0]).to_numpy()
 heading_direction = pd.read_csv(direction_path, header=[0], index_col=[0]).to_numpy()
 traj = pd.read_csv(traj_path, header=[0], index_col=[0]).to_numpy() # traj.x and traj.y
 # traj scale
+<<<<<<< HEAD
 traj = traj * 100 # original measurement is in meters 
+=======
+traj = traj * 100 # original measurement is in meters, m -> cm
+>>>>>>> 806a5e85282dffd0bf72999bfd614958de4861de
 trajecroty = []
 for i in range(7100): # 7100 is the length of each trajectory
     joint_angle = np.deg2rad(joint_movement[i])

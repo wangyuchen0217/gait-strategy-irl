@@ -113,9 +113,10 @@ def gait_generate(data, reverse=False):
     # if it is stance, append 1, if it is swing, append 0
     gait_phase = []
     if peak_indices[0] < valley_indices[0]:
-        for i in range(len(peak_indices)-1):
-            gait_phase.extend([0]*(peak_indices[i]-valley_indices[i]))
-            gait_phase.extend([1]*(valley_indices[i+1]-peak_indices[i]))
+        if peak_indices[-1] < valley_indices[-1]:
+            for i in range(len(peak_indices)-1):
+                gait_phase.extend([0]*(peak_indices[i]-valley_indices[i]))
+                gait_phase.extend([1]*(valley_indices[i+1]-peak_indices[i]))
         if peak_indices[-1] < valley_indices[-1]:
             gait_phase.extend([1]*(valley_indices[-1]-peak_indices[-1]))
     else:

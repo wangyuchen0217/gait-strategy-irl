@@ -43,21 +43,20 @@ def valley_detection(data):
     return valley_indices
 
 def plot_gait_phase(data, reverse=False):
+    # detect peak and valley
     peak_indices = peak_detection(data)
     valley_indices = valley_detection(data)
+    # add the first data point as peak or valley
     if peak_indices[0] < valley_indices[0]:
-        # add the first data point as a valley
         valley_indices.insert(0, 0)
     else:
-        # add the first data point as a peak
         peak_indices.insert(0, 0)
+    # add the last data point as peak or valley
     if peak_indices[-1] < valley_indices[-1]:
-        # add the last data point as a peak
         peak_indices.append(len(data)-1)
     else:
-        # add the last data point as a valley
         valley_indices.append(len(data)-1)
-    # left legs or right legs
+    # check if reverse is needed
     if not reverse:
         pass
     elif reverse:
@@ -90,21 +89,20 @@ def plot_gait_phase(data, reverse=False):
     #plt.show()
 
 def gait_generate(data, reverse=False):
+    # detect peak and valley
     peak_indices = peak_detection(data)
     valley_indices = valley_detection(data)
+    # add the first data point as peak or valley
     if peak_indices[0] < valley_indices[0]:
-        # add the first data point as a valley
         valley_indices.insert(0, 0)
     else:
-        # add the first data point as a peak
         peak_indices.insert(0, 0)
+    # add the last data point as peak or valley
     if peak_indices[-1] < valley_indices[-1]:
-        # add the last data point as a peak
         peak_indices.append(len(data)-1)
     else:
-        # add the last data point as a valley
         valley_indices.append(len(data)-1)
-    # left legs or right legs
+    # check if reverse is needed
     if not reverse:
         pass
     elif reverse:
@@ -116,16 +114,16 @@ def gait_generate(data, reverse=False):
     gait_phase = []
     if peak_indices[0] < valley_indices[0]:
         for i in range(len(peak_indices)-1):
-            gait_phase.extend([1]*(valley_indices[i]-peak_indices[i]))
-            gait_phase.extend([0]*(peak_indices[i+1]-valley_indices[i]))
+            gait_phase.extend([0]*(peak_indices[i]-valley_indices[i]))
+            gait_phase.extend([1]*(valley_indices[i+1]-peak_indices[i]))
         if peak_indices[-1] < valley_indices[-1]:
             gait_phase.extend([1]*(valley_indices[-1]-peak_indices[-1]))
     else:
         for i in range(len(valley_indices)-1):
-            gait_phase.extend([0]*(peak_indices[i]-valley_indices[i]))
-            gait_phase.extend([1]*(valley_indices[i+1]-peak_indices[i]))
+            gait_phase.extend([1]*(valley_indices[i]-peak_indices[i]))
+            gait_phase.extend([0]*(peak_indices[i+1]-valley_indices[i]))
         if peak_indices[-1] > valley_indices[-1]:
-            gait_phase.extend([0]*(valley_indices[-1]-peak_indices[-1]))
+            gait_phase.extend([0]*(peak_indices[-1]-valley_indices[-1]))
     return gait_phase
 
 # temperary test for c21-0680 data

@@ -70,17 +70,17 @@ def gait_generate(data, reverse=False):
     if peak_indices[0] < valley_indices[0]:
         for i in range(len(peak_indices)-1):
             gait_phase.extend([1]*(valley_indices[i]-peak_indices[i]))
-            gait_phase.extend([0]*(peak_indices[i+1]-valley_indices[i]))
+            gait_phase.extend([-1]*(peak_indices[i+1]-valley_indices[i]))
         # end with valley
         if peak_indices[-1] < valley_indices[-1]:
             gait_phase.extend([1]*(valley_indices[-1]-peak_indices[-1]))
     else: # begin with valley (end with valley)
         for i in range(len(valley_indices)-1):
-            gait_phase.extend([0]*(peak_indices[i]-valley_indices[i]))
+            gait_phase.extend([-1]*(peak_indices[i]-valley_indices[i]))
             gait_phase.extend([1]*(valley_indices[i+1]-peak_indices[i]))
         # end with peak
         if valley_indices[-1] < peak_indices[-1]:
-            gait_phase.extend([0]*(peak_indices[-1]-valley_indices[-1]))
+            gait_phase.extend([-1]*(peak_indices[-1]-valley_indices[-1]))
     return gait_phase
 
 def plot_gait_phase(data, reverse=False):

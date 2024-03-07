@@ -111,3 +111,23 @@ for i in range(7100): # 7100 is the length of each trajectory
 trajectories = np.array([trajecroty]) # [1, 7100, 24]
 print("expert_demo:", trajectories.shape)
 # np.save("CricketEnv2D-v0-moving.npy", trajectories)
+
+'''firl-2d moving gait phase'''
+cricket_number = 'c21'
+video_number = '0680'
+joint_path = os.path.join("expert_data_builder/gait_analysis", 
+                                                f"PIC{video_number}_Gait_phase.csv")
+gait = pd.read_csv(joint_path, header=[0], index_col=None).to_numpy()
+trajecroty = []
+for i in range(7100): # 7100 is the length of each trajectory
+    joint_angle = np.deg2rad(joint_movement[i])
+    direction = np.deg2rad(heading_direction[i])
+    sim.data.ctrl[:12] = joint_angle
+    sim.data.ctrl[12:14] = traj[i, :]
+    sim.data.ctrl[14] = direction
+    sim.step()
+    viewer.render()
+    # record the state
+    state = np.hstack((sim.get_state().qpos[:12].copy(), 
+                                        sim.get_state().qvel[:12].copy()))
+    trajecroty.append(state) # [7100, 24]

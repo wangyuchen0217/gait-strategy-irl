@@ -141,11 +141,11 @@ joint_path = os.path.join(fold_path, 'movement', cricket_number,
 joint_movement = pd.read_csv(joint_path, header=[0], index_col=[0])
 joint_movement = joint_movement.values
 joint_movement = data_smooth(joint_movement)
-
-# generate gait phase
-joint_movement = joint_movement[:40,:]
 reverse_list_ThC = [False, False, False, True, True, True]
 reverse_list_FTi = [True, False, True, False, True, False]
+
+# generate gait phase
+# joint_movement = joint_movement[:40,:]
 gait_phase_ThC = np.zeros((len(joint_movement)-1,6))
 gait_phase_FTi = np.zeros((len(joint_movement)-1,6))
 for i in range(6):
@@ -158,9 +158,8 @@ pd.DataFrame(gait_phase).to_csv(save_path,
                                         "FTi_LF","FTi_LM","FTi_LH","FTi_RF","FTi_RM", "FTi_RH"], index=None)
 
 # subplot for ThC joints
-joint_movement = joint_movement[:40,:]
+joint_movement = joint_movement[:200,:]
 ylabel = ['LF', 'LM', 'LH', 'RF', 'RM', 'RH']
-reverse_list_ThC = [False, False, False, True, True, True]
 plt.figure(figsize=(10,8))
 for i in range(6):
     plt.subplot(6,1,i+1)
@@ -175,7 +174,6 @@ plt.savefig('expert_data_builder/gait_analysis/gait_phase_ThC.png')
 
 # subplot for FTi joints
 plt.figure(figsize=(10,8))
-reverse_list_FTi = [True, False, True, False, True, False]
 for i in range(6):
     plt.subplot(6,1,i+1)
     plot_gait_phase(joint_movement[:,i+6], reverse=reverse_list_FTi[i])

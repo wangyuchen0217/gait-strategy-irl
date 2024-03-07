@@ -155,7 +155,7 @@ gait_phase = np.concatenate((gait_phase_ThC, gait_phase_FTi), axis=1)
 save_path = os.path.join(fold_path, 'movement', cricket_number, f'PIC{video_number}_Gait_phase.csv')
 pd.DataFrame(gait_phase).to_csv(save_path, 
                                 header=["ThC_LF","ThC_LM","ThC_LH","ThC_RF","ThC_RM","ThC_RH", 
-                                        "FTi_LF","FTi_LM","FTi_LH","FTi_RF","FTi_RM", "FTi_RH"], index=None)
+                                        "FTi_LF","FTi_LM","FTi_LH","FTi_RF","FTi_RM", "FTi_RH"], index=True)
 
 # subplot for ThC joints
 joint_movement = joint_movement[:200,:]

@@ -109,18 +109,18 @@
   </worldbody>
 
   <actuator>
-    <position ctrllimited="true" ctrlrange="-1.0 1.0" joint="LF_hip" gear="1"/>
-    <position ctrllimited="true" ctrlrange="-1.0 1.0" joint="LM_hip" gear="1"/>
-    <position ctrllimited="true" ctrlrange="-1.0 1.0" joint="LH_hip" gear="1"/>
-    <position ctrllimited="true" ctrlrange="-1.0 1.0" joint="RF_hip" gear="1"/>
-    <position ctrllimited="true" ctrlrange="-1.0 1.0" joint="RM_hip" gear="1"/>
-    <position ctrllimited="true" ctrlrange="-1.0 1.0" joint="RH_hip" gear="1"/>
-    <position ctrllimited="true" ctrlrange="-1.0 1.0" joint="LF_knee" gear="1"/>
-    <position ctrllimited="true" ctrlrange="-1.0 1.0" joint="LM_knee" gear="1"/>
-    <position ctrllimited="true" ctrlrange="-1.0 1.0" joint="LH_knee" gear="1"/>
-    <position ctrllimited="true" ctrlrange="-1.0 1.0" joint="RF_knee" gear="1"/>
-    <position ctrllimited="true" ctrlrange="-1.0 1.0" joint="RM_knee" gear="1"/>
-    <position ctrllimited="true" ctrlrange="-1.0 1.0" joint="RH_knee" gear="1"/>
+    <position ctrllimited="true" ctrlrange="0.0 1.0" joint="LF_hip" gear="1"/>
+    <position ctrllimited="true" ctrlrange="0.0 1.0" joint="LM_hip" gear="1"/>
+    <position ctrllimited="true" ctrlrange="0.0 1.0" joint="LH_hip" gear="1"/>
+    <position ctrllimited="true" ctrlrange="0.0 1.0" joint="RF_hip" gear="1"/>
+    <position ctrllimited="true" ctrlrange="0.0 1.0" joint="RM_hip" gear="1"/>
+    <position ctrllimited="true" ctrlrange="0.0 1.0" joint="RH_hip" gear="1"/>
+    <position ctrllimited="true" ctrlrange="0.0 1.0" joint="LF_knee" gear="1"/>
+    <position ctrllimited="true" ctrlrange="0.0 1.0" joint="LM_knee" gear="1"/>
+    <position ctrllimited="true" ctrlrange="0.0 1.0" joint="LH_knee" gear="1"/>
+    <position ctrllimited="true" ctrlrange="0.0 1.0" joint="RF_knee" gear="1"/>
+    <position ctrllimited="true" ctrlrange="0.0 1.0" joint="RM_knee" gear="1"/>
+    <position ctrllimited="true" ctrlrange="0.0 1.0" joint="RH_knee" gear="1"/>
     <position ctrllimited="false" joint="slide_x" gear="1" kp="70000"/>
     <position ctrllimited="false" joint="slide_y" gear="1" kp="70000"/>
     <position ctrllimited="false" joint="abdomen_z" gear="1" kp="70000"/>

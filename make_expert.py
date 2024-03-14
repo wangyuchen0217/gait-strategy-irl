@@ -20,6 +20,36 @@ model = mujoco_py.load_model_from_path(model_path)
 sim = mujoco_py.MjSim(model)
 viewer = mujoco_py.MjViewer(sim)
 
+'''firl-2d moving gait phase'''
+cricket_number = 'c21'
+video_number = '0680'
+gait_path = os.path.join("expert_data_builder/movement", cricket_number,
+                                                f"PIC{video_number}_Gait_phase.csv")
+direction_path = os.path.join("expert_data_builder/movement", cricket_number,
+                                                f"PIC{video_number}_Heading_direction.csv")
+traj_path = os.path.join("expert_data_builder/movement", cricket_number,
+                                                f"PIC{video_number}_Trajectory.csv")
+gait = pd.read_csv(gait_path, header=[0], index_col=[0]).to_numpy()
+heading_direction = pd.read_csv(direction_path, header=[0], index_col=[0]).to_numpy()
+traj = pd.read_csv(traj_path, header=[0], index_col=[0]).to_numpy() # traj.x and traj.y
+# traj scale
+traj = traj * 100 # original measurement is in meters m->cm
+trajecroty = []
+for i in range(7100): # 7100 is the length of each trajectory
+    sim.data.ctrl[:12] = gait[i, :]
+    sim.data.ctrl[12:14] = traj[i, :]
+    sim.data.ctrl[14] = heading_direction[i]
+    sim.step()
+    viewer.render()
+    # record the state
+    state = np.hstack((sim.get_state().qpos[:].copy(), 
+                                        sim.get_state().qvel[:].copy()))
+    trajecroty.append(state) # [7100, 24]
+trajectories = np.array([trajecroty]) # [1, 7100, 24]
+print("expert_demo:", trajectories.shape)
+# np.save("CricketEnv2D-v0-gait.npy", trajectories)
+
+
 '''let's do irl'''
 # # Get the state trajectories
 # subjects = 33 
@@ -52,6 +82,7 @@ viewer = mujoco_py.MjViewer(sim)
 # print("expert_demo:", trajectories.shape)
 # np.save("expert_demo.npy", trajectories)
 
+
 '''firl-2d resting position'''
 # subjects = 33 
 # trajectories = [] # [33, 1270, 24]   
@@ -80,6 +111,7 @@ viewer = mujoco_py.MjViewer(sim)
 # trajectories = np.array(trajectories)
 # print("expert_demo:", trajectories.shape)
 # np.save("CricketEnv2D-v0.npy", trajectories)
+
 
 '''firl-2d moving position'''
 # cricket_number = 'c21'
@@ -111,32 +143,3 @@ viewer = mujoco_py.MjViewer(sim)
 # trajectories = np.array([trajecroty]) # [1, 7100, 24]
 # print("expert_demo:", trajectories.shape)
 # # np.save("CricketEnv2D-v0-moving.npy", trajectories)
-
-'''firl-2d moving gait phase'''
-cricket_number = 'c21'
-video_number = '0680'
-gait_path = os.path.join("expert_data_builder/movement", cricket_number,
-                                                f"PIC{video_number}_Gait_phase.csv")
-direction_path = os.path.join("expert_data_builder/movement", cricket_number,
-                                                f"PIC{video_number}_Heading_direction.csv")
-traj_path = os.path.join("expert_data_builder/movement", cricket_number,
-                                                f"PIC{video_number}_Trajectory.csv")
-gait = pd.read_csv(gait_path, header=[0], index_col=[0]).to_numpy()
-heading_direction = pd.read_csv(direction_path, header=[0], index_col=[0]).to_numpy()
-traj = pd.read_csv(traj_path, header=[0], index_col=[0]).to_numpy() # traj.x and traj.y
-# traj scale
-traj = traj * 100 # original measurement is in meters m->cm
-trajecroty = []
-for i in range(7100): # 7100 is the length of each trajectory
-    sim.data.ctrl[:12] = gait[i, :]
-    sim.data.ctrl[12:14] = traj[i, :]
-    sim.data.ctrl[14] = heading_direction[i]
-    sim.step()
-    viewer.render()
-    # record the state
-    state = np.hstack((sim.get_state().qpos[:12].copy(), 
-                                        sim.get_state().qvel[:12].copy()))
-    trajecroty.append(state) # [7100, 24]
-trajectories = np.array([trajecroty]) # [1, 7100, 24]
-print("expert_demo:", trajectories.shape)
-# np.save("CricketEnv2D-v0-gait.npy", trajectories)

@@ -103,7 +103,7 @@
   </worldbody>
 
   <actuator>
-    <position ctrllimited="true" ctrlrange="-0.7853981634 1.919862177" joint="LF_hip" gear="1" kp="30000"/>
+    <!-- <position ctrllimited="true" ctrlrange="-0.7853981634 1.919862177" joint="LF_hip" gear="1" kp="30000"/>
     <position ctrllimited="true" ctrlrange="-1.134464014 0.9599310886" joint="LM_hip" gear="1" kp="30000"/>
     <position ctrllimited="true" ctrlrange="-2.00712864 0.2617993878" joint="LH_hip" gear="1" kp="30000"/>
     <position ctrllimited="true" ctrlrange="-1.919862177 0.7853981634" joint="RF_hip" gear="1" kp="30000"/>
@@ -114,6 +114,18 @@
     <position ctrllimited="true" ctrlrange="-3.141592654 0.0" joint="LH_knee" gear="1" kp="30000"/>
     <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="RF_knee" gear="1" kp="30000"/>
     <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="RM_knee" gear="1" kp="30000"/>
-    <position ctrllimited="true" ctrlrange="0.0 3.141592654" joint="RH_knee" gear="1" kp="30000"/>
+    <position ctrllimited="true" ctrlrange="0.0 3.141592654" joint="RH_knee" gear="1" kp="30000"/> -->
+    <motor ctrllimited="true" ctrlrange="-1.0 1.0" joint="LF_hip" gear="150"/>
+    <motor ctrllimited="true" ctrlrange="-1.0 1.0" joint="LM_hip" gear="150"/>
+    <motor ctrllimited="true" ctrlrange="-1.0 1.0" joint="LH_hip" gear="150"/>
+    <motor ctrllimited="true" ctrlrange="-1.0 1.0" joint="RF_hip" gear="150"/>
+    <motor ctrllimited="true" ctrlrange="-1.0 1.0" joint="RM_hip" gear="150"/>
+    <motor ctrllimited="true" ctrlrange="-1.0 1.0" joint="RH_hip" gear="150"/>
+    <motor ctrllimited="true" ctrlrange="-1.0 1.0" joint="LF_knee" gear="150"/>
+    <motor ctrllimited="true" ctrlrange="-1.0 1.0" joint="LM_knee" gear="150"/>
+    <motor ctrllimited="true" ctrlrange="-1.0 1.0" joint="LH_knee" gear="150"/>
+    <motor ctrllimited="true" ctrlrange="-1.0 1.0" joint="RF_knee" gear="150"/>
+    <motor ctrllimited="true" ctrlrange="-1.0 1.0" joint="RM_knee" gear="150"/>
+    <motor ctrllimited="true" ctrlrange="-1.0 1.0" joint="RH_knee" gear="150"/>
   </actuator>
 </mujoco>

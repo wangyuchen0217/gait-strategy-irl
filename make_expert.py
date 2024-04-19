@@ -8,6 +8,7 @@ import yaml
 import json
 import matplotlib.pyplot as plt
 import imageio
+from sklearn.preprocessing import MinMaxScaler
 
 # open config file
 with open("configs/irl.yml", "r") as f:
@@ -20,7 +21,13 @@ model = mujoco_py.load_model_from_path(model_path)
 sim = mujoco_py.MjSim(model)
 viewer = mujoco_py.MjViewer(sim)
 
-'''firl-2d moving position'''
+# normalization
+def normalize(data):
+    scaler = MinMaxScaler(feature_range=(-1, 1)).fit(data)
+    data_scaled = scaler.transform(data)
+    return scaler, data_scaled
+
+'''firl-3d w/ ThC joint  and motor actuators'''
 cricket_number = 'c21'
 video_number = '0680'
 joint_path = os.path.join("expert_data_builder/movement", cricket_number, 
@@ -50,6 +57,37 @@ for i in range(7100): # 7100 is the length of each trajectory
 trajectories = np.array([trajecroty]) # [1, 7100, 24]
 print("expert_demo:", trajectories.shape)
 np.save("CricketEnv2D-v0-moving-torso.npy", trajectories)
+
+'''firl-2d moving position'''
+# cricket_number = 'c21'
+# video_number = '0680'
+# joint_path = os.path.join("expert_data_builder/movement", cricket_number, 
+#                                                 f"PIC{video_number}_Joint_movement.csv")
+# direction_path = os.path.join("expert_data_builder/movement", cricket_number,
+#                                                 f"PIC{video_number}_Heading_direction.csv")
+# traj_path = os.path.join("expert_data_builder/movement", cricket_number,
+#                                                 f"PIC{video_number}_Trajectory.csv")
+# joint_movement = pd.read_csv(joint_path, header=[0], index_col=[0]).to_numpy()
+# heading_direction = pd.read_csv(direction_path, header=[0], index_col=[0]).to_numpy()
+# traj = pd.read_csv(traj_path, header=[0], index_col=[0]).to_numpy() # traj.x and traj.y
+# # traj scale
+# traj = traj * 100 # original measurement is in meters m->cm
+# trajecroty = []
+# for i in range(7100): # 7100 is the length of each trajectory
+#     joint_angle = np.deg2rad(joint_movement[i])
+#     direction = np.deg2rad(heading_direction[i])
+#     sim.data.ctrl[:12] = joint_angle
+#     sim.data.ctrl[12:14] = traj[i, :]
+#     sim.data.ctrl[14] = direction
+#     sim.step()
+#     viewer.render()
+#     # record the state
+#     state = np.hstack((sim.get_state().qpos[:].copy(), 
+#                                         sim.get_state().qvel[:].copy()))
+#     trajecroty.append(state) # [7100, 24]
+# trajectories = np.array([trajecroty]) # [1, 7100, 24]
+# print("expert_demo:", trajectories.shape)
+# np.save("CricketEnv2D-v0-moving-torso.npy", trajectories)
 
 
 '''let's do irl'''

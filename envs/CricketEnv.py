@@ -13,8 +13,8 @@ class CricketEnv(mujoco_env.MujocoEnv, utils.EzPickle):
         self.r = r
         self.prev_obs = None
         # Import xml document
-        self.model = mujoco_py.load_model_from_path("/home/yuchen/Crickets_Walking_IRL/envs/assets/Cricket.xml")
-        mujoco_env.MujocoEnv.__init__(self, '/home/yuchen/Crickets_Walking_IRL/envs/assets/Cricket.xml', 2)
+        self.model = mujoco_py.load_model_from_path("/home/yuchen/Crickets_Walking_IRL/envs/assets/Cricket3D.xml")
+        mujoco_env.MujocoEnv.__init__(self, '/home/yuchen/Crickets_Walking_IRL/envs/assets/Cricket3D.xml', 2)
         # Call MjSim to build a basic simulation
         self.sim = mujoco_py.MjSim(self.model)
         # Set up the viewer

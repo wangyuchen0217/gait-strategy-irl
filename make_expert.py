@@ -43,11 +43,12 @@ traj = pd.read_csv(traj_path, header=[0], index_col=[0]).to_numpy() # traj.x and
 traj = traj * 100 # original measurement is in meters m->cm
 trajecroty = []
 for i in range(7100): # 7100 is the length of each trajectory
+    #joint_movement_scale = normalize(joint_movement[i].reshape(-1, 1))[1].flatten()
     joint_angle = np.deg2rad(joint_movement[i])
-    direction = np.deg2rad(heading_direction[i])
-    sim.data.ctrl[:12] = joint_angle
-    sim.data.ctrl[12:14] = traj[i, :]
-    sim.data.ctrl[14] = direction
+    # direction = np.deg2rad(heading_direction[i])
+    sim.data.ctrl[:6] = joint_angle[:6] # ThC joint only
+    # sim.data.ctrl[12:14] = traj[i, :]
+    # sim.data.ctrl[14] = direction
     sim.step()
     viewer.render()
     # record the state
@@ -56,7 +57,7 @@ for i in range(7100): # 7100 is the length of each trajectory
     trajecroty.append(state) # [7100, 24]
 trajectories = np.array([trajecroty]) # [1, 7100, 24]
 print("expert_demo:", trajectories.shape)
-np.save("CricketEnv2D-v0-moving-torso.npy", trajectories)
+# np.save("CricketEnv2D-v0-moving-torso.npy", trajectories)
 
 '''firl-2d moving position'''
 # cricket_number = 'c21'

@@ -7,8 +7,8 @@ import mujoco_py
 import yaml
 import json
 import matplotlib.pyplot as plt
-import imageio
 from sklearn.preprocessing import MinMaxScaler
+from pykalman import KalmanFilter
 
 # open config file
 with open("configs/irl.yml", "r") as f:
@@ -27,28 +27,40 @@ def normalize(data):
     data_scaled = scaler.transform(data)
     return scaler, data_scaled
 
-'''firl-3d w/ ThC joint  and motor actuators'''
+# smooth the data
+def Kalman1D(observations,damping=1):
+    observation_covariance = damping
+    initial_value_guess = observations[0]
+    transition_matrix = 1
+    transition_covariance = 0.03
+    initial_value_guess
+    kf = KalmanFilter(
+            initial_state_mean=initial_value_guess,
+            initial_state_covariance=observation_covariance,
+            observation_covariance=observation_covariance,
+            transition_covariance=transition_covariance,
+            transition_matrices=transition_matrix
+            )
+    pred_state, state_cov = kf.smooth(observations)
+    return pred_state
+
+def data_smooth(data):
+    for i in range(data.shape[1]):
+        smoothed_data = Kalman1D(data[:,i], damping=1).reshape(-1,1)
+        data[:,i] = smoothed_data[:,0]
+    return data
+
+'''firl-3d w/ ThC joint  and gait data'''
 cricket_number = 'c21'
 video_number = '0680'
 joint_path = os.path.join("expert_data_builder/movement", cricket_number, 
                                                 f"PIC{video_number}_Joint_movement.csv")
-direction_path = os.path.join("expert_data_builder/movement", cricket_number,
-                                                f"PIC{video_number}_Heading_direction.csv")
-traj_path = os.path.join("expert_data_builder/movement", cricket_number,
-                                                f"PIC{video_number}_Trajectory.csv")
 joint_movement = pd.read_csv(joint_path, header=[0], index_col=[0]).to_numpy()
-heading_direction = pd.read_csv(direction_path, header=[0], index_col=[0]).to_numpy()
-traj = pd.read_csv(traj_path, header=[0], index_col=[0]).to_numpy() # traj.x and traj.y
-# traj scale
-traj = traj * 100 # original measurement is in meters m->cm
+joint_movement = data_smooth(joint_movement)
 trajecroty = []
 for i in range(7100): # 7100 is the length of each trajectory
-    #joint_movement_scale = normalize(joint_movement[i].reshape(-1, 1))[1].flatten()
     joint_angle = np.deg2rad(joint_movement[i])
-    # direction = np.deg2rad(heading_direction[i])
     sim.data.ctrl[:6] = joint_angle[:6] # ThC joint only
-    # sim.data.ctrl[12:14] = traj[i, :]
-    # sim.data.ctrl[14] = direction
     sim.step()
     viewer.render()
     # record the state

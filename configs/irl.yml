@@ -1,4 +1,4 @@
-model: Cricket2D
-env: CricketEnv2D-v0
+model: Cricket3D
+#env: CricketEnv3D-v0
 learning_rate: 0.001
 epochs: 1000

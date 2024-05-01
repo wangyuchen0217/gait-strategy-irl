@@ -56,37 +56,16 @@ def data_smooth(data):
     return data
 
 '''firl-3d  ThC joint smoothed data motor'''
-cricket_number = 'c21'
-video_number = '0680'
-joint_path = os.path.join("expert_data_builder/movement", cricket_number, 
-                                                f"PIC{video_number}_Joint_movement.csv")
-joint_movement = pd.read_csv(joint_path, header=[0], index_col=[0]).to_numpy()
-joint_movement = data_smooth(joint_movement) # smooth the data
-joint_movement = normalize(joint_movement)
-trajecroty = []
-for i in range(7100): # 7100 is the length of each trajectory
-    joint_angle = joint_movement[i]
-    sim.data.ctrl[:6] = joint_angle[:6] # ThC joint only
-    sim.step()
-    viewer.render()
-    # record the state
-    state = np.hstack((sim.get_state().qpos[:].copy(), 
-                                        sim.get_state().qvel[:].copy()))
-    trajecroty.append(state) # [7100, 24]
-trajectories = np.array([trajecroty]) # [1, 7100, 24]
-print("expert_demo:", trajectories.shape)
-# np.save("CricketEnv2D-v0-moving-torso.npy", trajectories)
-
-'''firl-3d  ThC joint smoothed data position'''
 # cricket_number = 'c21'
 # video_number = '0680'
 # joint_path = os.path.join("expert_data_builder/movement", cricket_number, 
 #                                                 f"PIC{video_number}_Joint_movement.csv")
 # joint_movement = pd.read_csv(joint_path, header=[0], index_col=[0]).to_numpy()
 # joint_movement = data_smooth(joint_movement) # smooth the data
+# joint_movement = normalize(joint_movement)
 # trajecroty = []
 # for i in range(7100): # 7100 is the length of each trajectory
-#     joint_angle = np.deg2rad(joint_movement[i])
+#     joint_angle = joint_movement[i]
 #     sim.data.ctrl[:6] = joint_angle[:6] # ThC joint only
 #     sim.step()
 #     viewer.render()
@@ -96,6 +75,28 @@ print("expert_demo:", trajectories.shape)
 #     trajecroty.append(state) # [7100, 24]
 # trajectories = np.array([trajecroty]) # [1, 7100, 24]
 # print("expert_demo:", trajectories.shape)
+# np.save("CricketEnv2D-v0-moving-torso.npy", trajectories)
+
+'''firl-3d  ThC joint smoothed data position'''
+cricket_number = 'c21'
+video_number = '0680'
+joint_path = os.path.join("expert_data_builder/movement", cricket_number, 
+                                                f"PIC{video_number}_Joint_movement.csv")
+joint_movement = pd.read_csv(joint_path, header=[0], index_col=[0]).to_numpy()
+joint_movement = data_smooth(joint_movement) # smooth the data
+joint_movement = joint_movement*2 # scale the data
+trajecroty = []
+for i in range(7100): # 7100 is the length of each trajectory
+    joint_angle = np.deg2rad(joint_movement[i])
+    sim.data.ctrl[:6] = joint_angle[:6] # ThC joint only
+    sim.step()
+    viewer.render()
+    # record the state
+    state = np.hstack((sim.get_state().qpos[:].copy(), 
+                                        sim.get_state().qvel[:].copy()))
+    trajecroty.append(state) # [7100, 24]
+trajectories = np.array([trajecroty]) # [1, 7100, 24]
+print("expert_demo:", trajectories.shape)
 # np.save("CricketEnv2D-v0-moving-torso.npy", trajectories)
 
 '''firl-2d moving position'''

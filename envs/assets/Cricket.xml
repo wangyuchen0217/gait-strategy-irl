@@ -43,7 +43,7 @@
       <body name="RF_leg" pos="0 0 0">
         <geom fromto="0.0 0.0 0.0 0.3 -0.2 0.0" name="RF_aux_geom" size="0.08" type="capsule"/>
         <body name="RF_aux" pos="0.3 -0.2 0">
-          <joint axis="-1 1 0" name="RF_CTr" pos="0.0 0.0 0.0" range="-10 10" type="hinge"/>
+          <joint axis="-1 -1 0" name="RF_CTr" pos="0.0 0.0 0.0" range="-10 10" type="hinge"/>
           <joint axis="0 0 1" name="RF_hip" pos="0.0 0.0 0.0" range="-10 10" type="hinge"/>
           <geom fromto="0.0 0.0 0.0 0.2 -0.2 0.0" name="RF_femur_geom" size="0.08" type="capsule"/>
           <body pos="0.2 -0.2 0.0">

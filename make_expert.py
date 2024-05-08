@@ -65,6 +65,12 @@ viewer = mujoco_py.MjViewer(sim)
 
 trajecroty = []
 for j in range(7100): # 7100 is the length of each trajectory
+    # implement a vitual force on legs
+    body_idx = sim.model.geom_name2id('LF_tip')
+    force = np.array([1, 0, 0])
+    sim.data.qfrc_applied[body_idx] = force
+
+    # implement the joint angle data
     joint_angle = np.deg2rad(joint_movement[j])
     sim.data.ctrl[:] = joint_angle
     sim.step()

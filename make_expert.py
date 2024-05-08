@@ -48,15 +48,13 @@ def data_smooth(data):
         data[:,i] = smoothed_data[:,0]
     return data
 
-'''firl-3d  ThC joint smoothed data position'''
+'''firl-2d resting position'''
 cricket_number = 'c21'
 video_number = '0680'
 joint_path = os.path.join("expert_data_builder/movement", cricket_number, 
                                                 f"PIC{video_number}_Joint_movement.csv")
 joint_movement = pd.read_csv(joint_path, header=[0], index_col=[0]).to_numpy()
-unsmoothed_data = joint_movement
-joint_movement = data_smooth(joint_movement) # smooth the data
-joint_movement = joint_movement*2 # scale the data
+# joint_movement = data_smooth(joint_movement) # smooth the data
 
 #  Set up simulation without rendering
 model_name = config_data.get("model")
@@ -66,18 +64,49 @@ sim = mujoco_py.MjSim(model)
 viewer = mujoco_py.MjViewer(sim)
 
 trajecroty = []
-for i in range(7100): # 7100 is the length of each trajectory
-    joint_angle = np.deg2rad(joint_movement[i])
-    sim.data.ctrl[:6] = joint_angle[:6] # ThC joint only
+for j in range(7100): # 7100 is the length of each trajectory
+    joint_angle = np.deg2rad(joint_movement[j])
+    sim.data.ctrl[:] = joint_angle
     sim.step()
-    viewer.render()
-    # record the state
-    state = np.hstack((sim.get_state().qpos[:].copy(), 
-                                        sim.get_state().qvel[:].copy()))
-    trajecroty.append(state) # [7100, 24]
+    #viewer.render()
+    state = np.hstack((sim.get_state().qpos.copy(), 
+                                        sim.get_state().qvel.copy()))
+    # record the state of each step
+    trajecroty.append(state) # [7100,24]
+# record each trails
 trajectories = np.array([trajecroty]) # [1, 7100, 24]
 print("expert_demo:", trajectories.shape)
-# np.save("CricketEnv2D-v0-moving-torso.npy", trajectories)
+# np.save("CricketEnv2D-v0.npy", trajectories)
+
+'''firl-3d  ThC joint smoothed data position'''
+# cricket_number = 'c21'
+# video_number = '0680'
+# joint_path = os.path.join("expert_data_builder/movement", cricket_number, 
+#                                                 f"PIC{video_number}_Joint_movement.csv")
+# joint_movement = pd.read_csv(joint_path, header=[0], index_col=[0]).to_numpy()
+# joint_movement = data_smooth(joint_movement) # smooth the data
+# joint_movement = joint_movement*2 # scale the data
+
+# #  Set up simulation without rendering
+# model_name = config_data.get("model")
+# model_path = 'envs/assets/' + model_name + '.xml'
+# model = mujoco_py.load_model_from_path(model_path)
+# sim = mujoco_py.MjSim(model)
+# viewer = mujoco_py.MjViewer(sim)
+
+# trajecroty = []
+# for i in range(7100): # 7100 is the length of each trajectory
+#     joint_angle = np.deg2rad(joint_movement[i])
+#     sim.data.ctrl[:6] = joint_angle[:6] # ThC joint only
+#     sim.step()
+#     viewer.render()
+#     # record the state
+#     state = np.hstack((sim.get_state().qpos[:].copy(), 
+#                                         sim.get_state().qvel[:].copy()))
+#     trajecroty.append(state) # [7100, 24]
+# trajectories = np.array([trajecroty]) # [1, 7100, 24]
+# print("expert_demo:", trajectories.shape)
+# # np.save("CricketEnv2D-v0-moving-torso.npy", trajectories)
 
 '''firl-3d  ThC joint smoothed data motor'''
 # cricket_number = 'c21'
@@ -139,36 +168,6 @@ print("expert_demo:", trajectories.shape)
 # trajectories = np.array([trajecroty]) # [1, 7100, 24]
 # print("expert_demo:", trajectories.shape)
 # np.save("CricketEnv2D-v0-moving-torso.npy", trajectories)
-
-'''firl-2d resting position'''
-# subjects = 33 
-# trajectories = [] # [33, 1270, 24]   
-# for i in range(subjects):
-#     subject_number = f"{i+1:02d}"
-#     with open("expert_data_builder/trail_details.json", "r") as f:
-#         trail_details = json.load(f)
-#         cricket_number =  trail_details[f"T{subject_number}"]["cricket_number"]
-#         video_number = trail_details[f"T{subject_number}"]["video_number"]
-#     # read the joint movement data
-#     csv_file_path = os.path.join("expert_data_builder/joint_movement", cricket_number, 
-#                                                 f"PIC{video_number}_Joint_movement.csv")
-#     trail = pd.read_csv(csv_file_path, header=[0], index_col=[0]).to_numpy()
-#     trajecroty = []
-#     for j in range(1270): # 1270 is the length of each trajectory
-#         joint_angle = np.deg2rad(trail[j])
-#         sim.data.ctrl[:] = joint_angle
-#         sim.step()
-#         #viewer.render()
-#         state = np.hstack((sim.get_state().qpos.copy(), 
-#                                             sim.get_state().qvel.copy()))
-#         # record the state of each step
-#         trajecroty.append(state) # [1270, 24]
-#     # record each trails
-#     trajectories.append(trajecroty) # [33, 1270, 24]
-# trajectories = np.array(trajectories)
-# print("expert_demo:", trajectories.shape)
-# np.save("CricketEnv2D-v0.npy", trajectories)
-
 
 '''firl-2d moving gait phase'''
 # cricket_number = 'c21'

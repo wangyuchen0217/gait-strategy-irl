@@ -64,33 +64,7 @@ sim = mujoco_py.MjSim(model)
 viewer = mujoco_py.MjViewer(sim)
 
 trajecroty = []
-stance = np.array([7000, 0, 0, 0, 0, 0])
-swing = np.array([0, 0, 0, 0, 0, 0])
 for j in range(7100): # 7100 is the length of each trajectory
-
-    # implement a vitual friction on legs
-    # if j < 1000:
-    #     sim.data.xfrc_applied[sim.model.body_name2id('LF_tip'), :] = stance
-    #     sim.data.xfrc_applied[sim.model.body_name2id('RF_tip'), :] = swing
-    #     sim.data.xfrc_applied[sim.model.body_name2id('LM_tip'), :] = swing
-    #     sim.data.xfrc_applied[sim.model.body_name2id('RM_tip'), :] = stance
-    #     sim.data.xfrc_applied[sim.model.body_name2id('LH_tip'), :] = stance
-    #     sim.data.xfrc_applied[sim.model.body_name2id('RH_tip'), :] = swing
-    # elif j >= 1000 and j < 2000:
-    #     sim.data.xfrc_applied[sim.model.body_name2id('LF_tip'), :] = swing
-    #     sim.data.xfrc_applied[sim.model.body_name2id('RF_tip'), :] = stance
-    #     sim.data.xfrc_applied[sim.model.body_name2id('LM_tip'), :] = stance
-    #     sim.data.xfrc_applied[sim.model.body_name2id('RM_tip'), :] = swing
-    #     sim.data.xfrc_applied[sim.model.body_name2id('LH_tip'), :] = swing
-    #     sim.data.xfrc_applied[sim.model.body_name2id('RH_tip'), :] = stance
-    # elif j >= 2000 and j < 3000:
-    #     sim.data.xfrc_applied[sim.model.body_name2id('LF_tip'), :] = stance
-    #     sim.data.xfrc_applied[sim.model.body_name2id('RF_tip'), :] = swing
-    #     sim.data.xfrc_applied[sim.model.body_name2id('LM_tip'), :] = swing
-    #     sim.data.xfrc_applied[sim.model.body_name2id('RM_tip'), :] = stance
-    #     sim.data.xfrc_applied[sim.model.body_name2id('LH_tip'), :] = stance
-    #     sim.data.xfrc_applied[sim.model.body_name2id('RH_tip'), :] = swing
-
     # implement the joint angle data
     joint_angle = np.deg2rad(joint_movement[j])
     sim.data.ctrl[:12] = joint_angle

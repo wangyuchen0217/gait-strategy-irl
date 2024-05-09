@@ -34,7 +34,9 @@
           <body name="LF_tibia" pos="0.0 0.28 0.0">
             <joint axis="0 0 -1" name="LF_knee" pos="0.0 0.0 0.0" range="-180 180" type="hinge"/>
             <geom fromto="0.0 0.0 0.0 0.0 0.28 0.0" name="LF_tibia_geom" size="0.08" type="capsule"/>
-            <geom name="LF_tip" pos="0.0 0.28 0.0" size="0.08" type="sphere"/>
+            <body name="LF_tip" pos="0.0 0.28. 0.0">
+                <geom name="LF_tip_geom" pos="0.0 0.0 0.0" size="0.08" type="sphere"/>
+            </body>
           </body>
         </body>
       </body>
@@ -47,7 +49,9 @@
           <body name="RF_tibia" pos="0.0 -0.28 0.0">
             <joint axis="0 0 -1" name="RF_knee" pos="0.0 0.0 0.0" range="-180 180" type="hinge"/>
             <geom fromto="0.0 0.0 0.0 0.0 -0.28 0.0" name="RF_tibia_geom" size="0.08" type="capsule"/>
-            <geom name="RF_tip" pos="0.0 -0.28 0.0" size="0.08" type="sphere"/>
+            <body name="RF_tip" pos="0.0 -0.28. 0.0">
+                <geom name="RF_tip_geom" pos="0.0 0.0 0.0" size="0.08" type="sphere"/>
+            </body>
           </body>
         </body>
       </body>
@@ -60,7 +64,9 @@
           <body name="LM_tibia" pos="0.0 0.3 0.0">
             <joint axis="0 0 -1" name="LM_knee" pos="0.0 0.0 0.0" range="-180 180" type="hinge"/>
             <geom fromto="0.0 0.0 0.0 0.0 0.3 0.0" name="LM_tibia_geom" size="0.08" type="capsule"/>
-            <geom name="LM_tip" pos="0.0 0.3 0.0" size="0.08" type="sphere"/>
+            <body name="LM_tip" pos="0.0 0.3 0.0">
+                <geom name="LM_tip_geom" pos="0.0 0.0 0.0" size="0.08" type="sphere"/>
+            </body>
           </body>
         </body>
       </body>
@@ -73,7 +79,9 @@
           <body name="RM_tibia" pos="0.0 -0.3 0.0">
             <joint axis="0 0 -1" name="RM_knee" pos="0.0 0.0 0.0" range="-180 180" type="hinge"/>
             <geom fromto="0.0 0.0 0.0 0.0 -0.3 0.0" name="RM_tibia_geom" size="0.08" type="capsule"/>
-            <geom name="RM_tip" pos="0.0 -0.3 0.0" size="0.08" type="sphere"/>
+            <body name="RM_tip" pos="0.0 -0.3 0.0">
+                <geom name="RM_tip_geom" pos="0.0 0.0 0.0" size="0.08" type="sphere"/>
+            </body>
           </body>
         </body>
       </body>
@@ -86,7 +94,9 @@
           <body name="LH_tibia" pos="0.0 0.51 0">
             <joint axis="0 0 -1" name="LH_knee" pos="0.0 0.0 0.0" range="-180 0" type="hinge"/>
             <geom fromto="0.0 0.0 0.0 0.0 0.51 0" name="LH_tibia_geom" size="0.08" type="capsule"/>
-            <geom name="LH_tip" pos="0.0 0.51 0.0" size="0.08" type="sphere"/>
+            <body name="LH_tip" pos="0.0 0.51 0.0">
+                <geom name="LH_tip_geom" pos="0.0 0.0 0.0" size="0.08" type="sphere"/>
+            </body>
           </body>
         </body>
       </body>
@@ -99,7 +109,9 @@
           <body name="RH_tibia" pos="0.0 -0.51 0">
             <joint axis="0 0 -1" name="RH_knee" pos="0.0 0.0 0.0" range="0 180" type="hinge"/>
             <geom fromto="0.0 0.0 0.0 0.0 -0.51 0" name="RH_tibia_geom" size="0.08" type="capsule"/>
-            <geom name="RH_tip" pos="0.0 -0.51 0.0" size="0.08" type="sphere"/>
+            <body name="RH_tip" pos="0.0 -0.51 0.0">
+                <geom name="RH_tip_geom" pos="0.0 0.0 0.0" size="0.08" type="sphere"/>
+            </body>
           </body>
         </body>
       </body>

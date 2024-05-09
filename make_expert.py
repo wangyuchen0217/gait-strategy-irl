@@ -48,7 +48,7 @@ def data_smooth(data):
         data[:,i] = smoothed_data[:,0]
     return data
 
-'''firl-2d resting position'''
+'''firl-2d'''
 cricket_number = 'c21'
 video_number = '0680'
 joint_path = os.path.join("expert_data_builder/movement", cricket_number, 
@@ -65,21 +65,22 @@ viewer = mujoco_py.MjViewer(sim)
 
 trajecroty = []
 for j in range(7100): # 7100 is the length of each trajectory
-    # implement a vitual force on legs
-    xfrc_applied = sim.data.xfrc_applied # [26, 6] is the force applied to each body
-    body_idx = sim.model.body_name2id('RH_tip') # idx starts from 0
-    force = np.array([-5000, 100000, 0])
+
+    # implement a vitual friction on legs
+    body_idx = sim.model.body_name2id('torso')
+    force = np.array([70000, 0, 0])
     sim.data.xfrc_applied[body_idx, :3] = force
 
     # implement the joint angle data
     joint_angle = np.deg2rad(joint_movement[j])
-    # sim.data.ctrl[:] = joint_angle
+    sim.data.ctrl[:12] = joint_angle
     sim.step()
     viewer.render()
     state = np.hstack((sim.get_state().qpos.copy(), 
                                         sim.get_state().qvel.copy()))
     # record the state of each step
     trajecroty.append(state) # [7100,24]
+
 # record each trails
 trajectories = np.array([trajecroty]) # [1, 7100, 24]
 print("expert_demo:", trajectories.shape)

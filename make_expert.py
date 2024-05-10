@@ -51,7 +51,7 @@ def data_smooth(data):
 # gait phase definition
 def gait_phase(gait_signals):
     if gait_signals == 1: # stance phase
-        friction = [1, 1, 0.5]
+        friction = [100, 100, 0.5]
     else:
         friction = [0, 0, 0]
     return friction
@@ -91,7 +91,7 @@ for j in range(7100): # 7100 is the length of each trajectory
     gait_signals = gait[j] # [6,]
     for i, idx in enumerate([LF_tip_idx, RF_tip_idx, LM_tip_idx, RM_tip_idx, LH_tip_idx, RH_tip_idx]):
         sim.model.geom_friction[idx, :] = gait_phase(gait_signals[i])
-        
+
     # implement the joint angle data
     joint_angle = np.deg2rad(joint_movement[j])
     sim.data.ctrl[:12] = joint_angle

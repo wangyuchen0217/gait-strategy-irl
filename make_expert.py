@@ -77,6 +77,11 @@ model = mujoco_py.load_model_from_path(model_path)
 sim = mujoco_py.MjSim(model)
 viewer = mujoco_py.MjViewer(sim)
 
+# Set the initial positions of the legs
+# initial_leg_positions = np.array([0.1, 0.2, 0.3, 0.4, 0.5, 0.6])  # Example positions
+# sim.data.qpos[model.get_joint_qpos_addr("LF_hip")] = initial_leg_positions[0]
+# sim.data.qpos[model.get_joint_qpos_addr("LM_hip")] = initial_leg_positions[1]
+
 LF_tip_idx = sim.model.geom_name2id('LF_tip_geom')
 RF_tip_idx = sim.model.geom_name2id('RF_tip_geom')
 LM_tip_idx = sim.model.geom_name2id('LM_tip_geom')
@@ -90,10 +95,10 @@ for j in range(7100): # 7100 is the length of each trajectory
     # implement the gait phase data
     gait_signals = gait[j] # [6,]
     for i, idx in enumerate([LF_tip_idx, RF_tip_idx]):
-        gait_data = gait_signals[i] * 7
+        gait_data = gait_signals[i]
         sim.model.geom_friction[idx, :] = gait_phase(gait_data)
     for i, idx in enumerate([LM_tip_idx, RM_tip_idx]):
-        gait_data = gait_signals[i+2] 
+        gait_data = gait_signals[i+2] * 7
         sim.model.geom_friction[idx, :] = gait_phase(gait_data)
     for i, idx in enumerate([LH_tip_idx, RH_tip_idx]):
         gait_data = gait_signals[i+4]

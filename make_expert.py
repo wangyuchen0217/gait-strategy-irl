@@ -68,7 +68,7 @@ joint_movement = data_smooth(joint_movement) # smooth the data
 gait_path = os.path.join("expert_data_builder/movement", cricket_number,
                                                 f"PIC{video_number}_Gait_phase.csv")
 gait = pd.read_csv(gait_path, header=[0], index_col=[0]).to_numpy()
-gait = gait[:,:6] # only use the ThC joint to define the gait phase
+gait = gait[:,6:] # only use the ThC joint to define the gait phase
 
 #  Set up simulation without rendering
 model_name = config_data.get("model")
@@ -90,10 +90,10 @@ for j in range(7100): # 7100 is the length of each trajectory
     # implement the gait phase data
     gait_signals = gait[j] # [6,]
     for i, idx in enumerate([LF_tip_idx, RF_tip_idx]):
-        gait_data = gait_signals[i] * 7
+        gait_data = gait_signals[i]* 7
         sim.model.geom_friction[idx, :] = gait_phase(gait_data)
     for i, idx in enumerate([LM_tip_idx, RM_tip_idx]):
-        gait_data = gait_signals[i+2]
+        gait_data = gait_signals[i+2] 
         sim.model.geom_friction[idx, :] = gait_phase(gait_data)
     for i, idx in enumerate([LH_tip_idx, RH_tip_idx]):
         gait_data = gait_signals[i+4]

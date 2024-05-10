@@ -51,7 +51,7 @@ def data_smooth(data):
 # gait phase definition
 def gait_phase(gait_signals):
     if gait_signals == 1: # stance phase
-        friction = [100, 100, 0.5]
+        friction = [100, 100, 100]
     else:
         friction = [0, 0, 0]
     return friction
@@ -62,7 +62,7 @@ video_number = '0680'
 joint_path = os.path.join("expert_data_builder/movement", cricket_number, 
                                                 f"PIC{video_number}_Joint_movement.csv")
 joint_movement = pd.read_csv(joint_path, header=[0], index_col=[0]).to_numpy()
-# joint_movement = data_smooth(joint_movement) # smooth the data
+joint_movement = data_smooth(joint_movement) # smooth the data
 
 # set up the gait phase
 gait_path = os.path.join("expert_data_builder/movement", cricket_number,
@@ -89,8 +89,15 @@ for j in range(7100): # 7100 is the length of each trajectory
 
     # implement the gait phase data
     gait_signals = gait[j] # [6,]
-    for i, idx in enumerate([LF_tip_idx, RF_tip_idx, LM_tip_idx, RM_tip_idx, LH_tip_idx, RH_tip_idx]):
-        sim.model.geom_friction[idx, :] = gait_phase(gait_signals[i])
+    for i, idx in enumerate([LF_tip_idx, RF_tip_idx]):
+        gait_data = gait_signals[i] * 7
+        sim.model.geom_friction[idx, :] = gait_phase(gait_data)
+    for i, idx in enumerate([LM_tip_idx, RM_tip_idx]):
+        gait_data = gait_signals[i+2]
+        sim.model.geom_friction[idx, :] = gait_phase(gait_data)
+    for i, idx in enumerate([LH_tip_idx, RH_tip_idx]):
+        gait_data = gait_signals[i+4]
+        sim.model.geom_friction[idx, :] = gait_phase(gait_data)
 
     # implement the joint angle data
     joint_angle = np.deg2rad(joint_movement[j])

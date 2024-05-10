@@ -145,7 +145,6 @@ reverse_list_ThC = [False, False, False, True, True, True]
 reverse_list_FTi = [True, False, True, False, True, False]
 
 # generate gait phase
-# joint_movement = joint_movement[:40,:]
 gait_phase_ThC = np.zeros((len(joint_movement)-1,6))
 gait_phase_FTi = np.zeros((len(joint_movement)-1,6))
 for i in range(6):

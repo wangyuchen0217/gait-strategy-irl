@@ -101,7 +101,7 @@ for j in range(7100): # 7100 is the length of each trajectory
         gait_data = gait_signals[i]
         sim.model.geom_friction[idx, :] = gait_phase(gait_data)
     for i, idx in enumerate([LM_tip_idx, RM_tip_idx]):
-        gait_data = gait_signals[i+2] * 7
+        gait_data = gait_signals[i+2]* 7
         sim.model.geom_friction[idx, :] = gait_phase(gait_data)
     for i, idx in enumerate([LH_tip_idx, RH_tip_idx]):
         gait_data = gait_signals[i+4]
@@ -112,16 +112,17 @@ for j in range(7100): # 7100 is the length of each trajectory
     sim.data.ctrl[:12] = joint_angle
     sim.step()
     viewer.render()
-    state = np.hstack((sim.get_state().qpos.copy(), 
-                                        sim.get_state().qvel.copy()))
+    state = np.hstack((sim.get_state().qpos.copy()[-12:], 
+                                        sim.get_state().qvel.copy()[-12:]))
     # record the state of each step
     trajecroty.append(state) # [7100,24]
 
-    if j == 0:
-        initail_pos = sim.get_state().qpos.copy()
-        initail_pos = initail_pos[-12:]
-        print("initail_pos:", initail_pos.shape)
-        print("initail_pos:", initail_pos)
+    # # record the initial position
+    # if j == 0:
+    #     initail_pos = sim.get_state().qpos.copy()
+    #     initail_pos = initail_pos[-12:]
+    #     print("initail_pos:", initail_pos.shape)
+    #     print("initail_pos:", initail_pos)
 
 # record each trails
 trajectories = np.array([trajecroty]) # [1, 7100, 24]

@@ -51,7 +51,7 @@ def data_smooth(data):
 # gait phase definition
 def gait_phase(gait_signals):
     if gait_signals == 1: # stance phase
-        friction = [100, 100, 100]
+        friction = [100, 0.5, 0.5]
     else:
         friction = [0, 0, 0]
     return friction
@@ -108,11 +108,15 @@ for j in range(7100): # 7100 is the length of each trajectory
     joint_angle = np.deg2rad(joint_movement[j])
     sim.data.ctrl[:12] = joint_angle
     sim.step()
-    viewer.render()
+    # viewer.render()
     state = np.hstack((sim.get_state().qpos.copy(), 
                                         sim.get_state().qvel.copy()))
     # record the state of each step
     trajecroty.append(state) # [7100,24]
+
+    if j == 0:
+        initail_pos = sim.get_state().qpos.copy()
+        print("initail_pos:", initail_pos.shape)
 
 # record each trails
 trajectories = np.array([trajecroty]) # [1, 7100, 24]

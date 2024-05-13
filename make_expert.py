@@ -78,9 +78,12 @@ sim = mujoco_py.MjSim(model)
 viewer = mujoco_py.MjViewer(sim)
 
 # Set the initial positions of the legs
-# initial_leg_positions = np.array([0.1, 0.2, 0.3, 0.4, 0.5, 0.6])  # Example positions
-# sim.data.qpos[model.get_joint_qpos_addr("LF_hip")] = initial_leg_positions[0]
-# sim.data.qpos[model.get_joint_qpos_addr("LM_hip")] = initial_leg_positions[1]
+initial_leg_positions = config_data.get("initial_leg_positions")
+print("initial_leg_positions:", initial_leg_positions)
+for i, idx in enumerate(["LF_hip", "LF_knee", "RF_hip", "RF_knee",
+                        "LM_hip", "LM_knee", "RM_hip", "RM_knee",
+                        "LH_hip", "LH_knee", "RH_hip", "RH_knee"]):
+    sim.data.qpos[model.get_joint_qpos_addr(idx)] = initial_leg_positions[i]
 
 LF_tip_idx = sim.model.geom_name2id('LF_tip_geom')
 RF_tip_idx = sim.model.geom_name2id('RF_tip_geom')
@@ -108,7 +111,7 @@ for j in range(7100): # 7100 is the length of each trajectory
     joint_angle = np.deg2rad(joint_movement[j])
     sim.data.ctrl[:12] = joint_angle
     sim.step()
-    # viewer.render()
+    viewer.render()
     state = np.hstack((sim.get_state().qpos.copy(), 
                                         sim.get_state().qvel.copy()))
     # record the state of each step
@@ -116,7 +119,9 @@ for j in range(7100): # 7100 is the length of each trajectory
 
     if j == 0:
         initail_pos = sim.get_state().qpos.copy()
+        initail_pos = initail_pos[-12:]
         print("initail_pos:", initail_pos.shape)
+        print("initail_pos:", initail_pos)
 
 # record each trails
 trajectories = np.array([trajecroty]) # [1, 7100, 24]

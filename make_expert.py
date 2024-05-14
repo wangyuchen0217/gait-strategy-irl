@@ -98,13 +98,13 @@ for j in range(7100): # 7100 is the length of each trajectory
     # implement the gait phase data
     gait_signals = gait[j] # [6,]
     for i, idx in enumerate([LF_tip_idx, RF_tip_idx]):
-        gait_data = gait_signals[i]* 1
+        gait_data = gait_signals[i]* 6
         sim.model.geom_friction[idx, :] = gait_phase(gait_data)
     for i, idx in enumerate([LM_tip_idx, RM_tip_idx]):
-        gait_data = gait_signals[i+2]* 1
+        gait_data = gait_signals[i+2]* 5
         sim.model.geom_friction[idx, :] = gait_phase(gait_data)
     for i, idx in enumerate([LH_tip_idx, RH_tip_idx]):
-        gait_data = gait_signals[i+4]* 1
+        gait_data = gait_signals[i+4]* 4
         sim.model.geom_friction[idx, :] = gait_phase(gait_data)
 
     # implement the joint angle data

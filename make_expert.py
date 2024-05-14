@@ -93,6 +93,7 @@ LH_tip_idx = sim.model.geom_name2id('LH_tip_geom')
 RH_tip_idx = sim.model.geom_name2id('RH_tip_geom')
 
 trajecroty = []
+torso_position = []
 for j in range(7100): # 7100 is the length of each trajectory
 
     # implement the gait phase data
@@ -111,11 +112,12 @@ for j in range(7100): # 7100 is the length of each trajectory
     joint_angle = np.deg2rad(joint_movement[j])
     sim.data.ctrl[:12] = joint_angle
     sim.step()
-    viewer.render()
+    # viewer.render()
     state = np.hstack((sim.get_state().qpos.copy()[-12:], 
                                         sim.get_state().qvel.copy()[-12:]))
     # record the state of each step
     trajecroty.append(state) # [7100,24]
+    torso_position.append(sim.data.qpos[:3].copy()) # [7100,3]
 
     # # record the initial position
     # if j == 0:
@@ -128,6 +130,16 @@ for j in range(7100): # 7100 is the length of each trajectory
 trajectories = np.array([trajecroty]) # [1, 7100, 24]
 print("expert_demo:", trajectories.shape)
 # np.save("CricketEnv2D-v0.npy", trajectories)
+
+# record the torso position
+plt.figure()
+torso_position = np.array(torso_position)
+plt.plot(torso_position[:,0], torso_position[:,1])
+plt.xlabel("x")
+plt.ylabel("y")
+plt.title("Trajectory")
+plt.show()
+#pd.DataFrame(torso_position).to_csv("torso_position.csv", header=["x", "y", "z"], index=True)
 
 '''firl-3d  ThC joint smoothed data position'''
 # cricket_number = 'c21'

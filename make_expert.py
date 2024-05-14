@@ -112,7 +112,7 @@ for j in range(7100): # 7100 is the length of each trajectory
     joint_angle = np.deg2rad(joint_movement[j])
     sim.data.ctrl[:12] = joint_angle
     sim.step()
-    # viewer.render()
+    viewer.render()
     state = np.hstack((sim.get_state().qpos.copy()[-12:], 
                                         sim.get_state().qvel.copy()[-12:]))
     # record the state of each step
@@ -139,7 +139,8 @@ plt.xlabel("x")
 plt.ylabel("y")
 plt.title("c21_0680_trajectory_simulated")
 plt.grid()
-plt.savefig("c21_0680_trajectory_simulated.png")
+plt.show()
+# plt.savefig("c21_0680_trajectory_simulated.png")
 
 '''firl-3d  ThC joint smoothed data position'''
 # cricket_number = 'c21'

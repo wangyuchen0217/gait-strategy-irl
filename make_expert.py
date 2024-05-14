@@ -139,8 +139,8 @@ plt.xlabel("x")
 plt.ylabel("y")
 plt.title("c21_0680_trajectory_simulated")
 plt.grid()
-plt.show()
-# plt.savefig("c21_0680_trajectory_simulated.png")
+# plt.show()
+plt.savefig("c21_0680_trajectory_simulated.png")
 
 '''firl-3d  ThC joint smoothed data position'''
 # cricket_number = 'c21'

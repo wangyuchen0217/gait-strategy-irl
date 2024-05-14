@@ -119,12 +119,12 @@ for j in range(7100): # 7100 is the length of each trajectory
     trajecroty.append(state) # [7100,24]
     torso_position.append(sim.data.qpos[:3].copy()) # [7100,3]
 
-    # # record the initial position
-    # if j == 0:
-    #     initail_pos = sim.get_state().qpos.copy()
-    #     initail_pos = initail_pos[-12:]
-    #     print("initail_pos:", initail_pos.shape)
-    #     print("initail_pos:", initail_pos)
+    # record the initial position
+    if j == 0:
+        initail_pos = sim.get_state().qpos.copy()
+        initail_pos = initail_pos[-12:]
+        print("initail_pos:", initail_pos.shape)
+        print("initail_pos:", initail_pos)
 
 # record each trails
 trajectories = np.array([trajecroty]) # [1, 7100, 24]

@@ -137,9 +137,9 @@ torso_position = np.array(torso_position)
 plt.plot(torso_position[:,0], torso_position[:,1])
 plt.xlabel("x")
 plt.ylabel("y")
-plt.title("Trajectory")
-plt.show()
-#pd.DataFrame(torso_position).to_csv("torso_position.csv", header=["x", "y", "z"], index=True)
+plt.title("c21_0680_trajectory_simulated")
+plt.grid()
+plt.savefig("c21_0680_trajectory_simulated.png")
 
 '''firl-3d  ThC joint smoothed data position'''
 # cricket_number = 'c21'

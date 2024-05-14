@@ -7,6 +7,9 @@ import pandas as pd
 direction_path = 'expert_data_builder/movement/c21/PIC0680_Heading_direction.csv'
 direction = pd.read_csv(direction_path, index_col=0, header=0).to_numpy()
 
+# set the initial direction to 0
+direction = direction - direction[0]
+
 # plot the data
 plt.figure(figsize=(15, 5))
 plt.plot(direction)

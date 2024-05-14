@@ -20,7 +20,7 @@ plt.xlabel('Frame')
 plt.ylabel('Direction')   
 plt.title('c21_0680_direction')
 plt.grid()
-plt.savefig('c21_0680_direction.png')
+# plt.savefig('c21_0680_direction.png')
 
 '''trajectory'''
 

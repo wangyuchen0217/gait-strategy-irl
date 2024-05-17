@@ -129,7 +129,7 @@ for j in range(7100): # 7100 is the length of each trajectory
 # record each trails
 trajectories = np.array([trajecroty]) # [1, 7100, 24]
 print("expert_demo:", trajectories.shape)
-# np.save("CricketEnv2D-v0.npy", trajectories)
+np.save("Cricket2D-v1-0.01.npy", trajectories)
 
 # record the torso position
 plt.figure()

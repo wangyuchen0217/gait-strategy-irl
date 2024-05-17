@@ -120,11 +120,11 @@ for j in range(7100): # 7100 is the length of each trajectory
     torso_position.append(sim.data.qpos[:3].copy()) # [7100,3]
 
     # record the initial position
-    # if j == 0:
-    #     initail_pos = sim.get_state().qpos.copy()
-    #     initail_pos = initail_pos[-12:]
-    #     print("initail_pos:", initail_pos.shape)
-    #     print("initail_pos:", initail_pos)
+    if j == 0:
+        initail_pos = sim.get_state().qpos.copy()
+        initail_pos = initail_pos[-12:]
+        print("initail_pos:", initail_pos.shape)
+        print("initail_pos:", initail_pos)
 
 # record each trails
 trajectories = np.array([trajecroty]) # [1, 7100, 24]
@@ -140,7 +140,7 @@ plt.ylabel("y")
 plt.title("c21_0680_trajectory_simulated")
 plt.grid()
 # plt.show()
-plt.savefig("c21_0680_008342.png")
+plt.savefig("c21_0680_001_4.png")
 
 '''firl-3d  ThC joint smoothed data position'''
 # cricket_number = 'c21'

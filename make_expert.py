@@ -110,7 +110,7 @@ for j in range(7100): # 7100 is the length of each trajectory
 
     # implement the joint angle data
     joint_angle = np.deg2rad(joint_movement[j])
-    sim.data.ctrl[:12] = joint_angle
+    sim.data.ctrl[:] = joint_angle
     sim.step()
     viewer.render()
     state = np.hstack((sim.get_state().qpos.copy()[-12:], 

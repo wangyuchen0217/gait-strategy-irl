@@ -11,8 +11,8 @@ class CricketEnv2D(mujoco_env.MujocoEnv, utils.EzPickle):
         self.T = T
         self.r = r
         self.prev_obs = None
-        self.model = mujoco_py.load_model_from_path("/home/yuchen/Crickets_Walking_IRL/envs/assets/Cricket2D.xml")
-        mujoco_env.MujocoEnv.__init__(self, '/home/yuchen/Crickets_Walking_IRL/envs/assets/Cricket2D.xml', 2)
+        self.model = mujoco_py.load_model_from_path("/home/yuchen/Crickets_Walking_IRL/envs/assets/Cricket2D-v1.xml")
+        mujoco_env.MujocoEnv.__init__(self, '/home/yuchen/Crickets_Walking_IRL/envs/assets/Cricket2D-v1.xml', 2)
 
     def step(self, action):
         vel = self.sim.data.qvel.flat[0]
@@ -47,8 +47,8 @@ class CricketEnv2D(mujoco_env.MujocoEnv, utils.EzPickle):
 
     def _get_obs(self):
         return np.concatenate([
-            self.sim.data.qpos[:12].flat,
-            self.sim.data.qvel[:12].flat,
+            self.sim.data.qpos[-12:].flat,
+            self.sim.data.qvel[-12:].flat,
         ])
     
     def reset_model(self):

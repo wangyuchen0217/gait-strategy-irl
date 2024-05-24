@@ -4,5 +4,6 @@
 **Cricket3D-v1.xml** 模型包含 ThC, FTi  Actuator: position/motor **更加真实的模型**
 
 # Cricket2D
-**Cricket2D-resting.xml** 静止模型，torso没有关节
-**Cricket2D-gait.xml** 静止模型，torso没有关节
+**Cricket2D.xml** 静止模型，torso没有关节
+**Cricket2D-v0.xml** 移动模型，torso有2个滑动关节，1个旋转关节
+**Cricket2D-v1.xml** 移动模型，torso有一个自由关节

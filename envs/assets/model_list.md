@@ -7,3 +7,6 @@
 **Cricket2D.xml** 静止模型，torso没有关节
 **Cricket2D-v0.xml** 移动模型，torso有2个滑动关节，1个旋转关节
 **Cricket2D-v1.xml** 移动模型，torso有一个自由关节
+
+# Stick Insect
+**StickInsect-v0.xml** Carausius morosus

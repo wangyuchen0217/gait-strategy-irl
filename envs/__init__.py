@@ -9,7 +9,7 @@ register(
 
 register(
     id='CricketEnv-v0',
-    entry_point='envs.CricketEnv:CricketEnv'
+    entry_point='envs.CricketEnv3D:CricketEnv'
 )
 
 register(

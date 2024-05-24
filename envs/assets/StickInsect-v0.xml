@@ -91,7 +91,7 @@
           <joint axis="0 0 -1" name="LH_ThC" pos="0.0 0.0 0.0" range="-65 -10" type="hinge"/>
           <geom fromto="0.0 0.0 0.0 0.0 1.39 0.0" name="LH_femur_geom" size="0.06" type="capsule"/>
           <body pos="0.0 1.39 0.0">
-            <joint axis="1 0 0" name="LH_FTi" pos="0.0 0.0 0.0" range="30 168" type="hinge"/>
+            <joint axis="1 0 0" name="LH_FTi" pos="0.0 0.0 0.0" range="39 168" type="hinge"/>
             <geom fromto="0.0 0.0 0.0 0.0 -1.41 0.0" name="LH_tibia_geom" size="0.03" type="capsule"/>
           </body>
         </body>
@@ -105,7 +105,7 @@
           <joint axis="0 0 1" name="RH_ThC" pos="0.0 0.0 0.0" range="-65 -10" type="hinge"/>
           <geom fromto="0.0 0.0 0.0 0.0 -1.39 0.0" name="RH_femur_geom" size="0.06" type="capsule"/>
           <body pos="0.0 -1.39 0.0">
-            <joint axis="-1 0 0" name="RH_FTi" pos="0.0 0.0 0.0" range="30 168" type="hinge"/>
+            <joint axis="-1 0 0" name="RH_FTi" pos="0.0 0.0 0.0" range="39 168" type="hinge"/>
             <geom fromto="0.0 0.0 0.0 0.0 1.41 0.0" name="RH_tibia_geom" size="0.03" type="capsule"/>
           </body>
         </body>

@@ -71,8 +71,8 @@ for j in range(2459): # 2459 is the length of each trajectory
     sim.data.ctrl[:] = joint_angle
     sim.step()
     viewer.render()
-    state = np.hstack((sim.get_state().qpos.copy()[-12:], 
-                                        sim.get_state().qvel.copy()[-12:]))
+    state = np.hstack((sim.get_state().qpos.copy()[-24:], 
+                                        sim.get_state().qvel.copy()[-24:]))
     # record the state of each step
     trajecroty.append(state) # [7100,24]
     torso_position.append(sim.data.qpos[:3].copy()) # [7100,3]

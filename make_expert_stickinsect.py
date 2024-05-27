@@ -9,6 +9,7 @@ import json
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import MinMaxScaler
 from pykalman import KalmanFilter
+from scipy.interpolate import CubicSpline
 
 # open config file
 with open("configs/irl.yml", "r") as f:
@@ -48,12 +49,39 @@ def data_smooth(data):
         data[:,i] = smoothed_data[:,0]
     return data
 
+# smooth the data using Cubic Spline
+def cubic_spline_smooth(data):
+    x = np.arange(data.shape[0])
+    smoothed_data = np.zeros_like(data)
+    for i in range(data.shape[1]):
+        cs = CubicSpline(x, data[:, i])
+        smoothed_data[:, i] = cs(x)
+    return smoothed_data
+
+class PIDController:
+    def __init__(self, Kp, Ki, Kd, setpoint=0):
+        self.Kp = Kp
+        self.Ki = Ki
+        self.Kd = Kd
+        self.setpoint = setpoint
+        self._last_error = 0
+        self._integral = 0
+
+    def update(self, measurement, dt):
+        error = self.setpoint - measurement
+        self._integral += error * dt
+        derivative = (error - self._last_error) / dt
+        self._last_error = error
+        return self.Kp * error + self.Ki * self._integral + self.Kd * derivative
+
+
 '''firl-stickinsect-v0'''
 animal = "Carausius"
 joint_path = os.path.join("expert_data_builder/stick_insect", animal, 
                                                 "Animal12_110415_00_22.csv")
 joint_movement = pd.read_csv(joint_path, header=[0], index_col=None).to_numpy()
-# joint_movement = data_smooth(joint_movement) # smooth the data
+joint_movement = data_smooth(joint_movement) # smooth the data
+# joint_movement = cubic_spline_smooth(joint_movement) # smooth the data using cubic spline
 
 #  Set up simulation without rendering
 model_name = config_data.get("model")
@@ -62,9 +90,29 @@ model = mujoco_py.load_model_from_path(model_path)
 sim = mujoco_py.MjSim(model)
 viewer = mujoco_py.MjViewer(sim)
 
+# PID controller parameters
+Kp, Ki, Kd = 0.05, 0.005, 0.005
+pid_controllers = [PIDController(Kp, Ki, Kd) for _ in range(sim.model.nv)]
+
 trajecroty = []
 torso_position = []
+
+# Gradual initialization over the first 100 steps
+init_steps = 1000
+initial_joint_positions = sim.data.qpos.copy()[-len(joint_movement[0]):]
+target_joint_positions = np.deg2rad(joint_movement)
+
 for j in range(2459): # 2459 is the length of each trajectory
+    if j < init_steps:
+        joint_angle = initial_joint_positions + (target_joint_positions[j] - initial_joint_positions) * (j / init_steps)
+    else:
+        joint_angle = target_joint_positions[j]
+
+    # Apply PID control
+    # dt = sim.model.opt.timestep
+    # for i in range(len(joint_angle)):
+    #     pid_controllers[i].setpoint = joint_angle[i]
+    #     joint_angle[i] = pid_controllers[i].update(sim.data.qpos[-len(joint_angle) + i], dt)
 
     # implement the joint angle data
     joint_angle = np.deg2rad(joint_movement[j])
@@ -74,8 +122,8 @@ for j in range(2459): # 2459 is the length of each trajectory
     state = np.hstack((sim.get_state().qpos.copy()[-24:], 
                                         sim.get_state().qvel.copy()[-24:]))
     # record the state of each step
-    trajecroty.append(state) # [7100,24]
-    torso_position.append(sim.data.qpos[:3].copy()) # [7100,3]
+    trajecroty.append(state) # [2459,24]
+    torso_position.append(sim.data.qpos[:3].copy()) # [2459,3]
 
     # record the initial position
     # if j == 0:
@@ -85,7 +133,7 @@ for j in range(2459): # 2459 is the length of each trajectory
     #     print("initail_pos:", initail_pos)
 
 # record each trails
-trajectories = np.array([trajecroty]) # [1, 7100, 24]
+trajectories = np.array([trajecroty]) # [1, 2459, 24]
 print("expert_demo:", trajectories.shape)
 # np.save("Cricket2D-v1-0.01.npy", trajectories)
 

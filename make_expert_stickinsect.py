@@ -48,27 +48,13 @@ def data_smooth(data):
         data[:,i] = smoothed_data[:,0]
     return data
 
-# gait phase definition
-def gait_phase(gait_signals):
-    if gait_signals == 1: # stance phase
-        friction = [100, 0.5, 0.5]
-    else:
-        friction = [0, 0, 0]
-    return friction
-
-'''firl-2d-v1'''
+'''firl-stickinsect-v0'''
 cricket_number = 'c21'
 video_number = '0680'
 joint_path = os.path.join("expert_data_builder/movement", cricket_number, 
                                                 f"PIC{video_number}_Joint_movement.csv")
 joint_movement = pd.read_csv(joint_path, header=[0], index_col=[0]).to_numpy()
-joint_movement = data_smooth(joint_movement) # smooth the data
-
-# set up the gait phase
-gait_path = os.path.join("expert_data_builder/movement", cricket_number,
-                                                f"PIC{video_number}_Gait_phase.csv")
-gait = pd.read_csv(gait_path, header=[0], index_col=[0]).to_numpy()
-gait = gait[:,:6] # only use the ThC joint to define the gait phase
+# joint_movement = data_smooth(joint_movement) # smooth the data
 
 #  Set up simulation without rendering
 model_name = config_data.get("model")
@@ -77,36 +63,9 @@ model = mujoco_py.load_model_from_path(model_path)
 sim = mujoco_py.MjSim(model)
 viewer = mujoco_py.MjViewer(sim)
 
-# Set the initial positions of the legs
-initial_leg_positions = config_data.get("initial_leg_positions")
-print("initial_leg_positions:", initial_leg_positions)
-for i, idx in enumerate(["LF_hip", "LF_knee", "RF_hip", "RF_knee",
-                        "LM_hip", "LM_knee", "RM_hip", "RM_knee",
-                        "LH_hip", "LH_knee", "RH_hip", "RH_knee"]):
-    sim.data.qpos[model.get_joint_qpos_addr(idx)] = initial_leg_positions[i]
-
-LF_tip_idx = sim.model.geom_name2id('LF_tip_geom')
-RF_tip_idx = sim.model.geom_name2id('RF_tip_geom')
-LM_tip_idx = sim.model.geom_name2id('LM_tip_geom')
-RM_tip_idx = sim.model.geom_name2id('RM_tip_geom')
-LH_tip_idx = sim.model.geom_name2id('LH_tip_geom')
-RH_tip_idx = sim.model.geom_name2id('RH_tip_geom')
-
 trajecroty = []
 torso_position = []
 for j in range(7100): # 7100 is the length of each trajectory
-
-    # implement the gait phase data
-    gait_signals = gait[j] # [6,]
-    for i, idx in enumerate([LF_tip_idx, RF_tip_idx]):
-        gait_data = gait_signals[i]* 6
-        sim.model.geom_friction[idx, :] = gait_phase(gait_data)
-    for i, idx in enumerate([LM_tip_idx, RM_tip_idx]):
-        gait_data = gait_signals[i+2]* 5
-        sim.model.geom_friction[idx, :] = gait_phase(gait_data)
-    for i, idx in enumerate([LH_tip_idx, RH_tip_idx]):
-        gait_data = gait_signals[i+4]* 4
-        sim.model.geom_friction[idx, :] = gait_phase(gait_data)
 
     # implement the joint angle data
     joint_angle = np.deg2rad(joint_movement[j])

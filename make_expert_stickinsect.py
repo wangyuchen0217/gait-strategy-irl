@@ -49,11 +49,10 @@ def data_smooth(data):
     return data
 
 '''firl-stickinsect-v0'''
-cricket_number = 'c21'
-video_number = '0680'
-joint_path = os.path.join("expert_data_builder/movement", cricket_number, 
-                                                f"PIC{video_number}_Joint_movement.csv")
-joint_movement = pd.read_csv(joint_path, header=[0], index_col=[0]).to_numpy()
+animal = "Carausius"
+joint_path = os.path.join("expert_data_builder/stick_insect", animal, 
+                                                "Animal12_110415_00_22.csv")
+joint_movement = pd.read_csv(joint_path, header=[0], index_col=None).to_numpy()
 # joint_movement = data_smooth(joint_movement) # smooth the data
 
 #  Set up simulation without rendering
@@ -65,7 +64,7 @@ viewer = mujoco_py.MjViewer(sim)
 
 trajecroty = []
 torso_position = []
-for j in range(7100): # 7100 is the length of each trajectory
+for j in range(2459): # 2459 is the length of each trajectory
 
     # implement the joint angle data
     joint_angle = np.deg2rad(joint_movement[j])

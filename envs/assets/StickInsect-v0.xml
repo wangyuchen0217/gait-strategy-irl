@@ -35,8 +35,8 @@
           <joint axis="0 0 -1" name="LF_ThC" pos="0.0 0.0 0.0" range="-5 71" type="hinge"/>
           <geom fromto="0.0 0.0 0.0 0.0 1.58 0.0" name="LF_femur_geom" size="0.06" type="capsule"/>
           <body pos="0.0 1.58 0.0">
-            <joint axis="1 0 0" name="LF_FTi" pos="0.0 0.0 0.0" range="47 146" type="hinge"/>
-            <geom fromto="0.0 0.0 0.0 0.0 -1.50 0.0" name="LF_tibia_geom" size="0.03" type="capsule"/>
+            <joint axis="1 0 0" name="LF_FTi" pos="0.0 0.0 0.0" range="-43 56" type="hinge"/>
+            <geom fromto="0.0 0.0 0.0 0.0 0.0 -1.50" name="LF_tibia_geom" size="0.03" type="capsule"/>
           </body>
         </body>
       </body>
@@ -49,8 +49,8 @@
           <joint axis="0 0 1" name="RF_ThC" pos="0.0 0.0 0.0" range="-5 71" type="hinge"/>
           <geom fromto="0.0 0.0 0.0 0.0 -1.58 0.0" name="RF_femur_geom" size="0.06" type="capsule"/>
           <body pos="0.0 -1.58 0.0">
-            <joint axis="-1 0 0" name="RF_FTi" pos="0.0 0.0 0.0" range="47 146" type="hinge"/>
-            <geom fromto="0.0 0.0 0.0 0.0 1.50 0.0" name="RF_tibia_geom" size="0.03" type="capsule"/>
+            <joint axis="-1 0 0" name="RF_FTi" pos="0.0 0.0 0.0" range="-43 56" type="hinge"/>
+            <geom fromto="0.0 0.0 0.0 0.0 0.0 -1.50" name="RF_tibia_geom" size="0.03" type="capsule"/>
           </body>
         </body>
       </body>
@@ -63,8 +63,8 @@
           <joint axis="0 0 -1" name="LM_ThC" pos="0.0 0.0 0.0" range="-48 30" type="hinge"/>
           <geom fromto="0.0 0.0 0.0 0.0 1.16 0.0" name="LM_femur_geom" size="0.06" type="capsule"/>
           <body pos="0.0 1.16 0.0">
-            <joint axis="1 0 0" name="LM_FTi" pos="0.0 0.0 0.0" range="40 169" type="hinge"/>
-            <geom fromto="0.0 0.0 0.0 0.0 -1.12 0.0" name="LM_tibia_geom" size="0.03" type="capsule"/>
+            <joint axis="1 0 0" name="LM_FTi" pos="0.0 0.0 0.0" range="-50 79" type="hinge"/>
+            <geom fromto="0.0 0.0 0.0 0.0 0.0 -1.12" name="LM_tibia_geom" size="0.03" type="capsule"/>
           </body>
         </body>
       </body>
@@ -77,8 +77,8 @@
           <joint axis="0 0 1" name="RM_ThC" pos="0.0 0.0 0.0" range="-48 30" type="hinge"/>
           <geom fromto="0.0 0.0 0.0 0.0 -1.16 0.0" name="RM_femur_geom" size="0.06" type="capsule"/>
           <body pos="0.0 -1.16 0.0">
-            <joint axis="-1 0 0" name="RM_FTi" pos="0.0 0.0 0.0" range="40 169" type="hinge"/>
-            <geom fromto="0.0 0.0 0.0 0.0 1.12 0.0" name="RM_tibia_geom" size="0.03" type="capsule"/>
+            <joint axis="-1 0 0" name="RM_FTi" pos="0.0 0.0 0.0" range="-50 79" type="hinge"/>
+            <geom fromto="0.0 0.0 0.0 0.0 0.0 -1.12" name="RM_tibia_geom" size="0.03" type="capsule"/>
           </body>
         </body>
       </body>
@@ -91,8 +91,8 @@
           <joint axis="0 0 -1" name="LH_ThC" pos="0.0 0.0 0.0" range="-65 -10" type="hinge"/>
           <geom fromto="0.0 0.0 0.0 0.0 1.39 0.0" name="LH_femur_geom" size="0.06" type="capsule"/>
           <body pos="0.0 1.39 0.0">
-            <joint axis="1 0 0" name="LH_FTi" pos="0.0 0.0 0.0" range="39 168" type="hinge"/>
-            <geom fromto="0.0 0.0 0.0 0.0 -1.41 0.0" name="LH_tibia_geom" size="0.03" type="capsule"/>
+            <joint axis="1 0 0" name="LH_FTi" pos="0.0 0.0 0.0" range="-51 78" type="hinge"/>
+            <geom fromto="0.0 0.0 0.0 0.0 0.0 -1.41" name="LH_tibia_geom" size="0.03" type="capsule"/>
           </body>
         </body>
       </body>
@@ -105,8 +105,8 @@
           <joint axis="0 0 1" name="RH_ThC" pos="0.0 0.0 0.0" range="-65 -10" type="hinge"/>
           <geom fromto="0.0 0.0 0.0 0.0 -1.39 0.0" name="RH_femur_geom" size="0.06" type="capsule"/>
           <body pos="0.0 -1.39 0.0">
-            <joint axis="-1 0 0" name="RH_FTi" pos="0.0 0.0 0.0" range="39 168" type="hinge"/>
-            <geom fromto="0.0 0.0 0.0 0.0 1.41 0.0" name="RH_tibia_geom" size="0.03" type="capsule"/>
+            <joint axis="-1 0 0" name="RH_FTi" pos="0.0 0.0 0.0" range="-51 78" type="hinge"/>
+            <geom fromto="0.0 0.0 0.0 0.0 0.0 -1.41" name="RH_tibia_geom" size="0.03" type="capsule"/>
           </body>
         </body>
       </body>

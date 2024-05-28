@@ -56,6 +56,9 @@ joint_path = os.path.join("expert_data_builder/stick_insect", animal,
 joint_movement = pd.read_csv(joint_path, header=[0], index_col=None).to_numpy()
 joint_movement = data_smooth(joint_movement) # smooth the data
 
+# FTi joint angle minus 90 degree
+joint_movement[:,-6:] = joint_movement[:,-6:] - 90
+
 dt = 0.005  # The timestep of your data
 # Calculate velocities and accelerations
 velocities = np.diff(joint_movement, axis=0) / dt

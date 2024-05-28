@@ -81,6 +81,8 @@ accelerations = np.diff(velocities, axis=0) / dt
 velocities = np.vstack((velocities, np.zeros((1, velocities.shape[1]))))
 accelerations = np.vstack((accelerations, np.zeros((2, accelerations.shape[1]))))
 
+print(joint_movement.shape, velocities.shape, accelerations.shape)
+
 #  Set up simulation without rendering
 model_name = config_data.get("model")
 model_path = 'envs/assets/' + model_name + '.xml'

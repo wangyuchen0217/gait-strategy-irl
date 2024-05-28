@@ -25,7 +25,7 @@
       <geom name="T1_geom" pos="0 0 0" fromto="0.0 0.0 0.0 -0.38 0.0 -0.08" size="0.06" type="capsule"/>
       <geom name="T2_geom" pos="0 0 0" fromto="-0.38 0.0 -0.08 -2.1 0.0 -0.46" size="0.06" type="capsule"/>
       <geom name="T3_geom" pos="0 0 0" fromto="-2.1 0.0 -0.46 -3.3 0.0 -0.56" size="0.06" type="capsule"/>
-      <joint armature="0" damping="0" limited="false" margin="0.01" name="root" pos="0 0 0" type="free"/>
+      <!-- <joint armature="0" damping="0" limited="false" margin="0.01" name="root" pos="0 0 0" type="free"/> -->
 
       <body name="LF_leg" pos="-0.19 0 -0.04">
         <geom fromto="0.0 0.0 0.0 0.0 0.13 0.0" name="LF_cox_geom" size="0.05" type="capsule"/>
@@ -143,6 +143,36 @@
     <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="RF_FTi" gear="1" kp="30000"/>
     <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="RM_FTi" gear="1" kp="30000"/>
     <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="RH_FTi" gear="1" kp="30000"/>
+
+    <velocity joint="LF_Sup" gear="1"/>
+    <velocity joint="LM_Sup" gear="1"/>
+    <velocity joint="LH_Sup" gear="1"/>
+    <velocity joint="RF_Sup" gear="1"/>
+    <velocity joint="RM_Sup" gear="1"/>
+    <velocity joint="RH_Sup" gear="1"/>
+
+    <velocity joint="LF_CTr" gear="1"/>
+    <velocity joint="LM_CTr" gear="1"/>
+    <velocity joint="LH_CTr" gear="1"/>
+    <velocity joint="RF_CTr" gear="1"/>
+    <velocity joint="RM_CTr" gear="1"/>
+    <velocity joint="RH_CTr" gear="1"/>
+
+    <velocity joint="LF_ThC" gear="1"/>
+    <velocity joint="LM_ThC" gear="1"/>
+    <velocity joint="LH_ThC" gear="1"/>
+    <velocity joint="RF_ThC" gear="1"/>
+    <velocity joint="RM_ThC" gear="1"/>
+    <velocity joint="RH_ThC" gear="1"/>
+
+    <velocity joint="LF_FTi" gear="1"/>
+    <velocity joint="LM_FTi" gear="1"/>
+    <velocity joint="LH_FTi" gear="1"/>
+    <velocity joint="RF_FTi" gear="1"/>
+    <velocity joint="RM_FTi" gear="1"/>
+    <velocity joint="RH_FTi" gear="1"/>
+
+
 
     <!-- <motor ctrllimited="true" ctrlrange="-1.0 1.0" joint="LF_Sup" gear="150"/>
     <motor ctrllimited="true" ctrlrange="-1.0 1.0" joint="LM_Sup" gear="150"/>

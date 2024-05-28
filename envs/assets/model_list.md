@@ -10,4 +10,3 @@
 
 # Stick Insect
 **StickInsect-v0.xml** Carausius morosus FTi 初始状态90deg
-**StickInsect-v0.xml** Carausius morosus FTi 初始状态舒张 

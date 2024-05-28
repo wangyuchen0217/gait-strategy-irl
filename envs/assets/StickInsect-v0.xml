@@ -25,7 +25,7 @@
       <geom name="T1_geom" pos="0 0 0" fromto="0.0 0.0 0.0 -0.38 0.0 -0.08" size="0.06" type="capsule"/>
       <geom name="T2_geom" pos="0 0 0" fromto="-0.38 0.0 -0.08 -2.1 0.0 -0.46" size="0.06" type="capsule"/>
       <geom name="T3_geom" pos="0 0 0" fromto="-2.1 0.0 -0.46 -3.3 0.0 -0.56" size="0.06" type="capsule"/>
-      <!-- <joint armature="0" damping="0" limited="false" margin="0.01" name="root" pos="0 0 0" type="free"/> -->
+      <joint armature="0" damping="0" limited="false" margin="0.01" name="root" pos="0 0 0" type="free"/>
 
       <body name="LF_leg" pos="-0.19 0 -0.04">
         <geom fromto="0.0 0.0 0.0 0.0 0.13 0.0" name="LF_cox_geom" size="0.05" type="capsule"/>

@@ -83,7 +83,7 @@ for custom in root.findall('custom'):
         if numeric.get('name') == 'init_qpos':
             init_qpos_data = numeric.get('data')
             break
-sim.data.qpos[:] = np.array(init_qpos_data.split()).astype(np.float64)
+sim.data.qpos[-24:] = np.array(init_qpos_data.split()).astype(np.float64)
 
 trajecroty = []
 torso_position = []

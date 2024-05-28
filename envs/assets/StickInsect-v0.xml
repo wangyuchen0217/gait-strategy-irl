@@ -3,10 +3,10 @@
   <option integrator="RK4" timestep="0.005"/> <!-- frequency [200,50] -->
 
   <custom>
-    <numeric data="0.10493037 -0.20370061  0.75559699  0.92065682  0.18436853  0.18303417
-  0.77375449  0.0098877   0.00417367 -0.03113045 -0.18052621  0.20915537
- -0.19411973  0.15408449 -0.60458982  0.46905785 -0.23663933  0.0678437
- -1.00309988  0.98588227  0.15600297  0.60413846 -0.45457679 -0.40792475" name="init_qpos"/>
+    <numeric data="0.10681971 -0.20482576  0.76341401  0.92561184  0.18595086  0.18452993
+  0.78049568  0.01004119  0.00413513 -0.03130112 -0.18171205  0.21024531
+ -0.19540428  0.15524787 -0.6086322   0.4715757  -0.23915008  0.06885989
+ -1.01172582  0.99137151  0.1567984   0.60833356 -0.45790772 -0.41003116" name="init_qpos"/>
   </custom>
 
   <default>
@@ -27,12 +27,12 @@
     <geom conaffinity="1" condim="3" material="MatPlane" name="floor" pos="0 0 0" rgba="0.8 0.8 0.8 1" size="40 40 40" type="plane"/>
     <camera name="general" mode="fixed" pos="-2 -10 6" xyaxes="1 0 0 0 0 1"/>
 
-    <body name="torso" pos="0 0 5">
+    <body name="torso" pos="0 0 2">
       <geom name="head_geom" pos="0 0 0" fromto="0.0 0.0 0.0 0.44 0.0 0.0" size="0.06" type="capsule"/>
       <geom name="T1_geom" pos="0 0 0" fromto="0.0 0.0 0.0 -0.38 0.0 -0.08" size="0.06" type="capsule"/>
       <geom name="T2_geom" pos="0 0 0" fromto="-0.38 0.0 -0.08 -2.1 0.0 -0.46" size="0.06" type="capsule"/>
       <geom name="T3_geom" pos="0 0 0" fromto="-2.1 0.0 -0.46 -3.3 0.0 -0.56" size="0.06" type="capsule"/>
-      <!-- <joint armature="0" damping="0" limited="false" margin="0.01" name="root" pos="0 0 0" type="free"/> -->
+      <joint armature="0" damping="0" limited="false" margin="0.01" name="root" pos="0 0 0" type="free"/>
 
       <body name="LF_leg" pos="-0.19 0 -0.04">
         <geom fromto="0.0 0.0 0.0 0.0 0.13 0.0" name="LF_cox_geom" size="0.05" type="capsule"/>

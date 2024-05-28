@@ -9,6 +9,7 @@ import json
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import MinMaxScaler
 from pykalman import KalmanFilter
+import xml.etree.ElementTree as ET
 
 # open config file
 with open("configs/irl.yml", "r") as f:
@@ -72,6 +73,18 @@ model = mujoco_py.load_model_from_path(model_path)
 sim = mujoco_py.MjSim(model)
 viewer = mujoco_py.MjViewer(sim)
 
+# Parse the XML file to extract custom data
+tree = ET.parse(model_path)
+root = tree.getroot()
+# Find the custom element and extract the init_qpos data
+init_qpos_data = None
+for custom in root.findall('custom'):
+    for numeric in custom.findall('numeric'):
+        if numeric.get('name') == 'init_qpos':
+            init_qpos_data = numeric.get('data')
+            break
+sim.data.qpos[:] = np.array(init_qpos_data.split()).astype(np.float64)
+
 trajecroty = []
 torso_position = []
 for j in range(2459): # 2459 is the length of each trajectory
@@ -89,11 +102,11 @@ for j in range(2459): # 2459 is the length of each trajectory
     torso_position.append(sim.data.qpos[:3].copy()) # [2459,3]
 
     # record the initial position
-    # if j == 0:
-    #     initail_pos = sim.get_state().qpos.copy()
-    #     initail_pos = initail_pos[-12:]
-    #     print("initail_pos:", initail_pos.shape)
-    #     print("initail_pos:", initail_pos)
+    if j == 0:
+        initail_pos = sim.get_state().qpos.copy()
+        initail_pos = initail_pos[:]
+        print("initail_pos:", initail_pos.shape)
+        print("initail_pos:", initail_pos)
 
 # record each trails
 trajectories = np.array([trajecroty]) # [1, 2459, 24]

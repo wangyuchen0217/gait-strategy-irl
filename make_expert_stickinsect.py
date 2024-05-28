@@ -9,7 +9,6 @@ import json
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import MinMaxScaler
 from pykalman import KalmanFilter
-from scipy.interpolate import CubicSpline
 
 # open config file
 with open("configs/irl.yml", "r") as f:
@@ -48,15 +47,6 @@ def data_smooth(data):
         smoothed_data = Kalman1D(data[:,i], damping=1).reshape(-1,1)
         data[:,i] = smoothed_data[:,0]
     return data
-
-# smooth the data using Cubic Spline
-def cubic_spline_smooth(data):
-    x = np.arange(data.shape[0])
-    smoothed_data = np.zeros_like(data)
-    for i in range(data.shape[1]):
-        cs = CubicSpline(x, data[:, i])
-        smoothed_data[:, i] = cs(x)
-    return smoothed_data
 
 
 '''firl-stickinsect-v0'''

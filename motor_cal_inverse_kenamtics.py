@@ -9,6 +9,7 @@ import json
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import MinMaxScaler
 from pykalman import KalmanFilter
+import xml.etree.ElementTree as ET
 
 # open config file
 with open("configs/irl.yml", "r") as f:
@@ -45,32 +46,30 @@ def calculate_inverse_dynamics_torques(sim, positions, velocities, accelerations
         sim.data.qpos[-24:] = qpos
         sim.data.qvel[-24:] = qvel
         sim.data.qacc[-24:] = qacc
-        
         # Calculate inverse dynamics
         mujoco_py.functions.mj_inverse(model, sim.data)
-        
         # Append the calculated torques
         torques.append(sim.data.qfrc_inverse.copy())
-    
     return np.array(torques)
 
 
-'''firl-stickinsect-v0'''
+'''firl-stickinsect-v1'''
 animal = "Carausius"
 joint_path = os.path.join("expert_data_builder/stick_insect", animal, 
                                                 "Animal12_110415_00_22.csv")
 joint_movement = pd.read_csv(joint_path, header=[0], index_col=None).to_numpy()
 joint_movement = data_smooth(joint_movement) # smooth the data
 
+# FTi joint angle minus 90 degree
+joint_movement[:,-6:] = joint_movement[:,-6:] - 90
+
 dt = 0.005  # The timestep of your data
 # Calculate velocities and accelerations
 velocities = np.diff(joint_movement, axis=0) / dt
 accelerations = np.diff(velocities, axis=0) / dt
 # Pad the arrays to match the length of the original data
-velocities = np.vstack((velocities, np.zeros((1, velocities.shape[1]))))
-accelerations = np.vstack((accelerations, np.zeros((2, accelerations.shape[1]))))
-
-print(joint_movement.shape, velocities.shape, accelerations.shape)
+velocities = np.vstack((velocities, np.zeros((1, velocities.shape[1])))) # [2459, 24]
+accelerations = np.vstack((accelerations, np.zeros((2, accelerations.shape[1])))) # [2459, 24]
 
 #  Set up simulation without rendering
 model_name = config_data.get("model")
@@ -79,6 +78,55 @@ model = mujoco_py.load_model_from_path(model_path)
 sim = mujoco_py.MjSim(model)
 viewer = mujoco_py.MjViewer(sim)
 
-# Calculate torques for the whole trajectory
+# Parse the XML file to extract custom data
+tree = ET.parse(model_path)
+root = tree.getroot()
+# Find the custom element and extract the init_qpos data
+init_qpos_data = None
+for custom in root.findall('custom'):
+    for numeric in custom.findall('numeric'):
+        if numeric.get('name') == 'init_qpos':
+            init_qpos_data = numeric.get('data')
+            break
+sim.data.qpos[-24:] = np.array(init_qpos_data.split()).astype(np.float64)
+
+# Calculate the torques
 torques = calculate_inverse_dynamics_torques(sim, joint_movement, velocities, accelerations)
-print(torques.shape)
+torques = torques[:,-24:]
+
+trajecroty = []
+torso_position = []
+for j in range(2459): # 2459 is the length of each trajectory
+
+    # implement the motor data
+    sim.data.ctrl[:] = torques[j]
+    sim.step()
+    viewer.render()
+    state = np.hstack((sim.get_state().qpos.copy()[-24:], 
+                                        sim.get_state().qvel.copy()[-24:]))
+    # record the state of each step
+    trajecroty.append(state) # [2459,24]
+    torso_position.append(sim.data.qpos[:3].copy()) # [2459,3]
+
+    # record the initial position
+    if j == 0:
+        initail_pos = sim.get_state().qpos.copy()
+        initail_pos = initail_pos[:]
+        print("initail_pos:", initail_pos.shape)
+        print("initail_pos:", initail_pos)
+
+# record each trails
+trajectories = np.array([trajecroty]) # [1, 2459, 24]
+print("expert_demo:", trajectories.shape)
+# np.save("StickInect-v0.npy", trajectories)
+
+# record the torso position
+# plt.figure()
+# torso_position = np.array(torso_position)
+# plt.plot(torso_position[:,0], torso_position[:,1])
+# plt.xlabel("x")
+# plt.ylabel("y")
+# plt.title("c21_0680_trajectory_simulated")
+# plt.grid()
+# plt.show()
+# # plt.savefig("c21_0680_002_3.png")

@@ -92,3 +92,4 @@ viewer = mujoco_py.MjViewer(sim)
 
 # Calculate torques for the whole trajectory
 torques = calculate_inverse_dynamics_torques(sim, joint_movement, velocities, accelerations)
+print(torques.shape)

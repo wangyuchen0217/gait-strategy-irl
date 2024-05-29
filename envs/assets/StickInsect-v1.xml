@@ -125,6 +125,7 @@
   </worldbody>
 
   <actuator>
+  
     <motor ctrllimited="true" ctrlrange="-1.0 1.0" joint="LF_Sup" gear="150"/>
     <motor ctrllimited="true" ctrlrange="-1.0 1.0" joint="LM_Sup" gear="150"/>
     <motor ctrllimited="true" ctrlrange="-1.0 1.0" joint="LH_Sup" gear="150"/>
@@ -152,5 +153,6 @@
     <motor ctrllimited="true" ctrlrange="-1.0 1.0" joint="RF_FTi" gear="150"/>
     <motor ctrllimited="true" ctrlrange="-1.0 1.0" joint="RM_FTi" gear="150"/>
     <motor ctrllimited="true" ctrlrange="-1.0 1.0" joint="RH_FTi" gear="150"/>
+
   </actuator>
 </mujoco>

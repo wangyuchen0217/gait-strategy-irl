@@ -15,17 +15,6 @@ import xml.etree.ElementTree as ET
 with open("configs/irl.yml", "r") as f:
     config_data = yaml.safe_load(f)
 
-# normalization
-def data_scale(data):
-    scaler = MinMaxScaler(feature_range=(-1, 1)).fit(data)
-    data_scaled = scaler.transform(data)
-    return data_scaled
-
-def normalize(data):
-    for i in range(data.shape[1]):
-        data[:,i] = data_scale(data[:,i].reshape(-1,1)).reshape(-1)
-    return data
-
 # smooth the data
 def Kalman1D(observations,damping=1):
     observation_covariance = damping
@@ -49,8 +38,22 @@ def data_smooth(data):
         data[:,i] = smoothed_data[:,0]
     return data
 
+# Function to calculate torques using inverse dynamics
+def calculate_inverse_dynamics_torques(sim, positions, velocities, accelerations):
+    torques = []
+    for qpos, qvel, qacc in zip(positions, velocities, accelerations):
+        # Set the state
+        sim.data.qpos[-24:] = qpos
+        sim.data.qvel[-24:] = qvel
+        sim.data.qacc[-24:] = qacc
+        # Calculate inverse dynamics
+        mujoco_py.functions.mj_inverse(model, sim.data)
+        # Append the calculated torques
+        torques.append(sim.data.qfrc_inverse.copy())
+    return np.array(torques)
 
-'''firl-stickinsect-v0'''
+
+'''firl-stickinsect-v1'''
 animal = "Carausius"
 joint_path = os.path.join("expert_data_builder/stick_insect", animal, 
                                                 "Animal12_110415_00_22.csv")
@@ -63,8 +66,10 @@ joint_movement[:,-6:] = joint_movement[:,-6:] - 90
 dt = 0.005  # The timestep of your data
 # Calculate velocities and accelerations
 velocities = np.diff(joint_movement, axis=0) / dt
+accelerations = np.diff(velocities, axis=0) / dt
 # Pad the arrays to match the length of the original data
-velocities = np.vstack((velocities, np.zeros((1, velocities.shape[1]))))
+velocities = np.vstack((velocities, np.zeros((1, velocities.shape[1])))) # [2459, 24]
+accelerations = np.vstack((accelerations, np.zeros((2, accelerations.shape[1])))) # [2459, 24]
 
 #  Set up simulation without rendering
 model_name = config_data.get("model")
@@ -85,14 +90,16 @@ for custom in root.findall('custom'):
             break
 sim.data.qpos[-24:] = np.array(init_qpos_data.split()).astype(np.float64)
 
+# Calculate the torques
+torques = calculate_inverse_dynamics_torques(sim, joint_movement, velocities, accelerations)
+torques = torques[:,-24:]
+
 trajecroty = []
 torso_position = []
 for j in range(2459): # 2459 is the length of each trajectory
 
-    # implement the joint angle data
-    joint_angle = np.deg2rad(joint_movement[j])
-    sim.data.ctrl[:24] = joint_angle
-    sim.data.ctrl[24:] = velocities[j]
+    # implement the motor data
+    sim.data.ctrl[:] = torques[j]
     sim.step()
     viewer.render()
     state = np.hstack((sim.get_state().qpos.copy()[-24:], 

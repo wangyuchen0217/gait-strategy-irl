@@ -15,17 +15,6 @@ import xml.etree.ElementTree as ET
 with open("configs/irl.yml", "r") as f:
     config_data = yaml.safe_load(f)
 
-# normalization
-def data_scale(data):
-    scaler = MinMaxScaler(feature_range=(-1, 1)).fit(data)
-    data_scaled = scaler.transform(data)
-    return data_scaled
-
-def normalize(data):
-    for i in range(data.shape[1]):
-        data[:,i] = data_scale(data[:,i].reshape(-1,1)).reshape(-1)
-    return data
-
 # smooth the data
 def Kalman1D(observations,damping=1):
     observation_covariance = damping
@@ -64,7 +53,7 @@ dt = 0.005  # The timestep of your data
 # Calculate velocities and accelerations
 velocities = np.diff(joint_movement, axis=0) / dt
 # Pad the arrays to match the length of the original data
-velocities = np.vstack((velocities, np.zeros((1, velocities.shape[1]))))
+velocities = np.vstack((velocities, np.zeros((1, velocities.shape[1])))) # [2459, 24]
 
 #  Set up simulation without rendering
 model_name = config_data.get("model")

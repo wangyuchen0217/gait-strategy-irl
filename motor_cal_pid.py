@@ -71,7 +71,7 @@ joint_movement = data_smooth(joint_movement) # smooth the data
 
 # Initialize PID controllers for each joint
 num_joints = joint_movement.shape[1]
-pid_controllers = [PIDController(kp=30000, ki=0, kd=0) for _ in range(num_joints)]
+pid_controllers = [PIDController(kp=30000, ki=0, kd=0) for _ in range(24)]
 
 #  Set up simulation without rendering
 model_name = config_data.get("model")
@@ -85,18 +85,14 @@ torso_position = []
 for j in range(2459): # 2459 is the length of each trajectory
 
     joint_angle = np.deg2rad(joint_movement[j])
-    desired_angles = joint_angle[j]
-    current_angles = sim.data.qpos[-num_joints:]  # Get current joint angles
+    desired_angles = joint_angle
+    current_angles = sim.data.qpos[-24:]  # Get current joint angles
     dt = sim.model.opt.timestep
     
     torques = calculate_torques(desired_angles, current_angles, dt, pid_controllers)
     print("torques", torques.shape)
     
     # Apply torques to actuators
-    sim.data.ctrl[:] = torques
-    
+    sim.data.ctrl[:] = torques 
     sim.step()
-
-    # Optional: Render the simulation
-    viewer = mujoco_py.MjViewer(sim)
     viewer.render()

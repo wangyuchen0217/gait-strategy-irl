@@ -9,6 +9,7 @@ import json
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import MinMaxScaler
 from pykalman import KalmanFilter
+import xml.etree.ElementTree as ET
 
 # open config file
 with open("configs/irl.yml", "r") as f:
@@ -69,6 +70,9 @@ joint_path = os.path.join("expert_data_builder/stick_insect", animal,
 joint_movement = pd.read_csv(joint_path, header=[0], index_col=None).to_numpy()
 joint_movement = data_smooth(joint_movement) # smooth the data
 
+# FTi joint angle minus 90 degree
+joint_movement[:,-6:] = joint_movement[:,-6:] - 90
+
 # Initialize PID controllers for each joint
 num_joints = joint_movement.shape[1]
 pid_controllers = [PIDController(kp=30000, ki=0, kd=0) for _ in range(24)]
@@ -80,6 +84,18 @@ model = mujoco_py.load_model_from_path(model_path)
 sim = mujoco_py.MjSim(model)
 viewer = mujoco_py.MjViewer(sim)
 
+# Parse the XML file to extract custom data
+tree = ET.parse(model_path)
+root = tree.getroot()
+# Find the custom element and extract the init_qpos data
+init_qpos_data = None
+for custom in root.findall('custom'):
+    for numeric in custom.findall('numeric'):
+        if numeric.get('name') == 'init_qpos':
+            init_qpos_data = numeric.get('data')
+            break
+sim.data.qpos[-24:] = np.array(init_qpos_data.split()).astype(np.float64)
+
 trajecroty = []
 torso_position = []
 for j in range(2459): # 2459 is the length of each trajectory
@@ -88,11 +104,37 @@ for j in range(2459): # 2459 is the length of each trajectory
     desired_angles = joint_angle
     current_angles = sim.data.qpos[-24:]  # Get current joint angles
     dt = sim.model.opt.timestep
-    
     torques = calculate_torques(desired_angles, current_angles, dt, pid_controllers)
-    print("torques", torques.shape)
     
     # Apply torques to actuators
     sim.data.ctrl[:] = torques 
     sim.step()
     viewer.render()
+    state = np.hstack((sim.get_state().qpos.copy()[-24:], 
+                                        sim.get_state().qvel.copy()[-24:]))
+    # record the state of each step
+    trajecroty.append(state) # [2459,24]
+    torso_position.append(sim.data.qpos[:3].copy()) # [2459,3]
+
+    # record the initial position
+    if j == 0:
+        initail_pos = sim.get_state().qpos.copy()
+        initail_pos = initail_pos[:]
+        print("initail_pos:", initail_pos.shape)
+        print("initail_pos:", initail_pos)
+
+# record each trails
+trajectories = np.array([trajecroty]) # [1, 2459, 24]
+print("expert_demo:", trajectories.shape)
+# np.save("StickInect-v0.npy", trajectories)
+
+# record the torso position
+# plt.figure()
+# torso_position = np.array(torso_position)
+# plt.plot(torso_position[:,0], torso_position[:,1])
+# plt.xlabel("x")
+# plt.ylabel("y")
+# plt.title("c21_0680_trajectory_simulated")
+# plt.grid()
+# plt.show()
+# # plt.savefig("c21_0680_002_3.png")

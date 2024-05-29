@@ -9,4 +9,5 @@
 **Cricket2D-v1.xml** 移动模型，torso有一个自由关节
 
 # Stick Insect
-**StickInsect-v0.xml** Carausius morosus FTi 初始状态90deg
+**StickInsect-v0.xml** Carausius morosus, FTi 初始状态 90 deg, position & velocity actuator
+**StickInsect-v0.xml** Carausius morosus, FTi 初始状态 90 deg, motor actuator

@@ -76,6 +76,7 @@ sim.data.qpos[-24:] = np.array(init_qpos_data.split()).astype(np.float64)
 
 trajecroty = []
 torso_position = []
+torques = []
 for j in range(2459): # 2459 is the length of each trajectory
 
     # implement the joint angle data
@@ -89,6 +90,8 @@ for j in range(2459): # 2459 is the length of each trajectory
     # record the state of each step
     trajecroty.append(state) # [2459,24]
     torso_position.append(sim.data.qpos[:3].copy()) # [2459,3]
+    # get data of the torques sensor
+    torques.append(sim.data.sensordata.copy())
 
     # record the initial position
     if j == 0:
@@ -101,6 +104,12 @@ for j in range(2459): # 2459 is the length of each trajectory
 trajectories = np.array([trajecroty]) # [1, 2459, 24]
 print("expert_demo:", trajectories.shape)
 # np.save("StickInect-v0.npy", trajectories)
+
+# record the torques
+torques = np.array(torques) # [2459, 72]
+torque_save_path = os.path.join("expert_data_builder/stick_insect", animal, 
+                                                "Animal12_110415_00_22_torques.csv")
+pd.DataFrame(torques).to_csv(torque_save_path, index=False, header=None)
 
 # record the torso position
 # plt.figure()

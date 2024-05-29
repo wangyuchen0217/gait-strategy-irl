@@ -38,38 +38,13 @@ def data_smooth(data):
         data[:,i] = smoothed_data[:,0]
     return data
 
-# Function to calculate torques using inverse dynamics
-def calculate_inverse_dynamics_torques(sim, positions, velocities, accelerations):
-    torques = []
-    for qpos, qvel, qacc in zip(positions, velocities, accelerations):
-        # Set the state
-        sim.data.qpos[-24:] = qpos
-        sim.data.qvel[-24:] = qvel
-        sim.data.qacc[-24:] = qacc
-        # Calculate inverse dynamics
-        mujoco_py.functions.mj_inverse(model, sim.data)
-        # Append the calculated torques
-        torques.append(sim.data.qfrc_inverse.copy())
-    return np.array(torques)
-
 
 '''firl-stickinsect-v1'''
 animal = "Carausius"
-joint_path = os.path.join("expert_data_builder/stick_insect", animal, 
-                                                "Animal12_110415_00_22.csv")
-joint_movement = pd.read_csv(joint_path, header=[0], index_col=None).to_numpy()
-joint_movement = data_smooth(joint_movement) # smooth the data
-
-# FTi joint angle minus 90 degree
-joint_movement[:,-6:] = joint_movement[:,-6:] - 90
-
-dt = 0.005  # The timestep of your data
-# Calculate velocities and accelerations
-velocities = np.diff(joint_movement, axis=0) / dt
-accelerations = np.diff(velocities, axis=0) / dt
-# Pad the arrays to match the length of the original data
-velocities = np.vstack((velocities, np.zeros((1, velocities.shape[1])))) # [2459, 24]
-accelerations = np.vstack((accelerations, np.zeros((2, accelerations.shape[1])))) # [2459, 24]
+torques_path = os.path.join("expert_data_builder/stick_insect", animal, 
+                                                "Animal12_110415_00_22_torques.csv")
+torques = pd.read_csv(torques_path, header=[0], index_col=None).to_numpy()
+torques = data_smooth(torques) # smooth the data
 
 #  Set up simulation without rendering
 model_name = config_data.get("model")
@@ -89,10 +64,6 @@ for custom in root.findall('custom'):
             init_qpos_data = numeric.get('data')
             break
 sim.data.qpos[-24:] = np.array(init_qpos_data.split()).astype(np.float64)
-
-# Calculate the torques
-torques = calculate_inverse_dynamics_torques(sim, joint_movement, velocities, accelerations)
-torques = torques[:,-24:]
 
 trajecroty = []
 torso_position = []

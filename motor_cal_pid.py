@@ -37,21 +37,28 @@ def data_smooth(data):
         data[:,i] = smoothed_data[:,0]
     return data
 
-# Function to calculate torques using inverse dynamics
-def calculate_inverse_dynamics_torques(sim, positions, velocities, accelerations):
-    torques = []
-    for qpos, qvel, qacc in zip(positions, velocities, accelerations):
-        # Set the state
-        sim.data.qpos[-24:] = qpos
-        sim.data.qvel[-24:] = qvel
-        sim.data.qacc[-24:] = qacc
-        
-        # Calculate inverse dynamics
-        mujoco_py.functions.mj_inverse(model, sim.data)
-        
-        # Append the calculated torques
-        torques.append(sim.data.qfrc_inverse.copy())
+# smooth the torques
+class PIDController:
+    def __init__(self, kp, ki, kd):
+        self.kp = kp
+        self.ki = ki
+        self.kd = kd
+        self.prev_error = 0
+        self.integral = 0
     
+    def compute(self, setpoint, measurement, dt):
+        error = setpoint - measurement
+        self.integral += error * dt
+        derivative = (error - self.prev_error) / dt
+        output = self.kp * error + self.ki * self.integral + self.kd * derivative
+        self.prev_error = error
+        return output
+
+def calculate_torques(desired_angles, current_angles, dt, pid_controllers):
+    torques = []
+    for i, pid in enumerate(pid_controllers):
+        torque = pid.compute(desired_angles[i], current_angles[i], dt)
+        torques.append(torque)
     return np.array(torques)
 
 
@@ -62,15 +69,9 @@ joint_path = os.path.join("expert_data_builder/stick_insect", animal,
 joint_movement = pd.read_csv(joint_path, header=[0], index_col=None).to_numpy()
 joint_movement = data_smooth(joint_movement) # smooth the data
 
-dt = 0.005  # The timestep of your data
-# Calculate velocities and accelerations
-velocities = np.diff(joint_movement, axis=0) / dt
-accelerations = np.diff(velocities, axis=0) / dt
-# Pad the arrays to match the length of the original data
-velocities = np.vstack((velocities, np.zeros((1, velocities.shape[1]))))
-accelerations = np.vstack((accelerations, np.zeros((2, accelerations.shape[1]))))
-
-print(joint_movement.shape, velocities.shape, accelerations.shape)
+# Initialize PID controllers for each joint
+num_joints = joint_movement.shape[1]
+pid_controllers = [PIDController(kp=30000, ki=0, kd=0) for _ in range(num_joints)]
 
 #  Set up simulation without rendering
 model_name = config_data.get("model")
@@ -79,6 +80,23 @@ model = mujoco_py.load_model_from_path(model_path)
 sim = mujoco_py.MjSim(model)
 viewer = mujoco_py.MjViewer(sim)
 
-# Calculate torques for the whole trajectory
-torques = calculate_inverse_dynamics_torques(sim, joint_movement, velocities, accelerations)
-print(torques.shape)
+trajecroty = []
+torso_position = []
+for j in range(2459): # 2459 is the length of each trajectory
+
+    joint_angle = np.deg2rad(joint_movement[j])
+    desired_angles = joint_angle[j]
+    current_angles = sim.data.qpos[-num_joints:]  # Get current joint angles
+    dt = sim.model.opt.timestep
+    
+    torques = calculate_torques(desired_angles, current_angles, dt, pid_controllers)
+    print("torques", torques.shape)
+    
+    # Apply torques to actuators
+    sim.data.ctrl[:] = torques
+    
+    sim.step()
+
+    # Optional: Render the simulation
+    viewer = mujoco_py.MjViewer(sim)
+    viewer.render()

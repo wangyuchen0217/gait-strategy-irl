@@ -38,7 +38,7 @@ def data_smooth(data):
         data[:,i] = smoothed_data[:,0]
     return data
 
-# smooth the torques
+# calculate the torques
 class PIDController:
     def __init__(self, kp, ki, kd):
         self.kp = kp
@@ -103,6 +103,9 @@ for j in range(2459): # 2459 is the length of each trajectory
     joint_angle = np.deg2rad(joint_movement[j])
     desired_angles = joint_angle
     current_angles = sim.data.qpos[-24:]  # Get current joint angles
+    if j == 0:
+        print("current_angles:", current_angles)
+        print("desired_angles:", desired_angles)
     dt = sim.model.opt.timestep
     torques = calculate_torques(desired_angles, current_angles, dt, pid_controllers)
     

@@ -14,17 +14,6 @@ from pykalman import KalmanFilter
 with open("configs/irl.yml", "r") as f:
     config_data = yaml.safe_load(f)
 
-# normalization
-def data_scale(data):
-    scaler = MinMaxScaler(feature_range=(-1, 1)).fit(data)
-    data_scaled = scaler.transform(data)
-    return data_scaled
-
-def normalize(data):
-    for i in range(data.shape[1]):
-        data[:,i] = data_scale(data[:,i].reshape(-1,1)).reshape(-1)
-    return data
-
 # smooth the data
 def Kalman1D(observations,damping=1):
     observation_covariance = damping

@@ -15,6 +15,17 @@ import xml.etree.ElementTree as ET
 with open("configs/irl.yml", "r") as f:
     config_data = yaml.safe_load(f)
 
+# normalization
+def data_scale(data):
+    scaler = MinMaxScaler(feature_range=(-1, 1)).fit(data)
+    data_scaled = scaler.transform(data)
+    return data_scaled
+
+def normalize(data):
+    for i in range(data.shape[1]):
+        data[:,i] = data_scale(data[:,i].reshape(-1,1)).reshape(-1)
+    return data
+
 # smooth the data
 def Kalman1D(observations,damping=1):
     observation_covariance = damping
@@ -47,7 +58,7 @@ forces = pd.read_csv(forces_path, header=[0], index_col=None).to_numpy()
 forces = data_smooth(forces) # smooth the data
 
 # calcuate the torque data
-
+torques = normalize(forces)
 
 #  Set up simulation without rendering
 model_name = config_data.get("model")
@@ -73,7 +84,7 @@ torso_position = []
 for j in range(2459): # 2459 is the length of each trajectory
 
     # implement the motor data
-    sim.data.ctrl[:] = forces[j]
+    sim.data.ctrl[:] = torques[j]
     sim.step()
     viewer.render()
     state = np.hstack((sim.get_state().qpos.copy()[-24:], 

@@ -105,11 +105,45 @@ trajectories = np.array([trajecroty]) # [1, 2459, 24]
 print("expert_demo:", trajectories.shape)
 # np.save("StickInect-v0.npy", trajectories)
 
+# Function to get the body ID associated with a sensor
+def get_sensor_body_id(sensor_name):
+    sensor_id = model.sensor_name2id(sensor_name)
+    return model.sensor_objid[sensor_id]
+
+# Function to transform torque from sensor frame to joint frame
+def transform_torque(sensor_name, torque_vec):
+    sensor_id = model.sensor_name2id(sensor_name)
+    body_id = model.sensor_objid[sensor_id]
+    # Get the rotation matrix from sensor frame to world frame
+    sensor_rot = sim.data.get_site_xmat(sensor_name).reshape(3, 3)
+    # Get the rotation matrix from world frame to joint frame
+    body_rot = sim.data.get_body_xmat(body_id).reshape(3, 3)
+    # Transform torque vector
+    world_torque = np.dot(sensor_rot, torque_vec)
+    joint_torque = np.dot(body_rot.T, world_torque)
+    return joint_torque
+
+# Function to process all timesteps of torque data
+def process_all_timesteps(torques):
+    all_transformed_torque = []
+    for timestep_data in torques:
+        transformed_torque_data = np.array([transform_torque(sensor_names[i], timestep_data[i]) for i in range(24)])
+        all_transformed_torque.append(transformed_torque_data)
+    return np.array(all_transformed_torque)
+
 # record the torques
 torques = np.array(torques) # [2459, 72]
+torques = torques.reshape(-1, 24, 3) # [2459, 24, 3]
+sensor_names =  ["LF_Sup_site","LM_Sup_site","LH_Sup_site","RF_Sup_site","RM_Sup_site","RH_Sup_site",
+                                    "LF_CTr_site","LM_CTr_site","LH_CTr_site","RF_CTr_site","RM_CTr_site","RH_CTr_site",
+                                    "LF_ThC_site","LM_ThC_site","LH_ThC_site","RF_ThC_site","RM_ThC_site","RH_ThC_site",
+                                    "LF_FTi_site","LM_FTi_site","LH_FTi_site","RF_FTi_site","RM_FTi_site","RH_FTi_site"]
+transformed_torques = process_all_timesteps(torques) 
+print("transformed_torque_data:", transformed_torques.shape)
+
 torque_save_path = os.path.join("expert_data_builder/stick_insect", animal, 
                                                 "Animal12_110415_00_22_torques.csv")
-pd.DataFrame(torques).to_csv(torque_save_path, index=False, header=None)
+pd.DataFrame(transformed_torques).to_csv(torque_save_path, index=False, header=None)
 
 # record the torso position
 # plt.figure()

@@ -1,4 +1,4 @@
-model: StickInsect-v1
+model: StickInsect-v2
 learning_rate: 0.001
 epochs: 1000
 

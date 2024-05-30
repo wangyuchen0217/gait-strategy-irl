@@ -41,10 +41,13 @@ def data_smooth(data):
 
 '''firl-stickinsect-v1'''
 animal = "Carausius"
-torques_path = os.path.join("expert_data_builder/stick_insect", animal, 
-                                                "Animal12_110415_00_22_torques.csv")
-torques = pd.read_csv(torques_path, header=[0], index_col=None).to_numpy()
-torques = data_smooth(torques) # smooth the data
+forces_path = os.path.join("expert_data_builder/stick_insect", animal, 
+                                                "Animal12_110415_00_22_forces.csv")
+forces = pd.read_csv(forces_path, header=[0], index_col=None).to_numpy()
+forces = data_smooth(forces) # smooth the data
+
+# calcuate the torque data
+
 
 #  Set up simulation without rendering
 model_name = config_data.get("model")
@@ -70,7 +73,7 @@ torso_position = []
 for j in range(2459): # 2459 is the length of each trajectory
 
     # implement the motor data
-    sim.data.ctrl[:] = torques[j]
+    sim.data.ctrl[:] = forces[j]
     sim.step()
     viewer.render()
     state = np.hstack((sim.get_state().qpos.copy()[-24:], 

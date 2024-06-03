@@ -207,7 +207,7 @@
   </actuator>
 
   <sensor>
-    <actuatorfrc actuator="LF_Sup" name="LF_Sup"/>
+    <!-- <actuatorfrc actuator="LF_Sup" name="LF_Sup"/>
     <actuatorfrc actuator="LM_Sup" name="LM_Sup"/>
     <actuatorfrc actuator="LH_Sup" name="LH_Sup"/>
     <actuatorfrc actuator="RF_Sup" name="RF_Sup"/>
@@ -233,9 +233,9 @@
     <actuatorfrc actuator="LH_FTi" name="LH_FTi"/>
     <actuatorfrc actuator="RF_FTi" name="RF_FTi"/>
     <actuatorfrc actuator="RM_FTi" name="RM_FTi"/>
-    <actuatorfrc actuator="RH_FTi" name="RH_FTi"/>
+    <actuatorfrc actuator="RH_FTi" name="RH_FTi"/> -->
 
-    <!-- <jointactuatorfrc joint="LF_Sup" name="LF_Sup"/>
+    <jointactuatorfrc joint="LF_Sup" name="LF_Sup"/>
     <jointactuatorfrc joint="LM_Sup" name="LM_Sup"/>
     <jointactuatorfrc joint="LH_Sup" name="LH_Sup"/>
     <jointactuatorfrc joint="RF_Sup" name="RF_Sup"/>
@@ -261,7 +261,7 @@
     <jointactuatorfrc joint="LH_FTi" name="LH_FTi"/>
     <jointactuatorfrc joint="RF_FTi" name="RF_FTi"/>
     <jointactuatorfrc joint="RM_FTi" name="RM_FTi"/>
-    <jointactuatorfrc joint="RH_FTi" name="RH_FTi"/> -->
+    <jointactuatorfrc joint="RH_FTi" name="RH_FTi"/>
 
     <!-- <torque site="LF_Sup_site" name="LF_Sup"/>
     <torque site="LM_Sup_site" name="LM_Sup"/>

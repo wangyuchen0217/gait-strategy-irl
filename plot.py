@@ -5,8 +5,6 @@ import pandas as pd
 import numpy as np
 from pykalman import KalmanFilter
 
-'''joint movement & forces'''
-
 # smooth the data
 def Kalman1D(observations,damping=1):
     observation_covariance = damping
@@ -29,6 +27,37 @@ def data_smooth(data):
         smoothed_data = Kalman1D(data[:,i], damping=1).reshape(-1,1)
         data[:,i] = smoothed_data[:,0]
     return data
+
+'''smoothed data'''
+joint_path = 'expert_data_builder/stick_insect/Carausius/Animal12_110415_00_22.csv'
+joint_movement = pd.read_csv(joint_path, header=[0], index_col=None).to_numpy()
+joint_movement_unsmoothed = joint_movement.copy()
+joint_movement = data_smooth(joint_movement)
+# subplot
+fig, axs = plt.subplots(2, 1, figsize=(15, 10))
+plt.subplots_adjust(hspace=0.5)
+axs[0].plot(joint_movement_unsmoothed[:,0], label='Sup')
+axs[0].plot(joint_movement_unsmoothed[:,6], label='CTr')
+axs[0].plot(joint_movement_unsmoothed[:,12], label='ThC')
+axs[0].plot(joint_movement_unsmoothed[:,18], label='FTi')
+axs[0].set_xlabel('Frame', fontsize=12)
+axs[0].set_ylabel('Joint Movement', fontsize=12)
+axs[0].set_title('Carausius_110415_00_22_joint_movement', fontsize=12)
+axs[0].legend()
+axs[0].grid()
+
+axs[1].plot(joint_movement[:,0])
+axs[1].plot(joint_movement[:,6])
+axs[1].plot(joint_movement[:,12])
+axs[1].plot(joint_movement[:,18])
+axs[1].set_xlabel('Frame', fontsize=12)
+axs[1].set_ylabel('Joint Movement_smooth', fontsize=12)
+axs[1].set_title('Carausius_110415_00_22_joint_movement_smooth', fontsize=12)
+axs[1].grid()
+# plt.show()
+plt.savefig('Carausius_110415_00_22_joint_movement.png')
+
+'''joint movement & forces'''
 
 # read the data
 joint_path = 'expert_data_builder/stick_insect/Carausius/Animal12_110415_00_22.csv'

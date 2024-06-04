@@ -55,10 +55,10 @@ animal = "Carausius"
 forces_path = os.path.join("expert_data_builder/stick_insect", animal, 
                                                 "Animal12_110415_00_22_forces.csv")
 forces = pd.read_csv(forces_path, header=[0], index_col=None).to_numpy()
-forces = data_smooth(forces) # smooth the data
+forces_smoothed = data_smooth(forces) # smooth the data
 
 # calcuate the torque data
-torques = normalize(forces)
+torques = forces_smoothed
 
 #  Set up simulation without rendering
 model_name = config_data.get("model")
@@ -104,6 +104,31 @@ for j in range(2459): # 2459 is the length of each trajectory
 trajectories = np.array([trajecroty]) # [1, 2459, 24]
 print("expert_demo:", trajectories.shape)
 # np.save("StickInect-v0.npy", trajectories)
+
+# plot and compare the data
+joint_path = os.path.join("expert_data_builder/stick_insect", animal,   
+                                                "Animal12_110415_00_22_joint_movement.csv")
+joint_movement = pd.read_csv(joint_path, header=[0], index_col=None).to_numpy()
+
+fig, axs = plt.subplots(3, 1, figsize=(15, 10))
+axs[0].plot(joint_movement[:,12])
+axs[0].set_xlabel('Frame')
+axs[0].set_ylabel('Joint Movement')
+axs[0].set_title('Carausius_110415_00_22_joint_movement')
+axs[0].grid()
+
+axs[1].plot(forces[:,12])
+axs[1].set_xlabel('Frame')
+axs[1].set_ylabel('Forces')
+axs[1].set_title('Carausius_110415_00_22_forces')
+axs[1].grid()
+
+axs[2].plot(forces_smoothed[:,12])
+axs[2].set_xlabel('Frame')
+axs[2].set_ylabel('Forces_smooth')
+axs[2].set_title('Carausius_110415_00_22_forces_smooth')
+axs[2].grid()
+plt.show()
 
 # record the torso position
 # plt.figure()

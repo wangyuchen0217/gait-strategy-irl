@@ -3,6 +3,60 @@
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
+from pykalman import KalmanFilter
+
+'''joint movement & forces'''
+
+# smooth the data
+def Kalman1D(observations,damping=1):
+    observation_covariance = damping
+    initial_value_guess = observations[0]
+    transition_matrix = 1
+    transition_covariance = 0.03
+    initial_value_guess
+    kf = KalmanFilter(
+            initial_state_mean=initial_value_guess,
+            initial_state_covariance=observation_covariance,
+            observation_covariance=observation_covariance,
+            transition_covariance=transition_covariance,
+            transition_matrices=transition_matrix
+            )
+    pred_state, state_cov = kf.smooth(observations)
+    return pred_state
+
+def data_smooth(data):
+    for i in range(data.shape[1]):
+        smoothed_data = Kalman1D(data[:,i], damping=1).reshape(-1,1)
+        data[:,i] = smoothed_data[:,0]
+    return data
+
+# read the data
+joint_path = 'expert_data_builder/stick_insect/Carausius/Animal12_110415_00_22.csv'
+joint_movement = pd.read_csv(joint_path, header=[0], index_col=None).to_numpy()
+forces_path = 'expert_data_builder/stick_insect/Carausius/Animal12_110415_00_22_forces.csv'
+forces = pd.read_csv(forces_path, header=[0], index_col=None).to_numpy()
+forces_smooth = data_smooth(forces)
+
+# subplot
+fig, axs = plt.subplots(3, 1, figsize=(15, 10))
+axs[0].plot(joint_movement[:,12])
+axs[0].set_xlabel('Frame')
+axs[0].set_ylabel('Joint Movement')
+axs[0].set_title('Carausius_110415_00_22_joint_movement')
+axs[0].grid()
+
+axs[1].plot(forces[:,12])
+axs[1].set_xlabel('Frame')
+axs[1].set_ylabel('Forces')
+axs[1].set_title('Carausius_110415_00_22_forces')
+axs[1].grid()
+
+axs[2].plot(forces_smooth[:,12])
+axs[2].set_xlabel('Frame')
+axs[2].set_ylabel('Forces_smooth')
+axs[2].set_title('Carausius_110415_00_22_forces_smooth')
+axs[2].grid()
+plt.show()
 
 '''direction'''
 
@@ -52,4 +106,4 @@ plt.xlabel('X')
 plt.ylabel('Y')
 plt.title('c21_0680_trajectory')
 plt.grid()
-plt.savefig('c21_0680_trajectory.png')
+# plt.savefig('c21_0680_trajectory.png')

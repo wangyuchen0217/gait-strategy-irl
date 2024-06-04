@@ -35,23 +35,24 @@ joint_path = 'expert_data_builder/stick_insect/Carausius/Animal12_110415_00_22.c
 joint_movement = pd.read_csv(joint_path, header=[0], index_col=None).to_numpy()
 forces_path = 'expert_data_builder/stick_insect/Carausius/Animal12_110415_00_22_forces.csv'
 forces = pd.read_csv(forces_path, header=[0], index_col=None).to_numpy()
-forces_smooth = data_smooth(forces)
+forces_unsmoothed = forces.copy()
+forces = data_smooth(forces)
 
 # subplot
-fig, axs = plt.subplots(3, 1, figsize=(15, 10))
-axs[0].plot(joint_movement[:,12])
+fig, axs = plt.subplots(3, 1, figsize=(15, 15))
+axs[0].plot(joint_movement[:,14])
 axs[0].set_xlabel('Frame')
 axs[0].set_ylabel('Joint Movement')
 axs[0].set_title('Carausius_110415_00_22_joint_movement')
 axs[0].grid()
 
-axs[1].plot(forces[:,12])
+axs[1].plot(forces_unsmoothed[:,14])
 axs[1].set_xlabel('Frame')
 axs[1].set_ylabel('Forces')
 axs[1].set_title('Carausius_110415_00_22_forces')
 axs[1].grid()
 
-axs[2].plot(forces_smooth[:,12])
+axs[2].plot(forces[:,14])
 axs[2].set_xlabel('Frame')
 axs[2].set_ylabel('Forces_smooth')
 axs[2].set_title('Carausius_110415_00_22_forces_smooth')

@@ -91,7 +91,7 @@ for j in range(2459): # 2459 is the length of each trajectory
     trajecroty.append(state) # [2459,24]
     torso_position.append(sim.data.qpos[:3].copy()) # [2459,3]
     # get data of the torques sensor
-    forces.append(sim.data.sensordata.copy())
+    # forces.append(sim.data.sensordata.copy())
 
     # record the initial position
     if j == 0:
@@ -103,16 +103,16 @@ for j in range(2459): # 2459 is the length of each trajectory
 # record each trails
 trajectories = np.array([trajecroty]) # [1, 2459, 24]
 print("expert_demo:", trajectories.shape)
-# np.save("StickInect-v0.npy", trajectories)
+np.save("StickInect-v0.npy", trajectories)
 
 # record the forces data
-forces = np.array(forces) # [2459, 24]
-print("forces:", forces.shape)
-forces_save_path = os.path.join("expert_data_builder/stick_insect", animal, "Animal12_110415_00_22_jointforces.csv")
-pd.DataFrame(forces).to_csv(forces_save_path, header=["LF_sup", "LM_sup", "LH_sup", "RF_sup", "RM_sup", "RH_sup",
-                                                                    "LF_CTr", "LM_CTr", "LH_CTr", "RF_CTr", "RM_CTr", "RH_CTr",
-                                                                    "LF_ThC", "LM_ThC", "LH_ThC", "RF_ThC", "RM_ThC", "RH_ThC",
-                                                                    "LF_FTi", "LM_FTi", "LH_FTi", "RF_FTi", "RM_FTi", "RH_FTi"], index=None)
+# forces = np.array(forces) # [2459, 24]
+# print("forces:", forces.shape)
+# forces_save_path = os.path.join("expert_data_builder/stick_insect", animal, "Animal12_110415_00_22_jointforces.csv")
+# pd.DataFrame(forces).to_csv(forces_save_path, header=["LF_sup", "LM_sup", "LH_sup", "RF_sup", "RM_sup", "RH_sup",
+#                                                                     "LF_CTr", "LM_CTr", "LH_CTr", "RF_CTr", "RM_CTr", "RH_CTr",
+#                                                                     "LF_ThC", "LM_ThC", "LH_ThC", "RF_ThC", "RM_ThC", "RH_ThC",
+#                                                                     "LF_FTi", "LM_FTi", "LH_FTi", "RF_FTi", "RM_FTi", "RH_FTi"], index=None)
 
 # record the torso position
 # plt.figure()

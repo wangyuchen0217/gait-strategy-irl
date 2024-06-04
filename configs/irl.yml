@@ -1,6 +1,6 @@
 # StickInsect-v0: PosVel
 # StickInsect-v1: Motor
 # StickInsect-v2: PosVel sensor
-model: StickInsect-v1
+model: StickInsect-v0
 learning_rate: 0.001
 epochs: 1000

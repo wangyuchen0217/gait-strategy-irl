@@ -111,7 +111,7 @@ for j in range(2459): # 2459 is the length of each trajectory
 # record each trails
 trajectories = np.array([trajecroty]) # [1, 2459, 24]
 print("expert_demo:", trajectories.shape)
-# np.save("StickInect-v0.npy", trajectories)
+# np.save("StickInsect-v0.npy", trajectories)
 
 # plot and compare the data
 # joint_path = os.path.join("expert_data_builder/stick_insect", animal,   

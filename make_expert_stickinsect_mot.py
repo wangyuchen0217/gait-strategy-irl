@@ -59,7 +59,14 @@ forces_unsmoothed = forces.copy()
 forces = data_smooth(forces) # smooth the data
 
 # calcuate the torque data
-torques = forces
+leg_lengths = np.array([0.13, 0.14, 0.15, 0.13, 0.14, 0.15, 
+                        0.13, 0.14, 0.15, 0.13, 0.14, 0.15, 
+                        1.58, 1.16, 1.39, 1.58, 1.16, 1.39, 
+                        1.5, 1.12, 1.41, 1.5, 1.12, 1.41])
+torques = np.zeros(forces.shape)
+for i in range(len(forces)):
+    torques[i] = forces[i] * leg_lengths
+print("torques:", torques.shape)
 
 #  Set up simulation without rendering
 model_name = config_data.get("model")
@@ -107,30 +114,30 @@ print("expert_demo:", trajectories.shape)
 # np.save("StickInect-v0.npy", trajectories)
 
 # plot and compare the data
-joint_path = os.path.join("expert_data_builder/stick_insect", animal,   
-                                                "Animal12_110415_00_22.csv")
-joint_movement = pd.read_csv(joint_path, header=[0], index_col=None).to_numpy()
+# joint_path = os.path.join("expert_data_builder/stick_insect", animal,   
+#                                                 "Animal12_110415_00_22.csv")
+# joint_movement = pd.read_csv(joint_path, header=[0], index_col=None).to_numpy()
 
-fig, axs = plt.subplots(3, 1, figsize=(15, 10))
-plt.subplots_adjust(hspace=0.5)
-axs[0].plot(joint_movement[:,12])
-axs[0].set_xlabel('Frame', fontsize=14)
-axs[0].set_ylabel('Joint Movement', fontsize=14)
-axs[0].set_title('Carausius_110415_00_22_joint_movement', fontsize=14)
-axs[0].grid()
+# fig, axs = plt.subplots(3, 1, figsize=(15, 10))
+# plt.subplots_adjust(hspace=0.5)
+# axs[0].plot(joint_movement[:,12])
+# axs[0].set_xlabel('Frame', fontsize=14)
+# axs[0].set_ylabel('Joint Movement', fontsize=14)
+# axs[0].set_title('Carausius_110415_00_22_joint_movement', fontsize=14)
+# axs[0].grid()
 
-axs[1].plot(forces[:,12])
-axs[1].set_xlabel('Frame', fontsize=14)
-axs[1].set_ylabel('Forces_smooth', fontsize=14)
-axs[1].set_title('Carausius_110415_00_22_forces_smooth', fontsize=14)
-axs[1].grid()
+# axs[1].plot(forces[:,12])
+# axs[1].set_xlabel('Frame', fontsize=14)
+# axs[1].set_ylabel('Forces_smooth', fontsize=14)
+# axs[1].set_title('Carausius_110415_00_22_forces_smooth', fontsize=14)
+# axs[1].grid()
 
-axs[2].plot(forces_unsmoothed[:,12])
-axs[2].set_xlabel('Frame', fontsize=14)
-axs[2].set_ylabel('Forces', fontsize=14)
-axs[2].set_title('Carausius_110415_00_22_forces', fontsize=14)
-axs[2].grid()
-plt.savefig("Carausius_110415_00_22.png")
+# axs[2].plot(forces_unsmoothed[:,12])
+# axs[2].set_xlabel('Frame', fontsize=14)
+# axs[2].set_ylabel('Forces', fontsize=14)
+# axs[2].set_title('Carausius_110415_00_22_forces', fontsize=14)
+# axs[2].grid()
+# plt.savefig("Carausius_110415_00_22.png")
 
 # record the torso position
 # plt.figure()

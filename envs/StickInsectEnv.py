@@ -13,8 +13,8 @@ class CricketEnv(mujoco_env.MujocoEnv, utils.EzPickle):
         self.r = r
         self.prev_obs = None
         # Import xml document
-        self.model = mujoco_py.load_model_from_path("/home/yuchen/Crickets_Walking_IRL/envs/assets/StickInsect-v1.xml")
-        mujoco_env.MujocoEnv.__init__(self, '/home/yuchen/Crickets_Walking_IRL/envs/assets/StickInsect-v1.xml', 2)
+        self.model = mujoco_py.load_model_from_path("/home/yuchen/Crickets_Walking_IRL/envs/assets/StickInsect-v0.xml")
+        mujoco_env.MujocoEnv.__init__(self, '/home/yuchen/Crickets_Walking_IRL/envs/assets/StickInsect-v0.xml', 2)
         # Call MjSim to build a basic simulation
         self.sim = mujoco_py.MjSim(self.model)
         # Set up the viewer
@@ -60,9 +60,8 @@ class CricketEnv(mujoco_env.MujocoEnv, utils.EzPickle):
 
     def _get_obs(self):
         return np.concatenate([
-            self.sim.data.qpos.flat[-48:],
-            self.sim.data.qvel.flat[-48:],
-            np.clip(self.sim.data.cfrc_ext, -1, 1).flat,
+            self.sim.data.qpos.flat[-24:],
+            self.sim.data.qvel.flat[-24:]
         ])
     
     def reset_model(self):

@@ -101,7 +101,7 @@ for j in range(2459): # 2459 is the length of each trajectory
         print("initail_pos:", initail_pos)
 
 # record each trails
-trajectories = np.array([trajecroty]) # [1, 2459, 24]
+trajectories = np.array([trajecroty]) # [1, 2459, 48]
 print("expert_demo:", trajectories.shape)
 # np.save("StickInect-v0.npy", trajectories)
 

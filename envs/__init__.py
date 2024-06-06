@@ -18,6 +18,6 @@ register(
 )
 
 register(
-    id = 'StickInsect-v0',
+    id='StickInsect-v0',
     entry_point='envs.StickInsectEnv:StickInsectEnv',
 )

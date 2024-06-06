@@ -16,3 +16,8 @@ register(
     id='CricketEnv2D-v0',
     entry_point='envs.CricketEnv2D:CricketEnv2D'
 )
+
+register(
+    id = 'StickInsect-v0',
+    entry_point='envs.StickInsectEnv:StickInsectEnv',
+)

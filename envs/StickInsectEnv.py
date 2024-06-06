@@ -2,8 +2,9 @@ import numpy as np
 from gym import utils
 from gym.envs.mujoco import mujoco_env
 import mujoco_py
+from gym import spaces
 
-class CricketEnv(mujoco_env.MujocoEnv, utils.EzPickle):
+class StickInsectEnv(mujoco_env.MujocoEnv, utils.EzPickle):
     def __init__(self, max_timesteps=500, r=None):
         # super(lab_env, self).__init__(env)
         utils.EzPickle.__init__(self)
@@ -20,9 +21,9 @@ class CricketEnv(mujoco_env.MujocoEnv, utils.EzPickle):
         # Set up the viewer
         self.viewer = mujoco_py.MjViewer(self.sim)
         # Set up the action space
-        #self.action_space = mujoco_env.MujocoEnv(self.model).action_space
+        self.action_space = spaces.Box(low=-np.pi, high=np.pi, shape=(48,), dtype=np.float32)
         # Set up the observation space
-        #self.observation_space = mujoco_env.MujocoEnv(self.model).observation_space
+        self.observation_space = spaces.Box(low=-np.inf, high=np.inf, shape=(48,), dtype=np.float32)
         # Set up the initial position and velocity
         self.init_qpos = self.sim.data.qpos.ravel().copy()
         self.init_qvel = self.sim.data.qvel.ravel().copy()
@@ -83,7 +84,7 @@ class CricketEnv(mujoco_env.MujocoEnv, utils.EzPickle):
 
 
 if __name__ == "__main__":
-    env = CricketEnv(max_timesteps=500)
+    env = StickInsectEnv(max_timesteps=500)
 
     for _ in range(1000):
         env.render()

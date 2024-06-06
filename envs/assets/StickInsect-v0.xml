@@ -3,10 +3,10 @@
   <option integrator="RK4" timestep="0.005"/> <!-- frequency [200,50] -->
 
   <custom>
-    <numeric data="0.10681971 -0.20482576 0.76341401 0.92561184 0.18595086 0.18452993 
-0.78049568 0.01004119 0.00413513 -0.03130112 -0.18171205 0.21024531 
--0.19540428 0.15524787 -0.6086322 0.4715757 -0.23915008 0.06885989 
--1.01172582 0.99137151 0.1567984 0.60833356 -0.45790772 -0.41003116 " name="init_qpos"/>
+    <numeric data="0.10681971 -0.20482576 0.76341401 0.92561184 0.18595086 0.18452993  
+0.78049568 0.01004119 0.00413513 -0.03130112 -0.18171205 0.21024531  
+-0.19540428 0.15524787 -0.6086322 0.4715757 -0.23915008 0.06885989  
+-1.01172582 0.99137151 0.1567984 0.60833356 -0.45790772 -0.41003116" name="init_qpos"/>
   </custom>
 
   <default>
@@ -34,7 +34,7 @@
       <geom name="T1_geom" pos="0 0 0" fromto="0.0 0.0 0.0 -0.38 0.0 -0.08" size="0.06" type="capsule"/>
       <geom name="T2_geom" pos="0 0 0" fromto="-0.38 0.0 -0.08 -2.1 0.0 -0.46" size="0.06" type="capsule"/>
       <geom name="T3_geom" pos="0 0 0" fromto="-2.1 0.0 -0.46 -3.3 0.0 -0.56" size="0.06" type="capsule"/>
-      <!-- <joint armature="0" damping="0" limited="false" margin="0.01" name="root" pos="0 0 0" type="free"/> -->
+      <joint armature="0" damping="0" limited="false" margin="0.01" name="root" pos="0 0 0" type="free"/>
 
       <body name="LF_leg" pos="-0.19 0 -0.04">
         <geom fromto="0.0 0.0 0.0 0.0 0.13 0.0" name="LF_cox_geom" size="0.05" type="capsule"/>
@@ -125,33 +125,33 @@
   </worldbody>
 
   <actuator>
-    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="LF_Sup" gear="1" kp="100"/>
-    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="LM_Sup" gear="1" kp="100"/>
-    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="LH_Sup" gear="1" kp="100"/>
-    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="RF_Sup" gear="1" kp="100"/>
-    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="RM_Sup" gear="1" kp="100"/>
-    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="RH_Sup" gear="1" kp="100"/>
+    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="LF_Sup" gear="1" kp="30000"/>
+    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="LM_Sup" gear="1" kp="30000"/>
+    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="LH_Sup" gear="1" kp="30000"/>
+    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="RF_Sup" gear="1" kp="30000"/>
+    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="RM_Sup" gear="1" kp="30000"/>
+    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="RH_Sup" gear="1" kp="30000"/>
 
-    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="LF_CTr" gear="1" kp="100"/>
-    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="LM_CTr" gear="1" kp="100"/>
-    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="LH_CTr" gear="1" kp="100"/>
-    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="RF_CTr" gear="1" kp="100"/>
-    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="RM_CTr" gear="1" kp="100"/>
-    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="RH_CTr" gear="1" kp="100"/>
+    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="LF_CTr" gear="1" kp="30000"/>
+    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="LM_CTr" gear="1" kp="30000"/>
+    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="LH_CTr" gear="1" kp="30000"/>
+    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="RF_CTr" gear="1" kp="30000"/>
+    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="RM_CTr" gear="1" kp="30000"/>
+    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="RH_CTr" gear="1" kp="30000"/>
 
-    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="LF_ThC" gear="1" kp="100"/>
-    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="LM_ThC" gear="1" kp="100"/>
-    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="LH_ThC" gear="1" kp="100"/>
-    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="RF_ThC" gear="1" kp="100"/>
-    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="RM_ThC" gear="1" kp="100"/>
-    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="RH_ThC" gear="1" kp="100"/>
+    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="LF_ThC" gear="1" kp="30000"/>
+    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="LM_ThC" gear="1" kp="30000"/>
+    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="LH_ThC" gear="1" kp="30000"/>
+    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="RF_ThC" gear="1" kp="30000"/>
+    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="RM_ThC" gear="1" kp="30000"/>
+    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="RH_ThC" gear="1" kp="30000"/>
 
-    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="LF_FTi" gear="1" kp="100"/>
-    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="LM_FTi" gear="1" kp="100"/>
-    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="LH_FTi" gear="1" kp="100"/>
-    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="RF_FTi" gear="1" kp="100"/>
-    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="RM_FTi" gear="1" kp="100"/>
-    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="RH_FTi" gear="1" kp="100"/>
+    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="LF_FTi" gear="1" kp="30000"/>
+    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="LM_FTi" gear="1" kp="30000"/>
+    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="LH_FTi" gear="1" kp="30000"/>
+    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="RF_FTi" gear="1" kp="30000"/>
+    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="RM_FTi" gear="1" kp="30000"/>
+    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="RH_FTi" gear="1" kp="30000"/>
 
     <velocity joint="LF_Sup" gear="1"/>
     <velocity joint="LM_Sup" gear="1"/>

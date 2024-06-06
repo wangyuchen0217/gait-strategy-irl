@@ -1,38 +1,30 @@
 import numpy as np
-import gymnasium as gym
-from gymnasium import utils
-from gymnasium.envs.mujoco import MujocoEnv
+from gym import utils
+from gym.envs.mujoco import mujoco_env
 import mujoco_py
-from gymnasium import spaces
+from gym import spaces
 
-class StickInsectEnv(MujocoEnv, utils.EzPickle):
+class StickInsectEnv(mujoco_env.MujocoEnv, utils.EzPickle):
     def __init__(self, max_timesteps=500, r=None):
+        # super(lab_env, self).__init__(env)
         utils.EzPickle.__init__(self)
-        self.metadata = {"render_modes": ["human"]}  # Example render modes
-
         self.timesteps = 0
-        self.max_timesteps = max_timesteps
+        self.max_timesteps=max_timesteps
+        # Set up the reward network
         self.r = r
-
-        # Define the action and observation space before initialization
-        num_joints = 24  # Adjust based on your specific environment
-        self.action_space = spaces.Box(low=-np.pi, high=np.pi, shape=(num_joints,), dtype=np.float32)
-        high = np.inf * np.ones(num_joints * 2)
-        low = -high
-        self.observation_space = spaces.Box(low=low, high=high, dtype=np.float32)
-
-        # Load the model from path
-        model_path = '/home/yuchen/Crickets_Walking_IRL/envs/assets/StickInsect-v0.xml'
-        self.model = mujoco_py.load_model_from_path(model_path)
-        
-        print("Metadata set:", self.metadata)
-
-        # Initialize the MujocoEnv
-        MujocoEnv.__init__(self, model_path=model_path, frame_skip=2, observation_space=self.observation_space)
-
-        # Further setup if necessary
+        self.prev_obs = None
+        # Import xml document
+        self.model = mujoco_py.load_model_from_path("/home/yuchen/Crickets_Walking_IRL/envs/assets/StickInsect-v0.xml")
+        mujoco_env.MujocoEnv.__init__(self, '/home/yuchen/Crickets_Walking_IRL/envs/assets/StickInsect-v0.xml', 2)
+        # Call MjSim to build a basic simulation
         self.sim = mujoco_py.MjSim(self.model)
+        # Set up the viewer
         self.viewer = mujoco_py.MjViewer(self.sim)
+        # Set up the action space
+        # self.action_space = spaces.Box(low=-np.pi, high=np.pi, shape=(48,), dtype=np.float32)
+        # Set up the observation space
+        # self.observation_space = spaces.Box(low=-np.inf, high=np.inf, shape=(48,), dtype=np.float32)
+        # Set up the initial position and velocity
         self.init_qpos = self.sim.data.qpos.ravel().copy()
         self.init_qvel = self.sim.data.qvel.ravel().copy()
 

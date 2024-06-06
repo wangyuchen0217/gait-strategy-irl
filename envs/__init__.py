@@ -19,5 +19,5 @@ register(
 
 register(
     id='StickInsect-v0',
-    entry_point='envs.StickInsectEnv:StickInsectEnv',
+    entry_point='envs.StickInsectEnv:StickInsectEnv'
 )

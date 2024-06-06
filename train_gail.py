@@ -1,24 +1,24 @@
 import numpy as np
-import gymnasium as gym
+import gym
 from stable_baselines3 import PPO
 from stable_baselines3.common.evaluation import evaluate_policy
 from stable_baselines3.ppo import MlpPolicy
 
 from imitation.algorithms.adversarial.gail import GAIL
+from stable_baselines3.common.vec_env import DummyVecEnv
 from imitation.data import rollout
 from imitation.data.wrappers import RolloutInfoWrapper
 from imitation.policies.serialize import load_policy
 from imitation.rewards.reward_nets import BasicRewardNet
 from imitation.util.networks import RunningNorm
 from imitation.util.util import make_vec_env
-
 import envs
 
 SEED = 42
 
 # Create the environment
 env = gym.make('StickInsect-v0')
-env = make_vec_env(lambda: env, n_envs=1)  # Wrap the env to be compatible with SB3
+env = DummyVecEnv([lambda: RolloutInfoWrapper(env)])
 
 # Load the expert dataset
 expert = np.load('expert/StickInsect-v0.npy', allow_pickle=True)

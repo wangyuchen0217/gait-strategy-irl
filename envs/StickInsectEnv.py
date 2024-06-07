@@ -81,7 +81,7 @@ class StickInsectEnv(MuJocoPyEnv, utils.EzPickle):
         self.viewer.cam.distance = self.model.stat.extent * 0.5
 
 if __name__ == "__main__":
-    env = StickInsectEnv()
+    env = StickInsectEnv(render_mode='human')
     env.reset()
 
     # print the observation space and action space

@@ -35,7 +35,7 @@ next_observations[-1] = observations[-1]   # Handle boundary by replicating the 
 dones = np.zeros(len(observations), dtype=bool)
 dones[-1] = True  # Mark the last timestep as terminal
 
-# 
+# transit the data to types.Transitions
 transitions = types.Transitions(
     obs=observations,
     acts=actions,

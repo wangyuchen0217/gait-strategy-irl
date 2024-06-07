@@ -1,4 +1,5 @@
 import numpy as np
+import gymnasium as gym
 from gymnasium import utils
 from gymnasium.envs.mujoco import MuJocoPyEnv
 from gymnasium.spaces import Box

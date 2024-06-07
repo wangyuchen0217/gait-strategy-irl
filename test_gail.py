@@ -24,25 +24,22 @@ env = DummyVecEnv([lambda: RolloutInfoWrapper(env)])
 # Reset the environment and get the initial observation
 obs = env.reset()
 
-# Print the observation space and action space
-# print("Observation Space:", env.observation_space)
-# print("Observation Space Shape:", env.observation_space.shape)
-# print("Action Space:", env.action_space)
-# print("Action Space Shape:", env.action_space.shape)
-
 # Initialize variables to store cumulative reward and done flag
 cumulative_reward = 0
 done = False
+step_count = 0
 
-# Run the policy until the episode is done
-while not done:
+# Run the policy until the episode is done or a maximum number of steps
+max_steps = 500  # Set a reasonable number of steps to prevent infinite loops
+
+while not done and step_count < max_steps:
     action, _states = loaded_policy.predict(obs, deterministic=True)  # Get the action from the policy
-    obs, rewards, done, info = env.step(action)  # Take the action in the environment
-    cumulative_reward += rewards[0]  # Sum up the rewards
-    print(f"Action: {action}, Reward: {rewards}, Done: {done}")
-
-    # Optionally, render the environment to visualize what's happening
-    env.render()  # Uncomment this if the environment supports rendering
+    obs, reward, done, info = env.step(action)  # Take the action in the environment
+    cumulative_reward += reward  # Sum up the rewards
+    print(f"Step: {step_count}, Action: {action}, Reward: {reward}, Done: {done}")
+    
+    env.render()  
+    step_count += 1
 
 print("Total reward for this episode:", cumulative_reward)
 

@@ -1,99 +1,78 @@
 import numpy as np
-import gymnasium as gym
 from gymnasium import utils
-from gymnasium.envs.mujoco import MujocoEnv
-import mujoco_py
-from gymnasium import spaces
+from gymnasium.envs.mujoco import MuJocoPyEnv
+from gymnasium.spaces import Box
 
-class StickInsectEnv(MujocoEnv, utils.EzPickle):
-    def __init__(self, max_timesteps=500, r=None):
-        utils.EzPickle.__init__(self)
-        self.metadata = {"render_modes": ["human"]}  # Example render modes
+class StickInsectEnv(MuJocoPyEnv, utils.EzPickle):
+    metadata = {
+        "render_modes": [
+            "human",
+            "rgb_array",
+            "depth_array",
+        ],
+        "render_fps":  100,
+    }
 
-        self.timesteps = 0
-        self.max_timesteps = max_timesteps
-        self.r = r
+    def __init__(self, **kwargs):
+        observation_space = Box(
+            low=-np.inf, high=np.inf, shape=(48,), dtype=np.float64
+        )
+        MuJocoPyEnv.__init__(
+            self, "/home/yuchen/Crickets_Walking_IRL/envs/assets/StickInsect-v0.xml", 2, observation_space=observation_space, **kwargs
+        )
+        utils.EzPickle.__init__(self, **kwargs)
 
-        # Define the action and observation space before initialization
-        num_joints = 24  # Adjust based on your specific environment
-        self.action_space = spaces.Box(low=-np.pi, high=np.pi, shape=(num_joints,), dtype=np.float32)
-        high = np.inf * np.ones(num_joints * 2)
-        low = -high
-        self.observation_space = spaces.Box(low=low, high=high, dtype=np.float32)
+    def step(self, a):
+        xposbefore = self.get_body_com("torso")[0]
+        self.do_simulation(a, self.frame_skip)
+        xposafter = self.get_body_com("torso")[0]
 
-        # Load the model from path
-        model_path = '/home/yuchen/Crickets_Walking_IRL/envs/assets/StickInsect-v0.xml'
-        self.model = mujoco_py.load_model_from_path(model_path)
-        
-        print("Metadata set:", self.metadata)
-
-        # Initialize the MujocoEnv
-        MujocoEnv.__init__(self, model_path=model_path, frame_skip=2, observation_space=self.observation_space)
-
-        # Further setup if necessary
-        self.sim = mujoco_py.MjSim(self.model)
-        self.viewer = mujoco_py.MjViewer(self.sim)
-        self.init_qpos = self.sim.data.qpos.ravel().copy()
-        self.init_qvel = self.sim.data.qvel.ravel().copy()
-
-    def step(self, action):
-        vel = self.sim.data.qvel.flat[0]
-        forward_reward = vel
-        if (self._get_obs is not None) and (self.r is not None):
-            reward_network = self.r(self._get_obs().copy())
-        else:
-            reward_network = 0
-        self.do_simulation(action, self.frame_skip)
-
-        ctrl_cost = .01 * np.square(action).sum()
-        contact_cost = 0.5 * 1e-3 * np.sum(
-            np.square(np.clip(self.sim.data.cfrc_ext, -1, 1)))
+        forward_reward = (xposafter - xposbefore) / self.dt
+        ctrl_cost = 0.5 * np.square(a).sum()
+        contact_cost = (
+            0.5 * 1e-3 * np.sum(np.square(np.clip(self.sim.data.cfrc_ext, -1, 1)))
+        )
+        survive_reward = 1.0
+        reward = forward_reward - ctrl_cost - contact_cost + survive_reward
         state = self.state_vector()
-        flipped = not (state[2] >= 0.2) 
-        flipped_rew = -1 if flipped else 0
-        reward = forward_reward - ctrl_cost - contact_cost +flipped_rew
-
-        if self.r is not None:
-            # print(reward_network)
-            reward = reward_network
-        # self.prev_obs = self._get_obs().copy()
-        self.timesteps += 1
-        done = self.timesteps >= self.max_timesteps
-
+        not_terminated = (
+            np.isfinite(state).all() and state[2] >= 0.2 and state[2] <= 1.0
+        )
+        terminated = not not_terminated
         ob = self._get_obs()
-        return ob, reward, done, dict(
-            reward_forward=forward_reward,
-            reward_ctrl=-ctrl_cost,
-            reward_contact=-contact_cost,
-            reward_flipped=flipped_rew)
+
+        if self.render_mode == "human":
+            self.render()
+        # truncation=False as the time limit is handled by the `TimeLimit` wrapper added during `make`
+        return (
+            ob,
+            reward,
+            terminated,
+            False,
+            dict(
+                reward_forward=forward_reward,
+                reward_ctrl=-ctrl_cost,
+                reward_contact=-contact_cost,
+                reward_survive=survive_reward,
+            ),
+        )
 
     def _get_obs(self):
-        return np.concatenate([
-            self.sim.data.qpos.flat[-24:],
-            self.sim.data.qvel.flat[-24:]
-        ])
-    
+        return np.concatenate(
+            [
+                self.sim.data.qpos.flat[-24:],
+                self.sim.data.qvel.flat[-24:]
+            ]
+        )
+
     def reset_model(self):
-        self.timesteps = 0
-        qpos = self.init_qpos + self.np_random.uniform(size=self.model.nq, low=-.1, high=.1)
-        qvel = self.init_qvel + self.np_random.randn(self.model.nv) * .1
+        qpos = self.init_qpos + self.np_random.uniform(
+            size=self.model.nq, low=-0.1, high=0.1
+        )
+        qvel = self.init_qvel + self.np_random.standard_normal(self.model.nv) * 0.1
         self.set_state(qpos, qvel)
-        self.prev_obs = self._get_obs().copy()
         return self._get_obs()
 
     def viewer_setup(self):
+        assert self.viewer is not None
         self.viewer.cam.distance = self.model.stat.extent * 0.5
-
-    def log_diagnostics(self, paths):
-        forward_rew = np.array([np.mean(traj['env_infos']['reward_forward']) for traj in paths])
-        reward_ctrl = np.array([np.mean(traj['env_infos']['reward_ctrl']) for traj in paths])
-        reward_cont = np.array([np.mean(traj['env_infos']['reward_contact']) for traj in paths])
-        reward_flip = np.array([np.mean(traj['env_infos']['reward_flipped']) for traj in paths])
-
-
-if __name__ == "__main__":
-    env = StickInsectEnv(max_timesteps=500)
-
-    for _ in range(1000):
-        env.render()
-        env.step(env.action_space.sample())

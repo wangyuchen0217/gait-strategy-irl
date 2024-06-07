@@ -1,5 +1,5 @@
 import numpy as np
-import gym
+import gymnasium as gym
 from stable_baselines3 import PPO
 from stable_baselines3.common.evaluation import evaluate_policy
 from stable_baselines3.ppo import MlpPolicy
@@ -12,6 +12,7 @@ from imitation.policies.serialize import load_policy
 from imitation.rewards.reward_nets import BasicRewardNet
 from imitation.util.networks import RunningNorm
 from imitation.util.util import make_vec_env
+from imitation.data import types
 import envs
 
 SEED = 42
@@ -34,14 +35,15 @@ next_observations[-1] = observations[-1]   # Handle boundary by replicating the 
 dones = np.zeros(len(observations), dtype=bool)
 dones[-1] = True  # Mark the last timestep as terminal
 
-# Assuming expert contains structured data for GAIL
-demonstrations = {
-    'obs': observations,
-    'acts': actions,
-    'next_obs': next_observations,
-    'dones': dones,
-    'infos': [{} for _ in range(len(observations))]
-}
+# 
+transitions = types.Transitions(
+    obs=observations,
+    acts=actions,
+    next_obs=next_observations,
+    dones=dones,
+    infos=[{} for _ in range(len(observations))]
+)
+
 
 learner = PPO(
     env=env,
@@ -60,7 +62,7 @@ reward_net = BasicRewardNet(
 )
 
 gail_trainer = GAIL(
-    demonstrations=demonstrations,
+    demonstrations=transitions,
     demo_batch_size=1024,
     gen_replay_buffer_capacity=512,
     n_disc_updates_per_round=8,

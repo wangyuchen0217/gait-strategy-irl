@@ -4,3 +4,6 @@
 model: StickInsect-v0
 learning_rate: 0.001
 epochs: 1000
+
+# SrickInsect-v0: PosVel w/o torso
+# StickInsect-v1: PosVel w/ torso

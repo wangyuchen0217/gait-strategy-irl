@@ -16,13 +16,8 @@ class StickInsectEnv(MuJocoPyEnv, utils.EzPickle):
 
     def __init__(self, **kwargs):
         observation_space = Box(
-            low=np.concatenate((np.full(24, -np.pi), np.full(24, -np.inf))),
-            high=np.concatenate((np.full(24, np.pi), np.full(24, np.inf))),
-            dtype=np.float64
-        )
-        action_space = Box(
-            low=np.concatenate((np.full(24, -np.pi), np.full(24, -np.inf))),
-            high=np.concatenate((np.full(24, np.pi), np.full(24, np.inf))),
+            low=np.concatenate((np.full(7, -np.inf), np.full(24, -np.pi), np.full(6, -np.inf), np.full(24, -np.inf))),
+            high=np.concatenate((np.full(7, np.inf), np.full(24, np.pi), np.full(6, np.inf), np.full(24, np.inf))),
             dtype=np.float64
         )
         MuJocoPyEnv.__init__(
@@ -68,8 +63,8 @@ class StickInsectEnv(MuJocoPyEnv, utils.EzPickle):
     def _get_obs(self):
         return np.concatenate(
             [
-                self.sim.data.qpos.flat[-24:],
-                self.sim.data.qvel.flat[-24:]
+                self.sim.data.qpos.flat[:],
+                self.sim.data.qvel.flat[:]
             ]
         )
 
@@ -84,3 +79,18 @@ class StickInsectEnv(MuJocoPyEnv, utils.EzPickle):
     def viewer_setup(self):
         assert self.viewer is not None
         self.viewer.cam.distance = self.model.stat.extent * 0.5
+
+if __name__ == "__main__":
+    env = StickInsectEnv()
+    env.reset()
+
+    # print the observation space and action space
+    print("observation space:", env.observation_space)
+    print("observation space shape:", env.observation_space.shape)
+    print("action space:", env.action_space)
+    print("action space shape:", env.action_space.shape)
+
+    for _ in range(1000):
+        env.step(env.action_space.sample())
+        env.render()
+    env.close()

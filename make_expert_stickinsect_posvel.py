@@ -75,7 +75,6 @@ for custom in root.findall('custom'):
 sim.data.qpos[-24:] = np.array(init_qpos_data.split()).astype(np.float64)
 
 trajecroty = []
-torso_position = []
 forces = []
 for j in range(2459): # 2459 is the length of each trajectory
 
@@ -85,11 +84,10 @@ for j in range(2459): # 2459 is the length of each trajectory
     sim.data.ctrl[24:] = velocities[j]
     sim.step()
     viewer.render()
-    state = np.hstack((sim.get_state().qpos.copy()[-24:], 
-                                        sim.get_state().qvel.copy()[-24:]))
+    state = np.hstack((sim.get_state().qpos.copy()[:], # [-24:] joint angles, [:] w/ torso 
+                                        sim.get_state().qvel.copy()[:])) # [-24:] joint velocities, [:] w/ torso
     # record the state of each step
-    trajecroty.append(state) # [2459,24]
-    torso_position.append(sim.data.qpos[:3].copy()) # [2459,3]
+    trajecroty.append(state) # [2459,48] only joint angles and velocities, [2459, 61] w/ torso
     # get data of the torques sensor
     # forces.append(sim.data.sensordata.copy())
 
@@ -101,9 +99,9 @@ for j in range(2459): # 2459 is the length of each trajectory
         print("initail_pos:", initail_pos)
 
 # record each trails
-trajectories = np.array([trajecroty]) # [1, 2459, 48]
+trajectories = np.array([trajecroty]) # [1, 2459, 48] only joint angles and velocities, [1, 2459, 61] w/ torso
 print("expert_demo:", trajectories.shape)
-# np.save("StickInect-v0.npy", trajectories)
+np.save("StickInect-v1.npy", trajectories)
 
 # record the forces data
 # forces = np.array(forces) # [2459, 24]
@@ -113,14 +111,3 @@ print("expert_demo:", trajectories.shape)
 #                                                                     "LF_CTr", "LM_CTr", "LH_CTr", "RF_CTr", "RM_CTr", "RH_CTr",
 #                                                                     "LF_ThC", "LM_ThC", "LH_ThC", "RF_ThC", "RM_ThC", "RH_ThC",
 #                                                                     "LF_FTi", "LM_FTi", "LH_FTi", "RF_FTi", "RM_FTi", "RH_FTi"], index=None)
-
-# record the torso position
-# plt.figure()
-# torso_position = np.array(torso_position)
-# plt.plot(torso_position[:,0], torso_position[:,1])
-# plt.xlabel("x")
-# plt.ylabel("y")
-# plt.title("c21_0680_trajectory_simulated")
-# plt.grid()
-# plt.show()
-# # plt.savefig("c21_0680_002_3.png")

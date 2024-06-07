@@ -153,33 +153,33 @@
     <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="RM_FTi" gear="1" kp="30000"/>
     <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="RH_FTi" gear="1" kp="30000"/>
 
-    <velocity joint="LF_Sup" gear="1" ctrllimited="true" ctrlrange="-300 300"/>
-    <velocity joint="LM_Sup" gear="1" ctrllimited="true" ctrlrange="-300 300"/>
-    <velocity joint="LH_Sup" gear="1" ctrllimited="true" ctrlrange="-300 300"/>
-    <velocity joint="RF_Sup" gear="1" ctrllimited="true" ctrlrange="-300 300"/>
-    <velocity joint="RM_Sup" gear="1" ctrllimited="true" ctrlrange="-300 300"/>
-    <velocity joint="RH_Sup" gear="1" ctrllimited="true" ctrlrange="-300 300"/>
+    <velocity joint="LF_Sup" gear="1" ctrllimited="true" ctrlrange="-600 600"/>
+    <velocity joint="LM_Sup" gear="1" ctrllimited="true" ctrlrange="-600 600"/>
+    <velocity joint="LH_Sup" gear="1" ctrllimited="true" ctrlrange="-600 600"/>
+    <velocity joint="RF_Sup" gear="1" ctrllimited="true" ctrlrange="-600 600"/>
+    <velocity joint="RM_Sup" gear="1" ctrllimited="true" ctrlrange="-600 600"/>
+    <velocity joint="RH_Sup" gear="1" ctrllimited="true" ctrlrange="-600 600"/>
 
-    <velocity joint="LF_CTr" gear="1" ctrllimited="true" ctrlrange="-300 300"/>
-    <velocity joint="LM_CTr" gear="1" ctrllimited="true" ctrlrange="-300 300"/>
-    <velocity joint="LH_CTr" gear="1" ctrllimited="true" ctrlrange="-300 300"/>
-    <velocity joint="RF_CTr" gear="1" ctrllimited="true" ctrlrange="-300 300"/>
-    <velocity joint="RM_CTr" gear="1" ctrllimited="true" ctrlrange="-300 300"/>
-    <velocity joint="RH_CTr" gear="1" ctrllimited="true" ctrlrange="-300 300"/>
+    <velocity joint="LF_CTr" gear="1" ctrllimited="true" ctrlrange="-600 600"/>
+    <velocity joint="LM_CTr" gear="1" ctrllimited="true" ctrlrange="-600 600"/>
+    <velocity joint="LH_CTr" gear="1" ctrllimited="true" ctrlrange="-600 600"/>
+    <velocity joint="RF_CTr" gear="1" ctrllimited="true" ctrlrange="-600 600"/>
+    <velocity joint="RM_CTr" gear="1" ctrllimited="true" ctrlrange="-600 600"/>
+    <velocity joint="RH_CTr" gear="1" ctrllimited="true" ctrlrange="-600 600"/>
 
-    <velocity joint="LF_ThC" gear="1" ctrllimited="true" ctrlrange="-300 300"/>
-    <velocity joint="LM_ThC" gear="1" ctrllimited="true" ctrlrange="-300 300"/>
-    <velocity joint="LH_ThC" gear="1" ctrllimited="true" ctrlrange="-300 300"/>
-    <velocity joint="RF_ThC" gear="1" ctrllimited="true" ctrlrange="-300 300"/>
-    <velocity joint="RM_ThC" gear="1" ctrllimited="true" ctrlrange="-300 300"/>
-    <velocity joint="RH_ThC" gear="1" ctrllimited="true" ctrlrange="-300 300"/>
+    <velocity joint="LF_ThC" gear="1" ctrllimited="true" ctrlrange="-600 600"/>
+    <velocity joint="LM_ThC" gear="1" ctrllimited="true" ctrlrange="-600 600"/>
+    <velocity joint="LH_ThC" gear="1" ctrllimited="true" ctrlrange="-600 600"/>
+    <velocity joint="RF_ThC" gear="1" ctrllimited="true" ctrlrange="-600 600"/>
+    <velocity joint="RM_ThC" gear="1" ctrllimited="true" ctrlrange="-600 600"/>
+    <velocity joint="RH_ThC" gear="1" ctrllimited="true" ctrlrange="-600 600"/>
 
-    <velocity joint="LF_FTi" gear="1" ctrllimited="true" ctrlrange="-300 300"/>
-    <velocity joint="LM_FTi" gear="1" ctrllimited="true" ctrlrange="-300 300"/>
-    <velocity joint="LH_FTi" gear="1" ctrllimited="true" ctrlrange="-300 300"/>
-    <velocity joint="RF_FTi" gear="1" ctrllimited="true" ctrlrange="-300 300"/>
-    <velocity joint="RM_FTi" gear="1" ctrllimited="true" ctrlrange="-300 300"/>
-    <velocity joint="RH_FTi" gear="1" ctrllimited="true" ctrlrange="-300 300"/>
+    <velocity joint="LF_FTi" gear="1" ctrllimited="true" ctrlrange="-600 600"/>
+    <velocity joint="LM_FTi" gear="1" ctrllimited="true" ctrlrange="-600 600"/>
+    <velocity joint="LH_FTi" gear="1" ctrllimited="true" ctrlrange="-600 600"/>
+    <velocity joint="RF_FTi" gear="1" ctrllimited="true" ctrlrange="-600 600"/>
+    <velocity joint="RM_FTi" gear="1" ctrllimited="true" ctrlrange="-600 600"/>
+    <velocity joint="RH_FTi" gear="1" ctrllimited="true" ctrlrange="-600 600"/>
   </actuator>
 
 </mujoco>

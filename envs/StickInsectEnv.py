@@ -15,7 +15,14 @@ class StickInsectEnv(MuJocoPyEnv, utils.EzPickle):
 
     def __init__(self, **kwargs):
         observation_space = Box(
-            low=-np.inf, high=np.inf, shape=(48,), dtype=np.float64
+            low=np.concatenate((np.full(24, -np.pi), np.full(24, -np.inf))),
+            high=np.concatenate((np.full(24, np.pi), np.full(24, np.inf))),
+            dtype=np.float64
+        )
+        action_space = Box(
+            low=np.concatenate((np.full(24, -np.pi), np.full(24, -np.inf))),
+            high=np.concatenate((np.full(24, np.pi), np.full(24, np.inf))),
+            dtype=np.float64
         )
         MuJocoPyEnv.__init__(
             self, "/home/yuchen/Crickets_Walking_IRL/envs/assets/StickInsect-v0.xml", 2, observation_space=observation_space, **kwargs

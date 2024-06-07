@@ -19,10 +19,16 @@ import envs
 loaded_policy = PPO.load("trained_policy_gail")
 
 # Create and wrap the environment
-env = gym.make('StickInsect-v0')
+env = gym.make('StickInsect-v0',  render_mode='human')
 env = DummyVecEnv([lambda: RolloutInfoWrapper(env)])
 # Reset the environment and get the initial observation
 obs = env.reset()
+
+# Print the observation space and action space
+# print("Observation Space:", env.observation_space)
+# print("Observation Space Shape:", env.observation_space.shape)
+# print("Action Space:", env.action_space)
+# print("Action Space Shape:", env.action_space.shape)
 
 # Initialize variables to store cumulative reward and done flag
 cumulative_reward = 0
@@ -33,6 +39,7 @@ while not done:
     action, _states = loaded_policy.predict(obs, deterministic=True)  # Get the action from the policy
     obs, rewards, done, info = env.step(action)  # Take the action in the environment
     cumulative_reward += rewards[0]  # Sum up the rewards
+    print(f"Action: {action}, Reward: {rewards}, Done: {done}")
 
     # Optionally, render the environment to visualize what's happening
     env.render()  # Uncomment this if the environment supports rendering

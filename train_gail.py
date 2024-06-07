@@ -22,11 +22,11 @@ env = gym.make('StickInsect-v0')
 env = DummyVecEnv([lambda: RolloutInfoWrapper(env)])
 
 # Load the expert dataset
-expert = np.load('expert/StickInsect-v0.npy', allow_pickle=True)
+expert = np.load('expert/StickInsect-v1.npy', allow_pickle=True)
 
 # Extract observations and "actions" (which are the next observations in this context)
 observations = expert[0, :-1, :]  # Exclude the last step to avoid indexing error
-actions = expert[0, 1:, :]        # Shift by one to get the "next" step as the action
+actions = expert[0, 1:, -48:]        # Shift by one to get the "next" step as the action
 
 # The last observation won't have a corresponding "next" action
 next_observations = np.roll(observations, -1, axis=0)

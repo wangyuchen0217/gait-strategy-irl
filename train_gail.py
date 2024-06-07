@@ -44,7 +44,7 @@ transitions = types.Transitions(
     infos=[{} for _ in range(len(observations))]
 )
 
-
+# Create the learner (Proximal Policy Optimization)
 learner = PPO(
     env=env,
     policy=MlpPolicy,
@@ -56,11 +56,13 @@ learner = PPO(
     seed=SEED,
 )
 
+# Create the reward network
 reward_net = BasicRewardNet(
     observation_space=env.observation_space,
     action_space=env.action_space,
 )
 
+# Create the GAIL trainer
 gail_trainer = GAIL(
     demonstrations=transitions,
     demo_batch_size=1024,
@@ -83,6 +85,9 @@ env.seed(SEED)
 learner_rewards_after_training, _ = evaluate_policy(
     learner, env, 100, return_episode_rewards=True,
 )
+
+# save the trained model
+learner.save("trained_policy_gail")
 
 print("mean reward after training:", np.mean(learner_rewards_after_training))
 print("mean reward before training:", np.mean(learner_rewards_before_training))

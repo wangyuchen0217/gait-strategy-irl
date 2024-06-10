@@ -1,3 +1,7 @@
+import os
+os.environ["CUDA_VISIBLE_DEVICES"] = "0"
+import sys
+sys.path.append("./") # add the root directory to the python path
 import numpy as np
 import gymnasium as gym
 from stable_baselines3 import PPO

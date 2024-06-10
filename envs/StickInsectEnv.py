@@ -21,7 +21,7 @@ class StickInsectEnv(MuJocoPyEnv, utils.EzPickle):
             dtype=np.float64
         )
         MuJocoPyEnv.__init__(
-            self, "/home/yuchen/Crickets_Walking_IRL/envs/assets/StickInsect-v0.xml", 2, observation_space=observation_space, **kwargs
+            self, "/home/yuchen/insect_walking_irl/envs/assets/StickInsect-v0.xml", 2, observation_space=observation_space, **kwargs
         )
         utils.EzPickle.__init__(self, **kwargs)
 

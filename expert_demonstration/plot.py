@@ -1,5 +1,6 @@
 # plot the data from expert_data_builder/movement/c21/PIC0680_Heading_direction.csv
-
+import sys
+sys.path.append("./") # add the root directory to the python path
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np

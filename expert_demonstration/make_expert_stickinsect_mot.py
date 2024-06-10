@@ -52,23 +52,43 @@ def data_smooth(data):
     return data
 
 
-'''firl-stickinsect-v1'''
-animal = "Carausius"
-forces_path = os.path.join("expert_data_builder/stick_insect", animal, 
-                                                "Animal12_110415_00_22_forces.csv")
-forces = pd.read_csv(forces_path, header=[0], index_col=None).to_numpy()
-forces_unsmoothed = forces.copy()
-forces = data_smooth(forces) # smooth the data
+'''actuatorfrc'''
+# animal = "Carausius"
+# forces_path = os.path.join("expert_data_builder/stick_insect", animal, 
+#                                                 "Animal12_110415_00_22_forces.csv")
+# forces = pd.read_csv(forces_path, header=[0], index_col=None).to_numpy()
+# forces_unsmoothed = forces.copy()
+# forces = data_smooth(forces) # smooth the data
 
-# calcuate the torque data
-leg_lengths = np.array([0.13, 0.14, 0.15, 0.13, 0.14, 0.15, 
-                        3.21, 2.42, 2.95, 3.21, 2.42, 2.95, 
-                        1.58, 1.16, 1.39, 1.58, 1.16, 1.39, 
-                        1.5, 1.12, 1.41, 1.5, 1.12, 1.41])
-torques = np.zeros(forces.shape)
-for i in range(len(forces)):
-    torques[i] = forces[i] * leg_lengths
+# # calcuate the torque data
+# leg_lengths = np.array([0.13, 0.14, 0.15, 0.13, 0.14, 0.15, 
+#                         3.21, 2.42, 2.95, 3.21, 2.42, 2.95, 
+#                         1.58, 1.16, 1.39, 1.58, 1.16, 1.39, 
+#                         1.5, 1.12, 1.41, 1.5, 1.12, 1.41])
+# torques = np.zeros(forces.shape)
+# for i in range(len(forces)):
+#     torques[i] = forces[i] * leg_lengths
+# print("torques:", torques.shape)
+
+'''torque'''
+animal = "Carausius"
+torques_path = os.path.join("expert_data_builder/stick_insect", animal, 
+                                                "Animal12_110415_00_22_torques.csv")
+torques = pd.read_csv(torques_path, header=None, index_col=None).to_numpy()
 print("torques:", torques.shape)
+
+# convert the generalized data to scalar values
+torque_scalars = np.zeros((torques.shape[0], torques.shape[1]//3))
+for i in range(torques.shape[0]):
+    for j in range(0, torques.shape[1], 3):
+        idx = j//3
+        torque_scalars[i,idx]= np.sqrt(torques[i,j]**2 + torques[i,j+1]**2 + torques[i,j+2]**2)
+print("torque_scalars:", torque_scalars.shape)
+
+torques_unsmoothed = torques.copy()
+torques = data_smooth(torques) # smooth the data
+torques_scalar_unsmoothed = torque_scalars.copy()
+torques_scalar = data_smooth(torque_scalars) # smooth the data
 
 #  Set up simulation without rendering
 model_name = config_data.get("model")
@@ -89,34 +109,17 @@ for custom in root.findall('custom'):
             break
 sim.data.qpos[-24:] = np.array(init_qpos_data.split()).astype(np.float64)
 
-# Define PD controller parameters
-Kp = 0.5  # Proportional gain
-Kd = 0.1  # Derivative gain
-target_positions = np.zeros(24)  # Assuming 24 joints, adjust as necessary
-
 trajecroty = []
-torq= []
-pd_torque = []
 for j in range(2459): # 2459 is the length of each trajectory
-    current_positions = sim.data.qpos[-24:]  # Current joint positions
-    current_velocities = sim.data.qvel[-24:]  # Current joint velocities
-    position_error = target_positions - current_positions  # Position error
-    velocity_error = -current_velocities  # Velocity error (damping term)
-
-    # Calculate torques using PD control
-    pd_torques = Kp * position_error + Kd * velocity_error
-    total_torques = torques[j] + pd_torques
 
     # implement the motor data
-    sim.data.ctrl[:] = total_torques
+    sim.data.ctrl[:] = torques_scalar[j]
     sim.step()
     # viewer.render()
     state = np.hstack((sim.get_state().qpos.copy()[-24:], 
                                         sim.get_state().qvel.copy()[-24:]))
     # record the state of each step
     trajecroty.append(state) # [2459,24]
-    torq.append(total_torques) # [2459,24]
-    pd_torque.append(pd_torques) # [2459,24]
 
     # record the initial position
     if j == 0:
@@ -130,62 +133,75 @@ trajectories = np.array([trajecroty]) # [1, 2459, 24]
 print("expert_demo:", trajectories.shape)
 # np.save("StickInsect-v0.npy", trajectories)
 
-# subplot the torque data and torq
-torq = np.array(torq)
-pd_torques = np.array(pd_torque)
-fig, axs = plt.subplots(3, 1, figsize=(15, 10))
+joint_path = os.path.join("expert_data_builder/stick_insect", animal,   
+                                                "Animal12_110415_00_22.csv")
+joint_movement = pd.read_csv(joint_path, header=[0], index_col=None).to_numpy()
+
+fig, axs = plt.subplots(3, 1, figsize=(15, 12))
 plt.subplots_adjust(hspace=0.5)
 axs[0].plot(torques[:,0])
-axs[0].plot(torques[:,6])
-axs[0].plot(torques[:,12])
 axs[0].plot(torques[:,18])
+axs[0].plot(torques[:,36])
+axs[0].plot(torques[:,54])
 axs[0].set_xlabel('Frame', fontsize=14)
-axs[0].set_ylabel('Torques', fontsize=14)
-axs[0].set_title('Carausius_110415_00_22_torques', fontsize=14)
+axs[0].set_ylabel('Torque_x', fontsize=14)
+axs[0].set_title('Carausius_110415_00_22_torque_x', fontsize=14)
 axs[0].grid()
+axs[0].legend(['Sup', 'CTr', 'ThC', 'FTi'])
 
-axs[1].plot(torq[:,0])
-axs[1].plot(torq[:,6])
-axs[1].plot(torq[:,12])
-axs[1].plot(torq[:,18])
+axs[1].plot(torques[:,1])
+axs[1].plot(torques[:,19])
+axs[1].plot(torques[:,37])
+axs[1].plot(torques[:,55])
 axs[1].set_xlabel('Frame', fontsize=14)
-axs[1].set_ylabel('Torq', fontsize=14)
-axs[1].set_title('Carausius_110415_00_22_torq', fontsize=14)
+axs[1].set_ylabel('Torque_y', fontsize=14)
+axs[1].set_title('Carausius_110415_00_22_torque_y', fontsize=14)
 axs[1].grid()
+axs[1].legend(['Sup', 'CTr', 'ThC', 'FTi'])
 
-axs[2].plot(pd_torques[:,0])
-axs[2].plot(pd_torques[:,6])
-axs[2].plot(pd_torques[:,12])
-axs[2].plot(pd_torques[:,18])
+axs[2].plot(torques[:,2])
+axs[2].plot(torques[:,20])
+axs[2].plot(torques[:,38])
+axs[2].plot(torques[:,56])
 axs[2].set_xlabel('Frame', fontsize=14)
-axs[2].set_ylabel('PD_Torques', fontsize=14)
-axs[2].set_title('Carausius_110415_00_22_pd_torques', fontsize=14)
+axs[2].set_ylabel('Torque_z', fontsize=14)
+axs[2].set_title('Carausius_110415_00_22_torque_z', fontsize=14)
 axs[2].grid()
-plt.show()
-
+axs[2].legend(['Sup', 'CTr', 'ThC', 'FTi'])
+plt.savefig("Carausius_110415_00_22_torque.png")
 
 # plot and compare the data
-# joint_path = os.path.join("expert_data_builder/stick_insect", animal,   
-#                                                 "Animal12_110415_00_22.csv")
-# joint_movement = pd.read_csv(joint_path, header=[0], index_col=None).to_numpy()
+joint_path = os.path.join("expert_data_builder/stick_insect", animal,   
+                                                "Animal12_110415_00_22.csv")
+joint_movement = pd.read_csv(joint_path, header=[0], index_col=None).to_numpy()
 
-# fig, axs = plt.subplots(3, 1, figsize=(15, 10))
-# plt.subplots_adjust(hspace=0.5)
-# axs[0].plot(joint_movement[:,12])
-# axs[0].set_xlabel('Frame', fontsize=14)
-# axs[0].set_ylabel('Joint Movement', fontsize=14)
-# axs[0].set_title('Carausius_110415_00_22_joint_movement', fontsize=14)
-# axs[0].grid()
+fig, axs = plt.subplots(3, 1, figsize=(15, 12))
+plt.subplots_adjust(hspace=0.5)
+axs[0].plot(joint_movement[:,0])
+axs[0].plot(joint_movement[:,6])
+axs[0].plot(joint_movement[:,12])
+axs[0].plot(joint_movement[:,18])
+axs[0].set_xlabel('Frame', fontsize=14)
+axs[0].set_ylabel('Joint Movement', fontsize=14)
+axs[0].set_title('Carausius_110415_00_22_joint_movement', fontsize=14)
+axs[0].grid()
+axs[0].legend(['Sup', 'CTr', 'ThC', 'FTi'])
 
-# axs[1].plot(forces[:,12])
-# axs[1].set_xlabel('Frame', fontsize=14)
-# axs[1].set_ylabel('Forces_smooth', fontsize=14)
-# axs[1].set_title('Carausius_110415_00_22_forces_smooth', fontsize=14)
-# axs[1].grid()
+axs[1].plot(torques_scalar[:,0])
+axs[1].plot(torques_scalar[:,6])
+axs[1].plot(torques_scalar[:,12])
+axs[1].plot(torques_scalar[:,18])
+axs[1].set_xlabel('Frame', fontsize=14)
+axs[1].set_ylabel('Torques_smooth', fontsize=14)
+axs[1].set_title('Carausius_110415_00_22_torques_smooth', fontsize=14)
+axs[1].grid()
 
-# axs[2].plot(forces_unsmoothed[:,12])
-# axs[2].set_xlabel('Frame', fontsize=14)
-# axs[2].set_ylabel('Forces', fontsize=14)
-# axs[2].set_title('Carausius_110415_00_22_forces', fontsize=14)
-# axs[2].grid()
-# plt.savefig("Carausius_110415_00_22.png")
+axs[2].plot(torques_scalar_unsmoothed[:,0])
+axs[2].plot(torques_scalar_unsmoothed[:,6])
+axs[2].plot(torques_scalar_unsmoothed[:,12])
+axs[2].plot(torques_scalar_unsmoothed[:,18])
+axs[2].set_xlabel('Frame', fontsize=14)
+axs[2].set_ylabel('Torques', fontsize=14)
+axs[2].set_title('Carausius_110415_00_22_torques', fontsize=14)
+axs[2].grid()
+plt.savefig("Carausius_110415_00_22.png")

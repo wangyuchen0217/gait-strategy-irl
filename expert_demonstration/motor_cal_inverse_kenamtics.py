@@ -121,14 +121,3 @@ for j in range(2459): # 2459 is the length of each trajectory
 trajectories = np.array([trajecroty]) # [1, 2459, 24]
 print("expert_demo:", trajectories.shape)
 # np.save("StickInect-v0.npy", trajectories)
-
-# record the torso position
-# plt.figure()
-# torso_position = np.array(torso_position)
-# plt.plot(torso_position[:,0], torso_position[:,1])
-# plt.xlabel("x")
-# plt.ylabel("y")
-# plt.title("c21_0680_trajectory_simulated")
-# plt.grid()
-# plt.show()
-# # plt.savefig("c21_0680_002_3.png")

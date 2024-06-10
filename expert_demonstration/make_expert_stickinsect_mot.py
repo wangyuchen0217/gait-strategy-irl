@@ -89,19 +89,32 @@ for custom in root.findall('custom'):
             break
 sim.data.qpos[-24:] = np.array(init_qpos_data.split()).astype(np.float64)
 
+# Define PD controller parameters
+Kp = 0.5  # Proportional gain
+Kd = 0.1  # Derivative gain
+target_positions = np.zeros(24)  # Assuming 24 joints, adjust as necessary
+
 trajecroty = []
-torso_position = []
+torq= []
 for j in range(2459): # 2459 is the length of each trajectory
+    current_positions = sim.data.qpos[-24:]  # Current joint positions
+    current_velocities = sim.data.qvel[-24:]  # Current joint velocities
+    position_error = target_positions - current_positions  # Position error
+    velocity_error = -current_velocities  # Velocity error (damping term)
+
+    # Calculate torques using PD control
+    pd_torques = Kp * position_error + Kd * velocity_error
+    total_torques = torques[j] + pd_torques
 
     # implement the motor data
-    sim.data.ctrl[:] = torques[j]
+    sim.data.ctrl[:] = total_torques
     sim.step()
-    viewer.render()
+    # viewer.render()
     state = np.hstack((sim.get_state().qpos.copy()[-24:], 
                                         sim.get_state().qvel.copy()[-24:]))
     # record the state of each step
     trajecroty.append(state) # [2459,24]
-    torso_position.append(sim.data.qpos[:3].copy()) # [2459,3]
+    torq.append(total_torques) # [2459,24]
 
     # record the initial position
     if j == 0:
@@ -114,6 +127,30 @@ for j in range(2459): # 2459 is the length of each trajectory
 trajectories = np.array([trajecroty]) # [1, 2459, 24]
 print("expert_demo:", trajectories.shape)
 # np.save("StickInsect-v0.npy", trajectories)
+
+# subplot the torque data and torq
+torq = np.array(torq)
+fig, axs = plt.subplots(2, 1, figsize=(15, 10))
+plt.subplots_adjust(hspace=0.5)
+axs[0].plot(torques[:,0])
+axs[0].plot(torques[:,6])
+axs[0].plot(torques[:,12])
+axs[0].plot(torques[:,18])
+axs[0].set_xlabel('Frame', fontsize=14)
+axs[0].set_ylabel('Torques', fontsize=14)
+axs[0].set_title('Carausius_110415_00_22_torques', fontsize=14)
+axs[0].grid()
+
+axs[1].plot(torq[:,0])
+axs[1].plot(torq[:,6])
+axs[1].plot(torq[:,12])
+axs[1].plot(torq[:,18])
+axs[1].set_xlabel('Frame', fontsize=14)
+axs[1].set_ylabel('Torq', fontsize=14)
+axs[1].set_title('Carausius_110415_00_22_torq', fontsize=14)
+axs[1].grid()
+plt.show()
+
 
 # plot and compare the data
 # joint_path = os.path.join("expert_data_builder/stick_insect", animal,   
@@ -140,14 +177,3 @@ print("expert_demo:", trajectories.shape)
 # axs[2].set_title('Carausius_110415_00_22_forces', fontsize=14)
 # axs[2].grid()
 # plt.savefig("Carausius_110415_00_22.png")
-
-# record the torso position
-# plt.figure()
-# torso_position = np.array(torso_position)
-# plt.plot(torso_position[:,0], torso_position[:,1])
-# plt.xlabel("x")
-# plt.ylabel("y")
-# plt.title("c21_0680_trajectory_simulated")
-# plt.grid()
-# plt.show()
-# # plt.savefig("c21_0680_002_3.png")

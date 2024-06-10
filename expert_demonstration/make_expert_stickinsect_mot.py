@@ -73,8 +73,8 @@ def data_smooth(data):
 '''torque'''
 animal = "Carausius"
 torques_path = os.path.join("expert_data_builder/stick_insect", animal, 
-                                                "Animal12_110415_00_22_torques.csv")
-torques = pd.read_csv(torques_path, header=None, index_col=None).to_numpy()
+                                                "Animal12_110415_00_22_torques_1.csv")
+torques = pd.read_csv(torques_path, header=[0], index_col=None).to_numpy()
 print("torques:", torques.shape)
 
 # # convert the generalized data to scalar values
@@ -85,17 +85,10 @@ print("torques:", torques.shape)
 #         torque_scalars[i,idx]= np.sqrt(torques[i,j]**2 + torques[i,j+1]**2 + torques[i,j+2]**2)
 # print("torque_scalars:", torque_scalars.shape)
 
-# torques_unsmoothed = torques.copy()
-# torques = data_smooth(torques) # smooth the data
+torques_unsmoothed = torques.copy()
+torques = data_smooth(torques) # smooth the data
 # torques_scalar_unsmoothed = torque_scalars.copy()
 # torques_scalar = data_smooth(torque_scalars) # smooth the data
-
-# take the value of certain axis from the torque data
-# sup uses the y-axis
-# CTr uses the x-axis
-# ThC uses the z-axis
-# FTi uses the x-axis
-
 
 #  Set up simulation without rendering
 model_name = config_data.get("model")
@@ -120,9 +113,9 @@ trajecroty = []
 for j in range(2459): # 2459 is the length of each trajectory
 
     # implement the motor data
-    sim.data.ctrl[:] = torques_scalar[j]
+    sim.data.ctrl[:] = torques[j]
     sim.step()
-    # viewer.render()
+    viewer.render()
     state = np.hstack((sim.get_state().qpos.copy()[-24:], 
                                         sim.get_state().qvel.copy()[-24:]))
     # record the state of each step

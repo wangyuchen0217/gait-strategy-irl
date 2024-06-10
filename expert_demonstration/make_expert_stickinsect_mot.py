@@ -62,7 +62,7 @@ forces = data_smooth(forces) # smooth the data
 
 # calcuate the torque data
 leg_lengths = np.array([0.13, 0.14, 0.15, 0.13, 0.14, 0.15, 
-                        0.13, 0.14, 0.15, 0.13, 0.14, 0.15, 
+                        3.21, 2.42, 2.95, 3.21, 2.42, 2.95, 
                         1.58, 1.16, 1.39, 1.58, 1.16, 1.39, 
                         1.5, 1.12, 1.41, 1.5, 1.12, 1.41])
 torques = np.zeros(forces.shape)
@@ -96,6 +96,7 @@ target_positions = np.zeros(24)  # Assuming 24 joints, adjust as necessary
 
 trajecroty = []
 torq= []
+pd_torque = []
 for j in range(2459): # 2459 is the length of each trajectory
     current_positions = sim.data.qpos[-24:]  # Current joint positions
     current_velocities = sim.data.qvel[-24:]  # Current joint velocities
@@ -115,6 +116,7 @@ for j in range(2459): # 2459 is the length of each trajectory
     # record the state of each step
     trajecroty.append(state) # [2459,24]
     torq.append(total_torques) # [2459,24]
+    pd_torque.append(pd_torques) # [2459,24]
 
     # record the initial position
     if j == 0:
@@ -130,7 +132,8 @@ print("expert_demo:", trajectories.shape)
 
 # subplot the torque data and torq
 torq = np.array(torq)
-fig, axs = plt.subplots(2, 1, figsize=(15, 10))
+pd_torques = np.array(pd_torque)
+fig, axs = plt.subplots(3, 1, figsize=(15, 10))
 plt.subplots_adjust(hspace=0.5)
 axs[0].plot(torques[:,0])
 axs[0].plot(torques[:,6])
@@ -149,6 +152,15 @@ axs[1].set_xlabel('Frame', fontsize=14)
 axs[1].set_ylabel('Torq', fontsize=14)
 axs[1].set_title('Carausius_110415_00_22_torq', fontsize=14)
 axs[1].grid()
+
+axs[2].plot(pd_torques[:,0])
+axs[2].plot(pd_torques[:,6])
+axs[2].plot(pd_torques[:,12])
+axs[2].plot(pd_torques[:,18])
+axs[2].set_xlabel('Frame', fontsize=14)
+axs[2].set_ylabel('PD_Torques', fontsize=14)
+axs[2].set_title('Carausius_110415_00_22_pd_torques', fontsize=14)
+axs[2].grid()
 plt.show()
 
 

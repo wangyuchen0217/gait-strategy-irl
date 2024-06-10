@@ -157,8 +157,7 @@ def torque_plot(): # plot the torque data w/ x,y,z
 
 def torque_scalar_plot():
     # plot and compare the data
-    joint_path = os.path.join("expert_data_builder/stick_insect", animal,   
-                                                    "Animal12_110415_00_22.csv")
+    joint_path = 'expert_data_builder/stick_insect/Carausius/Animal12_110415_00_22.csv'
     joint_movement = pd.read_csv(joint_path, header=[0], index_col=None).to_numpy()
 
     torques_path = '/home/yuchen/insect_walking_irl/expert_data_builder/stick_insect/Carausius/Animal12_110415_00_22_torques.csv'

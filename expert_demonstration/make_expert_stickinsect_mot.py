@@ -77,18 +77,25 @@ torques_path = os.path.join("expert_data_builder/stick_insect", animal,
 torques = pd.read_csv(torques_path, header=None, index_col=None).to_numpy()
 print("torques:", torques.shape)
 
-# convert the generalized data to scalar values
-torque_scalars = np.zeros((torques.shape[0], torques.shape[1]//3))
-for i in range(torques.shape[0]):
-    for j in range(0, torques.shape[1], 3):
-        idx = j//3
-        torque_scalars[i,idx]= np.sqrt(torques[i,j]**2 + torques[i,j+1]**2 + torques[i,j+2]**2)
-print("torque_scalars:", torque_scalars.shape)
+# # convert the generalized data to scalar values
+# torque_scalars = np.zeros((torques.shape[0], torques.shape[1]//3))
+# for i in range(torques.shape[0]):
+#     for j in range(0, torques.shape[1], 3):
+#         idx = j//3
+#         torque_scalars[i,idx]= np.sqrt(torques[i,j]**2 + torques[i,j+1]**2 + torques[i,j+2]**2)
+# print("torque_scalars:", torque_scalars.shape)
 
-torques_unsmoothed = torques.copy()
-torques = data_smooth(torques) # smooth the data
-torques_scalar_unsmoothed = torque_scalars.copy()
-torques_scalar = data_smooth(torque_scalars) # smooth the data
+# torques_unsmoothed = torques.copy()
+# torques = data_smooth(torques) # smooth the data
+# torques_scalar_unsmoothed = torque_scalars.copy()
+# torques_scalar = data_smooth(torque_scalars) # smooth the data
+
+# take the value of certain axis from the torque data
+# sup uses the y-axis
+# CTr uses the x-axis
+# ThC uses the z-axis
+# FTi uses the x-axis
+
 
 #  Set up simulation without rendering
 model_name = config_data.get("model")

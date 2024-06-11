@@ -5,7 +5,10 @@ sys.path.append("./") # add the root directory to the python path
 from envs import *
 import numpy as np
 import pandas as pd
-import mujoco_py    
+import mujoco
+import mujoco.viewer
+import time
+import mediapy as media
 import yaml
 import json
 import matplotlib.pyplot as plt
@@ -60,9 +63,9 @@ velocities = np.vstack((velocities, np.zeros((1, velocities.shape[1])))) # [2459
 #  Set up simulation without rendering
 model_name = config_data.get("model")
 model_path = 'envs/assets/' + model_name + '.xml'
-model = mujoco_py.load_model_from_path(model_path)
-sim = mujoco_py.MjSim(model)
-viewer = mujoco_py.MjViewer(sim)
+model = mujoco.MjModel.from_xml_path(model_path)
+data = mujoco.MjData(model)
+renderer = mujoco.Renderer(model)
 
 # Parse the XML file to extract custom data
 tree = ET.parse(model_path)
@@ -74,20 +77,24 @@ for custom in root.findall('custom'):
         if numeric.get('name') == 'init_qpos':
             init_qpos_data = numeric.get('data')
             break
-sim.data.qpos[-24:] = np.array(init_qpos_data.split()).astype(np.float64)
+data.qpos[-24:] = np.array(init_qpos_data.split()).astype(np.float64)
 
 trajecroty = []
 forces = []
+frames = []
 for j in range(2459): # 2459 is the length of each trajectory
 
     # implement the joint angle data
     joint_angle = np.deg2rad(joint_movement[j])
-    sim.data.ctrl[:24] = joint_angle
-    sim.data.ctrl[24:] = velocities[j]
-    sim.step()
-    viewer.render()
-    state = np.hstack((sim.get_state().qpos.copy()[:], # [-24:] joint angles, [:] w/ torso 
-                                        sim.get_state().qvel.copy()[:])) # [-24:] joint velocities, [:] w/ torso
+    data.ctrl[:24] = joint_angle
+    data.ctrl[24:] = velocities[j]
+    mujoco.mj_step(model, data)
+    renderer.update_scene(data)
+    pixels = renderer.render()
+    frames.append(pixels)
+
+    state = np.hstack((data.qpos.copy()[:], # [-24:] joint angles, [:] w/ torso 
+                                        data.qvel.copy()[:])) # [-24:] joint velocities, [:] w/ torso
     # record the state of each step
     trajecroty.append(state) # [2459,48] only joint angles and velocities, [2459, 61] w/ torso
     # get data of the torques sensor
@@ -95,11 +102,12 @@ for j in range(2459): # 2459 is the length of each trajectory
 
     # record the initial position
     if j == 0:
-        initail_pos = sim.get_state().qpos.copy()
+        initail_pos = data.qpos.copy()
         initail_pos = initail_pos[:]
         print("initail_pos:", initail_pos.shape)
         print("initail_pos:", initail_pos)
 
+media.show_video(frames, fps=0.005)
 # record each trails
 trajectories = np.array([trajecroty]) # [1, 2459, 48] only joint angles and velocities, [1, 2459, 61] w/ torso
 print("expert_demo:", trajectories.shape)

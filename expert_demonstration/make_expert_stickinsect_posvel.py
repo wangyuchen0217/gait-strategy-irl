@@ -85,21 +85,16 @@ with mujoco.viewer.launch_passive(model, data) as viewer:
     for j in range(2459):  # Run exactly 2459 frames
         if not viewer.is_running():  # Check if the viewer has been closed manually
             break
-
         # implement the joint angle data
         joint_angle = np.deg2rad(joint_movement[j])
         data.ctrl[:24] = joint_angle
         data.ctrl[24:] = velocities[j]
         mujoco.mj_step(model, data)
-
         viewer.sync()
-
         with viewer.lock():
             viewer.opt.flags[mujoco.mjtVisFlag.mjVIS_CONTACTPOINT] = int(data.time % 2)
-        
         # Manage timing to maintain a steady frame rate
         time.sleep(model.opt.timestep)
-
 
         state = np.hstack((data.qpos.copy()[:], # [-24:] joint angles, [:] w/ torso 
                                             data.qvel.copy()[:])) # [-24:] joint velocities, [:] w/ torso

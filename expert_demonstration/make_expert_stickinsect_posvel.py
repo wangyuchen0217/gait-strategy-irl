@@ -7,6 +7,7 @@ import numpy as np
 import pandas as pd
 import mujoco
 import mujoco.viewer
+import mujoco_viewer
 import time
 import mediapy as media
 import yaml
@@ -65,7 +66,6 @@ model_name = config_data.get("model")
 model_path = 'envs/assets/' + model_name + '.xml'
 model = mujoco.MjModel.from_xml_path(model_path)
 data = mujoco.MjData(model)
-renderer = mujoco.Renderer(model)
 
 # Parse the XML file to extract custom data
 tree = ET.parse(model_path)
@@ -81,33 +81,40 @@ data.qpos[-24:] = np.array(init_qpos_data.split()).astype(np.float64)
 
 trajecroty = []
 forces = []
-frames = []
-for j in range(2459): # 2459 is the length of each trajectory
+with mujoco.viewer.launch_passive(model, data) as viewer:
+    for j in range(2459):  # Run exactly 2459 frames
+        if not viewer.is_running():  # Check if the viewer has been closed manually
+            break
 
-    # implement the joint angle data
-    joint_angle = np.deg2rad(joint_movement[j])
-    data.ctrl[:24] = joint_angle
-    data.ctrl[24:] = velocities[j]
-    mujoco.mj_step(model, data)
-    renderer.update_scene(data)
-    pixels = renderer.render()
-    frames.append(pixels)
+        # implement the joint angle data
+        joint_angle = np.deg2rad(joint_movement[j])
+        data.ctrl[:24] = joint_angle
+        data.ctrl[24:] = velocities[j]
+        mujoco.mj_step(model, data)
 
-    state = np.hstack((data.qpos.copy()[:], # [-24:] joint angles, [:] w/ torso 
-                                        data.qvel.copy()[:])) # [-24:] joint velocities, [:] w/ torso
-    # record the state of each step
-    trajecroty.append(state) # [2459,48] only joint angles and velocities, [2459, 61] w/ torso
-    # get data of the torques sensor
-    # forces.append(sim.data.sensordata.copy())
+        viewer.sync()
 
-    # record the initial position
-    if j == 0:
-        initail_pos = data.qpos.copy()
-        initail_pos = initail_pos[:]
-        print("initail_pos:", initail_pos.shape)
-        print("initail_pos:", initail_pos)
+        with viewer.lock():
+            viewer.opt.flags[mujoco.mjtVisFlag.mjVIS_CONTACTPOINT] = int(data.time % 2)
+        
+        # Manage timing to maintain a steady frame rate
+        time.sleep(model.opt.timestep)
 
-media.show_video(frames, fps=0.005)
+
+        state = np.hstack((data.qpos.copy()[:], # [-24:] joint angles, [:] w/ torso 
+                                            data.qvel.copy()[:])) # [-24:] joint velocities, [:] w/ torso
+        # record the state of each step
+        trajecroty.append(state) # [2459,48] only joint angles and velocities, [2459, 61] w/ torso
+        # get data of the torques sensor
+        # forces.append(sim.data.sensordata.copy())
+
+        # record the initial position
+        if j == 0:
+            initail_pos = data.qpos.copy()
+            initail_pos = initail_pos[:]
+            print("initail_pos:", initail_pos.shape)
+            print("initail_pos:", initail_pos)
+
 # record each trails
 trajectories = np.array([trajecroty]) # [1, 2459, 48] only joint angles and velocities, [1, 2459, 61] w/ torso
 print("expert_demo:", trajectories.shape)

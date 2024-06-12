@@ -1,7 +1,7 @@
 import numpy as np
 
 from gymnasium import utils
-from gymnasium.envs.mujoco import MujocoEnv
+from gymnasium.envs.mujoco import MuJocoPyEnv
 from gymnasium.spaces import Box
 
 
@@ -10,21 +10,20 @@ DEFAULT_CAMERA_CONFIG = {
 }
 
 
-class StickInsectEnv(MujocoEnv, utils.EzPickle):
+class StickInsectEnv(MuJocoPyEnv, utils.EzPickle):
     metadata = {
         "render_modes": [
             "human",
             "rgb_array",
             "depth_array",
         ],
-        "render_fps": 100,
+        "render_fps": 20,
     }
 
     def __init__(
         self,
         xml_file="/home/yuchen/insect_walking_irl/envs/assets/StickInsect-v1.xml",
         ctrl_cost_weight=0.5,
-        use_contact_forces=False,
         contact_cost_weight=5e-4,
         healthy_reward=1.0,
         terminate_when_unhealthy=True,
@@ -38,7 +37,6 @@ class StickInsectEnv(MujocoEnv, utils.EzPickle):
             self,
             xml_file,
             ctrl_cost_weight,
-            use_contact_forces,
             contact_cost_weight,
             healthy_reward,
             terminate_when_unhealthy,
@@ -60,29 +58,21 @@ class StickInsectEnv(MujocoEnv, utils.EzPickle):
 
         self._reset_noise_scale = reset_noise_scale
 
-        self._use_contact_forces = use_contact_forces
-
         self._exclude_current_positions_from_observation = (
             exclude_current_positions_from_observation
         )
 
-        obs_shape = 27
-        if not exclude_current_positions_from_observation:
-            obs_shape += 2
-        if use_contact_forces:
-            obs_shape += 84
+        if exclude_current_positions_from_observation:
+            observation_space = Box(
+                low=-np.inf, high=np.inf, shape=(111,), dtype=np.float64
+            )
+        else:
+            observation_space = Box(
+                low=-np.inf, high=np.inf, shape=(113,), dtype=np.float64
+            )
 
-        observation_space = Box(
-            low=-np.inf, high=np.inf, shape=(obs_shape,), dtype=np.float64
-        )
-
-        MujocoEnv.__init__(
-            self,
-            xml_file,
-            2,
-            observation_space=observation_space,
-            default_camera_config=DEFAULT_CAMERA_CONFIG,
-            **kwargs,
+        MuJocoPyEnv.__init__(
+            self, xml_file, 5, observation_space=observation_space, **kwargs
         )
 
     @property
@@ -98,7 +88,7 @@ class StickInsectEnv(MujocoEnv, utils.EzPickle):
 
     @property
     def contact_forces(self):
-        raw_contact_forces = self.data.cfrc_ext
+        raw_contact_forces = self.sim.data.cfrc_ext
         min_value, max_value = self._contact_force_range
         contact_forces = np.clip(raw_contact_forces, min_value, max_value)
         return contact_forces
@@ -130,18 +120,22 @@ class StickInsectEnv(MujocoEnv, utils.EzPickle):
         xy_velocity = (xy_position_after - xy_position_before) / self.dt
         x_velocity, y_velocity = xy_velocity
 
+        ctrl_cost = self.control_cost(action)
+        contact_cost = self.contact_cost
+
         forward_reward = x_velocity
         healthy_reward = self.healthy_reward
 
         rewards = forward_reward + healthy_reward
+        costs = ctrl_cost + contact_cost
 
-        costs = ctrl_cost = self.control_cost(action)
-
+        reward = rewards - costs
         terminated = self.terminated
         observation = self._get_obs()
         info = {
             "reward_forward": forward_reward,
             "reward_ctrl": -ctrl_cost,
+            "reward_contact": -contact_cost,
             "reward_survive": healthy_reward,
             "x_position": xy_position_after[0],
             "y_position": xy_position_after[1],
@@ -150,12 +144,6 @@ class StickInsectEnv(MujocoEnv, utils.EzPickle):
             "y_velocity": y_velocity,
             "forward_reward": forward_reward,
         }
-        if self._use_contact_forces:
-            contact_cost = self.contact_cost
-            costs += contact_cost
-            info["reward_ctrl"] = -contact_cost
-
-        reward = rewards - costs
 
         if self.render_mode == "human":
             self.render()
@@ -163,17 +151,16 @@ class StickInsectEnv(MujocoEnv, utils.EzPickle):
         return observation, reward, terminated, False, info
 
     def _get_obs(self):
-        position = self.data.qpos.flat.copy()
-        velocity = self.data.qvel.flat.copy()
+        position = self.sim.data.qpos.flat.copy()
+        velocity = self.sim.data.qvel.flat.copy()
+        contact_force = self.contact_forces.flat.copy()
 
         if self._exclude_current_positions_from_observation:
             position = position[2:]
 
-        if self._use_contact_forces:
-            contact_force = self.contact_forces.flat.copy()
-            return np.concatenate((position, velocity, contact_force))
-        else:
-            return np.concatenate((position, velocity))
+        observations = np.concatenate((position, velocity, contact_force))
+
+        return observations
 
     def reset_model(self):
         noise_low = -self._reset_noise_scale
@@ -191,10 +178,18 @@ class StickInsectEnv(MujocoEnv, utils.EzPickle):
         observation = self._get_obs()
 
         return observation
+
+    def viewer_setup(self):
+        assert self.viewer is not None
+        for key, value in DEFAULT_CAMERA_CONFIG.items():
+            if isinstance(value, np.ndarray):
+                getattr(self.viewer.cam, key)[:] = value
+            else:
+                setattr(self.viewer.cam, key, value)
     
 if __name__ == "__main__":
     env = StickInsectEnv(render_mode='human')
-    env.reset_model()
+    env.reset()
 
     # print the observation space and action space
     print("observation space:", env.observation_space)

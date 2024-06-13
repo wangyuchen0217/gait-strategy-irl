@@ -82,6 +82,13 @@ data.qpos[-24:] = np.array(init_qpos_data.split()).astype(np.float64)
 trajecroty = []
 forces = []
 with mujoco.viewer.launch_passive(model, data) as viewer:
+    # set a camera <camera name="top" mode="fixed" pos="5 0 20" xyaxes="1 0 0 0 1 0"/>
+    viewer.cam.lookat[0] = 5  # x-coordinate of the point to look at
+    viewer.cam.lookat[1] = 0  # y-coordinate
+    viewer.cam.lookat[2] = 0  # z-coordinate
+    viewer.cam.distance = 20  # Camera distance from the lookat point
+    viewer.cam.azimuth = 90  # Camera azimuth angle in degrees
+    viewer.cam.elevation = -90  # Camera elevation angle in degrees
     for j in range(2459):  # Run exactly 2459 frames
         if not viewer.is_running():  # Check if the viewer has been closed manually
             break

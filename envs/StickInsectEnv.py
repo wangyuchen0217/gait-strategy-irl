@@ -73,10 +73,22 @@ class StickInsectEnv(MujocoEnv, utils.EzPickle):
         #     obs_shape += 84
 
         observation_space = Box(
-            low=np.concatenate((np.full(7, -np.inf), np.full(24, -np.pi), np.full(6, -np.inf), np.full(24, -np.inf))),
-            high=np.concatenate((np.full(7, np.inf), np.full(24, np.pi), np.full(6, np.inf), np.full(24, np.inf))),
-            dtype=np.float64
-        )
+                low=np.concatenate((np.full(5, -np.inf), np.full(24, -np.pi), np.full(6, -np.inf), np.full(24, -np.inf))),
+                high=np.concatenate((np.full(5, np.inf), np.full(24, np.pi), np.full(6, np.inf), np.full(24, np.inf))),
+                dtype=np.float64
+            )
+        if not exclude_current_positions_from_observation:
+            observation_space = Box(
+                low=np.concatenate((np.full(7, -np.inf), np.full(24, -np.pi), np.full(6, -np.inf), np.full(24, -np.inf))),
+                high=np.concatenate((np.full(7, np.inf), np.full(24, np.pi), np.full(6, np.inf), np.full(24, np.inf))),
+                dtype=np.float64
+            )
+        if use_contact_forces:
+            observation_space = Box(
+                low=np.concatenate((np.full(7, -np.inf), np.full(24, -np.pi), np.full(6, -np.inf), np.full(24, -np.inf), np.full(126, -np.inf))),
+                high=np.concatenate((np.full(7, np.inf), np.full(24, np.pi), np.full(6, np.inf), np.full(24, np.inf), np.full(126, np.inf))),
+                dtype=np.float64
+            )
 
         MujocoEnv.__init__(
             self,

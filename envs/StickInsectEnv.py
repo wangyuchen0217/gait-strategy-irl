@@ -31,7 +31,7 @@ class StickInsectEnv(MujocoEnv, utils.EzPickle):
         healthy_z_range=(0.2, 1.0),
         contact_force_range=(-1.0, 1.0),
         reset_noise_scale=0.1,
-        exclude_current_positions_from_observation=True,
+        exclude_current_positions_from_observation=False,
         **kwargs,
     ):
         utils.EzPickle.__init__(
@@ -66,29 +66,21 @@ class StickInsectEnv(MujocoEnv, utils.EzPickle):
             exclude_current_positions_from_observation
         )
 
+        # For Ant-v4
         # obs_shape = 27
         # if not exclude_current_positions_from_observation:
         #     obs_shape += 2
         # if use_contact_forces:
         #     obs_shape += 84
 
-        observation_space = Box(
-                low=np.concatenate((np.full(5, -np.inf), np.full(24, -np.pi), np.full(6, -np.inf), np.full(24, -np.inf))),
-                high=np.concatenate((np.full(5, np.inf), np.full(24, np.pi), np.full(6, np.inf), np.full(24, np.inf))),
-                dtype=np.float64
-            )
+        obs_shape = 59
         if not exclude_current_positions_from_observation:
-            observation_space = Box(
-                low=np.concatenate((np.full(7, -np.inf), np.full(24, -np.pi), np.full(6, -np.inf), np.full(24, -np.inf))),
-                high=np.concatenate((np.full(7, np.inf), np.full(24, np.pi), np.full(6, np.inf), np.full(24, np.inf))),
-                dtype=np.float64
-            )
+            obs_shape += 2
         if use_contact_forces:
-            observation_space = Box(
-                low=np.concatenate((np.full(7, -np.inf), np.full(24, -np.pi), np.full(6, -np.inf), np.full(24, -np.inf), np.full(126, -np.inf))),
-                high=np.concatenate((np.full(7, np.inf), np.full(24, np.pi), np.full(6, np.inf), np.full(24, np.inf), np.full(126, np.inf))),
-                dtype=np.float64
-            )
+            obs_shape += 128
+        observation_space = Box(
+            low=-np.inf, high=np.inf, shape=(obs_shape,), dtype=np.float64
+        )
 
         MujocoEnv.__init__(
             self,

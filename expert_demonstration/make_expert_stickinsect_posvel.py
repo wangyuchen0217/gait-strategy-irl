@@ -120,7 +120,7 @@ with mujoco.viewer.launch_passive(model, data) as viewer:
 # record each trails
 trajectories = np.array([trajecroty]) # [1, 2459, 48] only joint angles and velocities, [1, 2459, 61] w/ torso
 print("expert_demo:", trajectories.shape)
-# np.save("StickInsect-v0.npy", trajectories)
+np.save("StickInsect-v0-m3t.npy", trajectories)
 
 # record the forces data
 # forces = np.array(forces) # [2459, 24]

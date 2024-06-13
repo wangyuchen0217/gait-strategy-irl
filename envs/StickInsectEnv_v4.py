@@ -22,7 +22,7 @@ class StickInsectEnv(MujocoEnv, utils.EzPickle):
 
     def __init__(
         self,
-        xml_file="/home/yuchen/insect_walking_irl/envs/assets/StickInsect-v1.xml",
+        xml_file="/home/yuchen/insect_walking_irl/envs/assets/StickInsect-v0.xml",
         ctrl_cost_weight=0.5,
         use_contact_forces=False,
         contact_cost_weight=5e-4,

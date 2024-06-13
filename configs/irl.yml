@@ -5,5 +5,6 @@ model: StickInsect-v0
 learning_rate: 0.001
 epochs: 1000
 
-# SrickInsect-v0.npy: PosVel w/o torso
-# StickInsect-v0.1.npy: PosVel w/ torso
+# SrickInsect-v0-m2.npy: PosVel w/o torso mujoco210 
+# StickInsect-v0-m2t.npy: PosVel w/ torso mujoco210
+# StickInsect-v0-m3t.npy: PosVel w torso mujoco3.1.6 kp300 kv100

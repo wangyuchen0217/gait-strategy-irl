@@ -26,7 +26,7 @@ env = gym.make('StickInsect-v0')
 env = DummyVecEnv([lambda: RolloutInfoWrapper(env)])
 
 # Load the expert dataset
-expert = np.load('expert_demonstration/expert/StickInsect-v0.1.npy', allow_pickle=True)
+expert = np.load('expert_demonstration/expert/StickInsect-v0-m3t.npy', allow_pickle=True)
 
 # Extract observations and "actions" (which are the next observations in this context)
 observations = expert[0, :-1, :]  # Exclude the last step to avoid indexing error

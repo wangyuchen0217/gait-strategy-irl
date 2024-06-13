@@ -191,7 +191,7 @@ class StickInsectEnv(MujocoEnv, utils.EzPickle):
         observation = self._get_obs()
 
         return observation
-    
+
 if __name__ == "__main__":
     env = StickInsectEnv(render_mode='human')
     env.reset_model()

@@ -84,7 +84,7 @@ learner_rewards_before_training, _ = evaluate_policy(
 )
 
 # train the learner and evaluate again
-gail_trainer.train(20000)  # Train for 800_000 steps to match expert.
+gail_trainer.train(200000)  # Train for 800_000 steps to match expert.
 env.seed(SEED)
 learner_rewards_after_training, _ = evaluate_policy(
     learner, env, 100, return_episode_rewards=True,

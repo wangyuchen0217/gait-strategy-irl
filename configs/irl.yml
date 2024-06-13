@@ -1,17 +1,15 @@
-'''
-StickInsect-v0: PosVel
-StickInsect-v1: Motor
-StickInsect-v2: PosVel sensor
-'''
+# StickInsect-v0: PosVel
+# StickInsect-v1: Motor
+# StickInsect-v2: PosVel sensor
+
 model: StickInsect-v0
 learning_rate: 0.001
 epochs: 1000
 
-'''
-SrickInsect-v0-m2.npy: 
-  PosVel w/o torso mujoco210 kp30000
-StickInsect-v0-m2t.npy: 
-  PosVel w/ torso mujoco210 kp30000
-StickInsect-v0-m3t.npy: 
-  PosVel w torso mujoco316 kp300 kv100
-'''
+# SrickInsect-v0-m2.npy: 
+#   PosVel w/o torso mujoco210 kp30000
+# StickInsect-v0-m2t.npy: 
+#   PosVel w/ torso mujoco210 kp30000
+# StickInsect-v0-m3t.npy: 
+#   PosVel w torso mujoco316 kp300 kv100
+

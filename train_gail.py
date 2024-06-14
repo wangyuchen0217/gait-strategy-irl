@@ -22,14 +22,14 @@ import envs
 SEED = 42
 
 # Create the environment
-env = gym.make('StickInsect-v0')
+env = gym.make('StickInsect-v0', exclude_current_positions_from_observation=True)
 env = DummyVecEnv([lambda: RolloutInfoWrapper(env)])
 
 # Load the expert dataset
 expert = np.load('expert_demonstration/expert/StickInsect-v0-m3t.npy', allow_pickle=True)
 
 # Extract observations and "actions" (which are the next observations in this context)
-observations = expert[0, :-1, :]  # Exclude the last step to avoid indexing error
+observations = expert[0, :-1, 2:]  # Exclude the last step to avoid indexing error
 actions = expert[0, 1:, -48:]        # Shift by one to get the "next" step as the action
 
 # The last observation won't have a corresponding "next" action
@@ -37,7 +37,7 @@ next_observations = np.roll(observations, -1, axis=0)
 next_observations[-1] = observations[-1]   # Handle boundary by replicating the last observation
 
 dones = np.zeros(len(observations), dtype=bool)
-dones[-1] = True  # Mark the last timestep as terminal
+# dones[-1] = True  # Mark the last timestep as terminal
 
 # transit the data to types.Transitions
 transitions = types.Transitions(

@@ -18,7 +18,10 @@ from imitation.util.networks import RunningNorm
 from imitation.util.util import make_vec_env
 from imitation.data import types
 import envs
+
 import yaml
+import matplotlib.pyplot as plt
+import logging
 
 SEED = 42
 

@@ -11,5 +11,5 @@ exclude_xy: True
 #   PosVel w/ torso mujoco210 kp30000
 # StickInsect-v0-m3t.npy: 
 #   PosVel w/ torso mujoco316 kp300 kv100
-# StickInsect-v0-m3te.npy: 
-#   PosVel w/ torso exclude xy mujoco316 kp300 kv100
+# StickInsect-v0-m3t-12.npy: 
+#   PosVel w/ torso mujoco316 kp100 kv200

@@ -29,7 +29,7 @@ loaded_policy = PPO.load("trained_policy_gail")
 
 # Create and wrap the environment
 exclude_xy = config_data.get("exclude_xy")
-env = gym.make('StickInsect-v0',  exclude_current_positions_from_observation=exclude_xy)
+env = gym.make('StickInsect-v0',  exclude_current_positions_from_observation=exclude_xy, render_mode="human")
 env = DummyVecEnv([lambda: RolloutInfoWrapper(env)])
 # Reset the environment and get the initial observation
 obs = env.reset()

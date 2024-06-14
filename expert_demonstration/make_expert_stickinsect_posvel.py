@@ -79,7 +79,7 @@ for custom in root.findall('custom'):
             break
 data.qpos[-24:] = np.array(init_qpos_data.split()).astype(np.float64)
 
-trajecroty = []
+obs_state = []
 forces = []
 with mujoco.viewer.launch_passive(model, data) as viewer:
     # set a camera <camera name="top" mode="fixed" pos="5 0 20" xyaxes="1 0 0 0 1 0"/>
@@ -106,7 +106,7 @@ with mujoco.viewer.launch_passive(model, data) as viewer:
         state = np.hstack((data.qpos.copy()[:], # [-24:] joint angles, [:] w/ torso
                                             data.qvel.copy()[:])) # [-24:] joint velocities, [:] w/ torso
         # record the state of each step
-        trajecroty.append(state) # [2459,48] only joint angles and velocities, [2459, 61] w/ torso
+        obs_state.append(state) # [2459,48] only joint angles and velocities, [2459, 61] w/ torso
         # get data of the torques sensor
         # forces.append(sim.data.sensordata.copy())
 
@@ -117,10 +117,14 @@ with mujoco.viewer.launch_passive(model, data) as viewer:
             print("initail_pos:", initail_pos.shape)
             print("initail_pos:", initail_pos)
 
-# record each trails
-trajectories = np.array([trajecroty]) # [1, 2459, 48] only joint angles and velocities, [1, 2459, 61] w/ torso
-print("expert_demo:", trajectories.shape)
-# np.save("StickInsect-v0-m3t-12.npy", trajectories)
+# record observation state and action
+obs_states = np.array([obs_state]) # [1, 2459, 48] only joint angles and velocities, [1, 2459, 61] w/ torso
+print("expert_demo:", obs_states.shape)
+# np.save("StickInsect-v0-m3t-12-obs.npy", obs_states)
+actions = np.hstack((np.deg2rad(joint_movement), velocities))
+print("actions:", actions.shape)
+# np.save("StickInsect-v0-m3t-12-act.npy", actions)
+
 
 # record the forces data
 # forces = np.array(forces) # [2459, 24]

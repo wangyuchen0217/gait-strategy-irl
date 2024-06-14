@@ -103,7 +103,7 @@ with mujoco.viewer.launch_passive(model, data) as viewer:
         # Manage timing to maintain a steady frame rate
         time.sleep(model.opt.timestep)
 
-        state = np.hstack((data.qpos.copy()[:], # [-24:] joint angles, [:] w/ torso 
+        state = np.hstack((data.qpos.copy()[2:], # [-24:] joint angles, [:] w/ torso, [2:] torso exclude xy 
                                             data.qvel.copy()[:])) # [-24:] joint velocities, [:] w/ torso
         # record the state of each step
         trajecroty.append(state) # [2459,48] only joint angles and velocities, [2459, 61] w/ torso
@@ -120,7 +120,7 @@ with mujoco.viewer.launch_passive(model, data) as viewer:
 # record each trails
 trajectories = np.array([trajecroty]) # [1, 2459, 48] only joint angles and velocities, [1, 2459, 61] w/ torso
 print("expert_demo:", trajectories.shape)
-# np.save("StickInsect-v0-m3t.npy", trajectories)
+np.save("StickInsect-v0-m3te.npy", trajectories)
 
 # record the forces data
 # forces = np.array(forces) # [2459, 24]

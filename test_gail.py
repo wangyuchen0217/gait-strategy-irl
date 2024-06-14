@@ -18,12 +18,18 @@ from imitation.util.networks import RunningNorm
 from imitation.util.util import make_vec_env
 from imitation.data import types
 import envs
+import yaml
+
+# open config file
+with open("configs/irl.yml", "r") as f:
+    config_data = yaml.safe_load(f)
 
 # Load the trained policy
 loaded_policy = PPO.load("trained_policy_gail")
 
 # Create and wrap the environment
-env = gym.make('StickInsect-v0',  render_mode='human')
+exclude_xy = config_data.get("exclude_xy")
+env = gym.make('StickInsect-v0',  exclude_current_positions_from_observation=exclude_xy)
 env = DummyVecEnv([lambda: RolloutInfoWrapper(env)])
 # Reset the environment and get the initial observation
 obs = env.reset()

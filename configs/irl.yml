@@ -3,8 +3,7 @@
 # StickInsect-v2: PosVel sensor
 
 model: StickInsect-v0
-learning_rate: 0.001
-epochs: 1000
+exclude_xy: True
 
 # SrickInsect-v0-m2.npy: 
 #   PosVel w/o torso mujoco210 kp30000

@@ -53,23 +53,6 @@ def data_smooth(data):
         data[:,i] = smoothed_data[:,0]
     return data
 
-class PIDController:
-    def __init__(self, kp, ki, kd):
-        self.kp = kp
-        self.ki = ki
-        self.kd = kd
-        self.integral = 0
-        self.last_error = 0
-    
-    def compute(self, setpoint, measurement, dt):
-        error = setpoint - measurement
-        self.integral += error * dt
-        derivative = (error - self.last_error) / dt
-        output = self.kp * error + self.ki * self.integral + self.kd * derivative
-        self.last_error = error
-        return output
-
-
 '''actuatorfrc'''
 # animal = "Carausius"
 # forces_path = os.path.join("expert_data_builder/stick_insect", animal, 

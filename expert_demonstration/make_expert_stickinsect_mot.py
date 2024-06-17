@@ -5,7 +5,9 @@ sys.path.append("./") # add the root directory to the python path
 from envs import *
 import numpy as np
 import pandas as pd
-import mujoco_py    
+import mujoco
+import mujoco.viewer   
+import time
 import yaml
 import json
 import matplotlib.pyplot as plt
@@ -51,6 +53,26 @@ def data_smooth(data):
         data[:,i] = smoothed_data[:,0]
     return data
 
+class PIDController:
+    def __init__(self, kp, ki, kd, control_range=(-1.0, 1.0)):
+        self.kp = kp
+        self.ki = ki
+        self.kd = kd
+        self.control_range = control_range
+        self.integral = 0
+        self.last_error = 0
+    
+    def compute(self, setpoint, measurement, dt):
+        error = setpoint - measurement
+        self.integral += error * dt
+        derivative = (error - self.last_error) / dt
+        output = self.kp * error + self.ki * self.integral + self.kd * derivative
+        self.last_error = error
+        
+        # Clip the output to the actuator limits
+        output = max(min(output, self.control_range[1]), self.control_range[0])
+        return output
+
 
 '''actuatorfrc'''
 # animal = "Carausius"
@@ -73,7 +95,7 @@ def data_smooth(data):
 '''torque'''
 animal = "Carausius"
 torques_path = os.path.join("expert_data_builder/stick_insect", animal, 
-                                                "Animal12_110415_00_22_torques_1.csv")
+                                                "Animal12_110415_00_22_jointtorques.csv")
 torques = pd.read_csv(torques_path, header=[0], index_col=None).to_numpy()
 print("torques:", torques.shape)
 
@@ -93,9 +115,8 @@ torques = data_smooth(torques) # smooth the data
 #  Set up simulation without rendering
 model_name = config_data.get("model")
 model_path = 'envs/assets/' + model_name + '.xml'
-model = mujoco_py.load_model_from_path(model_path)
-sim = mujoco_py.MjSim(model)
-viewer = mujoco_py.MjViewer(sim)
+model = mujoco.MjModel.from_xml_path(model_path)
+data = mujoco.MjData(model)
 
 # Parse the XML file to extract custom data
 tree = ET.parse(model_path)
@@ -107,26 +128,35 @@ for custom in root.findall('custom'):
         if numeric.get('name') == 'init_qpos':
             init_qpos_data = numeric.get('data')
             break
-sim.data.qpos[-24:] = np.array(init_qpos_data.split()).astype(np.float64)
+data.qpos[-24:] = np.array(init_qpos_data.split()).astype(np.float64)
 
 trajecroty = []
-for j in range(2459): # 2459 is the length of each trajectory
+with mujoco.viewer.launch_passive(model, data) as viewer:
+    for j in range(2459):  # Run exactly 2459 frames
+        if not viewer.is_running():  # Check if the viewer has been closed manually
+            break
 
-    # implement the motor data
-    sim.data.ctrl[:] = torques[j]
-    sim.step()
-    viewer.render()
-    state = np.hstack((sim.get_state().qpos.copy()[-24:], 
-                                        sim.get_state().qvel.copy()[-24:]))
-    # record the state of each step
-    trajecroty.append(state) # [2459,24]
+        # implement the motor data
+        data.ctrl[:] = torques[j]
+        mujoco.mj_step(model, data)
+        viewer.sync()
 
-    # record the initial position
-    if j == 0:
-        initail_pos = sim.get_state().qpos.copy()
-        initail_pos = initail_pos[:]
-        print("initail_pos:", initail_pos.shape)
-        print("initail_pos:", initail_pos)
+        with viewer.lock():
+            viewer.opt.flags[mujoco.mjtVisFlag.mjVIS_CONTACTPOINT] = int(data.time % 2)
+        # Manage timing to maintain a steady frame rate
+        time.sleep(model.opt.timestep)
+
+        state = np.hstack((data.qpos.copy()[-24:],  # [-24:] joint angles, [:] w/ torso
+                                            data.qvel.copy()[-24:]))  # [-24:] joint velocities, [:] w/ torso
+        # record the state of each step
+        trajecroty.append(state) # [2459,24]
+
+        # record the initial position
+        if j == 0:
+            initail_pos = data.qpos.copy()
+            initail_pos = initail_pos[:]
+            print("initail_pos:", initail_pos.shape)
+            print("initail_pos:", initail_pos)
 
 # record each trails
 trajectories = np.array([trajecroty]) # [1, 2459, 24]

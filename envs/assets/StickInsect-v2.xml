@@ -149,7 +149,63 @@
   </worldbody>
 
   <actuator>
-    <position name="LF_Sup" ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="LF_Sup" gear="1" kp="30000"/>
+    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="LF_Sup" gear="1" kp="100" kv="200"/>
+    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="LM_Sup" gear="1" kp="100" kv="200"/>
+    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="LH_Sup" gear="1" kp="100" kv="200"/>
+    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="RF_Sup" gear="1" kp="100" kv="200"/>
+    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="RM_Sup" gear="1" kp="100" kv="200"/>
+    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="RH_Sup" gear="1" kp="100" kv="200"/>
+
+    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="LF_CTr" gear="1" kp="100" kv="200"/>
+    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="LM_CTr" gear="1" kp="100" kv="200"/>
+    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="LH_CTr" gear="1" kp="100" kv="200"/>
+    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="RF_CTr" gear="1" kp="100" kv="200"/>
+    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="RM_CTr" gear="1" kp="100" kv="200"/>
+    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="RH_CTr" gear="1" kp="100" kv="200"/>
+
+    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="LF_ThC" gear="1" kp="100" kv="200"/>
+    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="LM_ThC" gear="1" kp="100" kv="200"/>
+    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="LH_ThC" gear="1" kp="100" kv="200"/>
+    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="RF_ThC" gear="1" kp="100" kv="200"/>
+    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="RM_ThC" gear="1" kp="100" kv="200"/>
+    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="RH_ThC" gear="1" kp="100" kv="200"/>
+
+    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="LF_FTi" gear="1" kp="100" kv="200"/>
+    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="LM_FTi" gear="1" kp="100" kv="200"/>
+    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="LH_FTi" gear="1" kp="100" kv="200"/>
+    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="RF_FTi" gear="1" kp="100" kv="200"/>
+    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="RM_FTi" gear="1" kp="100" kv="200"/>
+    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="RH_FTi" gear="1" kp="100" kv="200"/>
+
+    <velocity joint="LF_Sup" gear="1" ctrllimited="true" ctrlrange="-600 600"/>
+    <velocity joint="LM_Sup" gear="1" ctrllimited="true" ctrlrange="-600 600"/>
+    <velocity joint="LH_Sup" gear="1" ctrllimited="true" ctrlrange="-600 600"/>
+    <velocity joint="RF_Sup" gear="1" ctrllimited="true" ctrlrange="-600 600"/>
+    <velocity joint="RM_Sup" gear="1" ctrllimited="true" ctrlrange="-600 600"/>
+    <velocity joint="RH_Sup" gear="1" ctrllimited="true" ctrlrange="-600 600"/>
+
+    <velocity joint="LF_CTr" gear="1" ctrllimited="true" ctrlrange="-600 600"/>
+    <velocity joint="LM_CTr" gear="1" ctrllimited="true" ctrlrange="-600 600"/>
+    <velocity joint="LH_CTr" gear="1" ctrllimited="true" ctrlrange="-600 600"/>
+    <velocity joint="RF_CTr" gear="1" ctrllimited="true" ctrlrange="-600 600"/>
+    <velocity joint="RM_CTr" gear="1" ctrllimited="true" ctrlrange="-600 600"/>
+    <velocity joint="RH_CTr" gear="1" ctrllimited="true" ctrlrange="-600 600"/>
+
+    <velocity joint="LF_ThC" gear="1" ctrllimited="true" ctrlrange="-600 600"/>
+    <velocity joint="LM_ThC" gear="1" ctrllimited="true" ctrlrange="-600 600"/>
+    <velocity joint="LH_ThC" gear="1" ctrllimited="true" ctrlrange="-600 600"/>
+    <velocity joint="RF_ThC" gear="1" ctrllimited="true" ctrlrange="-600 600"/>
+    <velocity joint="RM_ThC" gear="1" ctrllimited="true" ctrlrange="-600 600"/>
+    <velocity joint="RH_ThC" gear="1" ctrllimited="true" ctrlrange="-600 600"/>
+
+    <velocity joint="LF_FTi" gear="1" ctrllimited="true" ctrlrange="-600 600"/>
+    <velocity joint="LM_FTi" gear="1" ctrllimited="true" ctrlrange="-600 600"/>
+    <velocity joint="LH_FTi" gear="1" ctrllimited="true" ctrlrange="-600 600"/>
+    <velocity joint="RF_FTi" gear="1" ctrllimited="true" ctrlrange="-600 600"/>
+    <velocity joint="RM_FTi" gear="1" ctrllimited="true" ctrlrange="-600 600"/>
+    <velocity joint="RH_FTi" gear="1" ctrllimited="true" ctrlrange="-600 600"/>
+
+    <!-- <position name="LF_Sup" ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="LF_Sup" gear="1" kp="30000"/>
     <position name="LM_Sup" ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="LM_Sup" gear="1" kp="30000"/>
     <position name="LH_Sup" ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="LH_Sup" gear="1" kp="30000"/>
     <position name="RF_Sup" ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="RF_Sup" gear="1" kp="30000"/>
@@ -203,7 +259,7 @@
     <velocity joint="LH_FTi" gear="1"/>
     <velocity joint="RF_FTi" gear="1"/>
     <velocity joint="RM_FTi" gear="1"/>
-    <velocity joint="RH_FTi" gear="1"/>
+    <velocity joint="RH_FTi" gear="1"/> -->
   </actuator>
 
   <sensor>
@@ -235,7 +291,35 @@
     <actuatorfrc actuator="RM_FTi" name="RM_FTi"/>
     <actuatorfrc actuator="RH_FTi" name="RH_FTi"/> -->
 
-    <torque site="LF_Sup_site" name="LF_Sup"/>
+    <jointactuatorfrc joint="LF_Sup" name="LF_Sup"/>
+    <jointactuatorfrc joint="LM_Sup" name="LM_Sup"/>
+    <jointactuatorfrc joint="LH_Sup" name="LH_Sup"/>
+    <jointactuatorfrc joint="RF_Sup" name="RF_Sup"/>
+    <jointactuatorfrc joint="RM_Sup" name="RM_Sup"/>
+    <jointactuatorfrc joint="RH_Sup" name="RH_Sup"/>
+
+    <jointactuatorfrc joint="LF_CTr" name="LF_CTr"/>
+    <jointactuatorfrc joint="LM_CTr" name="LM_CTr"/>
+    <jointactuatorfrc joint="LH_CTr" name="LH_CTr"/>
+    <jointactuatorfrc joint="RF_CTr" name="RF_CTr"/>
+    <jointactuatorfrc joint="RM_CTr" name="RM_CTr"/>
+    <jointactuatorfrc joint="RH_CTr" name="RH_CTr"/>
+
+    <jointactuatorfrc joint="LF_ThC" name="LF_ThC"/>
+    <jointactuatorfrc joint="LM_ThC" name="LM_ThC"/>
+    <jointactuatorfrc joint="LH_ThC" name="LH_ThC"/>
+    <jointactuatorfrc joint="RF_ThC" name="RF_ThC"/>
+    <jointactuatorfrc joint="RM_ThC" name="RM_ThC"/>
+    <jointactuatorfrc joint="RH_ThC" name="RH_ThC"/>
+
+    <jointactuatorfrc joint="LF_FTi" name="LF_FTi"/>
+    <jointactuatorfrc joint="LM_FTi" name="LM_FTi"/>
+    <jointactuatorfrc joint="LH_FTi" name="LH_FTi"/>
+    <jointactuatorfrc joint="RF_FTi" name="RF_FTi"/>
+    <jointactuatorfrc joint="RM_FTi" name="RM_FTi"/>
+    <jointactuatorfrc joint="RH_FTi" name="RH_FTi"/>
+
+    <!-- <torque site="LF_Sup_site" name="LF_Sup"/>
     <torque site="LM_Sup_site" name="LM_Sup"/>
     <torque site="LH_Sup_site" name="LH_Sup"/>
     <torque site="RF_Sup_site" name="RF_Sup"/>
@@ -261,6 +345,6 @@
     <torque site="LH_FTi_site" name="LH_FTi"/>
     <torque site="RF_FTi_site" name="RF_FTi"/>
     <torque site="RM_FTi_site" name="RM_FTi"/>
-    <torque site="RH_FTi_site" name="RH_FTi"/>
+    <torque site="RH_FTi_site" name="RH_FTi"/> -->
   </sensor>
 </mujoco>

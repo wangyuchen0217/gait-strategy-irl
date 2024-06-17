@@ -2,7 +2,7 @@
 # StickInsect-v1: Motor
 # StickInsect-v2: PosVel sensor
 
-model: StickInsect-v0
+model: StickInsect-v1
 exclude_xy: True
 
 # SrickInsect-v0-m2.npy: 

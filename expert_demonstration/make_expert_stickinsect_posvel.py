@@ -125,6 +125,20 @@ actions = np.array([np.hstack((np.deg2rad(joint_movement), velocities))])
 print("actions:", actions.shape)
 # np.save("StickInsect-v0-m3t-12-act.npy", actions)
 
+# subplot 
+idx_j = 0 # 0--23 joint angles
+idx_v= 24 # 24--47 joint velocities
+fig, axs = plt.subplots(4, 1, figsize=(10, 10))
+plt.subplots_adjust(hspace=0.5)
+axs[0].plot(obs_states[0, :, idx_j+7], label="obs_states", color="blue")
+axs[0].set_title("joint angles_obs_states")
+axs[1].plot(actions[0, :, idx_j], label="actions", color="red")
+axs[1].set_title("joint angles_actions")
+axs[2].plot(obs_states[0, :, idx_v+13], label="obs_states", color="blue")
+axs[2].set_title("joint velocities_obs_states")
+axs[3].plot(actions[0, :, idx_v], label="actions", color="red")
+axs[3].set_title("joint velocities_actions")
+plt.savefig("obs_act_plot.png")
 
 # record the forces data
 # forces = np.array(forces) # [2459, 24]

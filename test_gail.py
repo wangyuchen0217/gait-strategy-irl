@@ -31,27 +31,47 @@ loaded_policy = PPO.load("trained_policy_gail")
 exclude_xy = config_data.get("exclude_xy")
 env = gym.make('StickInsect-v0',  exclude_current_positions_from_observation=exclude_xy, render_mode="human")
 env = DummyVecEnv([lambda: RolloutInfoWrapper(env)])
-# Reset the environment and get the initial observation
-obs = env.reset()
+# # Reset the environment and get the initial observation
+# obs = env.reset()
 
-# Initialize variables to store cumulative reward and done flag
-cumulative_reward = 0
-done = False
-step_count = 0
+# # Initialize variables to store cumulative reward and done flag
+# cumulative_reward = 0
+# done = False
+# step_count = 0
 
-# Run the policy until the episode is done or a maximum number of steps
-max_steps = 500  # Set a reasonable number of steps to prevent infinite loops
+# # Run the policy until the episode is done or a maximum number of steps
+# max_steps = 500  # Set a reasonable number of steps to prevent infinite loops
 
-while not done and step_count < max_steps:
-    action, _states = loaded_policy.predict(obs, deterministic=True)  # Get the action from the policy
-    obs, reward, done, info = env.step(action)  # Take the action in the environment
-    cumulative_reward += reward  # Sum up the rewards
-    print(f"Step: {step_count}, Action: {action}, Reward: {reward}, Done: {done}")
+# while not done and step_count < max_steps:
+#     action, _states = loaded_policy.predict(obs, deterministic=True)  # Get the action from the policy
+#     obs, reward, done, info = env.step(action)  # Take the action in the environment
+#     cumulative_reward += reward  # Sum up the rewards
+#     print(f"Step: {step_count}, Action: {action}, Reward: {reward}, Done: {done}")
     
-    env.render()  
+#     env.render()  
+#     step_count += 1
+
+# print("Total reward for this episode:", cumulative_reward)
+
+# # Close the environment
+# env.close()
+
+random_policy = lambda obs: env.action_space.sample()
+
+step_count = 0
+cumulative_reward = 0
+env = RolloutInfoWrapper(env)
+obs = env.reset()
+done = False
+max_steps = 500
+while not done and step_count < max_steps:
+    action = random_policy(obs)  # Replace with loaded_policy.predict(obs, deterministic=True) to switch back
+    obs, reward, done, info = env.step(action)
+    cumulative_reward += reward
+    print(f"Step: {step_count}, Action: {action}, Reward: {reward}, Done: {done}, Obs: {obs}")
+
+    env.render()
     step_count += 1
 
 print("Total reward for this episode:", cumulative_reward)
-
-# Close the environment
 env.close()

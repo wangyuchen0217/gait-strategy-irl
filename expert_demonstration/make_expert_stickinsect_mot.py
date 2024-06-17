@@ -54,11 +54,10 @@ def data_smooth(data):
     return data
 
 class PIDController:
-    def __init__(self, kp, ki, kd, control_range=(-1.0, 1.0)):
+    def __init__(self, kp, ki, kd):
         self.kp = kp
         self.ki = ki
         self.kd = kd
-        self.control_range = control_range
         self.integral = 0
         self.last_error = 0
     
@@ -68,9 +67,6 @@ class PIDController:
         derivative = (error - self.last_error) / dt
         output = self.kp * error + self.ki * self.integral + self.kd * derivative
         self.last_error = error
-        
-        # Clip the output to the actuator limits
-        output = max(min(output, self.control_range[1]), self.control_range[0])
         return output
 
 

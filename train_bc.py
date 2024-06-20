@@ -78,7 +78,7 @@ reward, _ = evaluate_policy(expert, env, 10)
 print(f"Reward before training: {reward}")
 
 # Note: set to 100000 to train a proficient expert
-expert.learn(total_timesteps=10_000_000, log_interval=1000, progress_bar=True)  
+expert.learn(total_timesteps=1_000_000, log_interval=1000, progress_bar=True)  
 reward, _ = evaluate_policy(expert, expert.get_env(), 10)
 print(f"Expert reward: {reward}")
 

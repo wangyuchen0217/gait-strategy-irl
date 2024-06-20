@@ -50,7 +50,7 @@ max_steps = 500  # Set a reasonable number of steps to prevent infinite loops
 
 while not done and step_count < max_steps:
     # Convert the observation to tensor, and add batch dimension if necessary
-    obs_tensor = torch.as_tensor(obs, dtype=torch.float64).squeeze(0)
+    obs_tensor = torch.as_tensor(obs, dtype=torch.float32).squeeze(0)
 
     with torch.no_grad():  # Disable gradient calculation for inference
         action, _ = loaded_policy.predict(obs_tensor, deterministic=True)  # Get action and ignore additional outputs

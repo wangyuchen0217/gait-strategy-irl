@@ -38,7 +38,7 @@ env = gym.make('StickInsect-v0',  exclude_current_positions_from_observation=exc
 env = DummyVecEnv([lambda: RolloutInfoWrapper(env)])
 # Reset the environment and get the initial observation
 obs = env.reset()
-print("Initial observation:", obs)
+# print("Initial observation:", obs)
 
 # Initialize variables to store cumulative reward and done flag
 cumulative_reward = 0
@@ -54,12 +54,12 @@ while not done and step_count < max_steps:
 
     with torch.no_grad():  # Disable gradient calculation for inference
         action, _ = loaded_policy.predict(obs_tensor, deterministic=True)  # Get action and ignore additional outputs
-    print("Action:", action)
-    print("Action shape:", action.shape)
-    print("Action type:", type(action))
+    # print("Action:", action)
+    # print("Action shape:", action.shape)
+    # print("Action type:", type(action))
     # Convert the action from (48,) to (1, 48) to match the expected input shape
     action = action.reshape(1, -1)
-    print("Action shape after reshape:", action.shape)
+    # print("Action shape after reshape:", action.shape)
 
     obs, reward, done, info = env.step(action)  # Take the action in the environment
     cumulative_reward += reward  # Sum up the rewards

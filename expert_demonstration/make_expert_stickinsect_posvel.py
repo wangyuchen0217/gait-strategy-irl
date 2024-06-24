@@ -78,7 +78,7 @@ for custom in root.findall('custom'):
 data.qpos[-24:] = np.array(init_qpos_data.split()).astype(np.float64)
 
 obs_state = []
-torques = []
+contact_forces = []
 with mujoco.viewer.launch_passive(model, data) as viewer:
     # set a camera <camera name="top" mode="fixed" pos="5 0 20" xyaxes="1 0 0 0 1 0"/>
     viewer.cam.lookat[0] = 5  # x-coordinate of the point to look at
@@ -106,7 +106,7 @@ with mujoco.viewer.launch_passive(model, data) as viewer:
         # record the state of each step
         obs_state.append(state) # [2459,48] only joint angles and velocities, [2459, 61] w/ torso
         # get data of the torques sensor
-        torques.append(data.sensordata.copy())
+        contact_forces.append(data.sensordata.copy())
 
         # record the initial position
         if j == 0:
@@ -139,10 +139,12 @@ print("actions:", actions.shape)
 # plt.savefig("obs_act_plot.png")
 
 # record the forces data
-torques = np.array(torques) # [2459, 24]
-print("torques:", torques.shape)
-forces_save_path = os.path.join("expert_data_builder/stick_insect", animal, "Animal12_110415_00_22_jointtorques.csv")
-pd.DataFrame(torques).to_csv(forces_save_path, header=["LF_sup", "LM_sup", "LH_sup", "RF_sup", "RM_sup", "RH_sup",
-                                                                    "LF_CTr", "LM_CTr", "LH_CTr", "RF_CTr", "RM_CTr", "RH_CTr",
-                                                                    "LF_ThC", "LM_ThC", "LH_ThC", "RF_ThC", "RM_ThC", "RH_ThC",
-                                                                    "LF_FTi", "LM_FTi", "LH_FTi", "RF_FTi", "RM_FTi", "RH_FTi"], index=None)
+contact_forces = np.array(contact_forces) # [2459, 6]
+print("contact_forces:", contact_forces.shape)
+forces_save_path = os.path.join("expert_data_builder/stick_insect", animal, "Animal12_110415_00_22_contactforce.csv")
+pd.DataFrame(contact_forces).to_csv(forces_save_path, header=["LF_foot", "LM_foot", "LH_foot", 
+                                                              "RF_foot", "RM_foot", "RH_foot"], index=None)
+# pd.DataFrame(contact_forces).to_csv(forces_save_path, header=["LF_sup", "LM_sup", "LH_sup", "RF_sup", "RM_sup", "RH_sup",
+#                                                                     "LF_CTr", "LM_CTr", "LH_CTr", "RF_CTr", "RM_CTr", "RH_CTr",
+#                                                                     "LF_ThC", "LM_ThC", "LH_ThC", "RF_ThC", "RM_ThC", "RH_ThC",
+#                                                                     "LF_FTi", "LM_FTi", "LH_FTi", "RF_FTi", "RM_FTi", "RH_FTi"], index=None)

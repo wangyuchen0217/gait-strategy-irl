@@ -50,6 +50,7 @@
             <joint axis="1 0 0" name="LF_FTi" pos="0.0 0.0 0.0" range="-43 56" type="hinge"/>
             <site name="LF_FTi_site" pos="0 0 0" size="0.01"/>
             <geom fromto="0.0 0.0 0.0 0.0 0.0 -1.50" name="LF_tibia_geom" size="0.03" type="capsule"/>
+            <site name="LF_foot" pos="0.0 0.0 -1.50" size="0.01"/>
           </body>
         </body>
       </body>
@@ -68,6 +69,7 @@
             <joint axis="-1 0 0" name="RF_FTi" pos="0.0 0.0 0.0" range="-43 56" type="hinge"/>
             <site name="RF_FTi_site" pos="0 0 0" size="0.01"/>
             <geom fromto="0.0 0.0 0.0 0.0 0.0 -1.50" name="RF_tibia_geom" size="0.03" type="capsule"/>
+            <site name="RF_foot" pos="0.0 0.0 -1.50" size="0.01"/>
           </body>
         </body>
       </body>
@@ -86,6 +88,7 @@
             <joint axis="1 0 0" name="LM_FTi" pos="0.0 0.0 0.0" range="-50 79" type="hinge"/>
             <site name="LM_FTi_site" pos="0 0 0" size="0.01"/>
             <geom fromto="0.0 0.0 0.0 0.0 0.0 -1.12" name="LM_tibia_geom" size="0.03" type="capsule"/>
+            <site name="LM_foot" pos="0.0 0.0 -1.12" size="0.01"/>
           </body>
         </body>
       </body>
@@ -104,6 +107,7 @@
             <joint axis="-1 0 0" name="RM_FTi" pos="0.0 0.0 0.0" range="-50 79" type="hinge"/>
             <site name="RM_FTi_site" pos="0 0 0" size="0.01"/>
             <geom fromto="0.0 0.0 0.0 0.0 0.0 -1.12" name="RM_tibia_geom" size="0.03" type="capsule"/>
+            <site name="RM_foot" pos="0.0 0.0 -1.12" size="0.01"/>
           </body>
         </body>
       </body>
@@ -122,6 +126,7 @@
             <joint axis="1 0 0" name="LH_FTi" pos="0.0 0.0 0.0" range="-51 78" type="hinge"/>
             <site name="LH_FTi_site" pos="0 0 0" size="0.01"/>
             <geom fromto="0.0 0.0 0.0 0.0 0.0 -1.41" name="LH_tibia_geom" size="0.03" type="capsule"/>
+            <site name="LH_foot" pos="0.0 0.0 -1.41" size="0.01"/>
           </body>
         </body>
       </body>
@@ -140,6 +145,7 @@
             <joint axis="-1 0 0" name="RH_FTi" pos="0.0 0.0 0.0" range="-51 78" type="hinge"/>
             <site name="RH_FTi_site" pos="0 0 0" size="0.01"/>
             <geom fromto="0.0 0.0 0.0 0.0 0.0 -1.41" name="RH_tibia_geom" size="0.03" type="capsule"/>
+            <site name="RH_foot" pos="0.0 0.0 -1.41" size="0.01"/>
           </body>
         </body>
       </body>
@@ -291,7 +297,7 @@
     <actuatorfrc actuator="RM_FTi" name="RM_FTi"/>
     <actuatorfrc actuator="RH_FTi" name="RH_FTi"/> -->
 
-    <jointactuatorfrc joint="LF_Sup" name="LF_Sup"/>
+    <!-- <jointactuatorfrc joint="LF_Sup" name="LF_Sup"/>
     <jointactuatorfrc joint="LM_Sup" name="LM_Sup"/>
     <jointactuatorfrc joint="LH_Sup" name="LH_Sup"/>
     <jointactuatorfrc joint="RF_Sup" name="RF_Sup"/>
@@ -317,7 +323,14 @@
     <jointactuatorfrc joint="LH_FTi" name="LH_FTi"/>
     <jointactuatorfrc joint="RF_FTi" name="RF_FTi"/>
     <jointactuatorfrc joint="RM_FTi" name="RM_FTi"/>
-    <jointactuatorfrc joint="RH_FTi" name="RH_FTi"/>
+    <jointactuatorfrc joint="RH_FTi" name="RH_FTi"/> -->
+
+    <touch site="LF_foot" name="LF_foot"/>
+    <touch site="LM_foot" name="LM_foot"/>
+    <touch site="LH_foot" name="LH_foot"/>
+    <touch site="RF_foot" name="RF_foot"/>
+    <touch site="RM_foot" name="RM_foot"/>
+    <touch site="RH_foot" name="RH_foot"/>
 
     <!-- <torque site="LF_Sup_site" name="LF_Sup"/>
     <torque site="LM_Sup_site" name="LM_Sup"/>

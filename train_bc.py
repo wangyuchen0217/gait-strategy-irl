@@ -53,7 +53,7 @@ actions = actions[0, :-1, :]
 next_observations = obs_states[0, 1:, 2:] if exclude_xy else obs_states[0, 1:, :] # Exclude the first step to avoid indexing error
 
 dones = np.zeros(len(observations), dtype=bool)
-dones[-1] = True  # Mark the last timestep as terminal
+# dones[-1] = True  # Mark the last timestep as terminal
 
 # transit the data to types.Transitions
 transitions = types.Transitions(
@@ -129,8 +129,8 @@ bc_trainer = bc.BC(
     rng=np.random.default_rng(SEED)
 )
 
-reward_before_training, _ = evaluate_policy(bc_trainer.policy, env, 10)
-print(f"Reward before training: {reward_before_training}")
+# reward_before_training, _ = evaluate_policy(bc_trainer.policy, env, 10)
+# print(f"Reward before training: {reward_before_training}")
 
 bc_trainer.train(n_epochs=1000)
 reward_after_training, _ = evaluate_policy(bc_trainer.policy, env, 10)

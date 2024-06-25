@@ -35,6 +35,7 @@ loaded_policy.eval() # Set the model to evaluation mode
 # Create and wrap the environment
 exclude_xy = config_data.get("exclude_xy")
 env = gym.make('StickInsect-v0',  exclude_current_positions_from_observation=exclude_xy, render_mode="human")
+env = gym.wrappers.TimeLimit(env, max_episode_steps=1000)
 env = DummyVecEnv([lambda: RolloutInfoWrapper(env)])
 # Reset the environment and get the initial observation
 obs = env.reset()
@@ -45,10 +46,7 @@ cumulative_reward = 0
 done = False
 step_count = 0
 
-# Run the policy until the episode is done or a maximum number of steps
-max_steps = 500  # Set a reasonable number of steps to prevent infinite loops
-
-while not done and step_count < max_steps:
+while not done:
     # Convert the observation to tensor, and add batch dimension if necessary
     obs_tensor = torch.as_tensor(obs, dtype=torch.float32).squeeze(0)
 
@@ -63,7 +61,7 @@ while not done and step_count < max_steps:
 
     obs, reward, done, info = env.step(action)  # Take the action in the environment
     cumulative_reward += reward  # Sum up the rewards
-    print(f"Step: {step_count}, Action: {action}, Reward: {reward}, Done: {done}")
+    print(f"Step: {step_count}, Reward: {reward}, Done: {done}")
     
     env.render()  
     step_count += 1

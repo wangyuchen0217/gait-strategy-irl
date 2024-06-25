@@ -202,13 +202,63 @@ if __name__ == "__main__":
     env = StickInsectEnv(render_mode='human')
     env.reset_model()
 
-    # print the observation space and action space
-    print("observation space:", env.observation_space)
-    print("observation space shape:", env.observation_space.shape)
-    print("action space:", env.action_space)
-    print("action space shape:", env.action_space.shape)
+    # # print the observation space and action space
+    # print("observation space:", env.observation_space)
+    # print("observation space shape:", env.observation_space.shape)
+    # print("action space:", env.action_space)
+    # print("action space shape:", env.action_space.shape)
 
-    for _ in range(1000):
-        env.step(env.action_space.sample())
+    # for _ in range(1000):
+    #     env.step(env.action_space.sample())
+    #     env.render()
+    # env.close()
+    
+    import sys
+    sys.path.append("./")
+    import os
+    import pandas as pd
+    from pykalman import KalmanFilter
+
+    # smooth the data
+    def Kalman1D(observations,damping=1):
+        observation_covariance = damping
+        initial_value_guess = observations[0]
+        transition_matrix = 1
+        transition_covariance = 0.03
+        initial_value_guess
+        kf = KalmanFilter(
+                initial_state_mean=initial_value_guess,
+                initial_state_covariance=observation_covariance,
+                observation_covariance=observation_covariance,
+                transition_covariance=transition_covariance,
+                transition_matrices=transition_matrix
+                )
+        pred_state, state_cov = kf.smooth(observations)
+        return pred_state
+
+    def data_smooth(data):
+        for i in range(data.shape[1]):
+            smoothed_data = Kalman1D(data[:,i], damping=1).reshape(-1,1)
+            data[:,i] = smoothed_data[:,0]
+        return data
+
+    animal = "Carausius"
+    joint_path = os.path.join("expert_data_builder/stick_insect", animal, 
+                                                    "Animal12_110415_00_22.csv")
+    joint_movement = pd.read_csv(joint_path, header=[0], index_col=None).to_numpy()
+    joint_movement = data_smooth(joint_movement) # smooth the data
+
+    # FTi joint angle minus 90 degree
+    joint_movement[:,-6:] = joint_movement[:,-6:] - 90
+
+    dt = 0.005  # The timestep of your data
+    # Calculate velocities and accelerations
+    velocities = np.diff(joint_movement, axis=0) / dt
+    # Pad the arrays to match the length of the original data
+    velocities = np.vstack((velocities, np.zeros((1, velocities.shape[1])))) # [2459, 24]
+
+    ctrl = np.hstack((joint_movement, velocities))
+    for i in range(2459):
+        action = ctrl[i]
+        env.step(action)
         env.render()
-    env.close()

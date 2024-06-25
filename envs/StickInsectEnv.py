@@ -17,7 +17,7 @@ class StickInsectEnv(MujocoEnv, utils.EzPickle):
             "rgb_array",
             "depth_array",
         ],
-        "render_fps": 100,
+        "render_fps": 200,
     }
 
     def __init__(
@@ -85,7 +85,7 @@ class StickInsectEnv(MujocoEnv, utils.EzPickle):
         MujocoEnv.__init__(
             self,
             xml_file,
-            2,
+            1,
             observation_space=observation_space,
             default_camera_config=DEFAULT_CAMERA_CONFIG,
             **kwargs,
@@ -262,3 +262,4 @@ if __name__ == "__main__":
         action = ctrl[i]
         env.step(action)
         env.render()
+    env.close()

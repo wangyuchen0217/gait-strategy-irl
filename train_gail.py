@@ -31,7 +31,9 @@ with open("configs/irl.yml", "r") as f:
 
 # Create the environment
 exclude_xy = config_data.get("exclude_xy")
-env = gym.make('StickInsect-v0',  exclude_current_positions_from_observation=exclude_xy)
+env = gym.make('StickInsect-v0',
+               exclude_current_positions_from_observation=exclude_xy,
+               max_episode_steps=3000)
 env = DummyVecEnv([lambda: RolloutInfoWrapper(env)])
 
 # Load the expert dataset
@@ -45,7 +47,7 @@ actions = actions[0, :-1, :]
 next_observations = obs_states[0, 1:, 2:] if exclude_xy else obs_states[0, 1:, :] # Exclude the first step to avoid indexing error
 
 dones = np.zeros(len(observations), dtype=bool)
-dones[-1] = True  # Mark the last timestep as terminal
+# dones[-1] = True  # Mark the last timestep as terminal
 
 # transit the data to types.Transitions
 transitions = types.Transitions(

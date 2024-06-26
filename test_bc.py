@@ -27,16 +27,28 @@ import torch
 with open("configs/irl.yml", "r") as f:
     config_data = yaml.safe_load(f)
 
+# Set seeds for reproducibility
+# SEED = 42
+# torch.manual_seed(SEED)
+# np.random.seed(SEED)
+# os.environ['PYTHONHASHSEED'] = str(SEED)
+
 # Load the trained policy
-loaded_policy = torch.load("trained_policy_bc.pth")
+loaded_policy = torch.load("trained_policy_bc_1000.pth")
 loaded_policy = loaded_policy.policy # Accessing the policy attribute which is a PyTorch model
 loaded_policy.eval() # Set the model to evaluation mode
 
 # Create and wrap the environment
 exclude_xy = config_data.get("exclude_xy")
-env = gym.make('StickInsect-v0',  exclude_current_positions_from_observation=exclude_xy, render_mode="human")
-env = gym.wrappers.TimeLimit(env, max_episode_steps=1000)
+env = gym.make('StickInsect-v0',  
+               exclude_current_positions_from_observation=exclude_xy, 
+               render_mode="human",
+               max_episode_steps=3000)
 env = DummyVecEnv([lambda: RolloutInfoWrapper(env)])
+
+# env.seed(SEED)
+# env.action_space.seed(SEED)
+# env.observation_space.seed(SEED)
 # Reset the environment and get the initial observation
 obs = env.reset()
 # print("Initial observation:", obs)
@@ -52,12 +64,8 @@ while not done:
 
     with torch.no_grad():  # Disable gradient calculation for inference
         action, _ = loaded_policy.predict(obs_tensor, deterministic=True)  # Get action and ignore additional outputs
-    # print("Action:", action)
-    # print("Action shape:", action.shape)
-    # print("Action type:", type(action))
     # Convert the action from (48,) to (1, 48) to match the expected input shape
     action = action.reshape(1, -1)
-    # print("Action shape after reshape:", action.shape)
 
     obs, reward, done, info = env.step(action)  # Take the action in the environment
     cumulative_reward += reward  # Sum up the rewards

@@ -28,7 +28,7 @@ class StickInsectEnv(MujocoEnv, utils.EzPickle):
         contact_cost_weight=5e-4,
         healthy_reward=1.0,
         terminate_when_unhealthy=True,
-        healthy_z_range=(1.0, 2.0),
+        healthy_z_range=(1.0, 3.0),
         contact_force_range=(-1.0, 1.0),
         reset_noise_scale=0.1,
         exclude_current_positions_from_observation=False,
@@ -136,7 +136,7 @@ class StickInsectEnv(MujocoEnv, utils.EzPickle):
         xy_velocity = (xy_position_after - xy_position_before) / self.dt
         x_velocity, y_velocity = xy_velocity
 
-        forward_reward = x_velocity
+        forward_reward = x_velocity * 10
         healthy_reward = self.healthy_reward
 
         rewards = forward_reward + healthy_reward
@@ -182,18 +182,23 @@ class StickInsectEnv(MujocoEnv, utils.EzPickle):
             return np.concatenate((position, velocity))
 
     def reset_model(self):
-        noise_low = -self._reset_noise_scale
-        noise_high = self._reset_noise_scale
+        # noise_low = -self._reset_noise_scale
+        # noise_high = self._reset_noise_scale
 
-        qpos = self.init_qpos + self.np_random.uniform(
-            low=noise_low, high=noise_high, size=self.model.nq
-        )
-        qvel = (
-            self.init_qvel
-            + self._reset_noise_scale * self.np_random.standard_normal(self.model.nv)
-        )
+        # qpos = self.init_qpos + self.np_random.uniform(
+        #     low=noise_low, high=noise_high, size=self.model.nq
+        # )
+        # qvel = (
+        #     self.init_qvel
+        #     + self._reset_noise_scale * self.np_random.standard_normal(self.model.nv)
+        # )
+        # self.set_state(qpos, qvel)
+
+        # observation = self._get_obs()
+
+        qpos = self.init_qpos
+        qvel = self.init_qvel
         self.set_state(qpos, qvel)
-
         observation = self._get_obs()
 
         return observation
@@ -215,54 +220,10 @@ if __name__ == "__main__":
     
     import sys
     sys.path.append("./")
-    import os
-    import pandas as pd
-    from pykalman import KalmanFilter
-
-    # # smooth the data
-    # def Kalman1D(observations,damping=1):
-    #     observation_covariance = damping
-    #     initial_value_guess = observations[0]
-    #     transition_matrix = 1
-    #     transition_covariance = 0.03
-    #     initial_value_guess
-    #     kf = KalmanFilter(
-    #             initial_state_mean=initial_value_guess,
-    #             initial_state_covariance=observation_covariance,
-    #             observation_covariance=observation_covariance,
-    #             transition_covariance=transition_covariance,
-    #             transition_matrices=transition_matrix
-    #             )
-    #     pred_state, state_cov = kf.smooth(observations)
-    #     return pred_state
-
-    # def data_smooth(data):
-    #     for i in range(data.shape[1]):
-    #         smoothed_data = Kalman1D(data[:,i], damping=1).reshape(-1,1)
-    #         data[:,i] = smoothed_data[:,0]
-    #     return data
-
-    # animal = "Carausius"
-    # joint_path = os.path.join("expert_data_builder/stick_insect", animal, 
-    #                                                 "Animal12_110415_00_22.csv")
-    # joint_movement = pd.read_csv(joint_path, header=[0], index_col=None).to_numpy()
-    # joint_movement = data_smooth(joint_movement) # smooth the data
-
-    # # FTi joint angle minus 90 degree
-    # joint_movement[:,-6:] = joint_movement[:,-6:] - 90
-
-    # dt = 0.005  # The timestep of your data
-    # # Calculate velocities and accelerations
-    # velocities = np.diff(joint_movement, axis=0) / dt
-    # # Pad the arrays to match the length of the original data
-    # velocities = np.vstack((velocities, np.zeros((1, velocities.shape[1])))) # [2459, 24]
-    
-    # joint_movement = np.deg2rad(joint_movement)
-    # ctrl = np.hstack((joint_movement, velocities))
 
     actions = np.load('expert_demonstration/expert/StickInsect-v0-m3t-12-act.npy', allow_pickle=True)
     actions = actions[0, :-1, :] 
-    for i in range(2459):
+    for i in range(2458):
         action = actions[i]
         obs, reward, done, _, _=env.step(action)
         env.render()

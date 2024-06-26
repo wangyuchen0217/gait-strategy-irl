@@ -35,12 +35,10 @@ with open("configs/irl.yml", "r") as f:
 # Create the environment
 exclude_xy = config_data.get("exclude_xy")
 env = gym.make('StickInsect-v0',
-               render_mode="human",  
-               exclude_current_positions_from_observation=exclude_xy)
+               exclude_current_positions_from_observation=exclude_xy,
+               max_episode_steps=3000)
 env = Monitor(env) 
 env = DummyVecEnv([lambda: RolloutInfoWrapper(env)])
-
-'''dataset'''
 
 # Load the expert dataset
 obs_states = np.load('expert_demonstration/expert/StickInsect-v0-m3t-12-obs.npy', allow_pickle=True)
@@ -64,63 +62,6 @@ transitions = types.Transitions(
     infos=[{} for _ in range(len(observations))]
 )
 
-'''expert'''
-
-# expert = PPO(
-#     policy=MlpPolicy,
-#     env=env,
-#     seed=0,
-#     batch_size=64,
-#     ent_coef=0.0,
-#     learning_rate=0.0003,
-#     n_epochs=10,
-#     n_steps=64,
-# )
-
-# reward, _ = evaluate_policy(expert, env, 10)
-# print(f"Reward before training: {reward}")
-
-# # Note: set to 100000 to train a proficient expert
-# expert.learn(total_timesteps=1_000, log_interval=1000, progress_bar=True)  
-# reward, _ = evaluate_policy(expert, expert.get_env(), 10)
-# print(f"Expert reward: {reward}")
-
-# rng = np.random.default_rng()
-# rollouts = rollout.rollout(
-#     expert,
-#     env,
-#     rollout.make_sample_until(min_timesteps=None, min_episodes=50),
-#     rng=rng,
-# )
-# transitions = rollout.flatten_trajectories(rollouts)
-
-'''test'''
-# obs = env.reset()
-# done = False
-# step_count = 0
-# # Run the policy until the episode is done or a maximum number of steps
-# max_steps = 500  # Set a reasonable number of steps to prevent infinite loops
-
-# while not done and step_count < max_steps:
-#     # Convert the observation to tensor, and add batch dimension if necessary
-#     obs_tensor = torch.as_tensor(obs, dtype=torch.float32).squeeze(0)
-
-#     with torch.no_grad():  # Disable gradient calculation for inference
-#         action, _ = expert.predict(obs_tensor, deterministic=True)  # Get action and ignore additional outputs
-#     # Convert the action from (48,) to (1, 48) to match the expected input shape
-#     action = action.reshape(1, -1)
-
-#     obs, reward, done, info = env.step(action)  # Take the action in the environment
-#     print(f"Step: {step_count}, Action: {action}, Reward: {reward}, Done: {done}")
-    
-#     env.render()  
-#     step_count += 1
-
-
-# # Close the environment
-# env.close()
-
-'''BC'''
 # Create the BC trainer
 bc_trainer = bc.BC(
     observation_space=env.observation_space,
@@ -129,12 +70,12 @@ bc_trainer = bc.BC(
     rng=np.random.default_rng(SEED)
 )
 
-# reward_before_training, _ = evaluate_policy(bc_trainer.policy, env, 10)
-# print(f"Reward before training: {reward_before_training}")
-
-bc_trainer.train(n_epochs=1000)
+reward_before_training, _ = evaluate_policy(bc_trainer.policy, env, 10)
+bc_trainer.train(n_epochs=5000)
 reward_after_training, _ = evaluate_policy(bc_trainer.policy, env, 10)
+
+print(f"Reward before training: {reward_before_training}")
 print(f"Reward after training: {reward_after_training}")
 
 # save the trained model
-torch.save(bc_trainer, "trained_policy_bc.pth")
+torch.save(bc_trainer, "trained_policy_bc_1000.pth")

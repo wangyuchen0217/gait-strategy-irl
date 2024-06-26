@@ -31,7 +31,10 @@ loaded_policy = PPO.load("trained_policy_gail")
 
 # Create and wrap the environment
 exclude_xy = config_data.get("exclude_xy")
-env = gym.make('StickInsect-v0',  exclude_current_positions_from_observation=exclude_xy, render_mode="human")
+env = gym.make('StickInsect-v0',  
+               exclude_current_positions_from_observation=exclude_xy, 
+               render_mode="human",
+               max_episode_steps=3000)
 env = DummyVecEnv([lambda: RolloutInfoWrapper(env)])
 # Reset the environment and get the initial observation
 obs = env.reset()
@@ -42,14 +45,11 @@ cumulative_reward = 0
 done = False
 step_count = 0
 
-# Run the policy until the episode is done or a maximum number of steps
-max_steps = 500  # Set a reasonable number of steps to prevent infinite loops
-
-while not done and step_count < max_steps:
+while not done:
     action, _states = loaded_policy.predict(obs, deterministic=True)  # Get the action from the policy
     obs, reward, done, info = env.step(action)  # Take the action in the environment
     cumulative_reward += reward  # Sum up the rewards
-    print(f"Step: {step_count}, Action: {action}, Reward: {reward}, Done: {done}")
+    print(f"Step: {step_count}, Reward: {reward}, Done: {done}")
     
     env.render()  
     step_count += 1

@@ -78,4 +78,4 @@ print(f"Reward before training: {reward_before_training}")
 print(f"Reward after training: {reward_after_training}")
 
 # save the trained model
-torch.save(bc_trainer, "trained_policy_bc_1000.pth")
+torch.save(bc_trainer, "trained_policy_bc.pth")

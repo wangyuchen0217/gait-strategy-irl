@@ -34,7 +34,7 @@ with open("configs/irl.yml", "r") as f:
 # os.environ['PYTHONHASHSEED'] = str(SEED)
 
 # Load the trained policy
-loaded_policy = torch.load("trained_policy_bc_1000.pth")
+loaded_policy = torch.load("trained_policy_bc.pth")
 loaded_policy = loaded_policy.policy # Accessing the policy attribute which is a PyTorch model
 loaded_policy.eval() # Set the model to evaluation mode
 

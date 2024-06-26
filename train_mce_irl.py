@@ -105,6 +105,15 @@ for t in range(len(observations)):
 # Correctly flatten trajectories to create transitions with rewards
 transitions = rollout.flatten_trajectories_with_rew(trajectories)
 
+transitions = []
+gamma = 0.99
+for t in range(len(obs_states) - 1):
+    state = observations[t]
+    action = actions[t]
+    next_state = next_observations[t]
+    discount = gamma ** t  # Compute the discount factor at time t
+    transitions.append((state, action, next_state, discount))
+
 # Initialize MCE IRL
 reward_net = BasicRewardNet(env.observation_space, env.action_space)
 mce_irl = MCEIRL(

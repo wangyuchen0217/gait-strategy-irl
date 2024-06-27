@@ -25,3 +25,9 @@ register(
      entry_point='envs.StickInsectEnv:StickInsectEnv',
      max_episode_steps=300,
 )
+
+register(
+     id='StickInsect-v0-discrete',
+     entry_point='envs.StickInsectEnv_discrete:StickInsectEnv',
+     max_episode_steps=300,
+)

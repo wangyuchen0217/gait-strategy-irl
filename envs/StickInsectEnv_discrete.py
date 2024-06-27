@@ -66,6 +66,16 @@ class StickInsectEnv(MujocoEnv, utils.EzPickle):
             exclude_current_positions_from_observation
         )
 
+        self.action_space = Box(low=-1, high=1, shape=(12,), dtype=np.float64)
+        self.observation_space = Box(low=-np.inf, high=np.inf, shape=(3,), dtype=np.float64)
+
+        # Example of defining states as discrete entities
+        self.num_states_per_dimension = 10  # Define how many states per dimension of observation
+        self.total_states = self.num_states_per_dimension ** self.observation_space.shape[0]
+        self.states = np.arange(self.total_states)  # This is overly simplistic and likely impractical
+
+        self.initialize_transition_matrix()
+
         obs_shape = 59
         if not exclude_current_positions_from_observation:
             obs_shape += 2
@@ -83,6 +93,16 @@ class StickInsectEnv(MujocoEnv, utils.EzPickle):
             default_camera_config=DEFAULT_CAMERA_CONFIG,
             **kwargs,
         )
+
+    def initialize_transition_matrix(self):
+        total_discrete_actions = self.action_space.shape[0] * 10  # Example: 10 discrete actions per dimension
+        self.transition_matrix = np.zeros((self.total_states, self.total_states, total_discrete_actions))
+
+        # Populate the transition matrix with simplified logic (hypothetical)
+        for state in self.states:
+            for action_idx in range(total_discrete_actions):
+                next_state = (state + action_idx) % self.total_states
+                self.transition_matrix[state, next_state, action_idx] = 1  # Deterministic example
 
     @property
     def healthy_reward(self):

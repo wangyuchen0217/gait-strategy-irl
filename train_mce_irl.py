@@ -47,9 +47,9 @@ env = DummyVecEnv([lambda: RolloutInfoWrapper(env)])
 env.horizon = 3000
 env.state_dim = number_of_features
 env.action_dim = number_of_features
-env.state_space = gym.spaces.Discrete(n_bins ** number_of_features)
+env.state_space = gym.spaces.Discrete(n_bins )
 env.action_space = gym.spaces.Discrete(n_bins)
-env.observation_matrix = np.eye(n_bins ** number_of_features)
+env.observation_matrix = np.eye(n_bins)
 
 # Load the expert dataset
 obs_states = np.load('expert_demonstration/expert/StickInsect-v0-m3t-12-obs.npy', allow_pickle=True)
@@ -57,61 +57,66 @@ actions = np.load('expert_demonstration/expert/StickInsect-v0-m3t-12-act.npy', a
 
 
 # Extract qpos and qvel data
-qpos_data = obs_states[:, :, 2:-30]  # Adjust indices based on actual data layout
-qvel_data = obs_states[:, :, -30:]  # Adjust indices based on actual data layout
+qpos_data = obs_states[0, :, 2:-30]  # Adjust indices based on actual data layout
+qvel_data = obs_states[0, :, -30:]  # Adjust indices based on actual data layout
 
 # Setup PCA
 pca_qpos = PCA(n_components=number_of_features)  # Reduce to 10 principal components for qpos
 pca_qvel = PCA(n_components=number_of_features)  # Reduce to 10 principal components for qvel
 
 # Fit PCA on flattened data assuming the first dimension is the batch dimension
-pca_qpos.fit(qpos_data.reshape(-1, qpos_data.shape[-1]))
-pca_qvel.fit(qvel_data.reshape(-1, qvel_data.shape[-1]))
+reduced_qpos = pca_qpos.fit_transform(qpos_data)
+reduced_qvel = pca_qvel.fit_transform(qvel_data)
 
-# Transform data
-reduced_qpos = pca_qpos.transform(qpos_data.reshape(-1, qpos_data.shape[-1]))
-reduced_qvel = pca_qvel.transform(qvel_data.reshape(-1, qvel_data.shape[-1]))
-
-# Reshape back to original batch shape
-reduced_qpos = reduced_qpos.reshape(qpos_data.shape[0], qpos_data.shape[1], -1)
-reduced_qvel = reduced_qvel.reshape(qvel_data.shape[0], qvel_data.shape[1], -1)
-
-# Concatenate reduced qpos and qvel back to form the new observations
-new_observations = np.concatenate((reduced_qpos, reduced_qvel), axis=-1)
+# Combine reduced qpos and qvel data
+reduced_data = np.hstack((reduced_qpos, reduced_qvel))
 
 # Use new_observations for training or simulation
-print("Transformed Observations Shape:", new_observations.shape)
+print("Transformed Observations Shape:", reduced_data.shape)
 
+num_bins = 10
+state_occupancy = np.zeros(num_bins)
 
-# Extract observations and "actions" (which are the next observations in this context)
-observations = obs_states[0, :-1, 2:] if exclude_xy else obs_states[0, :-1, :] # Exclude the last step to avoid indexing error
-actions = actions[0, :-1, :] 
-next_observations = obs_states[0, 1:, 2:] if exclude_xy else obs_states[0, 1:, :] # Exclude the first step to avoid indexing error
+# Example of discretizing and counting occupancy (very simplistic and for illustrative purposes)
+# Normally, you would have exact state definitions to increment these counts correctly
+for observation in reduced_data:
+    index = int(np.sum(observation) * num_bins / np.max(reduced_data)) % num_bins
+    state_occupancy[index] += 1
 
-
-# Configure the discretizer
-discretizer = KBinsDiscretizer(n_bins=n_bins, encode='onehot-dense', strategy='uniform')
-discrete_observations = discretizer.fit_transform(observations)
-
-# Assuming a suitable discretization or state identification method
-state_occupancy = np.zeros((n_bins ** number_of_features,))  # Adjust size based on discretization
-
-for t in range(len(observations) - 1):
-    state_index = np.argmax(discrete_observations[t])  # Assuming already one-hot
-    discount = gamma ** t
-    state_occupancy[state_index] += discount
-
-# Normalize the occupancy measure
+# Normalize to form a probability distribution (or keep as counts if that's what the method expects)
 state_occupancy /= np.sum(state_occupancy)
-# Pass this directly to MCE IRL
-demonstrations = state_occupancy  # Directly as a state-occupancy measure
+
+
+class CustomRewardNet(torch.nn.Module):
+    def __init__(self):
+        super().__init__()
+        # Example layer
+        self.layer = torch.nn.Linear(10, 1)  # Adjust dimensions according to your input size
+
+    def forward(self, obs, action=None, *args):
+        if action is not None:
+            x = torch.cat((obs, action), dim=-1)  # Concatenate action to observation if not None
+        else:
+            x = obs
+        return self.layer(x)
+    
+    @property
+    def dtype(self):
+        return next(self.parameters()).dtype  # Returns the dtype of the first parameter
+    
+    @property
+    def device(self):
+        return next(self.parameters()).device  # Returns the device of the first parameter
+
+    
+reward_net = CustomRewardNet()
 
 
 # Initialize MCE IRL
-reward_net = BasicRewardNet(env.observation_space, env.action_space)
+# reward_net = BasicRewardNet(env.observation_space, env.action_space)
 mce_irl = MCEIRL(
     env=env,
-    demonstrations=demonstrations,
+    demonstrations=state_occupancy,
     reward_net=reward_net,
     rng=rng,
     discount=0.99,

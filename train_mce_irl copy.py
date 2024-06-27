@@ -56,33 +56,6 @@ obs_states = np.load('expert_demonstration/expert/StickInsect-v0-m3t-12-obs.npy'
 actions = np.load('expert_demonstration/expert/StickInsect-v0-m3t-12-act.npy', allow_pickle=True)
 
 
-# Extract qpos and qvel data
-qpos_data = obs_states[:, :, 2:-30]  # Adjust indices based on actual data layout
-qvel_data = obs_states[:, :, -30:]  # Adjust indices based on actual data layout
-
-# Setup PCA
-pca_qpos = PCA(n_components=number_of_features)  # Reduce to 10 principal components for qpos
-pca_qvel = PCA(n_components=number_of_features)  # Reduce to 10 principal components for qvel
-
-# Fit PCA on flattened data assuming the first dimension is the batch dimension
-pca_qpos.fit(qpos_data.reshape(-1, qpos_data.shape[-1]))
-pca_qvel.fit(qvel_data.reshape(-1, qvel_data.shape[-1]))
-
-# Transform data
-reduced_qpos = pca_qpos.transform(qpos_data.reshape(-1, qpos_data.shape[-1]))
-reduced_qvel = pca_qvel.transform(qvel_data.reshape(-1, qvel_data.shape[-1]))
-
-# Reshape back to original batch shape
-reduced_qpos = reduced_qpos.reshape(qpos_data.shape[0], qpos_data.shape[1], -1)
-reduced_qvel = reduced_qvel.reshape(qvel_data.shape[0], qvel_data.shape[1], -1)
-
-# Concatenate reduced qpos and qvel back to form the new observations
-new_observations = np.concatenate((reduced_qpos, reduced_qvel), axis=-1)
-
-# Use new_observations for training or simulation
-print("Transformed Observations Shape:", new_observations.shape)
-
-
 # Extract observations and "actions" (which are the next observations in this context)
 observations = obs_states[0, :-1, 2:] if exclude_xy else obs_states[0, :-1, :] # Exclude the last step to avoid indexing error
 actions = actions[0, :-1, :] 

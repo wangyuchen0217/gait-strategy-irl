@@ -54,71 +54,48 @@ actions = actions[0, :-1, :]
 next_observations = obs_states[0, 1:, 2:] if exclude_xy else obs_states[0, 1:, :] # Exclude the first step to avoid indexing error
 
 
-
-# Parameters
-gamma = 0.99  # Discount factor
-n_bins = 5  # Fewer bins to reduce dimensionality
-
-# Initialize discretizer
-discretizer = KBinsDiscretizer(n_bins=n_bins, encode='ordinal', strategy='uniform')
-
-# Fit and transform the observations to discretize them
-discretized_observations = discretizer.fit_transform(observations)
-
-# Convert to integers
-discretized_observations = discretized_observations.astype(int)
-
-# Assuming a lower-dimensional state space for sparse representation
-num_states = n_bins ** min(10, observations.shape[1])  # Limiting to 10 dimensions
-
-# Use a sparse matrix to store occupancy measures
-state_occupancy = dok_matrix((num_states, 1))
-
-# Calculate discounted occupancy measures
-for t, state_index in enumerate(discretized_observations):
-    discount = gamma ** t
-    # Calculate flat index from multidimensional index
-    flat_index = np.ravel_multi_index(state_index[:10], (n_bins,) * min(10, observations.shape[1]))  # Only use up to 10 dimensions
-    state_occupancy[flat_index, 0] += discount
-
-# Convert to dense array and normalize
-dense_occupancy = state_occupancy.toarray().flatten()
-dense_occupancy /= np.sum(dense_occupancy)
-
-print(dense_occupancy)
-
-
-
-# Create transitions with time steps
-discount_factor = 0.99
-trajectories = []
-for t in range(len(observations)):
-    trajectory = types.TrajectoryWithRew(
-        obs=np.array([observations[t], next_observations[t]]),
-        acts=np.array([actions[t]]),
-        rews=np.array([0.0]),  # Placeholder rewards
-        infos=[{'time_step': t}],  # Adding time step information
-        terminal=False  # Set terminal to False for all steps
-    )
-    trajectories.append(trajectory)
-
-# Correctly flatten trajectories to create transitions with rewards
-transitions = rollout.flatten_trajectories_with_rew(trajectories)
-
-transitions = []
 gamma = 0.99
-for t in range(len(obs_states) - 1):
-    state = observations[t]
-    action = actions[t]
-    next_state = next_observations[t]
-    discount = gamma ** t  # Compute the discount factor at time t
-    transitions.append((state, action, next_state, discount))
+# Configure the discretizer
+n_bins = 10  # Adjust based on your specific needs
+discretizer = KBinsDiscretizer(n_bins=n_bins, encode='onehot-dense', strategy='uniform')
+
+# Assuming observations is already loaded and is your continuous data
+discrete_observations = discretizer.fit_transform(observations)
+discrete_next_observations = discretizer.transform(next_observations)
+
+# # Format transitions for MCE IRL
+# transitions = [{
+#     "obs": discrete_observations[t],
+#     "acts": actions[t],
+#     "next_obs": discrete_next_observations[t],
+#     "dones": np.array([False]),
+#     "infos": {"time_step": t, "discount": gamma ** t}
+# } for t in range(len(observations) - 1)]
+
+
+n_bins = 10  # Adjust based on your specific needs
+number_of_features = 2  # Adjust based on your specific needs
+# Assuming a suitable discretization or state identification method
+state_occupancy = np.zeros((n_bins ** number_of_features,))  # Adjust size based on discretization
+
+for t in range(len(observations) - 1):
+    state_index = np.argmax(discrete_observations[t])  # Assuming already one-hot
+    discount = gamma ** t
+    state_occupancy[state_index] += discount
+
+# Normalize the occupancy measure
+state_occupancy /= np.sum(state_occupancy)
+
+# Pass this directly to MCE IRL
+demonstrations = state_occupancy  # Directly as a state-occupancy measure
+
+
 
 # Initialize MCE IRL
 reward_net = BasicRewardNet(env.observation_space, env.action_space)
 mce_irl = MCEIRL(
     env=env,
-    demonstrations=transitions,
+    demonstrations=demonstrations,
     reward_net=reward_net,
     rng=rng,
     discount=0.99,

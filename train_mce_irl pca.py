@@ -62,12 +62,14 @@ observations = obs_states[0, :-1, 2:] if exclude_xy else obs_states[0, :-1, :] #
 actions = actions[0, :-1, :] 
 next_observations = obs_states[0, 1:, 2:] if exclude_xy else obs_states[0, 1:, :] # Exclude the first step to avoid indexing error
 
+
+
 # Standardize the data
 scaler = StandardScaler()
 scaled_data = scaler.fit_transform(observations)
 
 # Apply PCA
-desired_dimension =3
+desired_dimension =24
 pca = PCA(n_components=desired_dimension)  # Set the number of components to reduce to
 pca_result = pca.fit_transform(scaled_data)
 
@@ -82,64 +84,46 @@ cumulative_variance = np.cumsum(explained_variance)
 print("Explained Variance by each Principal Component:", explained_variance)
 print("Cumulative Explained Variance:", cumulative_variance)
 
-# Standardize the data
-scaler = StandardScaler()
-scaled_data = scaler.fit_transform(scaled_data)
-
-# Reshape data for temporal PCA
-# Transpose to make the time dimension as features for PCA
-scaled_data_transposed = scaled_data.T
-
-# Apply PCA on the transposed data to reduce temporal dimensions
-desired_temporal_dimension = 10  # Number of temporal components to reduce to
-pca_temporal = PCA(n_components=desired_temporal_dimension)
-pca_temporal_result = pca_temporal.fit_transform(scaled_data_transposed)
-
-# Transpose back to get the reduced time dimension
-reduced_temporal_data = pca_temporal_result.T
-
-# Plotting the explained variance for temporal PCA
-explained_variance_temporal = pca_temporal.explained_variance_ratio_
-cumulative_variance_temporal = np.cumsum(explained_variance_temporal)
-
-print("Explained Variance by each Principal Component:", explained_variance)
-print("Cumulative Explained Variance:", cumulative_variance)
-
 # Plotting the explained variance
+plt.figure(figsize=(6, 6))
+plt.bar(range(1, desired_dimension + 1), explained_variance, alpha=0.5, align='center', label='Individual explained variance')
+plt.step(range(1, desired_dimension + 1), cumulative_variance, where='mid', label='Cumulative explained variance')
+plt.xlabel('Principal components')
+plt.ylabel('Explained variance ratio')
+plt.title('Explained Variance by Principal Components')
+plt.legend(loc='best')
+plt.savefig('pca_explained_variance.png')
+
+
+
+# Calculate state frequencies (histogram)
+# Assuming each dimension is discretized into `n_bins` bins
+n_bins = 2
+# Discretizer for each principal component
+discretizer = KBinsDiscretizer(n_bins=n_bins, encode='ordinal', strategy='uniform')
+discretized_data = discretizer.fit_transform(pca_result)
+# Convert discretized data to integer states
+discretized_states = np.array(discretized_data, dtype=int)
+
+# Calculate the state frequencies (histogram)
+state_counts = np.zeros((n_bins,) * desired_dimension, dtype=int)
+
+for state in discretized_states:
+    state_counts[tuple(state)] += 1
+
+# Normalize the histogram to get state occupancy
+state_occupancy = state_counts / np.sum(state_counts)
+# Flatten the state occupancy for use in IRL
+state_occupancy_flat = state_occupancy.flatten()
+
+print("State Occupancy:", state_occupancy_flat)
+print("State Occupancy Shape:", state_occupancy_flat.shape)
+print("Sum of State Occupancy (should be 1):", np.sum(state_occupancy_flat))
+
+# Optional: Visualize the state occupancy if desired
 # plt.figure(figsize=(10, 5))
-# plt.bar(range(1, desired_dimension + 1), explained_variance, alpha=0.5, align='center', label='Individual explained variance')
-# plt.step(range(1, desired_dimension + 1), cumulative_variance, where='mid', label='Cumulative explained variance')
-# plt.xlabel('Principal components')
-# plt.ylabel('Explained variance ratio')
-# plt.title('Explained Variance by Principal Components')
-# plt.legend(loc='best')
+# plt.bar(range(len(state_occupancy_flat)), state_occupancy_flat, alpha=0.5, align='center')
+# plt.xlabel('Discretized States')
+# plt.ylabel('Occupancy Probability')
+# plt.title('State Occupancy Distribution')
 # plt.show()
-
-# 2D scatter plot of the first two principal components
-plt.figure(figsize=(10, 5))
-plt.scatter(pca_df['PC2'], pca_df['PC3'])
-plt.xlabel('Principal Component 1')
-plt.ylabel('Principal Component 2')
-plt.title('2D Scatter Plot of First Two Principal Components')
-plt.grid(True)
-plt.show()
-
-# Plotting the principal components over time
-plt.figure(figsize=(15, 8))
-for i in range(desired_dimension):
-    plt.plot(pca_df[f'PC{i+1}'], label=f'PC{i+1}')
-plt.xlabel('Time Steps')
-plt.ylabel('Principal Component Values')
-plt.title('Principal Components Over Time')
-plt.legend()
-plt.show()
-
-# Plotting the principal components of temporal data
-plt.figure(figsize=(15, 8))
-for i in range(desired_temporal_dimension):
-    plt.plot(reduced_temporal_data[i], label=f'Temporal PC{i+1}')
-plt.xlabel('Features')
-plt.ylabel('Temporal Principal Component Values')
-plt.title('Temporal Principal Components Over Features')
-plt.legend()
-plt.show()

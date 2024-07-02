@@ -72,7 +72,6 @@ scaled_data = scaler.fit_transform(observations)
 desired_dimension =24
 pca = PCA(n_components=desired_dimension)  # Set the number of components to reduce to
 pca_result = pca.fit_transform(scaled_data)
-
 # Convert the result back to a DataFrame for easier handling
 pca_df = pd.DataFrame(pca_result, columns=[f'PC{i+1}' for i in range(desired_dimension)])
 print("pca_result shape:", pca_result.shape)
@@ -80,7 +79,6 @@ print("pca_result shape:", pca_result.shape)
 # Explained variance to understand how much information is retained
 explained_variance = pca.explained_variance_ratio_
 cumulative_variance = np.cumsum(explained_variance)
-
 print("Explained Variance by each Principal Component:", explained_variance)
 print("Cumulative Explained Variance:", cumulative_variance)
 
@@ -107,15 +105,15 @@ discretized_states = np.array(discretized_data, dtype=int)
 
 # Calculate the state frequencies (histogram)
 state_counts = np.zeros((n_bins,) * desired_dimension, dtype=int)
-
 for state in discretized_states:
     state_counts[tuple(state)] += 1
-
 # Normalize the histogram to get state occupancy
 state_occupancy = state_counts / np.sum(state_counts)
 # Flatten the state occupancy for use in IRL
 state_occupancy_flat = state_occupancy.flatten()
 
+print("Discretized States Shape:", discretized_states.shape)
+print("State_counts shape:", state_counts.shape)
 print("State Occupancy:", state_occupancy_flat)
 print("State Occupancy Shape:", state_occupancy_flat.shape)
 print("Sum of State Occupancy (should be 1):", np.sum(state_occupancy_flat))

@@ -51,7 +51,7 @@ scaler = StandardScaler()
 scaled_data = scaler.fit_transform(observations)
 
 # Apply PCA
-desired_dimension =24
+desired_dimension =15
 pca = PCA(n_components=desired_dimension)  # Set the number of components to reduce to
 pca_result = pca.fit_transform(scaled_data)
 # Convert the result back to a DataFrame for easier handling
@@ -112,33 +112,28 @@ env = gym.make('StickInsect-v0-discrete',
                exclude_current_positions_from_observation=exclude_xy,
                max_episode_steps=3000)
 env = DummyVecEnv([lambda: RolloutInfoWrapper(env)])
-# env.horizon = 3000
-# env.state_dim = state_dim
-# env.action_dim = action_dim
+env.horizon = 3000
+env.state_dim = state_dim
+env.action_dim = action_dim
 env.state_space = gym.spaces.Discrete(n_bins ** state_dim)
 env.action_space = gym.spaces.Discrete(n_bins)
+env.observation_matrix = np.eye(n_bins ** state_dim)
 
 # Initialize reward network
 reward_net = BasicRewardNet(
     observation_space=env.observation_space,
     action_space=env.action_space,
     use_state=True,
-    use_action=True,
+    use_action=False,
     use_next_state=False,
     use_done=False,
 )
 
 # Initialize MCE-IRL algorithm
 mce_irl = MCEIRL(
+    demonstrations=state_occupancy_flat,  # Provide state occupancy as demonstrations
     env=env,
     reward_net=reward_net,
-    demonstrations=types.Transitions(
-        obs=discretized_states,
-        acts=actions,
-        next_obs=None,  # Not used in this example
-        dones=None,  # Not used in this example
-        infos=None,  # Not used in this example
-    ),
     rng=rng,
 )
 

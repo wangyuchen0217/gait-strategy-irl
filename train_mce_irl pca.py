@@ -33,25 +33,7 @@ import pandas as pd
 # open config file
 with open("configs/irl.yml", "r") as f:
     config_data = yaml.safe_load(f)
-
-SEED = 42
-rng = np.random.default_rng(SEED)
-n_bins = 10  # Adjust based on your specific needs
-number_of_features = 3  # Adjust based on your specific needs
-gamma = 0.99
-
-# Create the environment
 exclude_xy = config_data.get("exclude_xy")
-env = gym.make('StickInsect-v0-discrete',
-               exclude_current_positions_from_observation=exclude_xy,
-               max_episode_steps=3000)
-env = DummyVecEnv([lambda: RolloutInfoWrapper(env)])
-env.horizon = 3000
-env.state_dim = number_of_features
-env.action_dim = number_of_features
-env.state_space = gym.spaces.Discrete(n_bins ** number_of_features)
-env.action_space = gym.spaces.Discrete(n_bins)
-env.observation_matrix = np.eye(n_bins ** number_of_features)
 
 # Load the expert dataset
 obs_states = np.load('expert_demonstration/expert/StickInsect-v0-m3t-12-obs.npy', allow_pickle=True)
@@ -118,10 +100,55 @@ print("State Occupancy:", state_occupancy_flat)
 print("State Occupancy Shape:", state_occupancy_flat.shape)
 print("Sum of State Occupancy (should be 1):", np.sum(state_occupancy_flat))
 
-# Optional: Visualize the state occupancy if desired
-# plt.figure(figsize=(10, 5))
-# plt.bar(range(len(state_occupancy_flat)), state_occupancy_flat, alpha=0.5, align='center')
-# plt.xlabel('Discretized States')
-# plt.ylabel('Occupancy Probability')
-# plt.title('State Occupancy Distribution')
-# plt.show()
+
+SEED = 42
+rng = np.random.default_rng(SEED)
+gamma = 0.99
+state_dim = desired_dimension
+action_dim = len(actions[0])
+
+# Create the environment
+env = gym.make('StickInsect-v0-discrete',
+               exclude_current_positions_from_observation=exclude_xy,
+               max_episode_steps=3000)
+env = DummyVecEnv([lambda: RolloutInfoWrapper(env)])
+# env.horizon = 3000
+# env.state_dim = state_dim
+# env.action_dim = action_dim
+env.state_space = gym.spaces.Discrete(n_bins ** state_dim)
+env.action_space = gym.spaces.Discrete(n_bins)
+
+# Initialize reward network
+reward_net = BasicRewardNet(
+    observation_space=env.observation_space,
+    action_space=env.action_space,
+    use_state=True,
+    use_action=True,
+    use_next_state=False,
+    use_done=False,
+)
+
+# Initialize MCE-IRL algorithm
+mce_irl = MCEIRL(
+    env=env,
+    reward_net=reward_net,
+    demonstrations=types.Transitions(
+        obs=discretized_states,
+        acts=actions,
+        next_obs=None,  # Not used in this example
+        dones=None,  # Not used in this example
+        infos=None,  # Not used in this example
+    ),
+    rng=rng,
+)
+
+env.seed(SEED)
+mce_irl.train()
+
+# Evaluate the learned policy
+reward_after_training, _ = evaluate_policy(mce_irl.policy, env, 10)
+print(f"Reward after training: {reward_after_training}")
+# save the trained model
+torch.save(mce_irl.policy, "trained_policy_mce_irl.pth")
+
+

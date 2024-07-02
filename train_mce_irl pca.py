@@ -10,6 +10,7 @@ from stable_baselines3.common.evaluation import evaluate_policy
 from stable_baselines3.common.vec_env import DummyVecEnv
 
 from imitation.algorithms.mce_irl import MCEIRL
+from imitation.algorithms.mce_irl import squeeze_r
 
 from imitation.data import rollout
 from imitation.rewards import reward_nets
@@ -51,7 +52,7 @@ scaler = StandardScaler()
 scaled_data = scaler.fit_transform(observations)
 
 # Apply PCA
-desired_dimension =15
+desired_dimension =10
 pca = PCA(n_components=desired_dimension)  # Set the number of components to reduce to
 pca_result = pca.fit_transform(scaled_data)
 # Convert the result back to a DataFrame for easier handling
@@ -116,12 +117,14 @@ env.horizon = 3000
 env.state_dim = state_dim
 env.action_dim = action_dim
 env.state_space = gym.spaces.Discrete(n_bins ** state_dim)
-env.action_space = gym.spaces.Discrete(n_bins)
+env.action_space = gym.spaces.Discrete(action_dim)
 env.observation_matrix = np.eye(n_bins ** state_dim)
+env.transition_matrix = np.zeros((n_bins ** state_dim, action_dim, n_bins ** state_dim))
+env.initial_state_dist = np.zeros(n_bins ** state_dim)
 
 # Initialize reward network
 reward_net = BasicRewardNet(
-    observation_space=env.observation_space,
+    observation_space=env.state_space,
     action_space=env.action_space,
     use_state=True,
     use_action=False,

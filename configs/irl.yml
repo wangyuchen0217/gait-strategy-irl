@@ -6,6 +6,7 @@ model: StickInsect-v0
 exclude_xy: True
 env:
   seed: 42
+  horizon: 3000
 irl:
   pca_dimension: 10
   n_bins: 2

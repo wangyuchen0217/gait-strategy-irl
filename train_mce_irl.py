@@ -34,7 +34,8 @@ import pandas as pd
 # open config file
 with open("configs/irl.yml", "r") as f:
     config_data = yaml.safe_load(f)
-exclude_xy = config_data.get("exclude_xy")
+exclude_xy = config_data['exclude_xy']
+
 
 # Load the expert dataset
 obs_states = np.load('expert_demonstration/expert/StickInsect-v0-m3t-12-obs.npy', allow_pickle=True)
@@ -52,11 +53,11 @@ scaler = StandardScaler()
 scaled_data = scaler.fit_transform(observations)
 
 # Apply PCA
-desired_dimension =10
-pca = PCA(n_components=desired_dimension)  # Set the number of components to reduce to
+pca_dimension = config_data['irl']['pca_dimension']
+pca = PCA(n_components=pca_dimension)  # Set the number of components to reduce to
 pca_result = pca.fit_transform(scaled_data)
 # Convert the result back to a DataFrame for easier handling
-pca_df = pd.DataFrame(pca_result, columns=[f'PC{i+1}' for i in range(desired_dimension)])
+pca_df = pd.DataFrame(pca_result, columns=[f'PC{i+1}' for i in range(pca_dimension)])
 print("pca_result shape:", pca_result.shape)
 
 # Explained variance to understand how much information is retained
@@ -67,8 +68,8 @@ print("Cumulative Explained Variance:", cumulative_variance)
 
 # Plotting the explained variance
 plt.figure(figsize=(6, 6))
-plt.bar(range(1, desired_dimension + 1), explained_variance, alpha=0.5, align='center', label='Individual explained variance')
-plt.step(range(1, desired_dimension + 1), cumulative_variance, where='mid', label='Cumulative explained variance')
+plt.bar(range(1, pca_dimension + 1), explained_variance, alpha=0.5, align='center', label='Individual explained variance')
+plt.step(range(1, pca_dimension + 1), cumulative_variance, where='mid', label='Cumulative explained variance')
 plt.xlabel('Principal components')
 plt.ylabel('Explained variance ratio')
 plt.title('Explained Variance by Principal Components')
@@ -79,7 +80,7 @@ plt.savefig('pca_explained_variance.png')
 
 # Calculate state frequencies (histogram)
 # Assuming each dimension is discretized into `n_bins` bins
-n_bins = 2
+n_bins = config_data['irl']['n_bins']
 # Discretizer for each principal component
 discretizer = KBinsDiscretizer(n_bins=n_bins, encode='ordinal', strategy='uniform')
 discretized_data = discretizer.fit_transform(pca_result)
@@ -87,7 +88,7 @@ discretized_data = discretizer.fit_transform(pca_result)
 discretized_states = np.array(discretized_data, dtype=int)
 
 # Calculate the state frequencies (histogram)
-state_counts = np.zeros((n_bins,) * desired_dimension, dtype=int)
+state_counts = np.zeros((n_bins,) * pca_dimension, dtype=int)
 for state in discretized_states:
     state_counts[tuple(state)] += 1
 # Normalize the histogram to get state occupancy
@@ -102,18 +103,18 @@ print("State Occupancy Shape:", state_occupancy_flat.shape)
 print("Sum of State Occupancy (should be 1):", np.sum(state_occupancy_flat))
 
 
-SEED = 42
+SEED = config_data['env']['seed']
+horizon = config_data['env']['horizon']
 rng = np.random.default_rng(SEED)
-gamma = 0.99
-state_dim = desired_dimension
+state_dim = pca_dimension
 action_dim = len(actions[0])
 
 # Create the environment
 env = gym.make('StickInsect-v0-discrete',
                exclude_current_positions_from_observation=exclude_xy,
-               max_episode_steps=3000)
+               max_episode_steps=horizon)
 env = DummyVecEnv([lambda: RolloutInfoWrapper(env)])
-env.horizon = 3000
+env.horizon = horizon
 env.state_dim = state_dim
 env.action_dim = action_dim
 env.state_space = gym.spaces.Discrete(n_bins ** state_dim)
@@ -144,8 +145,6 @@ env.seed(SEED)
 mce_irl.train()
 
 # Evaluate the learned policy
-reward_after_training, _ = evaluate_policy(mce_irl.policy, env, 10)
-print(f"Reward after training: {reward_after_training}")
 # save the trained model
 torch.save(mce_irl.policy, "trained_policy_mce_irl.pth")
 

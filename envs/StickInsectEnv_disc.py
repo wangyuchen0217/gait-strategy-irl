@@ -2,7 +2,7 @@ import numpy as np
 
 from gymnasium import utils
 from gymnasium.envs.mujoco import MujocoEnv
-from gymnasium.spaces import Box
+from gymnasium.spaces import Discrete
 
 
 DEFAULT_CAMERA_CONFIG = {
@@ -32,6 +32,9 @@ class StickInsectEnv(MujocoEnv, utils.EzPickle):
         contact_force_range=(-1.0, 1.0),
         reset_noise_scale=0.1,
         exclude_current_positions_from_observation=False,
+        state_dim=10,
+        action_dim=48,
+        n_bins=2,
         **kwargs,
     ):
         utils.EzPickle.__init__(
@@ -66,43 +69,23 @@ class StickInsectEnv(MujocoEnv, utils.EzPickle):
             exclude_current_positions_from_observation
         )
 
-        self.action_space = Box(low=-1, high=1, shape=(12,), dtype=np.float64)
-        self.observation_space = Box(low=-np.inf, high=np.inf, shape=(3,), dtype=np.float64)
-
-        # Example of defining states as discrete entities
-        self.num_states_per_dimension = 10  # Define how many states per dimension of observation
-        self.total_states = self.num_states_per_dimension ** self.observation_space.shape[0]
-        self.states = np.arange(self.total_states)  # This is overly simplistic and likely impractical
-
-        self.initialize_transition_matrix()
-
-        obs_shape = 59
-        if not exclude_current_positions_from_observation:
-            obs_shape += 2
-        if use_contact_forces:
-            obs_shape += 128
-        observation_space = Box(
-            low=-np.inf, high=np.inf, shape=(obs_shape,), dtype=np.float64
-        )
+        self.state_dim = state_dim
+        self.action_dim = action_dim
+        self.state_space = Discrete(n_bins ** state_dim)
+        self.action_space = Discrete(action_dim)
+        self.observation_matrix = np.eye(n_bins ** state_dim)
+        self.transition_matrix = np.zeros((n_bins ** state_dim, action_dim, n_bins ** state_dim))
+        self.initial_state_dist = np.zeros(n_bins ** state_dim)
 
         MujocoEnv.__init__(
             self,
             xml_file,
             1,
-            observation_space=observation_space,
+            observation_space=self.state_space,
             default_camera_config=DEFAULT_CAMERA_CONFIG,
             **kwargs,
         )
 
-    def initialize_transition_matrix(self):
-        total_discrete_actions = self.action_space.shape[0] * 10  # Example: 10 discrete actions per dimension
-        self.transition_matrix = np.zeros((self.total_states, self.total_states, total_discrete_actions))
-
-        # Populate the transition matrix with simplified logic (hypothetical)
-        for state in self.states:
-            for action_idx in range(total_discrete_actions):
-                next_state = (state + action_idx) % self.total_states
-                self.transition_matrix[state, next_state, action_idx] = 1  # Deterministic example
 
     @property
     def healthy_reward(self):
@@ -220,25 +203,13 @@ if __name__ == "__main__":
     env = StickInsectEnv(render_mode='human')
     env.reset_model()
 
-    # # print the observation space and action space
-    # print("observation space:", env.observation_space)
-    # print("observation space shape:", env.observation_space.shape)
-    # print("action space:", env.action_space)
-    # print("action space shape:", env.action_space.shape)
+    # print the observation space and action space
+    print("observation space:", env.observation_space)
+    print("observation space shape:", env.observation_space.shape)
+    print("action space:", env.action_space)
+    print("action space shape:", env.action_space.shape)
 
-    # for _ in range(1000):
-    #     env.step(env.action_space.sample())
-    #     env.render()
-    # env.close()
-    
-    import sys
-    sys.path.append("./")
-
-    actions = np.load('expert_demonstration/expert/StickInsect-v0-m3t-12-act.npy', allow_pickle=True)
-    actions = actions[0, :-1, :] 
-    for i in range(2458):
-        action = actions[i]
-        obs, reward, done, _, _=env.step(action)
+    for _ in range(1000):
+        env.step(env.action_space.sample())
         env.render()
-        print("Step:", i, "Reward:", reward, "Done:", done)
     env.close()

@@ -110,11 +110,9 @@ state_dim = pca_dimension
 action_dim = len(actions[0])
 
 # Create the environment
-env = gym.make('StickInsect-v0-discrete',
-               exclude_current_positions_from_observation=exclude_xy,
-               max_episode_steps=horizon)
+env = gym.make('StickInsect-v0-disc',
+               exclude_current_positions_from_observation=exclude_xy)
 env = DummyVecEnv([lambda: RolloutInfoWrapper(env)])
-env.horizon = horizon
 env.state_dim = state_dim
 env.action_dim = action_dim
 env.state_space = gym.spaces.Discrete(n_bins ** state_dim)
@@ -144,7 +142,6 @@ mce_irl = MCEIRL(
 env.seed(SEED)
 mce_irl.train()
 
-# Evaluate the learned policy
 # save the trained model
 torch.save(mce_irl.policy, "trained_policy_mce_irl.pth")
 

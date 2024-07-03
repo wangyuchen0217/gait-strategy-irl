@@ -23,11 +23,11 @@ from gymnasium.envs.registration import register
 register(
      id='StickInsect-v0',
      entry_point='envs.StickInsectEnv:StickInsectEnv',
-     max_episode_steps=300,
+     max_episode_steps=3000,
 )
 
 register(
-     id='StickInsect-v0-discrete',
-     entry_point='envs.StickInsectEnv_discrete:StickInsectEnv',
-     max_episode_steps=300,
+     id='StickInsect-v0-disc',
+     entry_point='envs.StickInsectEnv_disc:StickInsectEnv',
+     max_episode_steps=3000,
 )

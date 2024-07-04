@@ -2,6 +2,7 @@ import os
 import sys
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 sys.path.append("./") # add the root directory to the python path
+import envs
 
 import torch
 import yaml
@@ -20,11 +21,10 @@ SEED = config_data['env']['seed']
 horizon = config_data['env']['horizon']
 
 # Load the trained reward function
-reward_net = torch.load("trained_reward_net.pth")
-
+reward_net = torch.load("trained_policy_mce_irl.pth")
 
 # Create and wrap the original environment
-env = gym.make('StickInsect-v0-disc',
+env = gym.make('StickInsect-v0',
                exclude_current_positions_from_observation=exclude_xy,
                max_episode_steps=horizon)
 env = DummyVecEnv([lambda: RolloutInfoWrapper(env)])

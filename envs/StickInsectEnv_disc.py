@@ -1,8 +1,11 @@
 import numpy as np
-
+import torch
 from gymnasium import utils
 from gymnasium.envs.mujoco import MujocoEnv
 from gymnasium.spaces import Discrete
+from sklearn.decomposition import PCA
+from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import KBinsDiscretizer
 
 
 DEFAULT_CAMERA_CONFIG = {
@@ -35,6 +38,7 @@ class StickInsectEnv(MujocoEnv, utils.EzPickle):
         state_dim=10,
         action_dim=48,
         n_bins=2,
+        pca_dimension=10,
         **kwargs,
     ):
         utils.EzPickle.__init__(
@@ -76,6 +80,8 @@ class StickInsectEnv(MujocoEnv, utils.EzPickle):
         self.observation_matrix = np.eye(n_bins ** state_dim)
         self.transition_matrix = np.zeros((n_bins ** state_dim, action_dim, n_bins ** state_dim))
         self.initial_state_dist = np.zeros(n_bins ** state_dim)
+        self.pca_dimension = pca_dimension
+        self.n_bins = n_bins
 
         MujocoEnv.__init__(
             self,
@@ -196,6 +202,33 @@ class StickInsectEnv(MujocoEnv, utils.EzPickle):
         qvel = self.init_qvel
         self.set_state(qpos, qvel)
         observation = self._get_obs()
+
+        # # Standardize the data
+        # scaler = StandardScaler()
+        # scaled_data = scaler.fit_transform(observations)
+
+        # # Apply PCA
+        # pca_dimension = self.pca_dimension
+        # pca = PCA(n_components=pca_dimension)  # Set the number of components to reduce to
+        # pca_result = pca.fit_transform(scaled_data)
+
+        # # Assuming each dimension is discretized into `n_bins` bins
+        # n_bins = self.n_bins
+        # # Discretizer for each principal component
+        # discretizer = KBinsDiscretizer(n_bins=n_bins, encode='ordinal', strategy='uniform')
+        # discretized_data = discretizer.fit_transform(pca_result)
+        # # Convert discretized data to integer states
+        # discretized_states = np.array(discretized_data, dtype=int)
+
+        # # Calculate the state frequencies (histogram)
+        # state_counts = np.zeros((n_bins,) * pca_dimension, dtype=int)
+        # for state in discretized_states:
+        #     state_counts[tuple(state)] += 1
+        # # Normalize the histogram to get state occupancy
+        # state_occupancy = state_counts / np.sum(state_counts)
+        # # Flatten the state occupancy for use in IRL
+        # state_occupancy_flat = state_occupancy.flatten()
+        # observation = state_occupancy_flat
 
         return observation
 

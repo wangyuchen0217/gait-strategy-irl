@@ -79,6 +79,7 @@ data.qpos[-24:] = np.array(init_qpos_data.split()).astype(np.float64)
 
 obs_state = []
 contact_forces = []
+contact_points = []
 with mujoco.viewer.launch_passive(model, data) as viewer:
     # set a camera <camera name="top" mode="fixed" pos="5 0 20" xyaxes="1 0 0 0 1 0"/>
     viewer.cam.lookat[0] = 5  # x-coordinate of the point to look at
@@ -107,6 +108,11 @@ with mujoco.viewer.launch_passive(model, data) as viewer:
         obs_state.append(state) # [2459,48] only joint angles and velocities, [2459, 61] w/ torso
         # get data of the torques sensor
         contact_forces.append(data.sensordata.copy())
+
+        for i in range(data.ncon):
+            contact = data.contact[i]
+            contact_point = contact.pos.copy()
+            contact_points.append(contact_point)
 
         # record the initial position
         if j == 0:

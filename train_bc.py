@@ -48,7 +48,6 @@ actions = np.load('expert_demonstration/expert/StickInsect-v0-m3t-31-act.npy', a
 # Extract observations and "actions" (which are the next observations in this context)
 observations = obs_states[0, :-1, 2:] if exclude_xy else obs_states[0, :-1, :] # Exclude the last step to avoid indexing error
 actions = actions[0, :-1, :] 
-pd.DataFrame(actions).to_csv("actions.csv")
 
 next_observations = obs_states[0, 1:, 2:] if exclude_xy else obs_states[0, 1:, :] # Exclude the first step to avoid indexing error
 

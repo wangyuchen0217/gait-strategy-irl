@@ -25,6 +25,7 @@ import matplotlib.pyplot as plt
 import logging
 import torch
 from pykalman import KalmanFilter
+import pandas as pd
 
 SEED = 42
 
@@ -41,12 +42,13 @@ env = Monitor(env)
 env = DummyVecEnv([lambda: RolloutInfoWrapper(env)])
 
 # Load the expert dataset
-obs_states = np.load('expert_demonstration/expert/StickInsect-v0-m3t-12-obs.npy', allow_pickle=True)
-actions = np.load('expert_demonstration/expert/StickInsect-v0-m3t-12-act.npy', allow_pickle=True)
+obs_states = np.load('expert_demonstration/expert/StickInsect-v0-m3t-31-obs.npy', allow_pickle=True)
+actions = np.load('expert_demonstration/expert/StickInsect-v0-m3t-31-act.npy', allow_pickle=True)
 
 # Extract observations and "actions" (which are the next observations in this context)
 observations = obs_states[0, :-1, 2:] if exclude_xy else obs_states[0, :-1, :] # Exclude the last step to avoid indexing error
 actions = actions[0, :-1, :] 
+pd.DataFrame(actions).to_csv("actions.csv")
 
 next_observations = obs_states[0, 1:, 2:] if exclude_xy else obs_states[0, 1:, :] # Exclude the first step to avoid indexing error
 

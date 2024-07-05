@@ -118,10 +118,10 @@ with mujoco.viewer.launch_passive(model, data) as viewer:
 # record observation state and action
 obs_states = np.array([obs_state]) # [1, 2459, 48] only joint angles and velocities, [1, 2459, 61] w/ torso
 print("expert_demo:", obs_states.shape)
-# np.save("StickInsect-v0-m3t-12-obs.npy", obs_states)
+# np.save("StickInsect-v0-m3t-31-obs.npy", obs_states)
 actions = np.array([np.hstack((np.deg2rad(joint_movement), velocities))])
 print("actions:", actions.shape)
-# np.save("StickInsect-v0-m3t-12-act.npy", actions)
+# np.save("StickInsect-v0-m3t-31-act.npy", actions)
 
 # subplot 
 # idx_j = 0 # 0--23 joint angles

@@ -120,17 +120,7 @@ class StickInsectEnv(MujocoEnv, utils.EzPickle):
     def is_healthy(self):
         state = self.state_vector()
         min_z, max_z = self._healthy_z_range
-        min_sup_h, max_sup_h = -0.3, 0.4
-        min_ctr_h, max_ctr_h = -0.15, 0.85
-        min_thc_h, max_thc_h = -1.15, -0.2
-        min_fti_h, max_fti_h = -0.9, 1.3
-
         is_healthy = np.isfinite(state).all() and min_z <= state[2] <= max_z 
-                # and min_fti_h <= state[30] <= max_fti_h \
-                # and min_fti_h <= state[27] <= max_fti_h
-                # and min_sup_h <= state[12] <= max_sup_h \
-                # and min_ctr_h <= state[18] <= max_ctr_h \
-                #and min_thc_h <= state[24] <= max_thc_h and 
         return is_healthy
 
     @property

@@ -129,10 +129,10 @@ with mujoco.viewer.launch_passive(model, data) as viewer:
 # record observation state and action
 obs_states = np.array([obs_state]) # [1, 2459, 48] only joint angles and velocities, [1, 2459, 61] w/ torso
 print("expert_demo:", obs_states.shape)
-# np.save("StickInsect-v0-m3t-31-obs.npy", obs_states)
+np.save("StickInsect-v0-m3t-22-obs.npy", obs_states)
 actions = np.array([np.hstack((np.deg2rad(joint_movement), velocities))])
 print("actions:", actions.shape)
-# np.save("StickInsect-v0-m3t-31-act.npy", actions)
+np.save("StickInsect-v0-m3t-22-act.npy", actions)
 contact_matrix = np.array(contact_matrix) # [2459, 6]
 print("contact_matrix:", contact_matrix.shape)
 # pd.DataFrame(contact_matrix).to_csv("contact_matrix.csv", header=["LF", "LM", "LH", "RF", "RM", "RH"], index=None)
@@ -148,8 +148,8 @@ for leg in range(contact_matrix.shape[1]):
 plt.yticks([leg * 1.5 + 0.5 for leg in range(6)], ['LF', 'LM', 'LH', 'RF', 'RM', 'RH']) 
 plt.gca().invert_yaxis()
 plt.xlabel('Time Step')
-plt.title('Gait Phase Plot kp300kv400')
-plt.savefig("gait_phase_plot_kp300kv400.png")
+plt.title('Gait Phase Plot kp200kv200')
+plt.savefig("gait_phase_plot_kp200kv200.png")
 
 # subplot 
 # idx_j = 0 # 0--23 joint angles

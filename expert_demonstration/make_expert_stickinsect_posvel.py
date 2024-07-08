@@ -148,8 +148,8 @@ for leg in range(contact_matrix.shape[1]):
 plt.yticks([leg * 1.5 + 0.5 for leg in range(6)], ['LF', 'LM', 'LH', 'RF', 'RM', 'RH']) 
 plt.gca().invert_yaxis()
 plt.xlabel('Time Step')
-plt.title('Gait Phase Plot kp300kv200')
-plt.savefig("gait_phase_plot_kp300kv200.png")
+plt.title('Gait Phase Plot kp300kv400')
+plt.savefig("gait_phase_plot_kp300kv400.png")
 
 # subplot 
 # idx_j = 0 # 0--23 joint angles

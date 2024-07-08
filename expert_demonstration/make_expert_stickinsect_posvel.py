@@ -78,7 +78,7 @@ for custom in root.findall('custom'):
 data.qpos[-24:] = np.array(init_qpos_data.split()).astype(np.float64)
 
 obs_state = []
-leg_geoms = ['LF_tibia_geom', 'RF_tibia_geom', 'LM_tibia_geom', 'RM_tibia_geom', 'LB_tibia_geom', 'RB_tibia_geom']
+leg_geoms = ['LF_tibia_geom', 'LM_tibia_geom', 'LH_tibia_geom', 'RF_tibia_geom', 'RM_tibia_geom', 'RH_tibia_geom']
 leg_ids = [mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_GEOM, name) for name in leg_geoms]
 floor_id = mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_GEOM, 'floor')
 contact_matrix = np.zeros((2459, len(leg_geoms)), dtype=int)

@@ -108,7 +108,8 @@ with mujoco.viewer.launch_passive(model, data) as viewer:
                                             data.qvel.copy()[:])) # [-24:] joint velocities, [:] w/ torso
         # record the state of each step
         obs_state.append(state) # [2459,48] only joint angles and velocities, [2459, 61] w/ torso
-
+        
+        # Record contact data
         for i in range(data.ncon):
                 contact = data.contact[i]
                 geom1 = contact.geom1

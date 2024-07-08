@@ -42,8 +42,8 @@ env = Monitor(env)
 env = DummyVecEnv([lambda: RolloutInfoWrapper(env)])
 
 # Load the expert dataset
-obs_states = np.load('expert_demonstration/expert/StickInsect-v0-m3t-22-obs.npy', allow_pickle=True)
-actions = np.load('expert_demonstration/expert/StickInsect-v0-m3t-22-act.npy', allow_pickle=True)
+obs_states = np.load('expert_demonstration/expert/StickInsect-v0-m3t-32-obs.npy', allow_pickle=True)
+actions = np.load('expert_demonstration/expert/StickInsect-v0-m3t-32-act.npy', allow_pickle=True)
 
 # Extract observations and "actions" (which are the next observations in this context)
 observations = obs_states[0, :-1, 2:] if exclude_xy else obs_states[0, :-1, :] # Exclude the last step to avoid indexing error

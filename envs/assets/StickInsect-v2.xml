@@ -155,7 +155,7 @@
   </worldbody>
 
   <actuator>
-    <!-- <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="LF_Sup" gear="1" kp="100" kv="200"/>
+    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="LF_Sup" gear="1" kp="100" kv="200"/>
     <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="LM_Sup" gear="1" kp="100" kv="200"/>
     <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="LH_Sup" gear="1" kp="100" kv="200"/>
     <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="RF_Sup" gear="1" kp="100" kv="200"/>
@@ -181,9 +181,9 @@
     <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="LH_FTi" gear="1" kp="100" kv="200"/>
     <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="RF_FTi" gear="1" kp="100" kv="200"/>
     <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="RM_FTi" gear="1" kp="100" kv="200"/>
-    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="RH_FTi" gear="1" kp="100" kv="200"/> -->
+    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="RH_FTi" gear="1" kp="100" kv="200"/>
 
-        <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="LF_Sup" gear="1" kp="300" kv="100"/>
+        <!-- <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="LF_Sup" gear="1" kp="300" kv="100"/>
     <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="LM_Sup" gear="1" kp="300" kv="100"/>
     <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="LH_Sup" gear="1" kp="300" kv="100"/>
     <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="RF_Sup" gear="1" kp="300" kv="100"/>
@@ -209,7 +209,7 @@
     <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="LH_FTi" gear="1" kp="300" kv="100"/>
     <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="RF_FTi" gear="1" kp="300" kv="100"/>
     <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="RM_FTi" gear="1" kp="300" kv="100"/>
-    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="RH_FTi" gear="1" kp="300" kv="100"/>
+    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="RH_FTi" gear="1" kp="300" kv="100"/> -->
 
     <velocity joint="LF_Sup" gear="1" ctrllimited="true" ctrlrange="-600 600"/>
     <velocity joint="LM_Sup" gear="1" ctrllimited="true" ctrlrange="-600 600"/>

@@ -132,7 +132,9 @@ print("expert_demo:", obs_states.shape)
 actions = np.array([np.hstack((np.deg2rad(joint_movement), velocities))])
 print("actions:", actions.shape)
 # np.save("StickInsect-v0-m3t-31-act.npy", actions)
-
+contact_matrix = np.array(contact_matrix) # [2459, 6]
+print("contact_matrix:", contact_matrix.shape)
+# pd.DataFrame(contact_matrix).to_csv("contact_matrix.csv", header=["LF", "LM", "LH", "RF", "RM", "RH"], index=None)
 
 # Plotting the gait phase
 plt.figure(figsize=(7, 6))
@@ -143,6 +145,7 @@ for leg in range(contact_matrix.shape[1]):
                      where=contact_matrix[:, leg] == 1, 
                      color='black', step='mid')
 plt.yticks([leg * 1.5 + 0.5 for leg in range(6)], ['LF', 'LM', 'LH', 'RF', 'RM', 'RH']) 
+plt.gca().invert_yaxis()
 plt.xlabel('Time Step')
 plt.title('Gait Phase Plot kp100kv200')
 plt.savefig("gait_phase_plot_kp100kv200.png")

@@ -78,8 +78,7 @@ for custom in root.findall('custom'):
 data.qpos[-24:] = np.array(init_qpos_data.split()).astype(np.float64)
 
 obs_state = []
-contact_forces = []
-contact_points = []
+touches = []
 with mujoco.viewer.launch_passive(model, data) as viewer:
     # set a camera <camera name="top" mode="fixed" pos="5 0 20" xyaxes="1 0 0 0 1 0"/>
     viewer.cam.lookat[0] = 5  # x-coordinate of the point to look at
@@ -106,13 +105,9 @@ with mujoco.viewer.launch_passive(model, data) as viewer:
                                             data.qvel.copy()[:])) # [-24:] joint velocities, [:] w/ torso
         # record the state of each step
         obs_state.append(state) # [2459,48] only joint angles and velocities, [2459, 61] w/ torso
-        # get data of the torques sensor
-        contact_forces.append(data.sensordata.copy())
-
-        for i in range(data.ncon):
-            contact = data.contact[i]
-            contact_point = contact.pos.copy()
-            contact_points.append(contact_point)
+        # get sensor data
+        touch = data.sensordata.copy()
+        touches.append(touch)
 
         # record the initial position
         if j == 0:
@@ -128,6 +123,31 @@ print("expert_demo:", obs_states.shape)
 actions = np.array([np.hstack((np.deg2rad(joint_movement), velocities))])
 print("actions:", actions.shape)
 # np.save("StickInsect-v0-m3t-31-act.npy", actions)
+touches = np.array(touches) # [2459, 6]
+print("touches:", touches.shape)
+pd.DataFrame(touches).to_csv("StickInsect-v0-m3t-31-touch.csv", header=["LF_foot", "LM_foot", "LH_foot",
+                                                                "RF_foot", "RM_foot", "RH_foot"], index=None)
+
+# Convert non-zero values to 1
+for i in range(touches.shape[0]):  
+    for j in range(touches.shape[1]):
+        touches[i, j] = np.where(touches[i, j] > 0, 1, 0)
+
+# Plotting the gait phase
+data = np.array(touches)
+plt.figure(figsize=(7, 6))
+labels = ['LF', 'LM', 'LH', 'RF', 'RM', 'RH']
+for leg in range(data.shape[1]):
+    # Use fill_between to create rectangles
+    plt.fill_between(range(data.shape[0]), 
+                     leg * 1.5, leg * 1.5 + 1, 
+                     where=data[:, leg] == 1, 
+                     color='black', step='mid')
+plt.yticks([leg * 1.5 + 0.5 for leg in range(data.shape[1])], ['LF', 'LM', 'LH', 'RF', 'RM', 'RH']) 
+
+plt.xlabel('Time Step')
+plt.title('Gait Phase Plot kp300kv100')
+plt.savefig("gait_phase_plot_kp300kv100.png")
 
 # subplot 
 # idx_j = 0 # 0--23 joint angles

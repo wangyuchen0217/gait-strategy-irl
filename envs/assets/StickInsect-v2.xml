@@ -50,7 +50,7 @@
             <joint axis="1 0 0" name="LF_FTi" pos="0.0 0.0 0.0" range="-43 56" type="hinge"/>
             <site name="LF_FTi_site" pos="0 0 0" size="0.01"/>
             <geom fromto="0.0 0.0 0.0 0.0 0.0 -1.50" name="LF_tibia_geom" size="0.03" type="capsule"/>
-            <site name="LF_foot" pos="0.0 0.0 -1.50" size="0.01"/>
+            <site name="LF_foot" pos="0.0 0.0 -1.50" size="0.03"/>
           </body>
         </body>
       </body>
@@ -69,7 +69,7 @@
             <joint axis="-1 0 0" name="RF_FTi" pos="0.0 0.0 0.0" range="-43 56" type="hinge"/>
             <site name="RF_FTi_site" pos="0 0 0" size="0.01"/>
             <geom fromto="0.0 0.0 0.0 0.0 0.0 -1.50" name="RF_tibia_geom" size="0.03" type="capsule"/>
-            <site name="RF_foot" pos="0.0 0.0 -1.50" size="0.01"/>
+            <site name="RF_foot" pos="0.0 0.0 -1.50" size="0.03"/>
           </body>
         </body>
       </body>
@@ -88,7 +88,7 @@
             <joint axis="1 0 0" name="LM_FTi" pos="0.0 0.0 0.0" range="-50 79" type="hinge"/>
             <site name="LM_FTi_site" pos="0 0 0" size="0.01"/>
             <geom fromto="0.0 0.0 0.0 0.0 0.0 -1.12" name="LM_tibia_geom" size="0.03" type="capsule"/>
-            <site name="LM_foot" pos="0.0 0.0 -1.12" size="0.01"/>
+            <site name="LM_foot" pos="0.0 0.0 -1.12" size="0.03"/>
           </body>
         </body>
       </body>
@@ -107,7 +107,7 @@
             <joint axis="-1 0 0" name="RM_FTi" pos="0.0 0.0 0.0" range="-50 79" type="hinge"/>
             <site name="RM_FTi_site" pos="0 0 0" size="0.01"/>
             <geom fromto="0.0 0.0 0.0 0.0 0.0 -1.12" name="RM_tibia_geom" size="0.03" type="capsule"/>
-            <site name="RM_foot" pos="0.0 0.0 -1.12" size="0.01"/>
+            <site name="RM_foot" pos="0.0 0.0 -1.12" size="0.03"/>
           </body>
         </body>
       </body>
@@ -126,7 +126,7 @@
             <joint axis="1 0 0" name="LH_FTi" pos="0.0 0.0 0.0" range="-51 78" type="hinge"/>
             <site name="LH_FTi_site" pos="0 0 0" size="0.01"/>
             <geom fromto="0.0 0.0 0.0 0.0 0.0 -1.41" name="LH_tibia_geom" size="0.03" type="capsule"/>
-            <site name="LH_foot" pos="0.0 0.0 -1.41" size="0.01"/>
+            <site name="LH_foot" pos="0.0 0.0 -1.41" size="0.03"/>
           </body>
         </body>
       </body>
@@ -145,7 +145,7 @@
             <joint axis="-1 0 0" name="RH_FTi" pos="0.0 0.0 0.0" range="-51 78" type="hinge"/>
             <site name="RH_FTi_site" pos="0 0 0" size="0.01"/>
             <geom fromto="0.0 0.0 0.0 0.0 0.0 -1.41" name="RH_tibia_geom" size="0.03" type="capsule"/>
-            <site name="RH_foot" pos="0.0 0.0 -1.41" size="0.01"/>
+            <site name="RH_foot" pos="0.0 0.0 -1.41" size="0.03"/>
           </body>
         </body>
       </body>
@@ -155,7 +155,7 @@
   </worldbody>
 
   <actuator>
-    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="LF_Sup" gear="1" kp="100" kv="200"/>
+    <!-- <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="LF_Sup" gear="1" kp="100" kv="200"/>
     <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="LM_Sup" gear="1" kp="100" kv="200"/>
     <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="LH_Sup" gear="1" kp="100" kv="200"/>
     <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="RF_Sup" gear="1" kp="100" kv="200"/>
@@ -181,7 +181,35 @@
     <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="LH_FTi" gear="1" kp="100" kv="200"/>
     <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="RF_FTi" gear="1" kp="100" kv="200"/>
     <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="RM_FTi" gear="1" kp="100" kv="200"/>
-    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="RH_FTi" gear="1" kp="100" kv="200"/>
+    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="RH_FTi" gear="1" kp="100" kv="200"/> -->
+
+        <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="LF_Sup" gear="1" kp="300" kv="100"/>
+    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="LM_Sup" gear="1" kp="300" kv="100"/>
+    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="LH_Sup" gear="1" kp="300" kv="100"/>
+    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="RF_Sup" gear="1" kp="300" kv="100"/>
+    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="RM_Sup" gear="1" kp="300" kv="100"/>
+    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="RH_Sup" gear="1" kp="300" kv="100"/>
+
+    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="LF_CTr" gear="1" kp="300" kv="100"/>
+    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="LM_CTr" gear="1" kp="300" kv="100"/>
+    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="LH_CTr" gear="1" kp="300" kv="100"/>
+    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="RF_CTr" gear="1" kp="300" kv="100"/>
+    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="RM_CTr" gear="1" kp="300" kv="100"/>
+    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="RH_CTr" gear="1" kp="300" kv="100"/>
+
+    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="LF_ThC" gear="1" kp="300" kv="100"/>
+    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="LM_ThC" gear="1" kp="300" kv="100"/>
+    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="LH_ThC" gear="1" kp="300" kv="100"/>
+    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="RF_ThC" gear="1" kp="300" kv="100"/>
+    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="RM_ThC" gear="1" kp="300" kv="100"/>
+    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="RH_ThC" gear="1" kp="300" kv="100"/>
+
+    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="LF_FTi" gear="1" kp="300" kv="100"/>
+    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="LM_FTi" gear="1" kp="300" kv="100"/>
+    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="LH_FTi" gear="1" kp="300" kv="100"/>
+    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="RF_FTi" gear="1" kp="300" kv="100"/>
+    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="RM_FTi" gear="1" kp="300" kv="100"/>
+    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="RH_FTi" gear="1" kp="300" kv="100"/>
 
     <velocity joint="LF_Sup" gear="1" ctrllimited="true" ctrlrange="-600 600"/>
     <velocity joint="LM_Sup" gear="1" ctrllimited="true" ctrlrange="-600 600"/>

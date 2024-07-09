@@ -130,96 +130,80 @@ class StickInsectEnv(MujocoEnv, utils.EzPickle):
         terminated = not self.is_healthy if self._terminate_when_unhealthy else False
         return terminated
 
-    # def step(self, action):
-    #     xy_position_before = self.get_body_com("torso")[:2].copy()
-    #     self.do_simulation(action, self.frame_skip)
-    #     xy_position_after = self.get_body_com("torso")[:2].copy()
-
-    #     xy_velocity = (xy_position_after - xy_position_before) / self.dt
-    #     x_velocity, y_velocity = xy_velocity
-
-    #     forward_reward = x_velocity * 10
-    #     healthy_reward = self.healthy_reward
-
-    #     rewards = forward_reward + healthy_reward
-
-    #     costs = ctrl_cost = self.control_cost(action)
-
-    #     terminated = self.terminated
-    #     observation = self._get_obs()
-    #     info = {
-    #         "reward_forward": forward_reward,
-    #         "reward_ctrl": -ctrl_cost,
-    #         "reward_survive": healthy_reward,
-    #         "x_position": xy_position_after[0],
-    #         "y_position": xy_position_after[1],
-    #         "distance_from_origin": np.linalg.norm(xy_position_after, ord=2),
-    #         "x_velocity": x_velocity,
-    #         "y_velocity": y_velocity,
-    #         "forward_reward": forward_reward,
-    #     }
-    #     if self._use_contact_forces:
-    #         contact_cost = self.contact_cost
-    #         costs += contact_cost
-    #         info["reward_ctrl"] = -contact_cost
-
-    #     reward = rewards - costs
-
-    #     if self.render_mode == "human":
-    #         self.render()
-    #     # truncation=False as the time limit is handled by the `TimeLimit` wrapper added during `make`
-    #     return observation, rewards, terminated, False, info
-
-    # def _get_obs(self):
-    #     position = self.data.qpos.flat.copy()
-    #     velocity = self.data.qvel.flat.copy()
-
-    #     if self._exclude_current_positions_from_observation:
-    #         position = position[2:]
-
-    #     if self._use_contact_forces:
-    #         contact_force = self.contact_forces.flat.copy()
-    #         return np.concatenate((position, velocity, contact_force))
-    #     else:
-    #         return np.concatenate((position, velocity))
-
-    # def reset_model(self):
-    #     # noise_low = -self._reset_noise_scale
-    #     # noise_high = self._reset_noise_scale
-
-    #     # qpos = self.init_qpos + self.np_random.uniform(
-    #     #     low=noise_low, high=noise_high, size=self.model.nq
-    #     # )
-    #     # qvel = (
-    #     #     self.init_qvel
-    #     #     + self._reset_noise_scale * self.np_random.standard_normal(self.model.nv)
-    #     # )
-    #     # self.set_state(qpos, qvel)
-
-    #     # observation = self._get_obs()
-
-    #     qpos = self.init_qpos
-    #     qvel = self.init_qvel
-    #     self.set_state(qpos, qvel)
-    #     observation = self._get_obs()
-
-    #     return observation
-
-    def reset(self):
-        obs = self.original_env.reset()
-        return self._transform_observation(obs)
-
     def step(self, action):
-        obs, reward, done, info = self.original_env.step(action)
-        transformed_obs = self._transform_observation(obs)
-        return transformed_obs, reward, done, info
+        xy_position_before = self.get_body_com("torso")[:2].copy()
+        self.do_simulation(action, self.frame_skip)
+        xy_position_after = self.get_body_com("torso")[:2].copy()
 
-    def _transform_observation(self, obs):
-        if self.exclude_xy:
-            obs = obs[2:]  # Exclude the first two elements if exclude_xy is True
-        scaled_obs = self.scaler.transform([obs])  # Scale the observation
-        pca_obs = self.pca.transform(scaled_obs)  # Apply PCA
-        return pca_obs.flatten()
+        xy_velocity = (xy_position_after - xy_position_before) / self.dt
+        x_velocity, y_velocity = xy_velocity
+
+        forward_reward = x_velocity * 10
+        healthy_reward = self.healthy_reward
+
+        rewards = forward_reward + healthy_reward
+
+        costs = ctrl_cost = self.control_cost(action)
+
+        terminated = self.terminated
+        observation = self._get_obs()
+        info = {
+            "reward_forward": forward_reward,
+            "reward_ctrl": -ctrl_cost,
+            "reward_survive": healthy_reward,
+            "x_position": xy_position_after[0],
+            "y_position": xy_position_after[1],
+            "distance_from_origin": np.linalg.norm(xy_position_after, ord=2),
+            "x_velocity": x_velocity,
+            "y_velocity": y_velocity,
+            "forward_reward": forward_reward,
+        }
+        if self._use_contact_forces:
+            contact_cost = self.contact_cost
+            costs += contact_cost
+            info["reward_ctrl"] = -contact_cost
+
+        reward = rewards - costs
+
+        if self.render_mode == "human":
+            self.render()
+        # truncation=False as the time limit is handled by the `TimeLimit` wrapper added during `make`
+        return observation, rewards, terminated, False, info
+
+    def _get_obs(self):
+        position = self.data.qpos.flat.copy()
+        velocity = self.data.qvel.flat.copy()
+
+        if self._exclude_current_positions_from_observation:
+            position = position[2:]
+
+        if self._use_contact_forces:
+            contact_force = self.contact_forces.flat.copy()
+            return np.concatenate((position, velocity, contact_force))
+        else:
+            return np.concatenate((position, velocity))
+
+    def reset_model(self):
+        # noise_low = -self._reset_noise_scale
+        # noise_high = self._reset_noise_scale
+
+        # qpos = self.init_qpos + self.np_random.uniform(
+        #     low=noise_low, high=noise_high, size=self.model.nq
+        # )
+        # qvel = (
+        #     self.init_qvel
+        #     + self._reset_noise_scale * self.np_random.standard_normal(self.model.nv)
+        # )
+        # self.set_state(qpos, qvel)
+
+        # observation = self._get_obs()
+
+        qpos = self.init_qpos
+        qvel = self.init_qvel
+        self.set_state(qpos, qvel)
+        observation = self._get_obs()
+
+        return observation
 
 if __name__ == "__main__":
     env = StickInsectEnv(render_mode='human')

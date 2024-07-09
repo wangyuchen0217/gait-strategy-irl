@@ -50,7 +50,7 @@ mean_reward, std_reward = evaluate_policy(learner, env, n_eval_episodes=10)
 print(f"Mean Reward: {mean_reward}, Std Reward: {std_reward}")
 
 # Save the trained model
-learner.save("ppo_trained_with_mce_irl_reward.pth")
+learner.save("trained_policy_ppo.pth")
 
 # Close the environment
 env.close()

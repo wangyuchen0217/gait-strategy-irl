@@ -62,7 +62,7 @@ transitions = types.Transitions(
 learner = PPO(
     env=env,
     policy=MlpPolicy,
-    batch_size=64,
+    batch_size=16,
     ent_coef=0.0,
     learning_rate=0.0004,
     gamma=0.95,
@@ -79,12 +79,13 @@ reward_net = BasicRewardNet(
 # Create the GAIL trainer
 gail_trainer = GAIL(
     demonstrations=transitions,
-    demo_batch_size=1024,
-    gen_replay_buffer_capacity=512,
-    n_disc_updates_per_round=8,
+    demo_batch_size=16,
+    gen_replay_buffer_capacity=8,
+    n_disc_updates_per_round=4,
     venv=env,
     gen_algo=learner,
     reward_net=reward_net,
+    allow_variable_horizon=True
 )
 
 # evaluate the learner before training
@@ -94,7 +95,7 @@ learner_rewards_before_training, _ = evaluate_policy(
 )
 
 # train the learner and evaluate again
-gail_trainer.train(200000)  # Train for 800_000 steps to match expert.
+gail_trainer.train(800000)  # Train for 800_000 steps to match expert.
 env.seed(SEED)
 learner_rewards_after_training, _ = evaluate_policy(
     learner, env, 100, return_episode_rewards=True,

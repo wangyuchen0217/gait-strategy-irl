@@ -31,7 +31,7 @@ loaded_policy = PPO.load("trained_policy_ppo.pth")
 
 # Create and wrap the environment
 exclude_xy = config_data.get("exclude_xy")
-env = gym.make('StickInsect-v0',  
+env = gym.make('StickInsect-v0-disc',  
                exclude_current_positions_from_observation=exclude_xy, 
                render_mode="human",
                max_episode_steps=3000)

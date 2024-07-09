@@ -24,7 +24,7 @@ horizon = config_data['env']['horizon']
 reward_net = torch.load("trained_policy_mce_irl.pth")
 
 # Create and wrap the original environment
-env = gym.make('StickInsect-v0',
+env = gym.make('StickInsect-v0-disc',
                exclude_current_positions_from_observation=exclude_xy,
                max_episode_steps=horizon)
 env = DummyVecEnv([lambda: RolloutInfoWrapper(env)])
@@ -33,7 +33,7 @@ env = DummyVecEnv([lambda: RolloutInfoWrapper(env)])
 learner = PPO(
     env=env,
     policy=MlpPolicy,
-    batch_size=64,
+    batch_size=16,
     ent_coef=0.0,
     learning_rate=0.0004,
     gamma=0.95,

@@ -34,7 +34,7 @@ class StickInsectEnv(MujocoEnv, utils.EzPickle):
         healthy_z_range=(1.0, 3.0),
         contact_force_range=(-1.0, 1.0),
         reset_noise_scale=0.1,
-        exclude_current_positions_from_observation=False,
+        exclude_current_positions_from_observation=True,
         state_dim=10,
         action_dim=48,
         n_bins=2,
@@ -176,12 +176,37 @@ class StickInsectEnv(MujocoEnv, utils.EzPickle):
 
         if self._exclude_current_positions_from_observation:
             position = position[2:]
+        
+        observations = np.concatenate((position, velocity)).reshape(-1, 1)
 
-        if self._use_contact_forces:
-            contact_force = self.contact_forces.flat.copy()
-            return np.concatenate((position, velocity, contact_force))
-        else:
-            return np.concatenate((position, velocity))
+        # Standardize the data
+        scaler = StandardScaler()
+        scaled_data = scaler.fit_transform(observations)
+
+        # Apply PCA
+        pca_dimension = self.pca_dimension
+        pca = PCA(n_components=pca_dimension)  # Set the number of components to reduce to
+        pca_result = pca.fit_transform(scaled_data)
+
+        # Assuming each dimension is discretized into `n_bins` bins
+        n_bins = self.n_bins
+        # Discretizer for each principal component
+        discretizer = KBinsDiscretizer(n_bins=n_bins, encode='ordinal', strategy='uniform')
+        discretized_data = discretizer.fit_transform(pca_result)
+        # Convert discretized data to integer states
+        discretized_states = np.array(discretized_data, dtype=int)
+
+        # Calculate the state frequencies (histogram)
+        state_counts = np.zeros((n_bins,) * pca_dimension, dtype=int)
+        for state in discretized_states:
+            state_counts[tuple(state)] += 1
+        # Normalize the histogram to get state occupancy
+        state_occupancy = state_counts / np.sum(state_counts)
+        # Flatten the state occupancy for use in IRL
+        state_occupancy_flat = state_occupancy.flatten()
+        observation = state_occupancy_flat
+
+        return observation
 
     def reset_model(self):
         # noise_low = -self._reset_noise_scale
@@ -202,33 +227,6 @@ class StickInsectEnv(MujocoEnv, utils.EzPickle):
         qvel = self.init_qvel
         self.set_state(qpos, qvel)
         observation = self._get_obs()
-
-        # # Standardize the data
-        # scaler = StandardScaler()
-        # scaled_data = scaler.fit_transform(observations)
-
-        # # Apply PCA
-        # pca_dimension = self.pca_dimension
-        # pca = PCA(n_components=pca_dimension)  # Set the number of components to reduce to
-        # pca_result = pca.fit_transform(scaled_data)
-
-        # # Assuming each dimension is discretized into `n_bins` bins
-        # n_bins = self.n_bins
-        # # Discretizer for each principal component
-        # discretizer = KBinsDiscretizer(n_bins=n_bins, encode='ordinal', strategy='uniform')
-        # discretized_data = discretizer.fit_transform(pca_result)
-        # # Convert discretized data to integer states
-        # discretized_states = np.array(discretized_data, dtype=int)
-
-        # # Calculate the state frequencies (histogram)
-        # state_counts = np.zeros((n_bins,) * pca_dimension, dtype=int)
-        # for state in discretized_states:
-        #     state_counts[tuple(state)] += 1
-        # # Normalize the histogram to get state occupancy
-        # state_occupancy = state_counts / np.sum(state_counts)
-        # # Flatten the state occupancy for use in IRL
-        # state_occupancy_flat = state_occupancy.flatten()
-        # observation = state_occupancy_flat
 
         return observation
 

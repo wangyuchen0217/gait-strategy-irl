@@ -39,6 +39,8 @@ class StickInsectEnv(MujocoEnv, utils.EzPickle):
         action_dim=48,
         n_bins=2,
         pca_dimension=10,
+        pca=None,
+        scaler=None,
         **kwargs,
     ):
         utils.EzPickle.__init__(
@@ -82,6 +84,9 @@ class StickInsectEnv(MujocoEnv, utils.EzPickle):
         self.initial_state_dist = np.zeros(n_bins ** state_dim)
         self.pca_dimension = pca_dimension
         self.n_bins = n_bins
+
+        self.pca = pca
+        self.scaler = scaler
 
         MujocoEnv.__init__(
             self,
@@ -179,9 +184,14 @@ class StickInsectEnv(MujocoEnv, utils.EzPickle):
 
         if self._use_contact_forces:
             contact_force = self.contact_forces.flat.copy()
-            return np.concatenate((position, velocity, contact_force))
+            obs = np.concatenate((position, velocity, contact_force))
         else:
-            return np.concatenate((position, velocity))
+            obs = np.concatenate((position, velocity))
+
+        # Apply PCA and scaler transformation
+        scaled_obs = self.scaler.transform([obs])
+        pca_obs = self.pca.transform(scaled_obs)
+        return pca_obs.flatten()
 
     def reset_model(self):
         # noise_low = -self._reset_noise_scale

@@ -46,8 +46,6 @@ observations = obs_states[0, :-1, 2:] if exclude_xy else obs_states[0, :-1, :] #
 actions = actions[0, :-1, :] 
 next_observations = obs_states[0, 1:, 2:] if exclude_xy else obs_states[0, 1:, :] # Exclude the first step to avoid indexing error
 
-
-
 # Standardize the data
 scaler = StandardScaler()
 scaled_data = scaler.fit_transform(observations)
@@ -78,73 +76,73 @@ plt.savefig('pca_explained_variance.png')
 
 
 
-# Calculate state frequencies (histogram)
-# Assuming each dimension is discretized into `n_bins` bins
-n_bins = config_data['irl']['n_bins']
-# Discretizer for each principal component
-discretizer = KBinsDiscretizer(n_bins=n_bins, encode='ordinal', strategy='uniform')
-discretized_data = discretizer.fit_transform(pca_result)
-# Convert discretized data to integer states
-discretized_states = np.array(discretized_data, dtype=int)
+# # Calculate state frequencies (histogram)
+# # Assuming each dimension is discretized into `n_bins` bins
+# n_bins = config_data['irl']['n_bins']
+# # Discretizer for each principal component
+# discretizer = KBinsDiscretizer(n_bins=n_bins, encode='ordinal', strategy='uniform')
+# discretized_data = discretizer.fit_transform(pca_result)
+# # Convert discretized data to integer states
+# discretized_states = np.array(discretized_data, dtype=int)
 
-# Calculate the state frequencies (histogram)
-state_counts = np.zeros((n_bins,) * pca_dimension, dtype=int)
-for state in discretized_states:
-    state_counts[tuple(state)] += 1
-# Normalize the histogram to get state occupancy
-state_occupancy = state_counts / np.sum(state_counts)
-# Flatten the state occupancy for use in IRL
-state_occupancy_flat = state_occupancy.flatten()
+# # Calculate the state frequencies (histogram)
+# state_counts = np.zeros((n_bins,) * pca_dimension, dtype=int)
+# for state in discretized_states:
+#     state_counts[tuple(state)] += 1
+# # Normalize the histogram to get state occupancy
+# state_occupancy = state_counts / np.sum(state_counts)
+# # Flatten the state occupancy for use in IRL
+# state_occupancy_flat = state_occupancy.flatten()
 
-print("Discretized States Shape:", discretized_states.shape)
-print("State_counts shape:", state_counts.shape)
-print("State Occupancy:", state_occupancy_flat)
-print("State Occupancy Shape:", state_occupancy_flat.shape)
-print("Sum of State Occupancy (should be 1):", np.sum(state_occupancy_flat))
+# print("Discretized States Shape:", discretized_states.shape)
+# print("State_counts shape:", state_counts.shape)
+# print("State Occupancy:", state_occupancy_flat)
+# print("State Occupancy Shape:", state_occupancy_flat.shape)
+# print("Sum of State Occupancy (should be 1):", np.sum(state_occupancy_flat))
 
 
-SEED = config_data['env']['seed']
-horizon = config_data['env']['horizon']
-rng = np.random.default_rng(SEED)
-state_dim = pca_dimension
-action_dim = len(actions[0])
+# SEED = config_data['env']['seed']
+# horizon = config_data['env']['horizon']
+# rng = np.random.default_rng(SEED)
+# state_dim = pca_dimension
+# action_dim = len(actions[0])
 
-# Create the environment
-env = gym.make('StickInsect-v0-disc',
-               exclude_current_positions_from_observation=exclude_xy,
-               max_episode_steps=horizon)
-env = DummyVecEnv([lambda: RolloutInfoWrapper(env)])
-env.horizon = horizon
-env.state_dim = n_bins ** state_dim
-env.action_dim = action_dim
-env.state_space = gym.spaces.Discrete(n_bins ** state_dim)
-env.action_space = gym.spaces.Discrete(action_dim)
-env.observation_matrix = np.eye(n_bins ** state_dim)
-env.transition_matrix = np.zeros((n_bins ** state_dim, action_dim, n_bins ** state_dim))
-env.initial_state_dist = np.zeros(n_bins ** state_dim)
+# # Create the environment
+# env = gym.make('StickInsect-v0-disc',
+#                exclude_current_positions_from_observation=exclude_xy,
+#                max_episode_steps=horizon)
+# env = DummyVecEnv([lambda: RolloutInfoWrapper(env)])
+# env.horizon = horizon
+# env.state_dim = n_bins ** state_dim
+# env.action_dim = action_dim
+# env.state_space = gym.spaces.Discrete(n_bins ** state_dim)
+# env.action_space = gym.spaces.Discrete(action_dim)
+# env.observation_matrix = np.eye(n_bins ** state_dim)
+# env.transition_matrix = np.zeros((n_bins ** state_dim, action_dim, n_bins ** state_dim))
+# env.initial_state_dist = np.zeros(n_bins ** state_dim)
 
-# Initialize reward network
-reward_net = BasicRewardNet(
-    observation_space=env.state_space,
-    action_space=env.action_space,
-    use_state=True,
-    use_action=False,
-    use_next_state=False,
-    use_done=False,
-)
+# # Initialize reward network
+# reward_net = BasicRewardNet(
+#     observation_space=env.state_space,
+#     action_space=env.action_space,
+#     use_state=True,
+#     use_action=False,
+#     use_next_state=False,
+#     use_done=False,
+# )
 
-# Initialize MCE-IRL algorithm
-mce_irl = MCEIRL(
-    demonstrations=state_occupancy_flat,  # Provide state occupancy as demonstrations
-    env=env,
-    reward_net=reward_net,
-    rng=rng,
-)
+# # Initialize MCE-IRL algorithm
+# mce_irl = MCEIRL(
+#     demonstrations=state_occupancy_flat,  # Provide state occupancy as demonstrations
+#     env=env,
+#     reward_net=reward_net,
+#     rng=rng,
+# )
 
-env.seed(SEED)
-mce_irl.train()
+# env.seed(SEED)
+# mce_irl.train()
 
-# save the trained model
-torch.save(mce_irl.policy, "trained_policy_mce_irl.pth")
+# # save the trained model
+# torch.save(mce_irl.policy, "trained_policy_mce_irl.pth")
 
 

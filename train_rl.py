@@ -43,7 +43,7 @@ learner = PPO(
 )
 
 # Train the model
-learner.learn(total_timesteps=10000)
+learner.learn(total_timesteps=200000)
 
 # Evaluate the trained agent
 mean_reward, std_reward = evaluate_policy(learner, env, n_eval_episodes=10)

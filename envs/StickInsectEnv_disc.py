@@ -3,6 +3,7 @@ import torch
 from gymnasium import utils
 from gymnasium.envs.mujoco import MujocoEnv
 from gymnasium.spaces import Discrete
+from gymnasium.spaces import Box
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
 from sklearn.preprocessing import KBinsDiscretizer
@@ -77,13 +78,15 @@ class StickInsectEnv(MujocoEnv, utils.EzPickle):
 
         self.state_dim = state_dim
         self.action_dim = action_dim
-        self.state_space = Discrete(n_bins ** state_dim)
-        self.action_space = Discrete(action_dim)
+        self.pca_dimension = pca_dimension
+        self.n_bins = n_bins
+        # self.state_space = Discrete(n_bins ** state_dim)
+        # self.action_space = Discrete(action_dim)
+        self.state_space = Box(low=-np.inf, high=np.inf, shape=(self.pca_dimension,), dtype=np.float32)
+        self.action_space = Box(low=-1.0, high=1.0, shape=(self.action_dim,), dtype=np.float32)
         self.observation_matrix = np.eye(n_bins ** state_dim)
         self.transition_matrix = np.zeros((n_bins ** state_dim, action_dim, n_bins ** state_dim))
         self.initial_state_dist = np.zeros(n_bins ** state_dim)
-        self.pca_dimension = pca_dimension
-        self.n_bins = n_bins
 
         self.pca = pca
         self.scaler = scaler

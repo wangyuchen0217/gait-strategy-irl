@@ -42,7 +42,8 @@ env = gym.make('StickInsect-v0-disc',
                 pca=pca,
                 scaler=scaler,
                exclude_current_positions_from_observation=exclude_xy,
-               max_episode_steps=horizon)
+               max_episode_steps=horizon,
+               discretize=False)
 env = DummyVecEnv([lambda: RolloutInfoWrapper(env)])
 
 # Setup PPO with the custom environment

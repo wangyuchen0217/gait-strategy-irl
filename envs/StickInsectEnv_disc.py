@@ -42,6 +42,7 @@ class StickInsectEnv(MujocoEnv, utils.EzPickle):
         pca_dimension=10,
         pca=None,
         scaler=None,
+        discretize=True,
         **kwargs,
     ):
         utils.EzPickle.__init__(
@@ -76,14 +77,19 @@ class StickInsectEnv(MujocoEnv, utils.EzPickle):
             exclude_current_positions_from_observation
         )
 
-        self.state_dim = state_dim
+        self.state_dim = n_bins ** state_dim
         self.action_dim = action_dim
         self.pca_dimension = pca_dimension
         self.n_bins = n_bins
-        # self.state_space = Discrete(n_bins ** state_dim)
-        # self.action_space = Discrete(action_dim)
-        self.state_space = Box(low=-np.inf, high=np.inf, shape=(self.pca_dimension,), dtype=np.float32)
-        self.action_space = Box(low=-1.0, high=1.0, shape=(self.action_dim,), dtype=np.float32)
+        self.discretize = discretize
+
+        if discretize:
+            self.state_space = Discrete(pca_dimension)
+            self.action_space = Discrete(action_dim)
+        else:
+            self.state_space = Box(low=-np.inf, high=np.inf, shape=(self.pca_dimension,), dtype=np.float32)
+            self.action_space = Box(low=-1.0, high=1.0, shape=(self.action_dim,), dtype=np.float32)
+
         self.observation_matrix = np.eye(n_bins ** state_dim)
         self.transition_matrix = np.zeros((n_bins ** state_dim, action_dim, n_bins ** state_dim))
         self.initial_state_dist = np.zeros(n_bins ** state_dim)
@@ -194,6 +200,13 @@ class StickInsectEnv(MujocoEnv, utils.EzPickle):
         # Apply PCA and scaler transformation
         scaled_obs = self.scaler.transform([obs])
         pca_obs = self.pca.transform(scaled_obs)
+
+        if self.discretize:
+            bins = np.linspace(-1, 1, self.n_bins)  # Adjust binning strategy as needed
+            discretized_obs = np.digitize(pca_obs, bins) - 1  # Ensure 0-based indexing
+            discretized_obs = discretized_obs.flatten()
+            return discretized_obs
+        
         return pca_obs.flatten()
 
     def reset_model(self):
@@ -215,6 +228,7 @@ class StickInsectEnv(MujocoEnv, utils.EzPickle):
         qvel = self.init_qvel
         self.set_state(qpos, qvel)
         observation = self._get_obs()
+        print(observation)
 
         return observation
 
@@ -236,6 +250,7 @@ if __name__ == "__main__":
         pca=pca,
         scaler=scaler,
         exclude_current_positions_from_observation=exclude_xy,
+        discretize=True
     )
     env.reset_model()
 

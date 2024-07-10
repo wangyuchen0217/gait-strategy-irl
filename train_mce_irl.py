@@ -120,6 +120,9 @@ env.observation_matrix = np.eye(n_bins ** state_dim)
 env.transition_matrix = np.zeros((n_bins ** state_dim, action_dim, n_bins ** state_dim))
 env.initial_state_dist = np.zeros(n_bins ** state_dim)
 
+print(env.state_space)
+print(env.action_space)
+
 # Initialize reward network
 reward_net = BasicRewardNet(
     observation_space=env.state_space,

@@ -207,25 +207,25 @@ if __name__ == "__main__":
     env = StickInsectEnv(render_mode='human')
     env.reset_model()
 
-    # # print the observation space and action space
-    # print("observation space:", env.observation_space)
-    # print("observation space shape:", env.observation_space.shape)
-    # print("action space:", env.action_space)
-    # print("action space shape:", env.action_space.shape)
+    # print the observation space and action space
+    print("observation space:", env.observation_space)
+    print("observation space shape:", env.observation_space.shape)
+    print("action space:", env.action_space)
+    print("action space shape:", env.action_space.shape)
 
-    # for _ in range(1000):
-    #     env.step(env.action_space.sample())
-    #     env.render()
-    # env.close()
-    
-    import sys
-    sys.path.append("./")
-
-    actions = np.load('expert_demonstration/expert/StickInsect-v0-m3t-12-act.npy', allow_pickle=True)
-    actions = actions[0, :-1, :] 
-    for i in range(2458):
-        action = actions[i]
-        obs, reward, done, _, _=env.step(action)
+    for _ in range(1000):
+        env.step(env.action_space.sample())
         env.render()
-        print("Step:", i, "Reward:", reward, "Done:", done)
     env.close()
+    
+    # import sys
+    # sys.path.append("./")
+
+    # actions = np.load('expert_demonstration/expert/StickInsect-v0-m3t-12-act.npy', allow_pickle=True)
+    # actions = actions[0, :-1, :] 
+    # for i in range(2458):
+    #     action = actions[i]
+    #     obs, reward, done, _, _=env.step(action)
+    #     env.render()
+    #     print("Step:", i, "Reward:", reward, "Done:", done)
+    # env.close()

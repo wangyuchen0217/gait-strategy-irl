@@ -219,20 +219,6 @@ class StickInsectEnv(MujocoEnv, utils.EzPickle):
         return observation
 
 if __name__ == "__main__":
-    # env = StickInsectEnv(render_mode='human')
-    # env.reset_model()
-
-    # # print the observation space and action space
-    # print("observation space:", env.observation_space)
-    # print("observation space shape:", env.observation_space.shape)
-    # print("action space:", env.action_space)
-    # print("action space shape:", env.action_space.shape)
-
-    # for _ in range(1000):
-    #     env.step(env.action_space.sample())
-    #     env.render()
-    # env.close()
-
     # Fit PCA and scaler on your entire dataset before using the environment
     exclude_xy = True  # Set this based on your configuration
     obs_states = np.load('expert_demonstration/expert/StickInsect-v0-m3t-12-obs.npy', allow_pickle=True)

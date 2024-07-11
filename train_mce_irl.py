@@ -142,9 +142,8 @@ mce_irl = MCEIRL(
 )
 
 env.seed(SEED)
-mce_irl.train()
+mce_irl.train(save_path="reward_net.pth")
 
-# save the trained model
-torch.save(mce_irl.policy, "trained_policy_mce_irl.pth")
+# torch.save(mce_irl.policy, "trained_policy_mce_irl.pth")
 
 

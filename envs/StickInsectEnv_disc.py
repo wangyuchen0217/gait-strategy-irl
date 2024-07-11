@@ -1,8 +1,12 @@
 import numpy as np
-
+import torch
 from gymnasium import utils
 from gymnasium.envs.mujoco import MujocoEnv
 from gymnasium.spaces import Discrete
+from gymnasium.spaces import Box
+from sklearn.decomposition import PCA
+from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import KBinsDiscretizer
 
 
 DEFAULT_CAMERA_CONFIG = {
@@ -31,10 +35,14 @@ class StickInsectEnv(MujocoEnv, utils.EzPickle):
         healthy_z_range=(1.0, 3.0),
         contact_force_range=(-1.0, 1.0),
         reset_noise_scale=0.1,
-        exclude_current_positions_from_observation=False,
+        exclude_current_positions_from_observation=True,
         state_dim=10,
         action_dim=48,
         n_bins=2,
+        pca_dimension=10,
+        pca=None,
+        scaler=None,
+        discretize=True,
         **kwargs,
     ):
         utils.EzPickle.__init__(
@@ -69,13 +77,25 @@ class StickInsectEnv(MujocoEnv, utils.EzPickle):
             exclude_current_positions_from_observation
         )
 
-        self.state_dim = state_dim
+        self.state_dim = n_bins ** state_dim
         self.action_dim = action_dim
-        self.state_space = Discrete(n_bins ** state_dim)
-        self.action_space = Discrete(action_dim)
+        self.pca_dimension = pca_dimension
+        self.n_bins = n_bins
+        self.discretize = discretize
+
+        if discretize:
+            self.state_space = Discrete(pca_dimension)
+            self.action_space = Discrete(action_dim)
+        else:
+            self.state_space = Box(low=-np.inf, high=np.inf, shape=(self.pca_dimension,), dtype=np.float32)
+            self.action_space = Box(low=-1.0, high=1.0, shape=(self.action_dim,), dtype=np.float32)
+
         self.observation_matrix = np.eye(n_bins ** state_dim)
         self.transition_matrix = np.zeros((n_bins ** state_dim, action_dim, n_bins ** state_dim))
         self.initial_state_dist = np.zeros(n_bins ** state_dim)
+
+        self.pca = pca
+        self.scaler = scaler
 
         MujocoEnv.__init__(
             self,
@@ -173,9 +193,21 @@ class StickInsectEnv(MujocoEnv, utils.EzPickle):
 
         if self._use_contact_forces:
             contact_force = self.contact_forces.flat.copy()
-            return np.concatenate((position, velocity, contact_force))
+            obs = np.concatenate((position, velocity, contact_force))
         else:
-            return np.concatenate((position, velocity))
+            obs = np.concatenate((position, velocity))
+
+        # Apply PCA and scaler transformation
+        scaled_obs = self.scaler.transform([obs])
+        pca_obs = self.pca.transform(scaled_obs)
+
+        if self.discretize:
+            bins = np.linspace(-1, 1, self.n_bins)  # Adjust binning strategy as needed
+            discretized_obs = np.digitize(pca_obs, bins) - 1  # Ensure 0-based indexing
+            discretized_obs = discretized_obs.flatten()
+            return discretized_obs
+        
+        return pca_obs.flatten()
 
     def reset_model(self):
         # noise_low = -self._reset_noise_scale
@@ -196,20 +228,37 @@ class StickInsectEnv(MujocoEnv, utils.EzPickle):
         qvel = self.init_qvel
         self.set_state(qpos, qvel)
         observation = self._get_obs()
+        print(observation)
 
         return observation
 
 if __name__ == "__main__":
-    env = StickInsectEnv(render_mode='human')
+    # Fit PCA and scaler on your entire dataset before using the environment
+    exclude_xy = True  # Set this based on your configuration
+    obs_states = np.load('expert_demonstration/expert/StickInsect-v0-m3t-12-obs.npy', allow_pickle=True)
+    observations = obs_states[0, :-1, 2:] if exclude_xy else obs_states[0, :-1, :]
+
+    scaler = StandardScaler()
+    scaled_data = scaler.fit_transform(observations)
+
+    pca_dimension = 10  # Adjust based on your configuration
+    pca = PCA(n_components=pca_dimension)
+    pca.fit(scaled_data)
+
+    env = StickInsectEnv(
+        render_mode='human',
+        pca=pca,
+        scaler=scaler,
+        exclude_current_positions_from_observation=exclude_xy,
+        discretize=True
+    )
     env.reset_model()
 
-    # print the observation space and action space
+    # Print the observation space and action space
     print("observation space:", env.observation_space)
-    print("observation space shape:", env.observation_space.shape)
     print("action space:", env.action_space)
-    print("action space shape:", env.action_space.shape)
 
     for _ in range(1000):
         env.step(env.action_space.sample())
-        env.render()
+        env.render
     env.close()

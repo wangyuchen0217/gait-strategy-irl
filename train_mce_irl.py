@@ -46,8 +46,6 @@ observations = obs_states[0, :-1, 2:] if exclude_xy else obs_states[0, :-1, :] #
 actions = actions[0, :-1, :] 
 next_observations = obs_states[0, 1:, 2:] if exclude_xy else obs_states[0, 1:, :] # Exclude the first step to avoid indexing error
 
-
-
 # Standardize the data
 scaler = StandardScaler()
 scaled_data = scaler.fit_transform(observations)
@@ -75,7 +73,6 @@ plt.ylabel('Explained variance ratio')
 plt.title('Explained Variance by Principal Components')
 plt.legend(loc='best')
 plt.savefig('pca_explained_variance.png')
-
 
 
 # Calculate state frequencies (histogram)
@@ -123,6 +120,9 @@ env.observation_matrix = np.eye(n_bins ** state_dim)
 env.transition_matrix = np.zeros((n_bins ** state_dim, action_dim, n_bins ** state_dim))
 env.initial_state_dist = np.zeros(n_bins ** state_dim)
 
+print(env.state_space)
+print(env.action_space)
+
 # Initialize reward network
 reward_net = BasicRewardNet(
     observation_space=env.state_space,
@@ -142,9 +142,8 @@ mce_irl = MCEIRL(
 )
 
 env.seed(SEED)
-mce_irl.train()
+mce_irl.train(save_path="reward_net.pth")
 
-# save the trained model
-torch.save(mce_irl.policy, "trained_policy_mce_irl.pth")
+# torch.save(mce_irl.policy, "trained_policy_mce_irl.pth")
 
 

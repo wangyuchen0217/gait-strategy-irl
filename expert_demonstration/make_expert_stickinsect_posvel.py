@@ -78,7 +78,10 @@ for custom in root.findall('custom'):
 data.qpos[-24:] = np.array(init_qpos_data.split()).astype(np.float64)
 
 obs_state = []
-contact_forces = []
+leg_geoms = ['LF_tibia_geom', 'LM_tibia_geom', 'LH_tibia_geom', 'RF_tibia_geom', 'RM_tibia_geom', 'RH_tibia_geom']
+leg_ids = [mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_GEOM, name) for name in leg_geoms]
+floor_id = mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_GEOM, 'floor')
+contact_matrix = np.zeros((2459, len(leg_geoms)), dtype=int)
 with mujoco.viewer.launch_passive(model, data) as viewer:
     # set a camera <camera name="top" mode="fixed" pos="5 0 20" xyaxes="1 0 0 0 1 0"/>
     viewer.cam.lookat[0] = 5  # x-coordinate of the point to look at
@@ -97,7 +100,7 @@ with mujoco.viewer.launch_passive(model, data) as viewer:
         mujoco.mj_step(model, data)
         viewer.sync()
         with viewer.lock():
-            viewer.opt.flags[mujoco.mjtVisFlag.mjVIS_CONTACTPOINT] = int(data.time % 2)
+            viewer.opt.flags[mujoco.mjtVisFlag.mjVIS_CONTACTPOINT] = 1
         # Manage timing to maintain a steady frame rate
         time.sleep(model.opt.timestep)
 
@@ -105,8 +108,16 @@ with mujoco.viewer.launch_passive(model, data) as viewer:
                                             data.qvel.copy()[:])) # [-24:] joint velocities, [:] w/ torso
         # record the state of each step
         obs_state.append(state) # [2459,48] only joint angles and velocities, [2459, 61] w/ torso
-        # get data of the torques sensor
-        contact_forces.append(data.sensordata.copy())
+        
+        # Record contact data
+        for i in range(data.ncon):
+                contact = data.contact[i]
+                geom1 = contact.geom1
+                geom2 = contact.geom2
+                # Check if the contact involves a leg geom and the floor
+                for leg_index, leg_id in enumerate(leg_ids):
+                    if (geom1 == leg_id and geom2 == floor_id) or (geom1 == floor_id and geom2 == leg_id):
+                        contact_matrix[j, leg_index] = 1  # Mark contact
 
         # record the initial position
         if j == 0:
@@ -118,10 +129,28 @@ with mujoco.viewer.launch_passive(model, data) as viewer:
 # record observation state and action
 obs_states = np.array([obs_state]) # [1, 2459, 48] only joint angles and velocities, [1, 2459, 61] w/ torso
 print("expert_demo:", obs_states.shape)
-# np.save("StickInsect-v0-m3t-12-obs.npy", obs_states)
+np.save("StickInsect-v0-m3t-32-obs.npy", obs_states)
 actions = np.array([np.hstack((np.deg2rad(joint_movement), velocities))])
 print("actions:", actions.shape)
-# np.save("StickInsect-v0-m3t-12-act.npy", actions)
+np.save("StickInsect-v0-m3t-32-act.npy", actions)
+contact_matrix = np.array(contact_matrix) # [2459, 6]
+print("contact_matrix:", contact_matrix.shape)
+# pd.DataFrame(contact_matrix).to_csv("contact_matrix.csv", header=["LF", "LM", "LH", "RF", "RM", "RH"], index=None)
+
+# Plotting the gait phase
+plt.figure(figsize=(7, 6))
+labels = ['LF', 'LM', 'LH', 'RF', 'RM', 'RH']
+for leg in range(contact_matrix.shape[1]):
+    plt.fill_between(range(contact_matrix.shape[0]), 
+                     leg * 1.5, leg * 1.5 + 1, 
+                     where=contact_matrix[:, leg] == 1, 
+                     color='black', step='mid')
+plt.yticks([leg * 1.5 + 0.5 for leg in range(6)], ['LF', 'LM', 'LH', 'RF', 'RM', 'RH']) 
+plt.gca().invert_yaxis()
+plt.xlabel('Time Step')
+plt.title('Gait Phase Plot kp300kv200')
+plt.show()
+# plt.savefig("gait_phase_plot_kp300kv200.png")
 
 # subplot 
 # idx_j = 0 # 0--23 joint angles

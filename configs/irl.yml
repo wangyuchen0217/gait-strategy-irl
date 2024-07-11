@@ -19,3 +19,8 @@ irl:
 #   PosVel w/ torso mujoco316 kp300 kv100
 # StickInsect-v0-m3t-12.npy: 
 #   PosVel w/ torso mujoco316 kp100 kv200
+
+# StickInsect-v0-m3t-12-obs/act.npy: 
+#   PosVel w/ torso mujoco316 kp100 kv200
+# StickInsect-v0-m3t-31-obs/act.npy: 
+#   PosVel w/ torso mujoco316 kp300 kv100

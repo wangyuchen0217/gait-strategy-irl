@@ -120,7 +120,7 @@ class StickInsectEnv(MujocoEnv, utils.EzPickle):
     def is_healthy(self):
         state = self.state_vector()
         min_z, max_z = self._healthy_z_range
-        is_healthy = np.isfinite(state).all() and min_z <= state[2] <= max_z
+        is_healthy = np.isfinite(state).all() and min_z <= state[2] <= max_z 
         return is_healthy
 
     @property
@@ -136,7 +136,7 @@ class StickInsectEnv(MujocoEnv, utils.EzPickle):
         xy_velocity = (xy_position_after - xy_position_before) / self.dt
         x_velocity, y_velocity = xy_velocity
 
-        forward_reward = x_velocity * 10
+        forward_reward = x_velocity * 100
         healthy_reward = self.healthy_reward
 
         rewards = forward_reward + healthy_reward
@@ -207,25 +207,25 @@ if __name__ == "__main__":
     env = StickInsectEnv(render_mode='human')
     env.reset_model()
 
-    # # print the observation space and action space
-    # print("observation space:", env.observation_space)
-    # print("observation space shape:", env.observation_space.shape)
-    # print("action space:", env.action_space)
-    # print("action space shape:", env.action_space.shape)
+    # print the observation space and action space
+    print("observation space:", env.observation_space)
+    print("observation space shape:", env.observation_space.shape)
+    print("action space:", env.action_space)
+    print("action space shape:", env.action_space.shape)
 
-    # for _ in range(1000):
-    #     env.step(env.action_space.sample())
-    #     env.render()
-    # env.close()
-    
-    import sys
-    sys.path.append("./")
-
-    actions = np.load('expert_demonstration/expert/StickInsect-v0-m3t-12-act.npy', allow_pickle=True)
-    actions = actions[0, :-1, :] 
-    for i in range(2458):
-        action = actions[i]
-        obs, reward, done, _, _=env.step(action)
+    for _ in range(1000):
+        env.step(env.action_space.sample())
         env.render()
-        print("Step:", i, "Reward:", reward, "Done:", done)
     env.close()
+    
+    # import sys
+    # sys.path.append("./")
+
+    # actions = np.load('expert_demonstration/expert/StickInsect-v0-m3t-12-act.npy', allow_pickle=True)
+    # actions = actions[0, :-1, :] 
+    # for i in range(2458):
+    #     action = actions[i]
+    #     obs, reward, done, _, _=env.step(action)
+    #     env.render()
+    #     print("Step:", i, "Reward:", reward, "Done:", done)
+    # env.close()

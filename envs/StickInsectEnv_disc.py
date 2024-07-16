@@ -43,6 +43,7 @@ class StickInsectEnv(MujocoEnv, utils.EzPickle):
         pca=None,
         scaler=None,
         discretize=True,
+        reward_net=None,
         **kwargs,
     ):
         utils.EzPickle.__init__(
@@ -82,6 +83,7 @@ class StickInsectEnv(MujocoEnv, utils.EzPickle):
         self.pca_dimension = pca_dimension
         self.n_bins = n_bins
         self.discretize = discretize
+        self.reward_net = reward_net
 
         if discretize:
             self.state_space = Discrete(pca_dimension)
@@ -144,45 +146,55 @@ class StickInsectEnv(MujocoEnv, utils.EzPickle):
         terminated = not self.is_healthy if self._terminate_when_unhealthy else False
         return terminated
 
+    # def step(self, action):
+    #     xy_position_before = self.get_body_com("torso")[:2].copy()
+    #     self.do_simulation(action, self.frame_skip)
+    #     xy_position_after = self.get_body_com("torso")[:2].copy()
+
+    #     xy_velocity = (xy_position_after - xy_position_before) / self.dt
+    #     x_velocity, y_velocity = xy_velocity
+
+    #     forward_reward = x_velocity * 10
+    #     healthy_reward = self.healthy_reward
+
+    #     rewards = forward_reward + healthy_reward
+
+    #     costs = ctrl_cost = self.control_cost(action)
+
+    #     terminated = self.terminated
+    #     observation = self._get_obs()
+    #     info = {
+    #         "reward_forward": forward_reward,
+    #         "reward_ctrl": -ctrl_cost,
+    #         "reward_survive": healthy_reward,
+    #         "x_position": xy_position_after[0],
+    #         "y_position": xy_position_after[1],
+    #         "distance_from_origin": np.linalg.norm(xy_position_after, ord=2),
+    #         "x_velocity": x_velocity,
+    #         "y_velocity": y_velocity,
+    #         "forward_reward": forward_reward,
+    #     }
+    #     if self._use_contact_forces:
+    #         contact_cost = self.contact_cost
+    #         costs += contact_cost
+    #         info["reward_ctrl"] = -contact_cost
+
+    #     reward = rewards - costs
+
+    #     if self.render_mode == "human":
+    #         self.render()
+    #     # truncation=False as the time limit is handled by the `TimeLimit` wrapper added during `make`
+    #     return observation, rewards, terminated, False, info
+
     def step(self, action):
-        xy_position_before = self.get_body_com("torso")[:2].copy()
         self.do_simulation(action, self.frame_skip)
-        xy_position_after = self.get_body_com("torso")[:2].copy()
-
-        xy_velocity = (xy_position_after - xy_position_before) / self.dt
-        x_velocity, y_velocity = xy_velocity
-
-        forward_reward = x_velocity * 10
-        healthy_reward = self.healthy_reward
-
-        rewards = forward_reward + healthy_reward
-
-        costs = ctrl_cost = self.control_cost(action)
-
+        obs = self._get_obs()
         terminated = self.terminated
-        observation = self._get_obs()
-        info = {
-            "reward_forward": forward_reward,
-            "reward_ctrl": -ctrl_cost,
-            "reward_survive": healthy_reward,
-            "x_position": xy_position_after[0],
-            "y_position": xy_position_after[1],
-            "distance_from_origin": np.linalg.norm(xy_position_after, ord=2),
-            "x_velocity": x_velocity,
-            "y_velocity": y_velocity,
-            "forward_reward": forward_reward,
-        }
-        if self._use_contact_forces:
-            contact_cost = self.contact_cost
-            costs += contact_cost
-            info["reward_ctrl"] = -contact_cost
-
-        reward = rewards - costs
-
-        if self.render_mode == "human":
-            self.render()
-        # truncation=False as the time limit is handled by the `TimeLimit` wrapper added during `make`
-        return observation, rewards, terminated, False, info
+        info = {}
+        # Convert obs to a PyTorch tensor
+        obs_tensor = torch.tensor(obs, dtype=torch.float32).unsqueeze(0)  # Add batch dimension
+        reward = self.reward_net(obs_tensor, None, None, None).item()  # Convert to scalar
+        return obs, reward, terminated, False, info
 
     def _get_obs(self):
         position = self.data.qpos.flat.copy()

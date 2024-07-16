@@ -12,8 +12,10 @@ from stable_baselines3.ppo import MlpPolicy
 from stable_baselines3.common.vec_env import DummyVecEnv
 from stable_baselines3.common.evaluation import evaluate_policy
 from imitation.data.wrappers import RolloutInfoWrapper
+from imitation.rewards.reward_nets import BasicRewardNet
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
+from gymnasium.spaces import Discrete, Box
 import numpy as np
 
 # open config file
@@ -34,8 +36,16 @@ pca_dimension = config_data['irl']['pca_dimension']
 pca = PCA(n_components=pca_dimension)
 pca.fit(scaled_data)
 
-# Load the trained reward function
-reward_net = torch.load("trained_policy_mce_irl.pth")
+# Load the trained reward network parameters
+reward_net = BasicRewardNet(
+    observation_space=Box(low=-np.inf, high=np.inf, shape=(1024,)),
+    action_space=Discrete(48),
+    use_state=True,
+    use_action=False,
+    use_next_state=False,
+    use_done=False,
+)
+reward_net.load_state_dict(torch.load("reward_net.pth"))
 
 # Create and wrap the original environment
 env = gym.make('StickInsect-v0-disc',
@@ -43,7 +53,8 @@ env = gym.make('StickInsect-v0-disc',
                 scaler=scaler,
                exclude_current_positions_from_observation=exclude_xy,
                max_episode_steps=horizon,
-               discretize=False)
+               discretize=False,
+                reward_net=reward_net)
 env = DummyVecEnv([lambda: RolloutInfoWrapper(env)])
 
 # Setup PPO with the custom environment

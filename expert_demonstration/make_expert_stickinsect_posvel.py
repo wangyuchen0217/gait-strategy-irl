@@ -137,43 +137,52 @@ contact_matrix = np.array(contact_matrix) # [2459, 6]
 print("contact_matrix:", contact_matrix.shape)
 # pd.DataFrame(contact_matrix).to_csv("contact_matrix.csv", header=["LF", "LM", "LH", "RF", "RM", "RH"], index=None)
 
-# Plotting the gait phase
-plt.figure(figsize=(7, 6))
-labels = ['LF', 'LM', 'LH', 'RF', 'RM', 'RH']
-for leg in range(contact_matrix.shape[1]):
-    plt.fill_between(range(contact_matrix.shape[0]), 
-                     leg * 1.5, leg * 1.5 + 1, 
-                     where=contact_matrix[:, leg] == 1, 
-                     color='black', step='mid')
-plt.yticks([leg * 1.5 + 0.5 for leg in range(6)], ['LF', 'LM', 'LH', 'RF', 'RM', 'RH']) 
-plt.gca().invert_yaxis()
-plt.xlabel('Time Step')
-plt.title('Gait Phase Plot kp300kv200')
-plt.show()
-# plt.savefig("gait_phase_plot_kp300kv200.png")
 
-# subplot 
-# idx_j = 0 # 0--23 joint angles
-# idx_v= 24 # 24--47 joint velocities
-# fig, axs = plt.subplots(4, 1, figsize=(10, 10))
-# plt.subplots_adjust(hspace=0.5)
-# axs[0].plot(obs_states[0, :, idx_j+7], label="obs_states", color="blue")
-# axs[0].set_title("joint angles_obs_states")
-# axs[1].plot(actions[0, :, idx_j], label="actions", color="red")
-# axs[1].set_title("joint angles_actions")
-# axs[2].plot(obs_states[0, :, idx_v+13], label="obs_states", color="blue")
-# axs[2].set_title("joint velocities_obs_states")
-# axs[3].plot(actions[0, :, idx_v], label="actions", color="red")
-# axs[3].set_title("joint velocities_actions")
-# plt.savefig("obs_act_plot.png")
+'''Plotting the gait phase'''
+plot_gait_phase = False
+if plot_gait_phase:
+    plt.figure(figsize=(7, 6))
+    labels = ['LF', 'LM', 'LH', 'RF', 'RM', 'RH']
+    for leg in range(contact_matrix.shape[1]):
+        plt.fill_between(range(contact_matrix.shape[0]), 
+                        leg * 1.5, leg * 1.5 + 1, 
+                        where=contact_matrix[:, leg] == 1, 
+                        color='black', step='mid')
+    plt.yticks([leg * 1.5 + 0.5 for leg in range(6)], ['LF', 'LM', 'LH', 'RF', 'RM', 'RH']) 
+    plt.gca().invert_yaxis()
+    plt.xlabel('Time Step')
+    plt.title('Gait Phase Plot kp300kv200')
+    plt.show()
+    # plt.savefig("gait_phase_plot_kp300kv200.png")
 
-# record the forces data
-# contact_forces = np.array(contact_forces) # [2459, 6]
-# print("contact_forces:", contact_forces.shape)
-# forces_save_path = os.path.join("expert_data_builder/stick_insect", animal, "Animal12_110415_00_22_contactforce.csv")
-# pd.DataFrame(contact_forces).to_csv(forces_save_path, header=["LF_foot", "LM_foot", "LH_foot", 
-#                                                               "RF_foot", "RM_foot", "RH_foot"], index=None)
-# pd.DataFrame(contact_forces).to_csv(forces_save_path, header=["LF_sup", "LM_sup", "LH_sup", "RF_sup", "RM_sup", "RH_sup",
-#                                                                     "LF_CTr", "LM_CTr", "LH_CTr", "RF_CTr", "RM_CTr", "RH_CTr",
-#                                                                     "LF_ThC", "LM_ThC", "LH_ThC", "RF_ThC", "RM_ThC", "RH_ThC",
-#                                                                     "LF_FTi", "LM_FTi", "LH_FTi", "RF_FTi", "RM_FTi", "RH_FTi"], index=None)
+
+'''subplot the obs and act data'''
+sub_plot_obs_act = False
+if sub_plot_obs_act:
+    idx_j = 0 # 0--23 joint angles
+    idx_v= 24 # 24--47 joint velocities
+    fig, axs = plt.subplots(4, 1, figsize=(10, 10))
+    plt.subplots_adjust(hspace=0.5)
+    axs[0].plot(obs_states[0, :, idx_j+7], label="obs_states", color="blue")
+    axs[0].set_title("joint angles_obs_states")
+    axs[1].plot(actions[0, :, idx_j], label="actions", color="red")
+    axs[1].set_title("joint angles_actions")
+    axs[2].plot(obs_states[0, :, idx_v+13], label="obs_states", color="blue")
+    axs[2].set_title("joint velocities_obs_states")
+    axs[3].plot(actions[0, :, idx_v], label="actions", color="red")
+    axs[3].set_title("joint velocities_actions")
+    plt.savefig("obs_act_plot.png")
+
+
+'''record the forces data'''
+collect_forces_data = False
+if collect_forces_data:
+    contact_forces = np.array(contact_forces) # [2459, 6]
+    print("contact_forces:", contact_forces.shape)
+    forces_save_path = os.path.join("expert_data_builder/stick_insect", animal, "Animal12_110415_00_22_contactforce.csv")
+    pd.DataFrame(contact_forces).to_csv(forces_save_path, header=["LF_foot", "LM_foot", "LH_foot", 
+                                                                "RF_foot", "RM_foot", "RH_foot"], index=None)
+    pd.DataFrame(contact_forces).to_csv(forces_save_path, header=["LF_sup", "LM_sup", "LH_sup", "RF_sup", "RM_sup", "RH_sup",
+                                                                        "LF_CTr", "LM_CTr", "LH_CTr", "RF_CTr", "RM_CTr", "RH_CTr",
+                                                                        "LF_ThC", "LM_ThC", "LH_ThC", "RF_ThC", "RM_ThC", "RH_ThC",
+                                                                        "LF_FTi", "LM_FTi", "LH_FTi", "RF_FTi", "RM_FTi", "RH_FTi"], index=None)

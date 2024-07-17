@@ -15,10 +15,8 @@ from sklearn.preprocessing import MinMaxScaler
 from pykalman import KalmanFilter
 import xml.etree.ElementTree as ET
 
-# open config file
-with open("configs/irl.yml", "r") as f:
-    config_data = yaml.safe_load(f)
 
+'''functions'''
 # smooth the data
 def Kalman1D(observations,damping=1):
     observation_covariance = damping
@@ -43,7 +41,11 @@ def data_smooth(data):
     return data
 
 
-'''firl-stickinsect-v0'''
+'''main'''
+# open config file
+with open("configs/irl.yml", "r") as f:
+    config_data = yaml.safe_load(f)
+
 animal = "Carausius"
 joint_path = os.path.join("expert_data_builder/stick_insect", animal, 
                                                 "Animal12_110415_00_22.csv")
@@ -65,17 +67,19 @@ model_path = 'envs/assets/' + model_name + '.xml'
 model = mujoco.MjModel.from_xml_path(model_path)
 data = mujoco.MjData(model)
 
-# Parse the XML file to extract custom data
-tree = ET.parse(model_path)
-root = tree.getroot()
-# Find the custom element and extract the init_qpos data
-init_qpos_data = None
-for custom in root.findall('custom'):
-    for numeric in custom.findall('numeric'):
-        if numeric.get('name') == 'init_qpos':
-            init_qpos_data = numeric.get('data')
-            break
-data.qpos[-24:] = np.array(init_qpos_data.split()).astype(np.float64)
+set_initial_state = False
+if set_initial_state:
+    # Parse the XML file to extract custom data
+    tree = ET.parse(model_path)
+    root = tree.getroot()
+    # Find the custom element and extract the init_qpos data
+    init_qpos_data = None
+    for custom in root.findall('custom'):
+        for numeric in custom.findall('numeric'):
+            if numeric.get('name') == 'init_qpos':
+                init_qpos_data = numeric.get('data')
+                break
+    data.qpos[-24:] = np.array(init_qpos_data.split()).astype(np.float64)
 
 obs_state = []
 leg_geoms = ['LF_tibia_geom', 'LM_tibia_geom', 'LH_tibia_geom', 'RF_tibia_geom', 'RM_tibia_geom', 'RH_tibia_geom']
@@ -138,7 +142,7 @@ print("contact_matrix:", contact_matrix.shape)
 # pd.DataFrame(contact_matrix).to_csv("contact_matrix.csv", header=["LF", "LM", "LH", "RF", "RM", "RH"], index=None)
 
 
-'''Plotting the gait phase'''
+'''plotting the gait phase'''
 plot_gait_phase = False
 if plot_gait_phase:
     plt.figure(figsize=(7, 6))

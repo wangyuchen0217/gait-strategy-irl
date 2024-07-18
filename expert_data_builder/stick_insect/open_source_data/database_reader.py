@@ -76,9 +76,9 @@ dataset.to_csv(save_path, index=False)
 print(dataset.shape)
 
 # write the dataset length to trail_details.json
+trail_details[f"T{subject}"]["length"] = dataset.shape[0]
 with open("configs/trail_details.json", "w") as f:
     json.dump(trail_details, f, indent=4)
-trail_details[f"T{subject}"]["length"] = {dataset.shape[0]}
 
 visualizaiton = False
 if visualizaiton:

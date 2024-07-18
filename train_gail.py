@@ -37,14 +37,14 @@ env = gym.make('StickInsect-v0',
 env = DummyVecEnv([lambda: RolloutInfoWrapper(env)])
 
 # Load the expert dataset
-obs_states = np.load('expert_demonstration/expert/StickInsect-v0-m3t-32-obs.npy', allow_pickle=True)
-actions = np.load('expert_demonstration/expert/StickInsect-v0-m3t-32-act.npy', allow_pickle=True)
+obs_states = np.load('expert_demonstration/expert/StickInsect-32-obs.npy', allow_pickle=True)
+actions = np.load('expert_demonstration/expert/StickInsect-32-act.npy', allow_pickle=True)
 
 # Extract observations and "actions" (which are the next observations in this context)
-observations = obs_states[0, :-1, 2:] if exclude_xy else obs_states[0, :-1, :] # Exclude the last step to avoid indexing error
-actions = actions[0, :-1, :] 
+observations = obs_states[:-1, 2:] if exclude_xy else obs_states[:-1, :] # Exclude the last step to avoid indexing error
+actions = actions[:-1, :] 
 
-next_observations = obs_states[0, 1:, 2:] if exclude_xy else obs_states[0, 1:, :] # Exclude the first step to avoid indexing error
+next_observations = obs_states[1:, 2:] if exclude_xy else obs_states[1:, :] # Exclude the first step to avoid indexing error
 
 dones = np.zeros(len(observations), dtype=bool)
 # dones[-1] = True  # Mark the last timestep as terminal
@@ -79,7 +79,7 @@ reward_net = BasicRewardNet(
 # Create the GAIL trainer
 gail_trainer = GAIL(
     demonstrations=transitions,
-    demo_batch_size=16,
+    demo_batch_size=32,
     gen_replay_buffer_capacity=8,
     n_disc_updates_per_round=4,
     venv=env,

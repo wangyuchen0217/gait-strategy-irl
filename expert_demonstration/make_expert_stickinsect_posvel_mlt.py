@@ -66,8 +66,6 @@ def get_observation_state(subject:str):
 # open config file
 with open("configs/irl.yml", "r") as f:
     config_data = yaml.safe_load(f)
-with open("configs/trail_details.json", "r") as f:
-    trail_details = json.load(f)
 
 #  Set up simulation without rendering
 model_name = config_data.get("model")
@@ -91,6 +89,7 @@ if set_initial_state:
 
 subjects = 12
 obs_state = []
+action = []
 leg_geoms = ['LF_tibia_geom', 'LM_tibia_geom', 'LH_tibia_geom', 'RF_tibia_geom', 'RM_tibia_geom', 'RH_tibia_geom']
 leg_ids = [mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_GEOM, name) for name in leg_geoms]
 floor_id = mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_GEOM, 'floor')
@@ -103,10 +102,10 @@ with mujoco.viewer.launch_passive(model, data) as viewer:
     viewer.cam.distance = 20  # Camera distance from the lookat point
     viewer.cam.azimuth = 90  # Camera azimuth angle in degrees
     viewer.cam.elevation = -90  # Camera elevation angle in degrees
-    for i in range(subjects):
-        subject = i + 1
-        joint_movement, velocities = get_observation_state(subject)
-        for j in range(2459):  # Run exactly 2459 frames
+    for i in range(1, subjects + 1):
+        subject_number = f"{i:02}"
+        joint_movement, velocities = get_observation_state(subject_number)
+        for j in range(len(joint_movement)):  # Run exactly 2459 frames
             if not viewer.is_running():  # Check if the viewer has been closed manually
                 break
             # implement the joint angle data
@@ -124,16 +123,17 @@ with mujoco.viewer.launch_passive(model, data) as viewer:
                                                 data.qvel.copy()[:])) # [-24:] joint velocities, [:] w/ torso
             # record the state of each step
             obs_state.append(state) # [2459,48] only joint angles and velocities, [2459, 61] w/ torso
+            action.append(data.ctrl.copy()) # [2459, 48] only joint angles and velocities, [2459, 61] w/ torso
             
             # Record contact data
-            for i in range(data.ncon):
-                    contact = data.contact[i]
-                    geom1 = contact.geom1
-                    geom2 = contact.geom2
-                    # Check if the contact involves a leg geom and the floor
-                    for leg_index, leg_id in enumerate(leg_ids):
-                        if (geom1 == leg_id and geom2 == floor_id) or (geom1 == floor_id and geom2 == leg_id):
-                            contact_matrix[j, leg_index] = 1  # Mark contact
+            # for i in range(data.ncon):
+            #         contact = data.contact[i]
+            #         geom1 = contact.geom1
+            #         geom2 = contact.geom2
+            #         # Check if the contact involves a leg geom and the floor
+            #         for leg_index, leg_id in enumerate(leg_ids):
+            #             if (geom1 == leg_id and geom2 == floor_id) or (geom1 == floor_id and geom2 == leg_id):
+            #                 contact_matrix[j, leg_index] = 1  # Mark contact
 
             # record the initial position
             if j == 0:
@@ -143,62 +143,9 @@ with mujoco.viewer.launch_passive(model, data) as viewer:
                 print("initail_pos:", initail_pos)
 
 # record observation state and action
-obs_states = np.array([obs_state]) # [1, 2459, 48] only joint angles and velocities, [1, 2459, 61] w/ torso
+obs_states = np.array(obs_state)
 print("expert_demo:", obs_states.shape)
-np.save("StickInsect-v0-m3t-32-obs.npy", obs_states)
-actions = np.array([np.hstack((np.deg2rad(joint_movement), velocities))])
+np.save("expert_demonstration/expert/StickInsect-32-obs.npy", obs_state)
+actions = np.array(action)
 print("actions:", actions.shape)
-np.save("StickInsect-v0-m3t-32-act.npy", actions)
-contact_matrix = np.array(contact_matrix) # [2459, 6]
-print("contact_matrix:", contact_matrix.shape)
-# pd.DataFrame(contact_matrix).to_csv("contact_matrix.csv", header=["LF", "LM", "LH", "RF", "RM", "RH"], index=None)
-
-
-'''plotting the gait phase'''
-plot_gait_phase = False
-if plot_gait_phase:
-    plt.figure(figsize=(7, 6))
-    labels = ['LF', 'LM', 'LH', 'RF', 'RM', 'RH']
-    for leg in range(contact_matrix.shape[1]):
-        plt.fill_between(range(contact_matrix.shape[0]), 
-                        leg * 1.5, leg * 1.5 + 1, 
-                        where=contact_matrix[:, leg] == 1, 
-                        color='black', step='mid')
-    plt.yticks([leg * 1.5 + 0.5 for leg in range(6)], ['LF', 'LM', 'LH', 'RF', 'RM', 'RH']) 
-    plt.gca().invert_yaxis()
-    plt.xlabel('Time Step')
-    plt.title('Gait Phase Plot kp300kv200')
-    plt.show()
-    # plt.savefig("gait_phase_plot_kp300kv200.png")
-
-
-'''subplot the obs and act data'''
-sub_plot_obs_act = False
-if sub_plot_obs_act:
-    idx_j = 0 # 0--23 joint angles
-    idx_v= 24 # 24--47 joint velocities
-    fig, axs = plt.subplots(4, 1, figsize=(10, 10))
-    plt.subplots_adjust(hspace=0.5)
-    axs[0].plot(obs_states[0, :, idx_j+7], label="obs_states", color="blue")
-    axs[0].set_title("joint angles_obs_states")
-    axs[1].plot(actions[0, :, idx_j], label="actions", color="red")
-    axs[1].set_title("joint angles_actions")
-    axs[2].plot(obs_states[0, :, idx_v+13], label="obs_states", color="blue")
-    axs[2].set_title("joint velocities_obs_states")
-    axs[3].plot(actions[0, :, idx_v], label="actions", color="red")
-    axs[3].set_title("joint velocities_actions")
-    plt.savefig("obs_act_plot.png")
-
-
-'''record the forces data'''
-collect_forces_data = False
-if collect_forces_data:
-    contact_forces = np.array(contact_forces) # [2459, 6]
-    print("contact_forces:", contact_forces.shape)
-    forces_save_path = os.path.join("expert_data_builder/stick_insect", animal, "Animal12_110415_00_22_contactforce.csv")
-    pd.DataFrame(contact_forces).to_csv(forces_save_path, header=["LF_foot", "LM_foot", "LH_foot", 
-                                                                "RF_foot", "RM_foot", "RH_foot"], index=None)
-    pd.DataFrame(contact_forces).to_csv(forces_save_path, header=["LF_sup", "LM_sup", "LH_sup", "RF_sup", "RM_sup", "RH_sup",
-                                                                        "LF_CTr", "LM_CTr", "LH_CTr", "RF_CTr", "RM_CTr", "RH_CTr",
-                                                                        "LF_ThC", "LM_ThC", "LH_ThC", "RF_ThC", "RM_ThC", "RH_ThC",
-                                                                        "LF_FTi", "LM_FTi", "LH_FTi", "RF_FTi", "RM_FTi", "RH_FTi"], index=None)
+np.save("expert_demonstration/expert/StickInsect-32-act.npy", action)

@@ -4,9 +4,9 @@
         "insect_number": "Animal12",
         "id_1": "110415",
         "id_2": "00",
-        "id_3": "23"
+        "id_3": "22",
+        "length": "None"
     },
-
     "T02": {
         "insect_name": "Carausius",
         "insect_number": "Animal12",
@@ -14,7 +14,6 @@
         "id_2": "00",
         "id_3": "23"
     },
-
     "T03": {
         "insect_name": "Carausius",
         "insect_number": "Animal12",
@@ -22,7 +21,6 @@
         "id_2": "00",
         "id_3": "32"
     },
-
     "T04": {
         "insect_name": "Carausius",
         "insect_number": "Animal12",
@@ -30,7 +28,6 @@
         "id_2": "08",
         "id_3": "28"
     },
-
     "T05": {
         "insect_name": "Carausius",
         "insect_number": "Animal12",
@@ -38,7 +35,6 @@
         "id_2": "08",
         "id_3": "37"
     },
-
     "T06": {
         "insect_name": "Carausius",
         "insect_number": "Animal12",
@@ -46,7 +42,6 @@
         "id_2": "08",
         "id_3": "40"
     },
-
     "T07": {
         "insect_name": "Carausius",
         "insect_number": "Animal12",
@@ -54,7 +49,6 @@
         "id_2": "24",
         "id_3": "27"
     },
-
     "T08": {
         "insect_name": "Carausius",
         "insect_number": "Animal12",
@@ -62,7 +56,6 @@
         "id_2": "24",
         "id_3": "29"
     },
-
     "T09": {
         "insect_name": "Carausius",
         "insect_number": "Animal12",
@@ -70,7 +63,6 @@
         "id_2": "24",
         "id_3": "33"
     },
-
     "T10": {
         "insect_name": "Carausius",
         "insect_number": "Animal12",
@@ -78,7 +70,6 @@
         "id_2": "48",
         "id_3": "31"
     },
-
     "T11": {
         "insect_name": "Carausius",
         "insect_number": "Animal12",
@@ -86,7 +77,6 @@
         "id_2": "48",
         "id_3": "35"
     },
-
     "T12": {
         "insect_name": "Carausius",
         "insect_number": "Animal12",

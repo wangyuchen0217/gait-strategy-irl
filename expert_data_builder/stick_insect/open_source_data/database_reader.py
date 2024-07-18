@@ -3,10 +3,19 @@ import scipy.io
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+import json
 
 # Load the .mat file
-file_name = 'Animal12_110415_48_39'
-mat_file_path = 'expert_data_builder/stick_insect/open_source_data/' + file_name + '.mat'
+subject = "01"
+with open("configs/trail_details.json", "r") as f:
+    trail_details = json.load(f)
+insect_name = trail_details[f"T{subject}"]["insect_name"]
+insect_number = trail_details[f"T{subject}"]["insect_number"]
+id_1 = trail_details[f"T{subject}"]["id_1"]
+id_2 = trail_details[f"T{subject}"]["id_2"]
+id_3 = trail_details[f"T{subject}"]["id_3"]
+file_name = f"{insect_number}_{id_1}_{id_2}_{id_3}"
+mat_file_path = f"expert_data_builder/stick_insect/open_source_data/{file_name}.mat"
 mat_contents = scipy.io.loadmat(mat_file_path)
 
 # Inspect the keys of the dictionary to understand the structure of the file
@@ -65,6 +74,11 @@ dataset = pd.DataFrame(dataset, index=None, columns=["LF_sup", "LM_sup", "LH_sup
 save_path = 'expert_data_builder/stick_insect/Carausius/' + file_name + '.csv'
 dataset.to_csv(save_path, index=False)
 print(dataset.shape)
+
+# write the dataset length to trail_details.json
+with open("configs/trail_details.json", "w") as f:
+    json.dump(trail_details, f, indent=4)
+trail_details[f"T{subject}"]["length"] = {dataset.shape[0]}
 
 visualizaiton = False
 if visualizaiton:

@@ -62,7 +62,7 @@ transitions = types.Transitions(
 learner = PPO(
     env=env,
     policy=MlpPolicy,
-    batch_size=16,
+    batch_size=32,
     ent_coef=0.0,
     learning_rate=0.0004,
     gamma=0.95,
@@ -79,7 +79,7 @@ reward_net = BasicRewardNet(
 # Create the GAIL trainer
 gail_trainer = GAIL(
     demonstrations=transitions,
-    demo_batch_size=32,
+    demo_batch_size=16,
     gen_replay_buffer_capacity=8,
     n_disc_updates_per_round=4,
     venv=env,

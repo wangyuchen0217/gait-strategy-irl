@@ -7,6 +7,7 @@ from gymnasium.spaces import Box
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
 from sklearn.preprocessing import KBinsDiscretizer
+from imitation.rewards.reward_nets import BasicRewardNet
 
 
 DEFAULT_CAMERA_CONFIG = {
@@ -43,6 +44,7 @@ class StickInsectEnv(MujocoEnv, utils.EzPickle):
         pca=None,
         scaler=None,
         discretize=True,
+        discretizer = None,
         reward_net=None,
         **kwargs,
     ):
@@ -83,6 +85,7 @@ class StickInsectEnv(MujocoEnv, utils.EzPickle):
         self.pca_dimension = pca_dimension
         self.n_bins = n_bins
         self.discretize = discretize
+        self.discretizer = discretizer
         self.reward_net = reward_net
 
         if discretize:
@@ -213,11 +216,12 @@ class StickInsectEnv(MujocoEnv, utils.EzPickle):
         scaled_obs = self.scaler.transform([obs])
         pca_obs = self.pca.transform(scaled_obs)
 
-        if self.discretize:
-            bins = np.linspace(-1, 1, self.n_bins)  # Adjust binning strategy as needed
-            discretized_obs = np.digitize(pca_obs, bins) - 1  # Ensure 0-based indexing
-            discretized_obs = discretized_obs.flatten()
-            return discretized_obs
+        if self.discretizer:
+            discretized_obs = self.discretizer.fit_transform(pca_obs).flatten()
+            print("discretized:", discretized_obs.shape)
+            state_index = np.ravel_multi_index(discretized_obs.astype(int), [self.n_bins] * self.pca_dimension)
+            print("state_index:", state_index)
+            return state_index
         
         return pca_obs.flatten()
 
@@ -257,12 +261,27 @@ if __name__ == "__main__":
     pca = PCA(n_components=pca_dimension)
     pca.fit(scaled_data)
 
+    reward_net = BasicRewardNet(
+        observation_space=Discrete(1024),
+        action_space=Discrete(48),
+        use_state=True,
+        use_action=False,
+        use_next_state=False,
+        use_done=False,
+    )
+    reward_net.load_state_dict(torch.load("trained_policy/reward_net.pth"))
+
+    n_bins = 2
+    discretizer = KBinsDiscretizer(n_bins=n_bins, encode='ordinal', strategy='uniform')
+
     env = StickInsectEnv(
         render_mode='human',
         pca=pca,
         scaler=scaler,
         exclude_current_positions_from_observation=exclude_xy,
-        discretize=True
+        discretize=True,
+        discretizer=discretizer,
+        reward_net=reward_net
     )
     env.reset_model()
 

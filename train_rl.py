@@ -38,22 +38,22 @@ pca.fit(scaled_data)
 
 # Load the trained reward network parameters
 reward_net = BasicRewardNet(
-    observation_space=Box(low=-np.inf, high=np.inf, shape=(1024,)),
+    observation_space=gym.spaces.Discrete(1024),
     action_space=Discrete(48),
     use_state=True,
     use_action=False,
     use_next_state=False,
     use_done=False,
 )
-reward_net.load_state_dict(torch.load("reward_net.pth"))
+reward_net.load_state_dict(torch.load("trained_policy/reward_net.pth"))
 
 # Create and wrap the original environment
 env = gym.make('StickInsect-v0-disc',
                 pca=pca,
                 scaler=scaler,
-               exclude_current_positions_from_observation=exclude_xy,
-               max_episode_steps=horizon,
-               discretize=False,
+                exclude_current_positions_from_observation=exclude_xy,
+                max_episode_steps=horizon,
+                discretize=True,
                 reward_net=reward_net)
 env = DummyVecEnv([lambda: RolloutInfoWrapper(env)])
 

@@ -72,7 +72,7 @@ plt.xlabel('Principal components')
 plt.ylabel('Explained variance ratio')
 plt.title('Explained Variance by Principal Components')
 plt.legend(loc='best')
-plt.savefig('pca_explained_variance.png')
+# plt.savefig('pca_explained_variance.png')
 
 
 # Calculate state frequencies (histogram)
@@ -98,7 +98,6 @@ print("State_counts shape:", state_counts.shape)
 print("State Occupancy:", state_occupancy_flat)
 print("State Occupancy Shape:", state_occupancy_flat.shape)
 print("Sum of State Occupancy (should be 1):", np.sum(state_occupancy_flat))
-
 
 SEED = config_data['env']['seed']
 horizon = config_data['env']['horizon']
@@ -144,6 +143,5 @@ mce_irl = MCEIRL(
 env.seed(SEED)
 mce_irl.train(save_path="reward_net.pth")
 
-# torch.save(mce_irl.policy, "trained_policy_mce_irl.pth")
 
 

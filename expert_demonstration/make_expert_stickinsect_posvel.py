@@ -133,17 +133,17 @@ with mujoco.viewer.launch_passive(model, data) as viewer:
 # record observation state and action
 obs_states = np.array([obs_state]) # [1, 2459, 48] only joint angles and velocities, [1, 2459, 61] w/ torso
 print("expert_demo:", obs_states.shape)
-np.save("StickInsect-v0-m3t-32-obs.npy", obs_states)
+# np.save("StickInsect-v0-m3t-32-obs.npy", obs_states)
 actions = np.array([np.hstack((np.deg2rad(joint_movement), velocities))])
 print("actions:", actions.shape)
-np.save("StickInsect-v0-m3t-32-act.npy", actions)
+# np.save("StickInsect-v0-m3t-32-act.npy", actions)
 contact_matrix = np.array(contact_matrix) # [2459, 6]
 print("contact_matrix:", contact_matrix.shape)
 # pd.DataFrame(contact_matrix).to_csv("contact_matrix.csv", header=["LF", "LM", "LH", "RF", "RM", "RH"], index=None)
 
 
 '''plotting the gait phase'''
-plot_gait_phase = False
+plot_gait_phase = True
 if plot_gait_phase:
     plt.figure(figsize=(7, 6))
     labels = ['LF', 'LM', 'LH', 'RF', 'RM', 'RH']

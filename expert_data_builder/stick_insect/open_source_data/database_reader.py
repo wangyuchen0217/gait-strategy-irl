@@ -82,7 +82,7 @@ def mat_reader(subject:str, visualizaiton=False):
 
     if visualizaiton:
         plt.figure(figsize=(8, 6))
-        plt.plot(LF_sup, label='Protraction/Retraction', c="green")
+        plt.plot(LF_sup, label='Supination/Pronation', c="green")
         plt.plot(LF_CTr, label='Levation/Depression', c='red')
         plt.plot(LF_ThC, label='Protraction/Retraction', c='blue')
         plt.plot(LF_FTi, label='Extension/Flexion', c="magenta")

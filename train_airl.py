@@ -104,12 +104,12 @@ learner_rewards_after_training, _ = evaluate_policy(
 )
 
 # save the trained model
-# learner.save("trained_policy_airl")
+learner.save("trained_policy_airl")
 
 # Extract the learned policy
 learned_policy = airl_trainer.gen_algo.policy
 # Save the trained policy
-airl_trainer.gen_algo.save("trained_policy_airl")
+# airl_trainer.gen_algo.save("trained_policy_airl")
 
 # Extract the reward function from the discriminator
 def reward_function(state, action):

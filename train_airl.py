@@ -81,6 +81,10 @@ reward_net = BasicRewardNet(
     observation_space=env.observation_space,
     action_space=env.action_space,
     normalize_input_layer=RunningNorm,
+    use_state = True,
+    use_action = True,
+    use_next_state = True,
+    use_done = True,
 )
 
 # Create the AIRL trainer

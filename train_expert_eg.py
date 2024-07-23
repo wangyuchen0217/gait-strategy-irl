@@ -34,6 +34,7 @@ with open("configs/irl.yml", "r") as f:
 exclude_xy = config_data.get("exclude_xy")
 env = gym.make('StickInsect-v0',
                exclude_current_positions_from_observation=exclude_xy,
+               render_mode="human",
                max_episode_steps=3000)
 env = DummyVecEnv([lambda: RolloutInfoWrapper(env)])
 

@@ -111,18 +111,5 @@ learner_rewards_after_training, _ = evaluate_policy(
 # save the trained model
 learner.save("trained_policy_airl")
 
-# Extract the learned policy
-learned_policy = airl_trainer.gen_algo.policy
-# Save the trained policy
-# airl_trainer.gen_algo.save("trained_policy_airl")
-
-# Extract the reward function from the discriminator
-def reward_function(state, action):
-    discriminator = airl_trainer.reward_trainer.discriminator
-    logits = discriminator(torch.cat([state, action], dim=-1))
-    reward = -logits  # or some transformation based on the discriminator output
-    return reward
-
-
 print("mean reward after training:", np.mean(learner_rewards_after_training))
 print("mean reward before training:", np.mean(learner_rewards_before_training))

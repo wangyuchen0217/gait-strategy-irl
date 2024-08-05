@@ -12,3 +12,6 @@
 **StickInsect-v0.xml** Carausius morosus, FTi 初始状态 90 deg, position & velocity actuator
 **StickInsect-v1.xml** Carausius morosus, FTi 初始状态 90 deg, motor actuator
 **StickInsect-v2.xml** Carausius morosus, FTi 初始状态 90 deg, position & velocity actuator, torque sensor
+
+# Simple Stick Insect
+**Sim-v0** Carausius morosus, 只保留FTi和ThC

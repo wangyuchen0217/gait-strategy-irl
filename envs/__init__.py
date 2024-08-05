@@ -31,3 +31,9 @@ register(
      entry_point='envs.StickInsectEnv_disc:StickInsectEnv',
      max_episode_steps=3000,
 )
+
+register(
+     id='Sim-v0',
+     entry_point='envs.SimEnv:StickInsectEnv',
+     max_episode_steps=3000,
+)

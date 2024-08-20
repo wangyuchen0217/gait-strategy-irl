@@ -180,7 +180,7 @@ def mat_reader_joint_angle(subject:str, save=False, visualizaiton=False):
 
 if __name__ == '__main__':
     # input the total number of subjects
-    subjects = 1 # 12
+    subjects = 3 # 12
     for i in range(1, subjects + 1):
         subject_number = f"{i:02}"
         # mat_reader_joint_angle(subject_number, save=False, visualizaiton=False)

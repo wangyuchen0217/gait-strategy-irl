@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 import json
 import matplotlib.pyplot as plt
+import seaborn as sns
 from sklearn.preprocessing import MinMaxScaler
 from pykalman import KalmanFilter
 
@@ -29,71 +30,104 @@ def get_cont_data(subject:str):
     gait = pd.read_csv(gait_path, header=[0], index_col=None).to_numpy()[1:-1]
     return vel, direction, gait
 
-vel, direction, gait = get_cont_data("01")
-# bin the data
-vel_bin_edges = np.arange(0, 55, 5)
-vel_binned = np.digitize(vel, vel_bin_edges, right=False)
-direction_bin_edges = np.arange(-20, 5, 5)
-direction_binned = np.digitize(direction, direction_bin_edges, right=False)
+vel_01, direction_01, gait_01 = get_cont_data("01")
+vel_02, direction_02, gait_02 = get_cont_data("02")
+vel_03, direction_03, gait_03 = get_cont_data("03")
+vel = np.concatenate((vel_01, vel_02, vel_03), axis=0)
+direction = np.concatenate((direction_01, direction_02, direction_03), axis=0)
+gait = np.concatenate((gait_01, gait_02, gait_03), axis=0)
 
+# bin the data
+vel_bin_edges = np.arange(0, 145, 5) # should be 145
+vel_binned = np.digitize(vel, vel_bin_edges, right=True)
+direction_bin_edges = np.arange(-20, 10, 5)
+direction_binned = np.digitize(direction, direction_bin_edges, right=True)
 
 # Define all possible gait pattern combinations (42 types)
 possible_combinations = {
-    '111111': 'Bin 1: All 6 legs stance',
-    '111110': 'Bin 2: 5 legs stance',
-    '111101': 'Bin 3: 5 legs stance',
-    '111011': 'Bin 4: 5 legs stance',
-    '110111': 'Bin 5: 5 legs stance',
-    '101111': 'Bin 6: 5 legs stance',
-    '011111': 'Bin 7: 5 legs stance',
-    '111100': 'Bin 8: 4 legs stance',
-    '111010': 'Bin 9: 4 legs stance',
-    '111001': 'Bin 10: 4 legs stance',
-    '110110': 'Bin 11: 4 legs stance',
-    '110101': 'Bin 12: 4 legs stance',
-    '110011': 'Bin 13: 4 legs stance',
-    '101110': 'Bin 14: 4 legs stance',
-    '101101': 'Bin 15: 4 legs stance',
-    '101011': 'Bin 16: 4 legs stance',
-    '100111': 'Bin 17: 4 legs stance',
-    '011110': 'Bin 18: 4 legs stance',
-    '011101': 'Bin 19: 4 legs stance',
-    '011011': 'Bin 20: 4 legs stance',
-    '010111': 'Bin 21: 4 legs stance',
-    '001111': 'Bin 22: 4 legs stance',
-    '111000': 'Bin 23: 3 legs stance',
-    '110100': 'Bin 24: 3 legs stance',
-    '110010': 'Bin 25: 3 legs stance',
-    '110001': 'Bin 26: 3 legs stance',
-    '101100': 'Bin 27: 3 legs stance',
-    '101010': 'Bin 28: 3 legs stance',
-    '101001': 'Bin 29: 3 legs stance',
-    '100110': 'Bin 30: 3 legs stance',
-    '100101': 'Bin 31: 3 legs stance',
-    '100011': 'Bin 32: 3 legs stance',
-    '011100': 'Bin 33: 3 legs stance',
-    '011010': 'Bin 34: 3 legs stance',
-    '011001': 'Bin 35: 3 legs stance',
-    '010110': 'Bin 36: 3 legs stance',
-    '010101': 'Bin 37: 3 legs stance',
-    '010011': 'Bin 38: 3 legs stance',
-    '001110': 'Bin 39: 3 legs stance',
-    '001101': 'Bin 40: 3 legs stance',
-    '001011': 'Bin 41: 3 legs stance',
-    '000111': 'Bin 42: 3 legs stance'
+    '111111': 1,
+    '111110': 2,
+    '111101': 3,
+    '111011': 4,
+    '110111': 5,
+    '101111': 6,
+    '011111': 7,
+    '111100': 8,
+    '111010': 9,
+    '111001': 10,
+    '110110': 11,
+    '110101': 12,
+    '110011': 13,
+    '101110': 14,
+    '101101': 15,
+    '101011': 16,
+    '100111': 17,
+    '011110': 18,
+    '011101': 19,
+    '011011': 20,
+    '010111': 21,
+    '001111': 22,
+    '111000': 23,
+    '110100': 24,
+    '110010': 25,
+    '110001': 26,
+    '101100': 27,
+    '101010': 28,
+    '101001': 29,
+    '100110': 30,
+    '100101': 31,
+    '100011': 32,
+    '011100': 33,
+    '011010': 34,
+    '011001': 35,
+    '010110': 36,
+    '010101': 37,
+    '010011': 38,
+    '001110': 39,
+    '001101': 40,
+    '001011': 41,
+    '000111': 42
 }
 
 
 # Combine the first six columns into a string for each row to represent the gait pattern
 gait_data = pd.DataFrame(gait)
 gait_data['Gait Pattern'] = gait_data.iloc[:, :6].astype(str).agg(''.join, axis=1)
-
 # Categorize each gait pattern based on the possible combinations
 gait_data['Category'] = gait_data['Gait Pattern'].map(possible_combinations)
-
 # Display the categorized data
 print(gait_data[['Gait Pattern', 'Category']])
 
-# # Save the categorized data to a new CSV file (if needed)
-# output_csv_path = 'path_to_save_categorized_gait_pattern.csv'  # Replace with your desired file path
-# gait.to_csv(output_csv_path, index=False)
+analysis_df = pd.DataFrame({
+        'Velocity Bin': vel_binned.flatten(),
+        'Direction Bin': direction_binned.flatten(),
+        'Gait Category': gait_data['Category']
+    })
+save_path = 'expert_demonstration/expert/CarausiusC00.csv'
+analysis_df.to_csv(save_path, index=False, header=True)
+
+# heat map
+heat_map = False
+if heat_map:
+    # Combine velocity, direction, and gait pattern into a single DataFrame for analysis
+    analysis_df = pd.DataFrame({
+        'Velocity Bin': vel_binned.flatten(),
+        'Direction Bin': direction_binned.flatten(),
+        'Gait Category': gait_data['Category']
+    })
+
+    # Create a pivot table to count occurrences
+    pivot_table = analysis_df.pivot_table(
+                                        index='Velocity Bin', 
+                                        columns='Direction Bin', 
+                                        values='Gait Category', 
+                                        aggfunc=lambda x: x.value_counts().index[0],
+                                        fill_value=0)
+
+    # Plot the heatmap
+    plt.figure(figsize=(12, 8))
+    sns.heatmap(pivot_table, cmap='YlGnBu', annot=True, fmt=".1f")  # Change 'fmt' if needed for proper formatting
+    plt.title('Heat Map of Gait Patterns by Velocity and Direction')
+    plt.xlabel('Direction Bin')
+    plt.ylabel('Velocity Bin')
+    plt.show()

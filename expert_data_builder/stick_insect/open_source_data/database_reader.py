@@ -79,6 +79,24 @@ def mat_reader_direction(subject:str, save=False, visualizaiton=False):
         plt.show()
 
 
+def mat_reader_gait(subject:str, save=False):
+    # Load the .mat file
+    mat_contents, file_name = json_reader(subject)
+    with open("configs/trail_details.json", "r") as f:
+        trail_details = json.load(f)  
+    # Extract specific data from the dictionary
+    gait = mat_contents['gait']
+    pattern = gait['pattern'][0, 0]
+    incontact = gait['incontact'][0, 0]
+    gait_info = np.concatenate((pattern, incontact), axis=1)
+    gait = pd.DataFrame(gait_info, index=None, columns=["LF", "LM", "LH", "RF", "RM", "RH", "incontact"])
+
+    if save:
+        save_path = 'expert_data_builder/stick_insect/Carausius/' + file_name + '_gait.csv'
+        gait.to_csv(save_path, index=False)
+        print(gait.shape)
+
+
 def mat_reader_joint_angle(subject:str, save=False, visualizaiton=False):
     # Load the .mat file
     mat_contents, file_name = json_reader(subject)
@@ -167,4 +185,5 @@ if __name__ == '__main__':
         subject_number = f"{i:02}"
         # mat_reader_joint_angle(subject_number, save=False, visualizaiton=False)
         # mat_reader_vel(subject_number, save=True, visualizaiton=False)
-        mat_reader_direction(subject_number, save=False, visualizaiton=True)
+        # mat_reader_direction(subject_number, save=False, visualizaiton=True)
+        mat_reader_gait(subject_number, save=True)

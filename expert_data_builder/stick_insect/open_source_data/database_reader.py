@@ -5,6 +5,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import json
 
+
 def json_reader(subject:str):
     # Load the .mat file
     with open("configs/trail_details.json", "r") as f:
@@ -23,13 +24,62 @@ def json_reader(subject:str):
 
     return mat_contents, file_name
 
-def mat_reader_vel(subject:str, visualizaiton=False):
+
+def mat_reader_vel(subject:str, save=False, visualizaiton=False):
     # Load the .mat file
     mat_contents, file_name = json_reader(subject)
     with open("configs/trail_details.json", "r") as f:
         trail_details = json.load(f)  
+    # Extract specific data from the dictionary
+    gait = mat_contents['gait']
+    vel = gait['velocity'][0, 0]
+    vel = pd.DataFrame(vel, index=None, columns=["vel"])
 
-def mat_reader_joint_angle(subject:str, visualizaiton=False):
+    if save:
+        save_path = 'expert_data_builder/stick_insect/Carausius/' + file_name + '_vel.csv'
+        vel.to_csv(save_path, index=False)
+        print(vel.shape) # the 1st value is nan
+
+    if visualizaiton:
+        plt.figure(figsize=(12, 3))
+        plt.plot(vel)
+        plt.xticks(fontsize=14)
+        plt.yticks(fontsize=14)
+        plt.xlabel('Time Steps', fontsize=14)
+        plt.ylabel('Vel', fontsize=14)
+        plt.grid()
+        plt.show()
+
+
+def mat_reader_direction(subject:str, save=False, visualizaiton=False):
+    # Load the .mat file
+    mat_contents, file_name = json_reader(subject)
+    with open("configs/trail_details.json", "r") as f:
+        trail_details = json.load(f)  
+    # Extract specific data from the dictionary    
+    T3 = mat_contents['T3']
+    T3_angle = T3['angle'][0, 0]
+    T3_yaw = T3_angle[:, 0].reshape(-1, 1)
+    direction = pd.DataFrame(T3_yaw, index=None, columns=["direction"])
+    
+    if save:
+        save_path = 'expert_data_builder/stick_insect/Carausius/' + file_name + '_direction.csv'
+        direction.to_csv(save_path, index=False)
+        print(direction.shape)
+
+    if visualizaiton:
+        plt.figure(figsize=(12, 3))
+        plt.plot(direction)
+        plt.ylim(-20, 20)
+        plt.xticks(fontsize=14)
+        plt.yticks(fontsize=14)
+        plt.xlabel('Time Steps', fontsize=14)
+        plt.ylabel('Direction (deg)', fontsize=14)
+        plt.grid()
+        plt.show()
+
+
+def mat_reader_joint_angle(subject:str, save=False, visualizaiton=False):
     # Load the .mat file
     mat_contents, file_name = json_reader(subject)
     with open("configs/trail_details.json", "r") as f:
@@ -85,9 +135,10 @@ def mat_reader_joint_angle(subject:str, visualizaiton=False):
                                                                                                 "LF_CTr", "LM_CTr", "LH_CTr", "RF_CTr", "RM_CTr", "RH_CTr",
                                                                                                 "LF_ThC", "LM_ThC", "LH_ThC", "RF_ThC", "RM_ThC", "RH_ThC",
                                                                                                 "LF_FTi", "LM_FTi", "LH_FTi", "RF_FTi", "RM_FTi", "RH_FTi"])
-    save_path = 'expert_data_builder/stick_insect/Carausius/' + file_name + '.csv'
-    dataset.to_csv(save_path, index=False)
-    print(dataset.shape)
+    if save:
+        save_path = 'expert_data_builder/stick_insect/Carausius/' + file_name + '.csv'
+        dataset.to_csv(save_path, index=False)
+        print(dataset.shape)
 
     # write the dataset length to trail_details.json
     trail_details[f"T{subject}"]["length"] = dataset.shape[0]
@@ -111,7 +162,9 @@ def mat_reader_joint_angle(subject:str, visualizaiton=False):
 
 if __name__ == '__main__':
     # input the total number of subjects
-    subjects = 12
+    subjects = 3 # 12
     for i in range(1, subjects + 1):
         subject_number = f"{i:02}"
-        mat_reader_joint_angle(subject_number, visualizaiton=False)
+        # mat_reader_joint_angle(subject_number, save=False, visualizaiton=False)
+        # mat_reader_vel(subject_number, save=True, visualizaiton=False)
+        mat_reader_direction(subject_number, save=False, visualizaiton=True)

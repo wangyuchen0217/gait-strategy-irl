@@ -5,7 +5,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import json
 
-def mat_reader(subject:str, visualizaiton=False):
+def json_reader(subject:str):
     # Load the .mat file
     with open("configs/trail_details.json", "r") as f:
         trail_details = json.load(f)
@@ -20,6 +20,20 @@ def mat_reader(subject:str, visualizaiton=False):
 
     # Inspect the keys of the dictionary to understand the structure of the file
     print(mat_contents.keys())
+
+    return mat_contents, file_name
+
+def mat_reader_vel(subject:str, visualizaiton=False):
+    # Load the .mat file
+    mat_contents, file_name = json_reader(subject)
+    with open("configs/trail_details.json", "r") as f:
+        trail_details = json.load(f)  
+
+def mat_reader_joint_angle(subject:str, visualizaiton=False):
+    # Load the .mat file
+    mat_contents, file_name = json_reader(subject)
+    with open("configs/trail_details.json", "r") as f:
+        trail_details = json.load(f)
 
     # Extract specific data from the dictionary
     LF, LM, LH = mat_contents['L1'], mat_contents['L2'], mat_contents['L3']
@@ -100,4 +114,4 @@ if __name__ == '__main__':
     subjects = 12
     for i in range(1, subjects + 1):
         subject_number = f"{i:02}"
-        mat_reader(subject_number, visualizaiton=False)
+        mat_reader_joint_angle(subject_number, visualizaiton=False)

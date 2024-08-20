@@ -38,7 +38,7 @@ direction = np.concatenate((direction_01, direction_02, direction_03), axis=0)
 gait = np.concatenate((gait_01, gait_02, gait_03), axis=0)
 
 # bin the data
-vel_bin_edges = np.arange(0, 145, 5) # should be 145
+vel_bin_edges = np.arange(0, 95, 5) # should be 145
 vel_binned = np.digitize(vel, vel_bin_edges, right=True)
 direction_bin_edges = np.arange(-20, 10, 5)
 direction_binned = np.digitize(direction, direction_bin_edges, right=True)
@@ -98,24 +98,21 @@ gait_data['Category'] = gait_data['Gait Pattern'].map(possible_combinations)
 # Display the categorized data
 print(gait_data[['Gait Pattern', 'Category']])
 
+# Combine velocity, direction, and gait pattern into a single DataFrame for analysis
 analysis_df = pd.DataFrame({
         'Velocity Bin': vel_binned.flatten(),
         'Direction Bin': direction_binned.flatten(),
         'Gait Category': gait_data['Category']
     })
-save_path = 'expert_demonstration/expert/CarausiusC00.csv'
-analysis_df.to_csv(save_path, index=False, header=True)
+
+save = False
+if save:
+    save_path = 'expert_demonstration/expert/CarausiusC00.csv'
+    analysis_df.to_csv(save_path, index=False, header=True)
 
 # heat map
-heat_map = False
+heat_map = True
 if heat_map:
-    # Combine velocity, direction, and gait pattern into a single DataFrame for analysis
-    analysis_df = pd.DataFrame({
-        'Velocity Bin': vel_binned.flatten(),
-        'Direction Bin': direction_binned.flatten(),
-        'Gait Category': gait_data['Category']
-    })
-
     # Create a pivot table to count occurrences
     pivot_table = analysis_df.pivot_table(
                                         index='Velocity Bin', 

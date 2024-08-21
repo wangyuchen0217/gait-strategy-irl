@@ -31,14 +31,18 @@ class CustomMDP(object):
 
         # Defining the state space as combinations of velocity and direction bins
         self.n_states = n_velocity_bins * n_direction_bins
+        print("Number of states: ", self.n_states)
 
         # Actions correspond to the different gait categories
         self.actions = list(range(n_gait_categories))
         self.n_actions = len(self.actions)
+        print("Number of actions: ", self.n_actions)
 
         # Transition probabilities and rewards will be provided by user or learned
         self.transition_probabilities = np.zeros((self.n_states, self.n_actions, self.n_states))
         self.rewards = np.zeros((self.n_states, self.n_actions))
+        print("Transition probabilities shape: ", self.transition_probabilities.shape)
+        print("Rewards shape: ", self.rewards.shape)
         
     def set_transition_probabilities(self, transition_probabilities):
         self.transition_probabilities = transition_probabilities

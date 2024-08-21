@@ -10,18 +10,24 @@ data = pd.read_csv('expert_demonstration/expert/CarausiusC00.csv')
 n_velocity_bins = data['Velocity Bin'].nunique()
 n_direction_bins = data['Direction Bin'].nunique()
 n_gait_categories = data['Gait Category'].nunique()
+print("Velocity bins: ", n_velocity_bins)
+print("Direction bins: ", n_direction_bins)
+print("Gait categories: ", n_gait_categories)
 
 mdp = MDP(n_velocity_bins, n_direction_bins, n_gait_categories, discount=0.9)
 
-# Create a feature matrix
+# Create a feature matrix (n_states, n_dimensions)
 n_states = mdp.n_states
 feature_matrix = np.zeros((n_states, n_velocity_bins + n_direction_bins))
+print("Feature matrix shape: ", feature_matrix.shape)
 
-# Populate the feature matrix
+# Populate the feature matrix (one-hot encoding)
 for index, row in data.iterrows():
-    state_index = int(row['Velocity Bin'] * n_direction_bins + row['Direction Bin'])
-    feature_matrix[state_index, row['Velocity Bin']] = 1
-    feature_matrix[state_index, n_velocity_bins + row['Direction Bin']] = 1
+    # set the row index
+    state_index = int((row['Velocity Bin']-1) * n_direction_bins + (row['Direction Bin']-1))
+    # set the one-hot encoding (column index)
+    feature_matrix[state_index, (row['Direction Bin']-1)] = 1
+    feature_matrix[state_index, n_velocity_bins + (row['Direction Bin']-1)] = 1
 
 # Generate trajectories from the dataset
 trajectories = []

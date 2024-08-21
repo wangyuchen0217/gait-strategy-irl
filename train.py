@@ -1,0 +1,46 @@
+import numpy as np
+import pandas as pd
+from gridworld import CustomMDP as MDP
+from maxent import customirl as irl
+
+# Load the dataset
+data = pd.read_csv('expert_demonstration/expert/CarausiusC00.csv')
+
+# Prepare the MDP
+n_velocity_bins = data['Velocity Bin'].nunique()
+n_direction_bins = data['Direction Bin'].nunique()
+n_gait_categories = data['Gait Category'].nunique()
+
+mdp = MDP(n_velocity_bins, n_direction_bins, n_gait_categories, discount=0.9)
+
+# Create a feature matrix
+n_states = mdp.n_states
+feature_matrix = np.zeros((n_states, n_velocity_bins + n_direction_bins))
+
+# Populate the feature matrix
+for index, row in data.iterrows():
+    state_index = int(row['Velocity Bin'] * n_direction_bins + row['Direction Bin'])
+    feature_matrix[state_index, row['Velocity Bin']] = 1
+    feature_matrix[state_index, n_velocity_bins + row['Direction Bin']] = 1
+
+# Generate trajectories from the dataset
+trajectories = []
+for index, row in data.iterrows():
+    state_index = int(row['Velocity Bin'] * n_direction_bins + row['Direction Bin'])
+    action = int(row['Gait Category'])
+    trajectories.append([(state_index, action)])
+
+# Set up transition probabilities (for simplicity, we'll assume deterministic transitions here)
+transition_probabilities = np.eye(n_states)[np.newaxis].repeat(mdp.n_actions, axis=0)
+
+# Set transition probabilities in MDP
+mdp.set_transition_probabilities(transition_probabilities)
+
+# Apply MaxEnt IRL
+epochs = 100
+learning_rate = 0.01
+rewards = irl(feature_matrix, mdp.n_actions, mdp.discount, transition_probabilities, trajectories, epochs, learning_rate)
+
+# Output the inferred rewards
+print("Inferred Rewards:")
+print(rewards)

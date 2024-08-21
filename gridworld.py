@@ -8,6 +8,45 @@ matthew.alger@anu.edu.au
 import numpy as np
 import numpy.random as rn
 
+import numpy as np
+
+class CustomMDP(object):
+    """
+    Custom MDP reflecting velocity and direction as states, and gait as actions.
+    """
+
+    def __init__(self, n_velocity_bins, n_direction_bins, n_gait_categories, discount):
+        """
+        n_velocity_bins: Number of velocity bins (int).
+        n_direction_bins: Number of direction bins (int).
+        n_gait_categories: Number of gait categories (int).
+        discount: MDP discount (float).
+        -> CustomMDP
+        """
+
+        self.n_velocity_bins = n_velocity_bins
+        self.n_direction_bins = n_direction_bins
+        self.n_gait_categories = n_gait_categories
+        self.discount = discount
+
+        # Defining the state space as combinations of velocity and direction bins
+        self.n_states = n_velocity_bins * n_direction_bins
+
+        # Actions correspond to the different gait categories
+        self.actions = list(range(n_gait_categories))
+        self.n_actions = len(self.actions)
+
+        # Transition probabilities and rewards will be provided by user or learned
+        self.transition_probabilities = np.zeros((self.n_states, self.n_actions, self.n_states))
+        self.rewards = np.zeros((self.n_states, self.n_actions))
+        
+    def set_transition_probabilities(self, transition_probabilities):
+        self.transition_probabilities = transition_probabilities
+    
+    def set_rewards(self, rewards):
+        self.rewards = rewards
+
+
 class Gridworld(object):
     """
     Gridworld MDP.

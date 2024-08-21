@@ -11,6 +11,53 @@ import numpy as np
 import numpy.random as rn
 import value_iteration
 
+
+def customirl(feature_matrix, n_actions, discount, transition_probability,
+        trajectories, epochs, learning_rate):
+    """
+    Find the reward function for the given trajectories.
+    
+    feature_matrix: Matrix with the nth row representing the nth state. NumPy array.
+    n_actions: Number of actions. int.
+    discount: MDP discount factor. float.
+    transition_probability: State transition probability matrix. NumPy array.
+    trajectories: List of trajectories. Each trajectory is a list of (state, action) tuples.
+    epochs: Number of optimization iterations. int.
+    learning_rate: Gradient descent learning rate. float.
+    -> Reward vector.
+    """
+
+    n_states, d_states = feature_matrix.shape
+    rewards = np.random.uniform(size=(n_states, n_actions))
+
+    for i in range(epochs):
+        # Compute feature expectations for current policy
+        expected_svf = np.zeros((n_states,))
+        for trajectory in trajectories:
+            for state, action in trajectory:
+                expected_svf[state] += 1
+        expected_svf /= len(trajectories)
+
+        # Policy iteration
+        values = np.zeros((n_states, n_actions))
+        for s in range(n_states):
+            for a in range(n_actions):
+                values[s, a] = np.dot(feature_matrix[s], rewards[s, a])
+        values = np.exp(values - values.max(axis=1, keepdims=True))
+        policy = values / values.sum(axis=1, keepdims=True)
+
+        # Compute gradient
+        gradient = np.zeros((n_states, d_states))
+        for state in range(n_states):
+            for action in range(n_actions):
+                for next_state in range(n_states):
+                    gradient[state] += transition_probability[state, action, next_state] * (policy[state, action] * feature_matrix[state] - expected_svf[state])
+
+        rewards += learning_rate * gradient
+
+    return rewards
+
+
 def irl(feature_matrix, n_actions, discount, transition_probability,
         trajectories, epochs, learning_rate):
     """

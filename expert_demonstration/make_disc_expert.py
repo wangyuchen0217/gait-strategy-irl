@@ -38,7 +38,7 @@ direction = np.concatenate((direction_01, direction_02, direction_03), axis=0)
 gait = np.concatenate((gait_01, gait_02, gait_03), axis=0)
 
 # bin the data
-vel_bin_edges = np.arange(0, 95, 5) # should be 145
+vel_bin_edges = np.arange(0, 145, 5) # should be 145
 vel_binned = np.digitize(vel, vel_bin_edges, right=True)
 direction_bin_edges = np.arange(-20, 10, 5)
 direction_binned = np.digitize(direction, direction_bin_edges, right=True)
@@ -86,7 +86,10 @@ possible_combinations = {
     '001110': 39,
     '001101': 40,
     '001011': 41,
-    '000111': 42
+    '000111': 42,
+    '010100': 43,
+    '010001': 44,
+    '010000': 45,
 }
 
 
@@ -94,7 +97,7 @@ possible_combinations = {
 gait_data = pd.DataFrame(gait)
 gait_data['Gait Pattern'] = gait_data.iloc[:, :6].astype(str).agg(''.join, axis=1)
 # Categorize each gait pattern based on the possible combinations
-gait_data['Category'] = gait_data['Gait Pattern'].map(possible_combinations)
+gait_data['Category'] = gait_data['Gait Pattern'].map(possible_combinations).astype(int)
 # Display the categorized data
 print(gait_data[['Gait Pattern', 'Category']])
 
@@ -105,13 +108,13 @@ analysis_df = pd.DataFrame({
         'Gait Category': gait_data['Category']
     })
 
-save = False
+save = True
 if save:
     save_path = 'expert_demonstration/expert/CarausiusC00.csv'
     analysis_df.to_csv(save_path, index=False, header=True)
 
 # heat map
-heat_map = True
+heat_map = False
 if heat_map:
     # Create a pivot table to count occurrences
     pivot_table = analysis_df.pivot_table(

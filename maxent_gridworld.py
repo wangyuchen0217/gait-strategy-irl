@@ -11,8 +11,8 @@ sys.path.append('/home/yuchen/Documents/Inverse-Reinforcement-Learning/')
 import numpy as np
 import matplotlib.pyplot as plt
 
-import irl.maxent as maxent
-import irl.mdp.gridworld as gridworld
+import maxent
+import gridworld
 
 def main(grid_size, discount, n_trajectories, epochs, learning_rate):
     """

@@ -40,6 +40,7 @@ for index, row in data.iterrows():
 
 # Set up transition probabilities (for simplicity, we'll assume deterministic transitions here)
 transition_probabilities = np.eye(n_states)[np.newaxis].repeat(mdp.n_actions, axis=0)
+transition_probabilities = np.swapaxes(transition_probabilities, 0, 1)
 print("Transition probabilities shape: ", transition_probabilities.shape)
 print("---------------------------------")
 

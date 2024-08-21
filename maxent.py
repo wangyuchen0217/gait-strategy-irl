@@ -42,12 +42,18 @@ def customirl(feature_matrix, n_actions, discount, transition_probability,
         values = np.zeros((n_states, n_actions))
         for s in range(n_states):
             for a in range(n_actions):
-                values[s, a] = np.dot(feature_matrix[s], rewards[s, a])
+                # print("s_idx, a_idx: ", s, a)
+                # print("feature_matrix[s]: ", feature_matrix[s])
+                # print("rewards[s, a]: ", rewards[s, a])
+                # values[s, a] = np.dot(feature_matrix[s], rewards[s, a])
+                values[s, a] = rewards[s, a] * np.sum(feature_matrix[s])
         values = np.exp(values - values.max(axis=1, keepdims=True))
         policy = values / values.sum(axis=1, keepdims=True)
+        print("policy shape: ", policy.shape)
 
         # Compute gradient
         gradient = np.zeros((n_states, d_states))
+        print("gradient shape: ", gradient.shape)
         for state in range(n_states):
             for action in range(n_actions):
                 for next_state in range(n_states):

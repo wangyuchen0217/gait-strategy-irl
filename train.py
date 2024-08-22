@@ -62,48 +62,41 @@ learning_rate = 0.01
 
 rewards = np.loadtxt('inferred_rewards.csv', delimiter=',')
 
-def plot_most_rewarded_action_heatmap(rewards, n_direction_bins, n_vel_bins):
+
+
+def plot_direction_action_reward_heatmap(rewards, n_direction_bins, n_vel_bins):
     """
-    Creates a heatmap where each cell shows the most rewarded action for each (direction bin, velocity bin) pair.
+    Creates a heatmap showing the reward distribution across direction bins and actions.
     
     :param rewards: Reward matrix of shape (n_states, n_actions).
     :param n_direction_bins: The number of direction bins.
     :param n_vel_bins: The number of velocity bins.
     """
     n_states = n_direction_bins * n_vel_bins
-
-    # Initialize a grid to store the most rewarded action per (direction, velocity) pair
-    action_grid = np.zeros((n_vel_bins, n_direction_bins), dtype=int)
-
-    # Determine the most rewarded action for each (direction, velocity) pair
-    for state_index in range(n_states):
-        velocity_bin = state_index // n_direction_bins
-        direction_bin = state_index % n_direction_bins
-
-        # Find the action with the highest reward for this state
-        most_rewarded_action = np.argmax(rewards[state_index, :])
-        action_grid[velocity_bin, direction_bin] = most_rewarded_action
-
-    # Create a discrete color map for actions
     n_actions = rewards.shape[1]
-    cmap = plt.cm.get_cmap('YlGnBu', n_actions)  # Using 'tab20' for up to 20 actions
 
-    # Plotting the heatmap
+    # Initialize a grid to store the aggregated reward per (direction bin, action)
+    reward_grid = np.zeros((n_direction_bins, n_actions))
+
+    # Populate the reward grid by aggregating over velocity bins
+    for state_index in range(n_states):
+        direction_bin = state_index % n_direction_bins
+        # Sum rewards across velocity bins for each direction bin and action
+        reward_grid[direction_bin, :] += rewards[state_index, :]
+
+    # Normalize by the number of velocity bins to get an average if needed
+    reward_grid /= n_vel_bins
+
+    # Plotting the heatmap using imshow
     plt.figure(figsize=(10, 8))
-    img = plt.imshow(action_grid, cmap=cmap, aspect='auto')
-    plt.title("Most Rewarded Action Heatmap")
-    plt.xlabel("Direction Bins")
-    plt.ylabel("Velocity Bins")
-
-    # Create a color bar with action labels
-    cbar = plt.colorbar(img, ticks=np.arange(np.max(action_grid) + 1))
-    cbar.set_label('Actions')
-    cbar.set_ticks(np.arange(np.max(action_grid) + 1) + 0.5)
-    cbar.set_ticklabels([f"Action {i}" for i in range(np.max(action_grid) + 1)])
-
+    plt.imshow(reward_grid, cmap='viridis', aspect='auto')
+    plt.title("Reward Heatmap: Direction vs. Action")
+    plt.xlabel("Actions")
+    plt.ylabel("Direction Bins")
+    plt.colorbar(label='Reward Value')
     plt.show()
 
 # Example usage:
-# Assuming rewards is a (140, 25) array and n_direction_bins=5, n_vel_bins=28
-plot_most_rewarded_action_heatmap(rewards, n_direction_bins=5, n_vel_bins=28)
+plot_direction_action_reward_heatmap(rewards, n_direction_bins=5, n_vel_bins=28)
+
 

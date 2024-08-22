@@ -114,13 +114,13 @@ if save:
     analysis_df.to_csv(save_path, index=False, header=True)
 
 # heat map
-heat_map_gait = True
+heat_map_gait = False
 if heat_map_gait:
     # Create a pivot table to count occurrences
     pivot_table = analysis_df.pivot_table(
                                         index='Velocity Bin', 
                                         columns='Direction Bin', 
-                                        values='Gait Category', 
+                                        values='Gait Category',
                                         aggfunc=lambda x: x.value_counts().index[0],
                                         fill_value=0)
 
@@ -132,7 +132,7 @@ if heat_map_gait:
     plt.ylabel('Velocity Bin')
     plt.show()
 
-heat_map_size = False
+heat_map_size = True
 if heat_map_size:
     # Combine velocity and direction into a single DataFrame
     state_df = pd.DataFrame({

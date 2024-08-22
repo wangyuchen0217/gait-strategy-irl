@@ -104,6 +104,6 @@ def plot_most_rewarded_action_heatmap(rewards, n_direction_bins, n_vel_bins):
     plt.show()
 
 # Example usage:
-# Assuming rewards is a (140, 25) array and n_direction_bins=8, n_vel_bins=25
+# Assuming rewards is a (140, 25) array and n_direction_bins=5, n_vel_bins=28
 plot_most_rewarded_action_heatmap(rewards, n_direction_bins=5, n_vel_bins=28)
 

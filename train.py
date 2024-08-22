@@ -62,28 +62,4 @@ learning_rate = 0.01
 
 rewards = np.loadtxt('inferred_rewards.csv', delimiter=',')
 
-def plot_action_rewards_heatmap(rewards, action_index, n_direction_bins, n_vel_bins):
-    # Adjust the grid size to match the number of states
-    adjusted_n_direction_bins = 14
-    adjusted_n_vel_bins = 10
-
-    # Select the rewards for the specified action
-    action_rewards = rewards[:, action_index]
-
-    # Reshape the rewards to the adjusted grid
-    reward_grid = action_rewards.reshape((adjusted_n_direction_bins, adjusted_n_vel_bins))
-
-    # Plotting the heatmap
-    plt.figure(figsize=(10, 8))
-    sns.heatmap(reward_grid, cmap='viridis', annot=True, fmt=".2f")
-    plt.title(f"Reward Heatmap for Action {action_index}")
-    plt.xlabel("Velocity Bins")
-    plt.ylabel("Direction Bins")
-    plt.colorbar(label='Reward Value')
-    plt.show()
-
-# Example usage with adjusted grid dimensions:
-plot_action_rewards_heatmap(rewards, action_index=0, n_direction_bins=14, n_vel_bins=10)
-
-
 

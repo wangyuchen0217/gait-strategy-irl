@@ -39,6 +39,7 @@ def main(grid_size, discount, n_trajectories, epochs, learning_rate):
     r = maxent.irl(feature_matrix, gw.n_actions, discount,
         gw.transition_probability, trajectories, epochs, learning_rate)
     
+    print("Feature matrix shape: ", feature_matrix.shape)
     print("Inferred Rewards:", r.shape)
 
     plt.subplot(1, 2, 1)

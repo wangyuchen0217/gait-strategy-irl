@@ -64,39 +64,3 @@ rewards = np.loadtxt('inferred_rewards.csv', delimiter=',')
 
 
 
-def plot_direction_action_reward_heatmap(rewards, n_direction_bins, n_vel_bins):
-    """
-    Creates a heatmap showing the reward distribution across direction bins and actions.
-    
-    :param rewards: Reward matrix of shape (n_states, n_actions).
-    :param n_direction_bins: The number of direction bins.
-    :param n_vel_bins: The number of velocity bins.
-    """
-    n_states = n_direction_bins * n_vel_bins
-    n_actions = rewards.shape[1]
-
-    # Initialize a grid to store the aggregated reward per (direction bin, action)
-    reward_grid = np.zeros((n_direction_bins, n_actions))
-
-    # Populate the reward grid by aggregating over velocity bins
-    for state_index in range(n_states):
-        direction_bin = state_index % n_direction_bins
-        # Sum rewards across velocity bins for each direction bin and action
-        reward_grid[direction_bin, :] += rewards[state_index, :]
-
-    # Normalize by the number of velocity bins to get an average if needed
-    reward_grid /= n_vel_bins
-
-    # Plotting the heatmap using imshow
-    plt.figure(figsize=(10, 8))
-    plt.imshow(reward_grid, cmap='viridis', aspect='auto')
-    plt.title("Reward Heatmap: Direction vs. Action")
-    plt.xlabel("Actions")
-    plt.ylabel("Direction Bins")
-    plt.colorbar(label='Reward Value')
-    plt.show()
-
-# Example usage:
-plot_direction_action_reward_heatmap(rewards, n_direction_bins=5, n_vel_bins=28)
-
-

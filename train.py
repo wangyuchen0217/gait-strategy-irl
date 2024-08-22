@@ -2,6 +2,8 @@ import numpy as np
 import pandas as pd
 from gridworld import CustomMDP as MDP
 from maxent import customirl as irl
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 # Load the dataset
 data = pd.read_csv('expert_demonstration/expert/CarausiusC00.csv')
@@ -50,8 +52,38 @@ mdp.set_transition_probabilities(transition_probabilities)
 # Apply MaxEnt IRL
 epochs = 100
 learning_rate = 0.01
-rewards = irl(feature_matrix, mdp.n_actions, mdp.discount, transition_probabilities, trajectories, epochs, learning_rate)
+# rewards = irl(feature_matrix, mdp.n_actions, mdp.discount, transition_probabilities, trajectories, epochs, learning_rate)
 
-# Output the inferred rewards
-print("Inferred Rewards:")
-print(rewards)
+# # Output the inferred rewards
+# print("Inferred Rewards:", rewards.shape)
+# print(rewards)
+# # Save the inferred rewards as a CSV file
+# np.savetxt('inferred_rewards.csv', rewards, delimiter=',')
+
+rewards = np.loadtxt('inferred_rewards.csv', delimiter=',')
+
+def plot_action_rewards_heatmap(rewards, action_index, n_direction_bins, n_vel_bins):
+    # Adjust the grid size to match the number of states
+    adjusted_n_direction_bins = 14
+    adjusted_n_vel_bins = 10
+
+    # Select the rewards for the specified action
+    action_rewards = rewards[:, action_index]
+
+    # Reshape the rewards to the adjusted grid
+    reward_grid = action_rewards.reshape((adjusted_n_direction_bins, adjusted_n_vel_bins))
+
+    # Plotting the heatmap
+    plt.figure(figsize=(10, 8))
+    sns.heatmap(reward_grid, cmap='viridis', annot=True, fmt=".2f")
+    plt.title(f"Reward Heatmap for Action {action_index}")
+    plt.xlabel("Velocity Bins")
+    plt.ylabel("Direction Bins")
+    plt.colorbar(label='Reward Value')
+    plt.show()
+
+# Example usage with adjusted grid dimensions:
+plot_action_rewards_heatmap(rewards, action_index=0, n_direction_bins=14, n_vel_bins=10)
+
+
+

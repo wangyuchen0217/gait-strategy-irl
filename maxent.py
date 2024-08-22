@@ -10,6 +10,7 @@ from itertools import product
 import numpy as np
 import numpy.random as rn
 import value_iteration
+import time
 
 
 def customirl(feature_matrix, n_actions, discount, transition_probability,
@@ -30,6 +31,10 @@ def customirl(feature_matrix, n_actions, discount, transition_probability,
     n_states, d_states = feature_matrix.shape
     rewards = np.random.uniform(size=(n_states, n_actions))
 
+    # Initialize the start time
+    print("Starting IRL:")
+    start_time = time.time()
+
     for i in range(epochs):
         # Compute feature expectations for current policy
         expected_svf = np.zeros((n_states,))
@@ -49,17 +54,26 @@ def customirl(feature_matrix, n_actions, discount, transition_probability,
                 values[s, a] = rewards[s, a] * np.sum(feature_matrix[s])
         values = np.exp(values - values.max(axis=1, keepdims=True))
         policy = values / values.sum(axis=1, keepdims=True)
-        print("policy shape: ", policy.shape)
 
         # Compute gradient
         gradient = np.zeros((n_states, d_states))
-        print("gradient shape: ", gradient.shape)
         for state in range(n_states):
             for action in range(n_actions):
                 for next_state in range(n_states):
-                    gradient[state] += transition_probability[state, action, next_state] * (policy[state, action] * feature_matrix[state] - expected_svf[state])
+                    transition_prob = transition_probability[state, action, next_state]
+                    policy_value = policy[state, action]
+                    feature_contribution = policy_value * feature_matrix[state] - expected_svf[state]
+                    gradient[state] += transition_prob * feature_contribution
 
-        rewards += learning_rate * gradient
+        # Update rewards based on gradient
+        for s in range(n_states):
+            for a in range(n_actions):
+                rewards[s, a] += learning_rate * np.dot(gradient[s], feature_matrix[s])
+        
+        # Print progress every 10 epochs
+        if (i + 1) % 10 == 0:
+            elapsed_time = time.time() - start_time
+            print(f"Epoch {i + 1}/{epochs} - Time elapsed: {elapsed_time:.2f}s")
 
     return rewards
 

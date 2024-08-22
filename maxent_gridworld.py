@@ -38,6 +38,8 @@ def main(grid_size, discount, n_trajectories, epochs, learning_rate):
     ground_r = np.array([gw.reward(s) for s in range(gw.n_states)])
     r = maxent.irl(feature_matrix, gw.n_actions, discount,
         gw.transition_probability, trajectories, epochs, learning_rate)
+    
+    print("Inferred Rewards:", r.shape)
 
     plt.subplot(1, 2, 1)
     plt.pcolor(ground_r.reshape((grid_size, grid_size)))

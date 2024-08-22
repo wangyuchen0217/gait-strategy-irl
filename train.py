@@ -61,6 +61,3 @@ learning_rate = 0.01
 # np.savetxt('inferred_rewards.csv', rewards, delimiter=',')
 
 rewards = np.loadtxt('inferred_rewards.csv', delimiter=',')
-
-
-

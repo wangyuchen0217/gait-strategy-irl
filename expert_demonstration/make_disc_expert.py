@@ -108,14 +108,14 @@ analysis_df = pd.DataFrame({
         'Gait Category': gait_data['Category']
     })
 
-save = True
+save = False
 if save:
     save_path = 'expert_demonstration/expert/CarausiusC00.csv'
     analysis_df.to_csv(save_path, index=False, header=True)
 
 # heat map
-heat_map = False
-if heat_map:
+heat_map_gait = False
+if heat_map_gait:
     # Create a pivot table to count occurrences
     pivot_table = analysis_df.pivot_table(
                                         index='Velocity Bin', 
@@ -131,3 +131,20 @@ if heat_map:
     plt.xlabel('Direction Bin')
     plt.ylabel('Velocity Bin')
     plt.show()
+
+# Combine velocity and direction into a single DataFrame
+state_df = pd.DataFrame({
+    'Velocity Bin': vel_binned.flatten(),
+    'Direction Bin': direction_binned.flatten(),
+})
+
+# Create a pivot table to count occurrences of each state
+state_counts = state_df.pivot_table(index='Velocity Bin', columns='Direction Bin', aggfunc='size', fill_value=0)
+
+# Plot the heatmap of most accessed states
+plt.figure(figsize=(12, 8))
+sns.heatmap(state_counts, cmap='YlGnBu', annot=True, fmt="d")  # 'fmt="d"' for integer counts
+plt.title('Heat Map of Most Accessed States by Velocity and Direction')
+plt.xlabel('Direction Bin')
+plt.ylabel('Velocity Bin')
+plt.show()

@@ -11,7 +11,18 @@ import numpy as np
 import numpy.random as rn
 import value_iteration
 import time
+import matplotlib.pyplot as plt
 
+def plot_grid_based_rewards(rewards, n_direction_bins, n_vel_bins, epoch):
+    # Assuming rewards are aggregated over actions for each state
+    state_rewards = rewards.sum(axis=1).reshape((n_vel_bins, n_direction_bins))
+    plt.figure(figsize=(10, 8))
+    plt.imshow(state_rewards, cmap='viridis', aspect='auto')
+    plt.title("Grid-Based Reward Heatmap")
+    plt.xlabel("Direction Bins")
+    plt.ylabel("Velocity Bins")
+    plt.colorbar(label='Reward Value')
+    plt.savefig("reward_heatmap_"+ epoch +".png")
 
 def customirl(feature_matrix, n_actions, discount, transition_probability,
         trajectories, epochs, learning_rate):
@@ -74,6 +85,7 @@ def customirl(feature_matrix, n_actions, discount, transition_probability,
         if (i + 1) % 10 == 0:
             elapsed_time = time.time() - start_time
             print(f"Epoch {i + 1}/{epochs} - Time elapsed: {elapsed_time:.2f}s")
+            plot_grid_based_rewards(rewards, n_direction_bins=5, n_vel_bins=28, epoch=str(i+1))
 
     return rewards
 

@@ -52,14 +52,25 @@ mdp.set_transition_probabilities(transition_probabilities)
 # Apply MaxEnt IRL
 epochs = 100
 learning_rate = 0.01
-# rewards = irl(feature_matrix, mdp.n_actions, mdp.discount, transition_probabilities, trajectories, epochs, learning_rate)
+rewards = irl(feature_matrix, mdp.n_actions, mdp.discount, transition_probabilities, trajectories, epochs, learning_rate)
 
-# # Output the inferred rewards
-# print("Inferred Rewards:", rewards.shape)
-# print(rewards)
-# # Save the inferred rewards as a CSV file
-# np.savetxt('inferred_rewards.csv', rewards, delimiter=',')
+# Output the inferred rewards
+print("Inferred Rewards:", rewards.shape)
+print(rewards)
+# Save the inferred rewards as a CSV file
+np.savetxt('inferred_rewards.csv', rewards, delimiter=',')
 
 rewards = np.loadtxt('inferred_rewards.csv', delimiter=',')
 
+def plot_grid_based_rewards(rewards, n_direction_bins, n_vel_bins):
+    # Assuming rewards are aggregated over actions for each state
+    state_rewards = rewards.sum(axis=1).reshape((n_vel_bins, n_direction_bins))
+    plt.figure(figsize=(10, 8))
+    plt.imshow(state_rewards, cmap='viridis', aspect='auto')
+    plt.title("Grid-Based Reward Heatmap")
+    plt.xlabel("Direction Bins")
+    plt.ylabel("Velocity Bins")
+    plt.colorbar(label='Reward Value')
+    plt.show()
 
+plot_grid_based_rewards(rewards, n_direction_bins, n_velocity_bins)

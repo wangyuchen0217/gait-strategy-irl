@@ -185,5 +185,5 @@ if __name__ == '__main__':
         subject_number = f"{i:02}"
         # mat_reader_joint_angle(subject_number, save=False, visualizaiton=False)
         mat_reader_vel(subject_number, save=False, visualizaiton=True)
-        mat_reader_direction(subject_number, save=False, visualizaiton=False)
+        mat_reader_direction(subject_number, save=False, visualizaiton=True)
         # mat_reader_gait(subject_number, save=True)

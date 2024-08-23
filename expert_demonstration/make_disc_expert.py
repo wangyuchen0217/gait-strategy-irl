@@ -140,13 +140,13 @@ analysis_df = pd.DataFrame({
         'Gait Category': gait_data['Category']
     })
 
-save = True
+save = False
 if save:
     save_path = 'expert_demonstration/expert/CarausiusC00.csv'
     analysis_df.to_csv(save_path, index=False, header=True)
 
 # heat map
-heat_map_gait = True
+heat_map_gait = False
 if heat_map_gait:
     # Create a pivot table to count occurrences
     pivot_table = analysis_df.pivot_table(
@@ -164,7 +164,7 @@ if heat_map_gait:
     plt.ylabel('Velocity Bin')
     plt.show()
 
-heat_map_size = True
+heat_map_size = False
 if heat_map_size:
     # Combine velocity and direction into a single DataFrame
     state_df = pd.DataFrame({
@@ -182,3 +182,69 @@ if heat_map_size:
     plt.xlabel('Direction Bin')
     plt.ylabel('Velocity Bin')
     plt.show()
+
+plot_states = True
+if plot_states:
+    # velocity
+    fig, axes = plt.subplots(3, 1, figsize=(12, 9))
+    # Plot for vel_01
+    axes[0].plot(vel_01)
+    axes[0].set_title('CarausuisC00', fontsize=14)
+    axes[0].set_xticks(axes[0].get_xticks())
+    axes[0].set_yticks(axes[0].get_yticks())
+    axes[0].tick_params(axis='both', labelsize=14)
+    axes[0].set_xlabel('Time Steps', fontsize=14)
+    axes[0].set_ylabel('Vel', fontsize=14)
+    axes[0].grid()
+    # Plot for vel_02
+    axes[1].plot(vel_02)
+    axes[1].set_title('CarausuisC00', fontsize=14)
+    axes[1].set_xticks(axes[1].get_xticks())
+    axes[1].set_yticks(axes[1].get_yticks())
+    axes[1].tick_params(axis='both', labelsize=14)
+    axes[1].set_xlabel('Time Steps', fontsize=14)
+    axes[1].set_ylabel('Vel', fontsize=14)
+    axes[1].grid()
+    # Plot for vel_03
+    axes[2].plot(vel_03)
+    axes[2].set_title('CarausuisC00', fontsize=14)
+    axes[2].set_xticks(axes[2].get_xticks())
+    axes[2].set_yticks(axes[2].get_yticks())
+    axes[2].tick_params(axis='both', labelsize=14)
+    axes[2].set_xlabel('Time Steps', fontsize=14)
+    axes[2].set_ylabel('Vel', fontsize=14)
+    axes[2].grid()
+    plt.tight_layout()
+    plt.savefig('expert_demonstration/expert/plot/CarausiusC00_vel.png')
+
+    # direction
+    fig, axes = plt.subplots(3, 1, figsize=(12, 9))
+    # Plot for direction_01
+    axes[0].plot(direction_01)
+    axes[0].set_title('CarausuisC00', fontsize=14)
+    axes[0].set_xticks(axes[0].get_xticks())
+    axes[0].set_yticks(axes[0].get_yticks())
+    axes[0].tick_params(axis='both', labelsize=14)
+    axes[0].set_xlabel('Time Steps', fontsize=14)
+    axes[0].set_ylabel('Direction', fontsize=14)
+    axes[0].grid()
+    # Plot for direction_02
+    axes[1].plot(direction_02)
+    axes[1].set_title('CarausuisC00', fontsize=14)
+    axes[1].set_xticks(axes[1].get_xticks())
+    axes[1].set_yticks(axes[1].get_yticks())
+    axes[1].tick_params(axis='both', labelsize=14)
+    axes[1].set_xlabel('Time Steps', fontsize=14)
+    axes[1].set_ylabel('Direction', fontsize=14)
+    axes[1].grid()
+    # Plot for direction_03
+    axes[2].plot(direction_03)
+    axes[2].set_title('CarausuisC00', fontsize=14)
+    axes[2].set_xticks(axes[2].get_xticks())
+    axes[2].set_yticks(axes[2].get_yticks())
+    axes[2].tick_params(axis='both', labelsize=14)
+    axes[2].set_xlabel('Time Steps', fontsize=14)
+    axes[2].set_ylabel('Direction', fontsize=14)
+    axes[2].grid()
+    plt.tight_layout()
+    plt.savefig('expert_demonstration/expert/plot/CarausiusC00_direction.png')

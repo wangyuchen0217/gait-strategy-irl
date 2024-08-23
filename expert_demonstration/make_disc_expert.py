@@ -38,11 +38,12 @@ vel_01, direction_01, gait_01 = get_cont_data("01")
 vel_02, direction_02, gait_02 = get_cont_data("02")
 vel_03, direction_03, gait_03 = get_cont_data("03")
 acc_01, acc_02, acc_03 = calculate_acceleration(vel_01), calculate_acceleration(vel_02), calculate_acceleration(vel_03)
-vel = np.concatenate((vel_01, vel_02, vel_03), axis=0)
-direction = np.concatenate((direction_01, direction_02, direction_03), axis=0)
-gait = np.concatenate((gait_01, gait_02, gait_03), axis=0)
+vel = np.concatenate((vel_01[1:], vel_02[1:], vel_03[1:]), axis=0)
+direction = np.concatenate((direction_01[1:], direction_02[1:], direction_03[1:]), axis=0)
+gait = np.concatenate((gait_01[1:], gait_02[1:], gait_03[1:]), axis=0)
 acc = np.concatenate((acc_01, acc_02, acc_03), axis=0)
 
+# save vel and acc
 # plot_histogram(acc, title='Acceleration Data Distribution', xlabel='Acceleration', savename='CarausuisC00_histogram_acc')
 # plot_histogram(vel, title='Velocity Data Distribution', xlabel='Velocity', savename='CarausuisC00_histogram_vel')
 
@@ -51,7 +52,7 @@ vel_bin_edges = np.arange(0, 145, 5) # should be 145
 vel_binned = np.digitize(vel, vel_bin_edges, right=True)
 direction_bin_edges = np.arange(-20, 10, 5)
 direction_binned = np.digitize(direction, direction_bin_edges, right=True)
-acc_bin_edges = np.arange(-200, 200, 10)
+acc_bin_edges = np.arange(-3000, 2500, 250)
 acc_binned = np.digitize(acc, acc_bin_edges, right=True)
 
 # Define all possible gait pattern combinations (42 types)
@@ -149,11 +150,12 @@ print(gait_data[['Gait Pattern', 'Category']])
 # Combine velocity, direction, and gait pattern into a single DataFrame for analysis
 analysis_df = pd.DataFrame({
         'Velocity Bin': vel_binned.flatten(),
+        'Acceleration Bin': acc_binned.flatten(),
         'Direction Bin': direction_binned.flatten(),
         'Gait Category': gait_data['Category']
     })
 
-save = False
+save = True
 if save:
     save_path = 'expert_demonstration/expert/CarausiusC00.csv'
     analysis_df.to_csv(save_path, index=False, header=True)

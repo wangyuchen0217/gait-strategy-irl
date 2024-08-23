@@ -6,8 +6,6 @@ import pandas as pd
 import json
 import matplotlib.pyplot as plt
 import seaborn as sns
-from sklearn.preprocessing import MinMaxScaler
-from pykalman import KalmanFilter
 
 
 def get_cont_data(subject:str):
@@ -92,12 +90,46 @@ possible_combinations = {
     '010000': 45,
 }
 
+# Define grouped gait combinations (6 types)
+grouped_gait_combinations = {
+    # representative noncanonical
+    '111111': 5,
+    '111110': 5,
+    '111101': 5,
+    '111011': 5,
+    '110111': 5,
+    '101111': 5,
+    '011111': 5,
+    # tetrapod gait
+    '110101': 4,
+    '110011': 4,
+    '101110': 4,
+    '101011': 4,
+    '011110': 4,
+    '011101': 4,
+    # tripod gait
+    '101010': 3,
+    '010101': 3,
+    # tetrapod gait (noncanonical)
+    '111010': 2,
+    '110110': 2,
+    '101101': 2,
+    '011011': 2,
+    '010111': 2,
+    # tripod gait (noncanonical)
+    '010110': 1,
+    '010011': 1,
+    # rare noncanonical
+    '010100': 0,
+    '010001': 0,
+    '010000': 0,
+}
 
 # Combine the first six columns into a string for each row to represent the gait pattern
 gait_data = pd.DataFrame(gait)
 gait_data['Gait Pattern'] = gait_data.iloc[:, :6].astype(str).agg(''.join, axis=1)
 # Categorize each gait pattern based on the possible combinations
-gait_data['Category'] = gait_data['Gait Pattern'].map(possible_combinations).astype(int)
+gait_data['Category'] = gait_data['Gait Pattern'].map(grouped_gait_combinations).astype(int)
 # Display the categorized data
 print(gait_data[['Gait Pattern', 'Category']])
 
@@ -108,13 +140,13 @@ analysis_df = pd.DataFrame({
         'Gait Category': gait_data['Category']
     })
 
-save = False
+save = True
 if save:
     save_path = 'expert_demonstration/expert/CarausiusC00.csv'
     analysis_df.to_csv(save_path, index=False, header=True)
 
 # heat map
-heat_map_gait = False
+heat_map_gait = True
 if heat_map_gait:
     # Create a pivot table to count occurrences
     pivot_table = analysis_df.pivot_table(

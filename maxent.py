@@ -126,7 +126,7 @@ def customirl(feature_matrix, n_actions, discount, transition_probability,
             elapsed_time = time.time() - start_time
             print(f"Epoch {i + 1}/{epochs} - Time elapsed: {elapsed_time:.2f}s")
             plot_grid_based_rewards(rewards, n_direction_bins=5, n_vel_bins=28, epoch=str(i+1))
-            plot_most_rewarded_action_heatmap(rewards, n_direction_bins=5, n_vel_bins=28, epoch=str(i+1))
+            # plot_most_rewarded_action_heatmap(rewards, n_direction_bins=5, n_vel_bins=28, epoch=str(i+1))
 
     return rewards
 

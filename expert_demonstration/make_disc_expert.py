@@ -6,6 +6,7 @@ import pandas as pd
 import json
 import matplotlib.pyplot as plt
 import seaborn as sns
+from plot_expert import *
 
 
 def get_cont_data(subject:str):
@@ -28,18 +29,30 @@ def get_cont_data(subject:str):
     gait = pd.read_csv(gait_path, header=[0], index_col=None).to_numpy()[1:-1]
     return vel, direction, gait
 
+def calculate_acceleration(vel):
+    # frequency = 200 Hz
+    acc = np.diff(vel, axis=0) / 0.005
+    return acc
+
 vel_01, direction_01, gait_01 = get_cont_data("01")
 vel_02, direction_02, gait_02 = get_cont_data("02")
 vel_03, direction_03, gait_03 = get_cont_data("03")
+acc_01, acc_02, acc_03 = calculate_acceleration(vel_01), calculate_acceleration(vel_02), calculate_acceleration(vel_03)
 vel = np.concatenate((vel_01, vel_02, vel_03), axis=0)
 direction = np.concatenate((direction_01, direction_02, direction_03), axis=0)
 gait = np.concatenate((gait_01, gait_02, gait_03), axis=0)
+acc = np.concatenate((acc_01, acc_02, acc_03), axis=0)
+
+# plot_histogram(acc, title='Acceleration Data Distribution', xlabel='Acceleration', savename='CarausuisC00_histogram_acc')
+# plot_histogram(vel, title='Velocity Data Distribution', xlabel='Velocity', savename='CarausuisC00_histogram_vel')
 
 # bin the data
 vel_bin_edges = np.arange(0, 145, 5) # should be 145
 vel_binned = np.digitize(vel, vel_bin_edges, right=True)
 direction_bin_edges = np.arange(-20, 10, 5)
 direction_binned = np.digitize(direction, direction_bin_edges, right=True)
+acc_bin_edges = np.arange(-200, 200, 10)
+acc_binned = np.digitize(acc, acc_bin_edges, right=True)
 
 # Define all possible gait pattern combinations (42 types)
 possible_combinations = {
@@ -146,105 +159,9 @@ if save:
     analysis_df.to_csv(save_path, index=False, header=True)
 
 # heat map
-heat_map_gait = False
-if heat_map_gait:
-    # Create a pivot table to count occurrences
-    pivot_table = analysis_df.pivot_table(
-                                        index='Velocity Bin', 
-                                        columns='Direction Bin', 
-                                        values='Gait Category',
-                                        aggfunc=lambda x: x.value_counts().index[0],
-                                        fill_value=0)
+# heatmap_direction_vel_reward(analysis_df)
+# heatmap_direction_vel_action(vel_binned, direction_binned)
 
-    # Plot the heatmap
-    plt.figure(figsize=(12, 8))
-    sns.heatmap(pivot_table, cmap='YlGnBu', annot=True, fmt=".1f")  # Change 'fmt' if needed for proper formatting
-    plt.title('Heat Map of Gait Patterns by Velocity and Direction')
-    plt.xlabel('Direction Bin')
-    plt.ylabel('Velocity Bin')
-    plt.show()
+# plot states
+plot_states(vel_01, vel_02, vel_03, direction_01, direction_02, direction_03, acc_01, acc_02, acc_03)
 
-heat_map_size = False
-if heat_map_size:
-    # Combine velocity and direction into a single DataFrame
-    state_df = pd.DataFrame({
-        'Velocity Bin': vel_binned.flatten(),
-        'Direction Bin': direction_binned.flatten(),
-    })
-
-    # Create a pivot table to count occurrences of each state
-    state_counts = state_df.pivot_table(index='Velocity Bin', columns='Direction Bin', aggfunc='size', fill_value=0)
-
-    # Plot the heatmap of most accessed states
-    plt.figure(figsize=(12, 8))
-    sns.heatmap(state_counts, cmap='YlGnBu', annot=True, fmt="d")  # 'fmt="d"' for integer counts
-    plt.title('Heat Map of Most Accessed States by Velocity and Direction')
-    plt.xlabel('Direction Bin')
-    plt.ylabel('Velocity Bin')
-    plt.show()
-
-plot_states = True
-if plot_states:
-    # velocity
-    fig, axes = plt.subplots(3, 1, figsize=(12, 9))
-    # Plot for vel_01
-    axes[0].plot(vel_01)
-    axes[0].set_title('CarausuisC00', fontsize=14)
-    axes[0].set_xticks(axes[0].get_xticks())
-    axes[0].set_yticks(axes[0].get_yticks())
-    axes[0].tick_params(axis='both', labelsize=14)
-    axes[0].set_xlabel('Time Steps', fontsize=14)
-    axes[0].set_ylabel('Vel', fontsize=14)
-    axes[0].grid()
-    # Plot for vel_02
-    axes[1].plot(vel_02)
-    axes[1].set_title('CarausuisC00', fontsize=14)
-    axes[1].set_xticks(axes[1].get_xticks())
-    axes[1].set_yticks(axes[1].get_yticks())
-    axes[1].tick_params(axis='both', labelsize=14)
-    axes[1].set_xlabel('Time Steps', fontsize=14)
-    axes[1].set_ylabel('Vel', fontsize=14)
-    axes[1].grid()
-    # Plot for vel_03
-    axes[2].plot(vel_03)
-    axes[2].set_title('CarausuisC00', fontsize=14)
-    axes[2].set_xticks(axes[2].get_xticks())
-    axes[2].set_yticks(axes[2].get_yticks())
-    axes[2].tick_params(axis='both', labelsize=14)
-    axes[2].set_xlabel('Time Steps', fontsize=14)
-    axes[2].set_ylabel('Vel', fontsize=14)
-    axes[2].grid()
-    plt.tight_layout()
-    plt.savefig('expert_demonstration/expert/plot/CarausiusC00_vel.png')
-
-    # direction
-    fig, axes = plt.subplots(3, 1, figsize=(12, 9))
-    # Plot for direction_01
-    axes[0].plot(direction_01)
-    axes[0].set_title('CarausuisC00', fontsize=14)
-    axes[0].set_xticks(axes[0].get_xticks())
-    axes[0].set_yticks(axes[0].get_yticks())
-    axes[0].tick_params(axis='both', labelsize=14)
-    axes[0].set_xlabel('Time Steps', fontsize=14)
-    axes[0].set_ylabel('Direction', fontsize=14)
-    axes[0].grid()
-    # Plot for direction_02
-    axes[1].plot(direction_02)
-    axes[1].set_title('CarausuisC00', fontsize=14)
-    axes[1].set_xticks(axes[1].get_xticks())
-    axes[1].set_yticks(axes[1].get_yticks())
-    axes[1].tick_params(axis='both', labelsize=14)
-    axes[1].set_xlabel('Time Steps', fontsize=14)
-    axes[1].set_ylabel('Direction', fontsize=14)
-    axes[1].grid()
-    # Plot for direction_03
-    axes[2].plot(direction_03)
-    axes[2].set_title('CarausuisC00', fontsize=14)
-    axes[2].set_xticks(axes[2].get_xticks())
-    axes[2].set_yticks(axes[2].get_yticks())
-    axes[2].tick_params(axis='both', labelsize=14)
-    axes[2].set_xlabel('Time Steps', fontsize=14)
-    axes[2].set_ylabel('Direction', fontsize=14)
-    axes[2].grid()
-    plt.tight_layout()
-    plt.savefig('expert_demonstration/expert/plot/CarausiusC00_direction.png')

@@ -103,6 +103,10 @@ def irl(feature_matrix, n_actions, discount, transition_probability,
     -> Reward vector with shape (N,).
     """
 
+    # Initialize the start time
+    print("Starting IRL:")
+    start_time = time.time()
+
     n_states, d_states = feature_matrix.shape
 
     # Initialise weights.
@@ -121,6 +125,11 @@ def irl(feature_matrix, n_actions, discount, transition_probability,
         grad = feature_expectations - feature_matrix.T.dot(expected_svf)
 
         alpha += learning_rate * grad
+
+        # Print progress every 10 epochs
+        if (i + 1) % 10 == 0:
+            elapsed_time = time.time() - start_time
+            print(f"Epoch {i + 1}/{epochs} - Time elapsed: {elapsed_time:.2f}s")
 
     return feature_matrix.dot(alpha).reshape((n_states,))
 

@@ -82,20 +82,20 @@ epochs = 100
 learning_rate = 0.01
 discount = 0.9
 # rewards = irl(feature_matrix, mdp.n_actions, mdp.discount, transition_probabilities, trajectories, epochs, learning_rate)
-rewards = maxentirl(feature_matrix, mdp.n_actions, discount, 
-                    transition_probabilities, trajectories, epochs, learning_rate)
+# rewards = maxentirl(feature_matrix, mdp.n_actions, discount, 
+#                     transition_probabilities, trajectories, epochs, learning_rate)
 
-# Output the inferred rewards
-print("Inferred Rewards:", rewards.shape)
-print(rewards)
-# Save the inferred rewards as a CSV file
-np.savetxt('inferred_rewards_maxent.csv', rewards, delimiter=',')
+# # Output the inferred rewards
+# print("Inferred Rewards:", rewards.shape)
+# print(rewards)
+# # Save the inferred rewards as a CSV file
+# np.savetxt('inferred_rewards_maxent.csv', rewards, delimiter=',')
 
-# rewards = np.loadtxt('inferred_rewards.csv', delimiter=',')
+rewards = np.loadtxt('inferred_rewards.csv', delimiter=',')
 
 # plot_grid_based_rewards(rewards, n_acceleration_bins, n_velocity_bins)
 # visualize_rewards_heatmap(rewards, n_states, mdp.n_actions)
-# plot_most_rewarded_action_heatmap(rewards, n_acceleration_bins=21, n_vel_bins=28)
+plot_most_rewarded_action_heatmap(rewards, n_acceleration_bins=21, n_vel_bins=28)
 # plot_action_reward_subplots(rewards, n_acceleration_bins=21, n_vel_bins=28, n_actions=6)
 # plot_velocity_action_reward_heatmap(rewards, n_acceleration_bins=21, n_vel_bins=28)
 # plot_acceleration_action_reward_heatmap(rewards, n_acceleration_bins=21, n_vel_bins=28)

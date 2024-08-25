@@ -42,6 +42,8 @@ vel = np.concatenate((vel_01[1:], vel_02[1:], vel_03[1:]), axis=0)
 direction = np.concatenate((direction_01[1:], direction_02[1:], direction_03[1:]), axis=0)
 gait = np.concatenate((gait_01[1:], gait_02[1:], gait_03[1:]), axis=0)
 acc = np.concatenate((acc_01, acc_02, acc_03), axis=0)
+print("length of T01, T02, T03: ", len(acc_01), len(acc_02), len(acc_03))
+print("length of faltten trajectory:", len(acc))
 
 # save vel and acc
 # plot_histogram(acc, title='Acceleration Data Distribution', xlabel='Acceleration', savename='CarausuisC00_histogram_acc')
@@ -155,7 +157,7 @@ analysis_df = pd.DataFrame({
         'Gait Category': gait_data['Category']
     })
 
-save = True
+save = False
 if save:
     save_path = 'expert_demonstration/expert/CarausiusC00.csv'
     analysis_df.to_csv(save_path, index=False, header=True)
@@ -165,5 +167,5 @@ if save:
 # heatmap_direction_vel_action(vel_binned, direction_binned)
 
 # plot states
-plot_states(vel_01, vel_02, vel_03, direction_01, direction_02, direction_03, acc_01, acc_02, acc_03)
+# plot_states(vel_01, vel_02, vel_03, direction_01, direction_02, direction_03, acc_01, acc_02, acc_03)
 

@@ -2,27 +2,27 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-# def plot_grid_based_rewards(rewards, n_direction_bins, n_vel_bins, epoch):
-#     # Assuming rewards are aggregated over actions for each state
-#     state_rewards = rewards.sum(axis=1).reshape((n_vel_bins, n_direction_bins))
-#     plt.figure(figsize=(10, 8))
-#     plt.imshow(state_rewards, cmap='viridis', aspect='auto')
-#     plt.title("Grid-Based Reward Heatmap")
-#     plt.xlabel("Direction Bins")
-#     plt.ylabel("Velocity Bins")
-#     plt.colorbar(label='Reward Value')
-#     plt.savefig("reward_heatmap_"+ epoch +".png")
-
-def plot_grid_based_rewards(rewards, n_acceleration_bins, n_vel_bins, epoch):
+def plot_grid_based_rewards(rewards, n_direction_bins, n_vel_bins, epoch):
     # Assuming rewards are aggregated over actions for each state
-    state_rewards = rewards.sum(axis=1).reshape((n_vel_bins, n_acceleration_bins))
+    state_rewards = rewards.sum(axis=1).reshape((n_vel_bins, n_direction_bins))
     plt.figure(figsize=(10, 8))
     plt.imshow(state_rewards, cmap='viridis', aspect='auto')
     plt.title("Grid-Based Reward Heatmap")
-    plt.xlabel("Acceleration Bins")
+    plt.xlabel("Direction Bins")
     plt.ylabel("Velocity Bins")
     plt.colorbar(label='Reward Value')
     plt.savefig("reward_heatmap_"+ epoch +".png")
+
+# def plot_grid_based_rewards(rewards, n_acceleration_bins, n_vel_bins, epoch):
+#     # Assuming rewards are aggregated over actions for each state
+#     state_rewards = rewards.sum(axis=1).reshape((n_vel_bins, n_acceleration_bins))
+#     plt.figure(figsize=(10, 8))
+#     plt.imshow(state_rewards, cmap='viridis', aspect='auto')
+#     plt.title("Grid-Based Reward Heatmap")
+#     plt.xlabel("Acceleration Bins")
+#     plt.ylabel("Velocity Bins")
+#     plt.colorbar(label='Reward Value')
+#     plt.savefig("reward_heatmap_"+ epoch +".png")
 
 def plot_most_rewarded_action_heatmap(rewards, n_direction_bins, n_vel_bins, epoch):
     """

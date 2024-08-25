@@ -4,6 +4,7 @@ from gridworld import CustomMDP as MDP
 from maxent import customirl as irl
 import matplotlib.pyplot as plt
 import seaborn as sns
+from plot_evaluate import *
 
 # Load the dataset
 data = pd.read_csv('expert_demonstration/expert/CarausiusC00.csv')
@@ -39,6 +40,12 @@ for index, row in data.iterrows():
     state_index = int((row['Velocity Bin']-1) * n_direction_bins + (row['Direction Bin']-1))
     action = int(row['Gait Category'])
     trajectories.append([(state_index, action)])
+trajectories = np.array(trajectories)
+# reshape the trajectories to (1, len_trajectories, 2)
+len_trajectories = trajectories.shape[0]
+trajectories = trajectories.reshape(1, len_trajectories, 2)
+trajectories = trajectories.tolist()
+print("Trajectories: ", len(trajectories), len(trajectories[0]), len(trajectories[0][0]))
 
 # Set up transition probabilities (for simplicity, we'll assume deterministic transitions here)
 transition_probabilities = np.eye(n_states)[np.newaxis].repeat(mdp.n_actions, axis=0)
@@ -61,3 +68,10 @@ learning_rate = 0.01
 # np.savetxt('inferred_rewards.csv', rewards, delimiter=',')
 
 rewards = np.loadtxt('inferred_rewards.csv', delimiter=',')
+
+plot_grid_based_rewards(rewards, n_direction_bins, n_velocity_bins)
+visualize_rewards_heatmap(rewards, n_states, mdp.n_actions)
+plot_most_rewarded_action_heatmap(rewards, n_direction_bins=5, n_vel_bins=28)
+plot_action_reward_subplots(rewards, n_direction_bins=5, n_vel_bins=28, n_actions=6)
+plot_velocity_action_reward_heatmap(rewards, n_direction_bins=5, n_vel_bins=28)
+plot_direction_action_reward_heatmap(rewards, n_direction_bins=5, n_vel_bins=28)

@@ -2,27 +2,27 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-# def plot_grid_based_rewards(rewards, n_direction_bins, n_vel_bins, epoch):
-#     # Assuming rewards are aggregated over actions for each state
-#     state_rewards = rewards.sum(axis=1).reshape((n_vel_bins, n_direction_bins))
-#     plt.figure(figsize=(10, 8))
-#     plt.imshow(state_rewards, cmap='viridis_r', aspect='auto')
-#     plt.title("Grid-Based Reward Heatmap", fontsize=16)
-#     plt.xlabel("Direction Bins", fontsize=14)
-#     plt.ylabel("Velocity Bins", fontsize=14)
-#     plt.colorbar(label='Reward Value')
-#     plt.savefig("reward_heatmap_"+ epoch +".png")
-
-def plot_grid_based_rewards(rewards, n_acceleration_bins, n_vel_bins, epoch):
+def plot_grid_based_rewards(rewards, n_direction_bins, n_vel_bins, epoch):
     # Assuming rewards are aggregated over actions for each state
-    state_rewards = rewards.sum(axis=1).reshape((n_vel_bins, n_acceleration_bins))
+    state_rewards = rewards.sum(axis=1).reshape((n_vel_bins, n_direction_bins))
     plt.figure(figsize=(10, 8))
     plt.imshow(state_rewards, cmap='viridis_r', aspect='auto')
     plt.title("Grid-Based Reward Heatmap", fontsize=16)
-    plt.xlabel("Acceleration Bins", fontsize=14)
+    plt.xlabel("Direction Bins", fontsize=14)
     plt.ylabel("Velocity Bins", fontsize=14)
     plt.colorbar(label='Reward Value')
     plt.savefig("reward_heatmap_"+ epoch +".png")
+
+# def plot_grid_based_rewards(rewards, n_acceleration_bins, n_vel_bins, epoch):
+#     # Assuming rewards are aggregated over actions for each state
+#     state_rewards = rewards.sum(axis=1).reshape((n_vel_bins, n_acceleration_bins))
+#     plt.figure(figsize=(10, 8))
+#     plt.imshow(state_rewards, cmap='viridis_r', aspect='auto')
+#     plt.title("Grid-Based Reward Heatmap", fontsize=16)
+#     plt.xlabel("Acceleration Bins", fontsize=14)
+#     plt.ylabel("Velocity Bins", fontsize=14)
+#     plt.colorbar(label='Reward Value')
+#     plt.savefig("reward_heatmap_"+ epoch +".png")
 
 def plot_most_rewarded_action_heatmap(rewards, n_direction_bins, n_vel_bins, epoch):
     """

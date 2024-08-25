@@ -64,10 +64,10 @@ def plot_most_rewarded_action_heatmap(rewards, n_direction_bins, n_vel_bins):
     plt.ylabel("Velocity Bins", fontsize=14)
 
     # Create a color bar with action labels
-    cbar = plt.colorbar(img, ticks=np.arange(np.max(action_grid) + 1))
+    cbar = plt.colorbar(img, ticks=np.arange(n_actions))
     cbar.set_label('Actions')
-    cbar.set_ticks(np.arange(np.max(action_grid) + 1) + 0.5)
-    cbar.set_ticklabels([f"Action {i}" for i in range(np.max(action_grid) + 1)])
+    cbar.set_ticks(np.arange(n_actions))
+    cbar.set_ticklabels([f"Action {i}" for i in range(n_actions)])
 
     plt.savefig("most_rewarded_action_heatmap.png")
 

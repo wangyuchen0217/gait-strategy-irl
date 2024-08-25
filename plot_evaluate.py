@@ -11,7 +11,7 @@ import seaborn as sns
 #     plt.imshow(state_rewards, cmap='viridis_r', aspect='auto')  # Use 'viridis_r' for reversed colormap
 #     plt.title("Grid-Based Reward Heatmap", fontsize=16)
 #     plt.xticks(ticks=np.arange(0, n_direction_bins), labels=np.arange(-20, 5, step=5), fontsize=12)
-#     plt.yticks(ticks=np.arange(0, n_vel_bins), labels=np.arange(0, 140, step=5), fontsize=12)
+#     plt.yticks(ticks=np.arange(0, n_vel_bins)[::3], labels=np.arange(0, 140, step=5)[::3], fontsize=12)
 #     plt.xlabel("Direction Bins", fontsize=14)
 #     plt.ylabel("Velocity Bins", fontsize=14)
 #     plt.colorbar(label='Reward Value')
@@ -59,7 +59,7 @@ import seaborn as sns
 #     img = plt.imshow(action_grid, cmap=cmap, aspect='auto')
 #     plt.title("Most Rewarded Action Heatmap", fontsize=16)
 #     plt.xticks(ticks=np.arange(0, n_direction_bins), labels=np.arange(-20, 5, step=5), fontsize=12)
-#     plt.yticks(ticks=np.arange(0, n_vel_bins), labels=np.arange(0, 140, step=5), fontsize=12)
+#     plt.yticks(ticks=np.arange(0, n_vel_bins)[::3], labels=np.arange(0, 140, step=5)[::3], fontsize=12)
 #     plt.xlabel("Direction Bins", fontsize=14)
 #     plt.ylabel("Velocity Bins", fontsize=14)
 
@@ -104,7 +104,7 @@ import seaborn as sns
 #         img = ax.imshow(reward_grid, cmap='viridis_r', aspect='auto')
 #         ax.set_title(f"Action {action_index}", fontsize=16)
 #         ax.set_xticks(ticks=np.arange(0, n_direction_bins), labels=np.arange(-20, 5, step=5), fontsize=12)
-#         ax.set_yticks(ticks=np.arange(0, n_vel_bins), labels=np.arange(0, 140, step=5), fontsize=12)
+#         ax.set_yticks(ticks=np.arange(0, n_vel_bins)[::3], labels=np.arange(0, 140, step=5)[::3], fontsize=12)
 #         ax.set_xlabel("Direction Bins", fontsize=14)
 #         ax.set_ylabel("Velocity Bins", fontsize=14)
 
@@ -142,7 +142,7 @@ import seaborn as sns
 #     plt.figure(figsize=(10, 8))
 #     plt.imshow(reward_grid, cmap='viridis_r', aspect='auto')
 #     plt.title("Reward Heatmap: Velocity vs. Action", fontsize=16)
-#     plt.yticks(ticks=np.arange(0, n_vel_bins), labels=np.arange(0, 140, step=5), fontsize=12)
+#     plt.yticks(ticks=np.arange(0, n_vel_bins)[::3], labels=np.arange(0, 140, step=5)[::3], fontsize=12)
 #     plt.xlabel("Actions", fontsize=14)
 #     plt.ylabel("Velocity Bins", fontsize=14)
 #     plt.colorbar(label='Reward Value')

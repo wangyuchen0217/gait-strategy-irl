@@ -189,8 +189,8 @@ def plot_grid_based_rewards(rewards, n_acceleration_bins, n_vel_bins):
     plt.figure(figsize=(10, 8))
     plt.imshow(state_rewards, cmap='viridis_r', aspect='auto')
     plt.title("Grid-Based Reward Heatmap", fontsize=16)
-    plt.xticks(ticks=np.arange(0, n_acceleration_bins), labels=np.arange(-3000, 2250, step=250), fontsize=12)
-    plt.yticks(ticks=np.arange(0, n_vel_bins), labels=np.arange(0, 140, step=5), fontsize=12)
+    plt.xticks(ticks=np.arange(0, n_acceleration_bins)[::3], labels=np.arange(-3000, 2250, step=250)[::3], minor=False, fontsize=12)
+    plt.yticks(ticks=np.arange(0, n_vel_bins)[::3], labels=np.arange(0, 140, step=5)[::3], fontsize=12)
     plt.xlabel("Acceleration Bins", fontsize=14)
     plt.ylabel("Velocity Bins", fontsize=14)
     plt.colorbar(label='Reward Value')
@@ -202,7 +202,7 @@ def visualize_rewards_heatmap(rewards, n_states, n_actions):
     plt.title("Reward Function Heatmap (State-Action Rewards)", fontsize=16)
     plt.xlabel("Actions", fontsize=14)
     plt.ylabel("States", fontsize=14)
-    plt.imshow(rewards, cmap='viridis', aspect='auto')
+    plt.imshow(rewards, cmap='viridis_r', aspect='auto')
     plt.colorbar(label='Reward Value')
     plt.savefig("state_action_reward_heatmap.png")
 
@@ -229,8 +229,8 @@ def plot_most_rewarded_action_heatmap(rewards, n_acceleration_bins, n_vel_bins):
     plt.figure(figsize=(10, 8))
     img = plt.imshow(action_grid, cmap=cmap, aspect='auto')
     plt.title("Most Rewarded Action Heatmap", fontsize=16)
-    plt.xticks(ticks=np.arange(0, n_acceleration_bins), labels=np.arange(-3000, 2250, step=250), fontsize=12)
-    plt.yticks(ticks=np.arange(0, n_vel_bins), labels=np.arange(0, 140, step=5), fontsize=12)
+    plt.xticks(ticks=np.arange(0, n_acceleration_bins)[::3], labels=np.arange(-3000, 2250, step=250)[::3], minor=False, fontsize=12)
+    plt.yticks(ticks=np.arange(0, n_vel_bins)[::3], labels=np.arange(0, 140, step=5)[::3], fontsize=12)
     plt.xlabel("Acceleration Bins", fontsize=14)
     plt.ylabel("Velocity Bins", fontsize=14)
 
@@ -274,15 +274,15 @@ def plot_action_reward_subplots(rewards, n_acceleration_bins, n_vel_bins, n_acti
         ax = axes[action_index]
         img = ax.imshow(reward_grid, cmap='viridis_r', aspect='auto')
         ax.set_title(f"Action {action_index}")
-        ax.set_xticks(ticks=np.arange(0, n_acceleration_bins), labels=np.arange(-3000, 2250, step=250), fontsize=12)
-        ax.set_yticks(ticks=np.arange(0, n_vel_bins), labels=np.arange(0, 140, step=5), fontsize=12)
+        ax.set_xticks(ticks=np.arange(0, n_acceleration_bins)[::3], labels=np.arange(-3000, 2250, step=250)[::3], fontsize=12)
+        ax.set_yticks(ticks=np.arange(0, n_vel_bins)[::3], labels=np.arange(0, 140, step=5)[::3], fontsize=12)
         ax.set_xlabel("Acceleration Bins", fontsize=14)
         ax.set_ylabel("Velocity Bins", fontsize=14)
 
     # Add a color bar to the last subplot, shared across all subplots
     fig.colorbar(img, ax=axes, orientation='vertical', fraction=0.02, pad=0.04)
     plt.tight_layout(rect=[0, 0, 0.88, 1])
-    plt.show()
+    plt.savefig("action_reward_subplots.png")
 
 def plot_velocity_action_reward_heatmap(rewards, n_acceleration_bins, n_vel_bins):
     """
@@ -311,11 +311,11 @@ def plot_velocity_action_reward_heatmap(rewards, n_acceleration_bins, n_vel_bins
     plt.figure(figsize=(10, 8))
     plt.imshow(reward_grid, cmap='viridis_r', aspect='auto')
     plt.title("Reward Heatmap: Velocity vs. Action", fontsize=16)
-    plt.yticks(ticks=np.arange(0, n_vel_bins), labels=np.arange(0, 140, step=5), fontsize=12)
+    plt.yticks(ticks=np.arange(0, n_vel_bins)[::3], labels=np.arange(0, 140, step=5)[::3], fontsize=12)
     plt.xlabel("Actions", fontsize=14)
     plt.ylabel("Velocity Bins", fontsize=14)
     plt.colorbar(label='Reward Value')
-    plt.show()
+    plt.savefig("velocity_action_reward_heatmap.png")
 
 def plot_acceleration_action_reward_heatmap(rewards, n_acceleration_bins, n_vel_bins):
     """
@@ -344,8 +344,8 @@ def plot_acceleration_action_reward_heatmap(rewards, n_acceleration_bins, n_vel_
     plt.figure(figsize=(10, 8))
     plt.imshow(reward_grid, cmap='viridis_r', aspect='auto')
     plt.title("Reward Heatmap: Acceleration vs. Action", fontsize=16)
-    plt.yticks(ticks=np.arange(0, n_acceleration_bins), labels=np.arange(-3000, 2250, step=250), fontsize=12)
+    plt.yticks(ticks=np.arange(0, n_acceleration_bins)[::3], labels=np.arange(-3000, 2250, step=250)[::3], minor=False, fontsize=12)
     plt.xlabel("Actions", fontsize=14)
     plt.ylabel("Acceleration Bins", fontsize=14)
     plt.colorbar(label='Reward Value')
-    plt.show()
+    plt.savefig("acceleration_action_reward_heatmap.png")

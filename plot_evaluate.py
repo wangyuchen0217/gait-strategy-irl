@@ -109,9 +109,10 @@ def plot_action_reward_subplots(rewards, n_direction_bins, n_vel_bins, n_actions
         ax.set_ylabel("Velocity Bins", fontsize=14)
 
     # Add a color bar to the last subplot, shared across all subplots
+    # change the ax position
+    # cb_ax = fig.add_axes([0.92, 0.15, 0.02, 0.7])
     fig.colorbar(img, ax=axes, orientation='vertical', fraction=0.02, pad=0.04)
-    plt.subplots_adjust(right=0.8)
-    plt.tight_layout()
+    plt.tight_layout(rect=[0, 0, 0.88, 1])
     plt.savefig("action_reward_subplots.png")
 
 def plot_velocity_action_reward_heatmap(rewards, n_direction_bins, n_vel_bins):

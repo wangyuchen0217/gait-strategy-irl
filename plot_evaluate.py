@@ -110,6 +110,7 @@ def plot_action_reward_subplots(rewards, n_direction_bins, n_vel_bins, n_actions
 
     # Add a color bar to the last subplot, shared across all subplots
     fig.colorbar(img, ax=axes, orientation='vertical', fraction=0.02, pad=0.04)
+    plt.subplots_adjust(right=0.8)
     plt.tight_layout()
     plt.savefig("action_reward_subplots.png")
 

@@ -94,21 +94,21 @@ discount = 0.9
 # rewards = maxentirl(feature_matrix, mdp.n_actions, discount, 
 #                     transition_probabilities, trajectories, epochs, learning_rate)
 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-feature_matrix_torch = torch.tensor(feature_matrix, dtype=torch.float32).to(device)
-transition_probabilities_torch = torch.tensor(transition_probabilities, dtype=torch.float32).to(device)
-trajectories_torch = torch.tensor(trajectories, dtype=torch.long).to(device)  # long type for indices
-rewards_torch = maxent_gpu.irl(feature_matrix_torch, mdp.n_actions, mdp.discount, 
-                               transition_probabilities_torch, trajectories_torch, 
-                               epochs, learning_rate)
-# Convert the output rewards back to a NumPy array if needed
-rewards = rewards_torch.cpu().numpy()
+# device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+# feature_matrix_torch = torch.tensor(feature_matrix, dtype=torch.float32).to(device)
+# transition_probabilities_torch = torch.tensor(transition_probabilities, dtype=torch.float32).to(device)
+# trajectories_torch = torch.tensor(trajectories, dtype=torch.long).to(device)  # long type for indices
+# rewards_torch = maxent_gpu.irl(feature_matrix_torch, mdp.n_actions, mdp.discount, 
+#                                transition_probabilities_torch, trajectories_torch, 
+#                                epochs, learning_rate)
+# # Convert the output rewards back to a NumPy array if needed
+# rewards = rewards_torch.cpu().numpy()
 
-#Output the inferred rewards
-print("Inferred Rewards:", rewards.shape)
-print(rewards)
-# Save the inferred rewards as a CSV file
-np.savetxt('inferred_rewards_maxent_direction.csv', rewards, delimiter=',')
+# #Output the inferred rewards
+# print("Inferred Rewards:", rewards.shape)
+# print(rewards)
+# # Save the inferred rewards as a CSV file
+# np.savetxt('inferred_rewards_maxent_direction.csv', rewards, delimiter=',')
 
 # rewards = np.loadtxt('inferred_rewards.csv', delimiter=',')
 
@@ -118,3 +118,10 @@ np.savetxt('inferred_rewards_maxent_direction.csv', rewards, delimiter=',')
 # plot_action_reward_subplots(rewards, n_direction_bins=5, n_vel_bins=28, n_actions=6)
 # plot_velocity_action_reward_heatmap(rewards, n_direction_bins=5, n_vel_bins=28)
 # plot_direction_action_reward_heatmap(rewards, n_direction_bins=5, n_vel_bins=28)
+
+rewards = np.loadtxt('inferred_rewards_matent_direction.csv', delimiter=',')
+plt.figure(figsize=(10, 5))
+plt.pcolor(rewards.reshape((n_velocity_bins, n_direction_bins)))
+plt.colorbar()
+plt.title("Recovered reward")
+plt.show()

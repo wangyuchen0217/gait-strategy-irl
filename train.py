@@ -96,7 +96,7 @@ rewards = maxentirl(feature_matrix, mdp.n_actions, discount,
 print("Inferred Rewards:", rewards.shape)
 print(rewards)
 # Save the inferred rewards as a CSV file
-np.savetxt('inferred_rewards_matent_direction.csv', rewards, delimiter=',')
+np.savetxt('inferred_rewards_maxent_direction.csv', rewards, delimiter=',')
 
 # rewards = np.loadtxt('inferred_rewards.csv', delimiter=',')
 

@@ -131,7 +131,7 @@ def irl(feature_matrix, n_actions, discount, transition_probability,
             elapsed_time = time.time() - start_time
             print(f"Epoch {i + 1}/{epochs} - Time elapsed: {elapsed_time:.2f}s")
             output = feature_matrix.dot(alpha).reshape((n_states,))
-            np.savetxt('inferred_rewards'+str(i+1)+'.csv', output, delimiter=',')
+            np.savetxt('acc_inferred_rewards'+str(i+1)+'.csv', output, delimiter=',')
 
     return feature_matrix.dot(alpha).reshape((n_states,))
 

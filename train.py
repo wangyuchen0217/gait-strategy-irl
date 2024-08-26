@@ -91,8 +91,8 @@ epochs = 100
 learning_rate = 0.01
 discount = 0.9
 # rewards = irl(feature_matrix, mdp.n_actions, mdp.discount, transition_probabilities, trajectories, epochs, learning_rate)
-rewards = maxentirl(feature_matrix, mdp.n_actions, discount, 
-                    transition_probabilities, trajectories, epochs, learning_rate)
+# rewards = maxentirl(feature_matrix, mdp.n_actions, discount, 
+#                     transition_probabilities, trajectories, epochs, learning_rate)
 
 # device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 # feature_matrix_torch = torch.tensor(feature_matrix, dtype=torch.float32).to(device)
@@ -104,11 +104,11 @@ rewards = maxentirl(feature_matrix, mdp.n_actions, discount,
 # # Convert the output rewards back to a NumPy array if needed
 # rewards = rewards_torch.cpu().numpy()
 
-#Output the inferred rewards
-print("Inferred Rewards:", rewards.shape)
-print(rewards)
-# Save the inferred rewards as a CSV file
-np.savetxt('inferred_rewards_maxent_direction.csv', rewards, delimiter=',')
+# #Output the inferred rewards
+# print("Inferred Rewards:", rewards.shape)
+# print(rewards)
+# # Save the inferred rewards as a CSV file
+# np.savetxt('inferred_rewards_maxent_direction.csv', rewards, delimiter=',')
 
 # rewards = np.loadtxt('inferred_rewards.csv', delimiter=',')
 

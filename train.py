@@ -90,12 +90,19 @@ mdp.set_transition_probabilities(transition_probabilities)
 epochs = 100
 learning_rate = 0.01
 discount = 0.9
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 # rewards = irl(feature_matrix, mdp.n_actions, mdp.discount, transition_probabilities, trajectories, epochs, learning_rate)
 # rewards = maxentirl(feature_matrix, mdp.n_actions, discount, 
 #                     transition_probabilities, trajectories, epochs, learning_rate)
-rewards = maxent_gpu.irl(feature_matrix, mdp.n_actions, mdp.discount, 
-                         transition_probabilities, trajectories, epochs, learning_rate)
+
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+feature_matrix_torch = torch.tensor(feature_matrix, dtype=torch.float32).to(device)
+transition_probabilities_torch = torch.tensor(transition_probabilities, dtype=torch.float32).to(device)
+trajectories_torch = torch.tensor(trajectories, dtype=torch.long).to(device)  # long type for indices
+rewards_torch = maxent_gpu.irl(feature_matrix_torch, mdp.n_actions, mdp.discount, 
+                               transition_probabilities_torch, trajectories_torch, 
+                               epochs, learning_rate)
+# Convert the output rewards back to a NumPy array if needed
+rewards = rewards_torch.cpu().numpy()
 
 #Output the inferred rewards
 print("Inferred Rewards:", rewards.shape)

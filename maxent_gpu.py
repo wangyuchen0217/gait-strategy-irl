@@ -194,7 +194,7 @@ def find_policy(n_states, n_actions, transition_probabilities, reward, discount,
             for j in range(n_actions):
                 p = transition_probabilities[i, j, :]
                 Q[i, j] = torch.dot(p, reward + discount*v)
-        Q -= Q.max(axis=1).view(n_states, 1)  # For numerical stability.
+        Q -= Q.max(dim=1)[0].view(n_states, 1)  # For numerical stability.
         Q = torch.exp(Q)/torch.exp(Q).sum(axis=1).view(n_states, 1)
         return Q
 

@@ -119,9 +119,9 @@ discount = 0.9
 # plot_velocity_action_reward_heatmap(rewards, n_direction_bins=5, n_vel_bins=28)
 # plot_direction_action_reward_heatmap(rewards, n_direction_bins=5, n_vel_bins=28)
 
-rewards = np.loadtxt('inferred_rewards_matent_direction.csv', delimiter=',')
-plt.figure(figsize=(10, 5))
+rewards = np.loadtxt('test_folder/cut_traj/maxent/S33A6/inferred_rewards_matent_direction.csv', delimiter=',')
+plt.figure(figsize=(10, 8))
 plt.pcolor(rewards.reshape((n_velocity_bins, n_direction_bins)))
 plt.colorbar()
 plt.title("Recovered reward")
-plt.show()
+plt.savefig('grid_base_reward_heatmap.png')

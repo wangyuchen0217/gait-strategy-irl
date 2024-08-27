@@ -1,1 +1,70 @@
 nohup: ignoring input
+---------------------------------
+Velocity bins:  28
+Direction bins:  5
+Gait categories:  6
+---------------------------------
+Number of states:  140
+Number of actions:  6
+Transition probabilities shape:  (140, 6, 140)
+Rewards shape:  (140, 6)
+Feature matrix shape:  (140, 33)
+Transition probabilities shape:  (140, 6, 140)
+---------------------------------
+Starting IRL:
+Epoch 10/100 - Time elapsed: 5860.16s
+Epoch 20/100 - Time elapsed: 11728.60s
+Epoch 30/100 - Time elapsed: 17639.20s
+Epoch 40/100 - Time elapsed: 23531.55s
+Epoch 50/100 - Time elapsed: 29430.04s
+Epoch 60/100 - Time elapsed: 35343.80s
+Epoch 70/100 - Time elapsed: 41247.38s
+Epoch 80/100 - Time elapsed: 47136.81s
+Epoch 90/100 - Time elapsed: 53001.84s
+Epoch 100/100 - Time elapsed: 58816.40s
+Inferred Rewards: (140,)
+[  479.27946486     0.             0.          3108.92585017
+     0.           479.27946486  1637.61751681 -7188.76511632
+  3108.92585017  1968.77763251   479.27946486  1637.61751681
+ -7188.76511632  3108.92585017  1968.77763251   479.27946486
+  1637.61751681 -7188.76511632  3108.92585017  1968.77763251
+   479.27946486  1637.61751681 -7188.76511632  3108.92585017
+  1968.77763251   479.27946486  1637.61751681 -7188.76511632
+  3108.92585017  1968.77763251   479.27946486  1637.61751681
+ -7188.76511632  3108.92585017  1968.77763251   479.27946486
+  1637.61751681 -7188.76511632  3108.92585017  1968.77763251
+   479.27946486  1637.61751681 -7188.76511632  3108.92585017
+  1968.77763251   479.27946486  1637.61751681 -7188.76511632
+  3108.92585017  1968.77763251   479.27946486     0.
+ -7188.76511632  3108.92585017  1968.77763251     0.
+  1637.61751681 -7188.76511632  3108.92585017  1968.77763251
+     0.          1637.61751681 -7188.76511632  3108.92585017
+  1968.77763251     0.          1637.61751681 -7188.76511632
+  3108.92585017  1968.77763251     0.          1637.61751681
+ -7188.76511632  3108.92585017  1968.77763251     0.
+     0.         -7188.76511632  3108.92585017  1968.77763251
+     0.             0.         -7188.76511632  3108.92585017
+  1968.77763251     0.             0.         -7188.76511632
+  3108.92585017  1968.77763251     0.             0.
+ -7188.76511632  3108.92585017  1968.77763251     0.
+     0.         -7188.76511632  3108.92585017  1968.77763251
+     0.             0.             0.          3108.92585017
+     0.             0.             0.         -7188.76511632
+  3108.92585017  1968.77763251     0.             0.
+ -7188.76511632  3108.92585017  1968.77763251     0.
+     0.         -7188.76511632  3108.92585017     0.
+     0.             0.         -7188.76511632  3108.92585017
+     0.             0.             0.         -7188.76511632
+  3108.92585017     0.             0.             0.
+ -7188.76511632  3108.92585017     0.             0.
+     0.         -7188.76511632  3108.92585017     0.        ]
+Traceback (most recent call last):
+  File "train.py", line 122, in <module>
+    rewards = np.loadtxt('inferred_rewards_matent_direction.csv', delimiter=',')
+  File "/home/yuchen/anaconda3/envs/mujoco316/lib/python3.8/site-packages/numpy/lib/npyio.py", line 1067, in loadtxt
+    fh = np.lib._datasource.open(fname, 'rt', encoding=encoding)
+  File "/home/yuchen/anaconda3/envs/mujoco316/lib/python3.8/site-packages/numpy/lib/_datasource.py", line 193, in open
+    return ds.open(path, mode, encoding=encoding, newline=newline)
+  File "/home/yuchen/anaconda3/envs/mujoco316/lib/python3.8/site-packages/numpy/lib/_datasource.py", line 533, in open
+    raise IOError("%s not found." % path)
+OSError: inferred_rewards_matent_direction.csv not found.

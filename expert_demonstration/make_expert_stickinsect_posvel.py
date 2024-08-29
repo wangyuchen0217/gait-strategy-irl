@@ -143,7 +143,7 @@ print("contact_matrix:", contact_matrix.shape)
 
 
 '''plotting the gait phase'''
-plot_gait_phase = True
+plot_gait_phase = False
 if plot_gait_phase:
     plt.figure(figsize=(7, 6))
     labels = ['LF', 'LM', 'LH', 'RF', 'RM', 'RH']

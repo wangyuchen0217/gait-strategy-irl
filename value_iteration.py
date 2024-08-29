@@ -37,7 +37,7 @@ def value(policy, n_states, transition_probabilities, reward, discount,
     return v
 
 def optimal_value(n_states, n_actions, transition_probabilities, reward,
-                  discount, threshold=1e-2):
+                  discount, threshold=1e-4):
     """
     Find the optimal value function.
 

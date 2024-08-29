@@ -46,10 +46,10 @@ def generate_trajectory(data, n_direction_bins):
     return trajectory
 
 # Generate trajectories from the dataset
+'''cut_traj array'''
 # t01 = data.iloc[0:2456]
 # t02 = data.iloc[2456:3960]
 # t03 = data.iloc[3960:5199]
-
 # traj_01 = generate_trajectory(t01, n_direction_bins)
 # traj_02 = generate_trajectory(t02, n_direction_bins)
 # traj_03 = generate_trajectory(t03, n_direction_bins)
@@ -59,12 +59,17 @@ def generate_trajectory(data, n_direction_bins):
 # trajectories = np.array([traj_01, traj_02, traj_03])
 # print("Trajectories: ", trajectories.shape)
 
+'''cut_traj list'''
+# t01 = data.iloc[0:2456]
+# t02 = data.iloc[2456:3960]
+# t03 = data.iloc[3960:5199]
 # traj_01 = generate_trajectory(t01, n_direction_bins)
 # traj_02 = generate_trajectory(t02, n_direction_bins)
 # traj_03 = generate_trajectory(t03, n_direction_bins)
 # trajectories = [traj_01, traj_02, traj_03]
 # print("Trajectories: ", len(trajectories), len(trajectories[2]), len(trajectories[1][0]))
-    
+
+'''flatten_traj'''
 trajectories = []
 for index, row in data.iterrows():
     state_index = int((row['Velocity Bin']-1) * n_direction_bins + (row['Direction Bin']-1))
@@ -91,8 +96,8 @@ epochs = 100
 learning_rate = 0.01
 discount = 0.9
 # rewards = irl(feature_matrix, mdp.n_actions, mdp.discount, transition_probabilities, trajectories, epochs, learning_rate)
-# rewards = maxentirl(feature_matrix, mdp.n_actions, discount, 
-#                     transition_probabilities, trajectories, epochs, learning_rate)
+rewards = maxentirl(feature_matrix, mdp.n_actions, discount, 
+                    transition_probabilities, trajectories, epochs, learning_rate)
 
 # device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 # feature_matrix_torch = torch.tensor(feature_matrix, dtype=torch.float32).to(device)
@@ -104,14 +109,13 @@ discount = 0.9
 # # Convert the output rewards back to a NumPy array if needed
 # rewards = rewards_torch.cpu().numpy()
 
-# #Output the inferred rewards
-# print("Inferred Rewards:", rewards.shape)
-# print(rewards)
-# # Save the inferred rewards as a CSV file
-# np.savetxt('inferred_rewards_maxent_direction.csv', rewards, delimiter=',')
+#Output the inferred rewards
+print("Inferred Rewards:", rewards.shape)
+print(rewards)
+# Save the inferred rewards as a CSV file
+np.savetxt('inferred_rewards_maxent_direction.csv', rewards, delimiter=',')
 
 # rewards = np.loadtxt('inferred_rewards.csv', delimiter=',')
-
 # plot_grid_based_rewards(rewards, n_direction_bins, n_velocity_bins)
 # visualize_rewards_heatmap(rewards, n_states, mdp.n_actions)
 # plot_most_rewarded_action_heatmap(rewards, n_direction_bins=5, n_vel_bins=28)
@@ -119,9 +123,9 @@ discount = 0.9
 # plot_velocity_action_reward_heatmap(rewards, n_direction_bins=5, n_vel_bins=28)
 # plot_direction_action_reward_heatmap(rewards, n_direction_bins=5, n_vel_bins=28)
 
-rewards = np.loadtxt('inferred_rewards_matent_direction.csv', delimiter=',')
-plt.figure(figsize=(10, 8))
-plt.pcolor(rewards.reshape((n_velocity_bins, n_direction_bins)))
-plt.colorbar()
-plt.title("Recovered reward")
-plt.savefig('grid_base_reward_heatmap.png')
+# rewards = np.loadtxt('inferred_rewards_maxent_direction.csv', delimiter=',')
+# plt.figure(figsize=(10, 8))
+# plt.pcolor(rewards.reshape((n_velocity_bins, n_direction_bins)))
+# plt.colorbar()
+# plt.title("Recovered reward")
+# plt.savefig('grid_base_reward_heatmap.png')

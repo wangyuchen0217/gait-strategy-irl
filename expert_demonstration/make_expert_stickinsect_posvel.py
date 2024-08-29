@@ -108,7 +108,7 @@ with mujoco.viewer.launch_passive(model, data) as viewer:
         # Manage timing to maintain a steady frame rate
         time.sleep(model.opt.timestep)
 
-        state = np.hstack((data.qpos.copy()[:], # [-24:] joint angles, [:] w/ torso
+        state = np.hstack((data.qpos.copy()[2:], # [-24:] joint angles, [:] w/ torso
                                             data.qvel.copy()[:])) # [-24:] joint velocities, [:] w/ torso
         # record the state of each step
         obs_state.append(state) # [2459,48] only joint angles and velocities, [2459, 61] w/ torso
@@ -133,7 +133,7 @@ with mujoco.viewer.launch_passive(model, data) as viewer:
 # record observation state and action
 obs_states = np.array([obs_state]) # [1, 2459, 48] only joint angles and velocities, [1, 2459, 61] w/ torso
 print("expert_demo:", obs_states.shape)
-# np.save("StickInsect-v0-m3t-32-obs.npy", obs_states)
+# np.save("StickInsect-v0.npy", obs_states)
 actions = np.array([np.hstack((np.deg2rad(joint_movement), velocities))])
 print("actions:", actions.shape)
 # np.save("StickInsect-v0-m3t-32-act.npy", actions)

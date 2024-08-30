@@ -96,8 +96,8 @@ epochs = 100
 learning_rate = 0.01
 discount = 0.9
 # rewards = irl(feature_matrix, mdp.n_actions, mdp.discount, transition_probabilities, trajectories, epochs, learning_rate)
-rewards = maxentirl(feature_matrix, mdp.n_actions, discount, 
-                    transition_probabilities, trajectories, epochs, learning_rate)
+# rewards = maxentirl(feature_matrix, mdp.n_actions, discount, 
+#                     transition_probabilities, trajectories, epochs, learning_rate)
 
 # device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 # feature_matrix_torch = torch.tensor(feature_matrix, dtype=torch.float32).to(device)
@@ -109,11 +109,11 @@ rewards = maxentirl(feature_matrix, mdp.n_actions, discount,
 # # Convert the output rewards back to a NumPy array if needed
 # rewards = rewards_torch.cpu().numpy()
 
-#Output the inferred rewards
-print("Inferred Rewards:", rewards.shape)
-print(rewards)
-# Save the inferred rewards as a CSV file
-np.savetxt('inferred_rewards_maxent_direction.csv', rewards, delimiter=',')
+# #Output the inferred rewards
+# print("Inferred Rewards:", rewards.shape)
+# print(rewards)
+# # Save the inferred rewards as a CSV file
+# np.savetxt('inferred_rewards_maxent_direction.csv', rewards, delimiter=',')
 
 # rewards = np.loadtxt('inferred_rewards.csv', delimiter=',')
 # plot_grid_based_rewards(rewards, n_direction_bins, n_velocity_bins)
@@ -123,9 +123,55 @@ np.savetxt('inferred_rewards_maxent_direction.csv', rewards, delimiter=',')
 # plot_velocity_action_reward_heatmap(rewards, n_direction_bins=5, n_vel_bins=28)
 # plot_direction_action_reward_heatmap(rewards, n_direction_bins=5, n_vel_bins=28)
 
-# rewards = np.loadtxt('inferred_rewards_maxent_direction.csv', delimiter=',')
-# plt.figure(figsize=(10, 8))
-# plt.pcolor(rewards.reshape((n_velocity_bins, n_direction_bins)))
-# plt.colorbar()
-# plt.title("Recovered reward")
-# plt.savefig('grid_base_reward_heatmap.png')
+from value_iteration import optimal_value
+
+rewards = np.loadtxt('inferred_rewards_maxent_direction.csv', delimiter=',')
+def find_most_rewarded_action(n_states, n_actions, transition_probabilities, reward, discount):
+    """
+    Find the most rewarded action for each state based on the given reward function.
+
+    n_states: Number of states. int.
+    n_actions: Number of actions. int.
+    transition_probabilities: NumPy array mapping (state, action, state') to the 
+                              probability of transitioning from state to state' under action.
+                              Shape (N, A, N).
+    reward: Vector of rewards for each state. Shape (N,).
+    discount: Discount factor. float.
+    
+    -> Array of the most rewarded actions for each state. Shape (N,).
+    """
+    v = optimal_value(n_states, n_actions, transition_probabilities, reward, discount)
+    
+    most_rewarded_actions = np.zeros(n_states, dtype=int)
+    
+    for s in range(n_states):
+        max_q = float('-inf')
+        best_action = None
+        
+        for a in range(n_actions):
+            # Compute the Q-value for action 'a' in state 's'
+            q_value = np.sum(transition_probabilities[s, a, :] * (reward + discount * v))
+            
+            if q_value > max_q:
+                max_q = q_value
+                best_action = a
+                
+        most_rewarded_actions[s] = best_action
+    
+    return most_rewarded_actions
+
+# Assume you have already obtained the most_rewarded_actions array
+most_rewarded_actions = find_most_rewarded_action(n_states, mdp.n_actions, transition_probabilities, rewards, discount)
+
+# Reshape the array for heatmap plotting
+# Assuming you want to plot a 2D grid, reshape the most_rewarded_actions array into a square shape
+
+heatmap_data = most_rewarded_actions.reshape((n_velocity_bins, n_direction_bins))
+
+# Plotting the heatmap
+plt.figure(figsize=(8, 6))
+sns.heatmap(heatmap_data, annot=True, cmap="viridis", cbar=True, linewidths=.5)
+plt.title("Heatmap of Most Rewarded Actions at Each State")
+plt.xlabel("State Grid X")
+plt.ylabel("State Grid Y")
+plt.show()

@@ -1,0 +1,26 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+mean_rewards = []
+th4s = []
+maxs = []
+for i in range(10):
+    no = (i + 1)*10
+    datapath = 'test_folder/flatten_traj/maxent/S33A6/direc_inferred_rewards' + str(no) + '.csv'
+    # calculate the mean reward
+    data = np.loadtxt(datapath, delimiter=',')
+    mean_reward = np.mean(data)
+    print('mean reward:', mean_reward)
+    mean_rewards.append(mean_reward)
+    th4 = data[3]
+    print('th4:', th4)
+    th4s.append(th4)
+    max = np.max(data)
+    print('max:', max)
+    maxs.append(max)
+
+
+plt.figure(figsize=(10, 8))
+plt.plot(maxs)
+plt.show()
+

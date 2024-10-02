@@ -92,8 +92,8 @@ print("---------------------------------")
 mdp.set_transition_probabilities(transition_probabilities)
 
 # Apply MaxEnt IRL
-epochs = 100
-learning_rate = 0.01
+epochs = 150
+learning_rate = 0.001
 discount = 0.9
 # rewards = irl(feature_matrix, mdp.n_actions, mdp.discount, transition_probabilities, trajectories, epochs, learning_rate)
 rewards = maxentirl(feature_matrix, mdp.n_actions, discount, 

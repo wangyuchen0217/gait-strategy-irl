@@ -95,15 +95,15 @@ mdp.set_transition_probabilities(transition_probabilities)
 epochs = 100
 learning_rate = 0.01
 discount = 0.9
-rewards = irl(feature_matrix, mdp.n_actions, mdp.discount, transition_probabilities, trajectories, epochs, learning_rate)
-# rewards = maxentirl(feature_matrix, mdp.n_actions, discount, 
-#                     transition_probabilities, trajectories, epochs, learning_rate)
+# rewards = irl(feature_matrix, mdp.n_actions, mdp.discount, transition_probabilities, trajectories, epochs, learning_rate)
+rewards = maxentirl(feature_matrix, mdp.n_actions, discount, 
+                     transition_probabilities, trajectories, epochs, learning_rate)
 
-# #Output the inferred rewards
-# print("Inferred Rewards:", rewards.shape)
-# print(rewards)
-# # Save the inferred rewards as a CSV file
-# np.savetxt('inferred_rewards_maxent_direction.csv', rewards, delimiter=',')
+#Output the inferred rewards
+print("Inferred Rewards:", rewards.shape)
+print(rewards)
+# Save the inferred rewards as a CSV file
+np.savetxt('inferred_rewards_maxent_direction.csv', rewards, delimiter=',')
 
 # # Evaluate the inferred rewards
 # rewards = np.loadtxt('inferred_rewards.csv', delimiter=',')

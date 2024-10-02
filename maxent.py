@@ -133,7 +133,7 @@ def irl(feature_matrix, n_actions, discount, transition_probability,
             print(f"Epoch {i + 1}/{epochs} - Time elapsed: {elapsed_time:.2f}s")
             rewards = feature_matrix.dot(alpha).reshape((n_states,))
             plot_grid_based_rewards(rewards, n_direction_bins=5, n_vel_bins=28, epoch=str(i+1))
-            # np.savetxt('direc_inferred_rewards'+str(i+1)+'.csv', output, delimiter=',')
+            np.savetxt('direc_inferred_rewards'+str(i+1)+'.csv', rewards, delimiter=',')
 
     return feature_matrix.dot(alpha).reshape((n_states,))
 

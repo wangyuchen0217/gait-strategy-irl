@@ -4,7 +4,6 @@ from gridworld import CustomMDP as MDP
 import maxent
 from maxent import customirl
 from maxent import maxentirl
-import maxent_gpu
 import matplotlib.pyplot as plt
 import seaborn as sns
 from plot_evaluate import *
@@ -55,10 +54,15 @@ def build_transition_matrix_from_indices(data, n_states, n_actions):
         next_state, _ = data[i + 1]      # Infer the next state from the next tuple
         # Increment the count for this transition
         transition_counts[state, action, next_state] += 1
-    # Normalize the counts to get probabilities
-    transition_probabilities = transition_counts / np.sum(transition_counts, axis=2, keepdims=True)
-    # Handle cases where no transitions were recorded for some state-action pairs
-    transition_probabilities = np.nan_to_num(transition_probabilities)
+    # Compute the sums of transition counts along axis 2
+    counts_sum = np.sum(transition_counts, axis=2, keepdims=True)
+    # Safely divide the counts by the sums, where counts_sum != 0
+    transition_probabilities = np.divide(
+        transition_counts, 
+        counts_sum, 
+        out=np.zeros_like(transition_counts),  # If division by zero, output 0
+        where=counts_sum != 0                 # Only divide where counts_sum is not 0
+    )
     return transition_probabilities
 
 # Generate trajectories from the dataset

@@ -125,6 +125,13 @@ def irl(feature_matrix, n_actions, discount, transition_probability,
                                          transition_probability, trajectories)
         grad = feature_expectations - feature_matrix.T.dot(expected_svf)
 
+        ''''''
+        # (revised) Add L2 regularization term to the gradient
+        lambda_reg = 0.01  # Adjust this value as needed
+        grad -= lambda_reg * alpha
+        grad_norm = np.linalg.norm(grad)
+        ''''''
+        
         alpha += learning_rate * grad
 
         # Print progress every 10 epochs
@@ -132,6 +139,12 @@ def irl(feature_matrix, n_actions, discount, transition_probability,
             elapsed_time = time.time() - start_time
             print(f"Epoch {i + 1}/{epochs} - Time elapsed: {elapsed_time:.2f}s")
             rewards = feature_matrix.dot(alpha).reshape((n_states,))
+            ''''''
+            # (revised) Normalize rewards to range [0, 1] (or use a different range if needed)
+            rewards = (rewards - rewards.min()) / (rewards.max() - rewards.min())
+            # (revised) traking the gradient norm
+            print(f"--------------------- Gradient norm: {grad_norm:.4f}")
+            ''''''
             plot_grid_based_rewards(rewards, n_direction_bins=5, n_vel_bins=28, epoch=str(i+1))
             np.savetxt('direc_inferred_rewards'+str(i+1)+'.csv', rewards, delimiter=',')
 

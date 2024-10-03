@@ -84,12 +84,12 @@ epochs = 100
 learning_rate = 0.01
 discount = 0.9
 
-# train irl
-rewards = maxentirl(feature_matrix, mdp.n_actions, discount, transition_probabilities, trajectories, epochs, learning_rate)
-#Output the inferred rewards
-print("Inferred Rewards:", rewards.shape)
-# Save the inferred rewards as a CSV file
-np.savetxt('inferred_rewards_maxent_direction.csv', rewards, delimiter=',')
+# # train irl
+# rewards = maxentirl(feature_matrix, mdp.n_actions, discount, transition_probabilities, trajectories, epochs, learning_rate)
+# #Output the inferred rewards
+# print("Inferred Rewards:", rewards.shape)
+# # Save the inferred rewards as a CSV file
+# np.savetxt('inferred_rewards_maxent_direction.csv', rewards, delimiter=',')
 
 
 def plot_most_rewarded_action(q_values, n_states):

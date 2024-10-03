@@ -1,0 +1,23 @@
+train.py:59: RuntimeWarning: invalid value encountered in true_divide
+  transition_probabilities = transition_counts / np.sum(transition_counts, axis=2, keepdims=True)
+---------------------------------
+Velocity bins:  28
+Direction bins:  5
+Gait categories:  6
+---------------------------------
+Number of states:  140
+Number of actions:  6
+Transition probabilities shape:  (140, 6, 140)
+Rewards shape:  (140, 6)
+Feature matrix shape:  (140, 33)
+Transition probabilities shape:  (140, 6, 140)
+---------------------------------
+Starting IRL:
+Traceback (most recent call last):
+  File "train.py", line 88, in <module>
+    # # train irl
+  File "/home/yuchen/insect_walking_irl/maxent.py", line 124, in maxentirl
+    expected_svf = find_expected_svf(n_states, r, n_actions, discount,
+  File "/home/yuchen/insect_walking_irl/maxent.py", line 235, in find_expected_svf
+    policy[i, j] * # Stochastic policy
+KeyboardInterrupt

@@ -1,8 +1,8 @@
 import numpy as np
 import pandas as pd
 from gridworld import CustomMDP as MDP
-from maxent import customirl as irl
-from maxent import irl as maxentirl
+from maxent import customirl
+from maxent import maxentirl
 import maxent_gpu
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -95,7 +95,7 @@ mdp.set_transition_probabilities(transition_probabilities)
 epochs = 100
 learning_rate = 0.01
 discount = 0.9
-# rewards = irl(feature_matrix, mdp.n_actions, mdp.discount, transition_probabilities, trajectories, epochs, learning_rate)
+# rewards = customirl(feature_matrix, mdp.n_actions, mdp.discount, transition_probabilities, trajectories, epochs, learning_rate)
 rewards = maxentirl(feature_matrix, mdp.n_actions, discount, 
                      transition_probabilities, trajectories, epochs, learning_rate)
 

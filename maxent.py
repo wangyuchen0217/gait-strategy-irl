@@ -83,7 +83,7 @@ def customirl(feature_matrix, n_actions, discount, transition_probability,
     return rewards
 
 
-def irl(feature_matrix, n_actions, discount, transition_probability,
+def maxentirl(feature_matrix, n_actions, discount, transition_probability,
         trajectories, epochs, learning_rate):
     """
     Find the reward function for the given trajectories.
@@ -131,7 +131,7 @@ def irl(feature_matrix, n_actions, discount, transition_probability,
         grad -= lambda_reg * alpha
         grad_norm = np.linalg.norm(grad)
         ''''''
-        
+
         alpha += learning_rate * grad
 
         # Print progress every 10 epochs

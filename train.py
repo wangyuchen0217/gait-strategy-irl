@@ -89,31 +89,17 @@ trajectories = trajectories.reshape(1, len_trajectories, 2)
 # transition_probabilities = np.swapaxes(transition_probabilities, 0, 1)
 
 def build_transition_matrix_from_indices(data, n_states, n_actions):
-    """
-    Build transition probability matrix from (state_idx, action_idx) data.
-    
-    :param data: A list of tuples (state_idx, action_idx), where the next state is inferred by the next item.
-    :param n_states: Number of states.
-    :param n_actions: Number of actions.
-    :return: Transition probability matrix of shape (n_states, n_actions, n_states).
-    """
-    # Initialize the transition counts
     transition_counts = np.zeros((n_states, n_actions, n_states))
-
     # Iterate over the data and infer the next state from the next tuple
     for i in range(len(data) - 1):
         state, action = data[i]          # Current state and action
         next_state, _ = data[i + 1]      # Infer the next state from the next tuple
-        
         # Increment the count for this transition
         transition_counts[state, action, next_state] += 1
-
     # Normalize the counts to get probabilities
     transition_probabilities = transition_counts / np.sum(transition_counts, axis=2, keepdims=True)
-
     # Handle cases where no transitions were recorded for some state-action pairs
     transition_probabilities = np.nan_to_num(transition_probabilities)
-
     return transition_probabilities
 
 transition_probabilities = build_transition_matrix_from_indices(trajectories[0], n_states, n_actions)
@@ -160,7 +146,7 @@ def plot_most_rewarded_action(q_values, n_states):
     plt.title("Most Rewarded Action for Each State")
     plt.xlabel("State Index")
     plt.ylabel("State Index")
-    plt.show()
+    plt.savefig('most_rewarded_action_heatmap.png')
 
 plot_most_rewarded_action(q_values, n_states)
 

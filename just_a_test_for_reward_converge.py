@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 mean_rewards = []
 th4s = []
 maxs = []
-for i in range(15):
+for i in range(7):
     no = (i + 1)*10
     datapath = 'direc_inferred_rewards' + str(no) + '.csv'
     # calculate the mean reward

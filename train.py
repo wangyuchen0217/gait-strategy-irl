@@ -122,11 +122,11 @@ def plot_most_rewarded_action(q_values, n_states):
     plt.savefig('most_rewarded_action_heatmap.png')
 
 
-# # evaluate the policy
-# rewards = np.loadtxt('test_folder/flatten_traj/maxent/S33A6/inferred_rewards_maxent_direction.csv', delimiter=',')
-# q_values = maxent.find_policy(n_states, rewards, n_actions, discount, transition_probabilities)
-# print("Q-values shape: ", q_values.shape)
-# # save the q_values as a CSV file
-# np.savetxt('q_values_maxent_direction.csv', q_values, delimiter=',')
-# plot_most_rewarded_action(q_values, n_states)
+# evaluate the policy
+rewards = np.loadtxt('test_folder/flatten_traj/maxent/S33A6-tran/inferred_rewards_maxent_direction.csv', delimiter=',')
+q_values = maxent.find_policy(n_states, rewards, n_actions, discount, transition_probabilities)
+print("Q-values shape: ", q_values.shape)
+# save the q_values as a CSV file
+np.savetxt('q_values_maxent_direction.csv', q_values, delimiter=',')
+plot_most_rewarded_action(q_values, n_states)
 

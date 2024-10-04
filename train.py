@@ -114,7 +114,7 @@ def plot_most_rewarded_action(q_values, n_states):
     most_rewarded_action = np.argmax(q_values, axis=1)
     print("Most rewarded action shape: ", most_rewarded_action.shape)
     # Plot the heatmap (reshaping if the states are grid-like, otherwise just plot)
-    plt.figure(figsize=(10, 6))
+    plt.figure(figsize=(10, 8))
     sns.heatmap(most_rewarded_action.reshape(n_velocity_bins, n_direction_bins), cmap="YlGnBu", annot=True)
     plt.title("Most Rewarded Action for Each State")
     plt.xlabel("State Index")
@@ -122,11 +122,11 @@ def plot_most_rewarded_action(q_values, n_states):
     plt.savefig('most_rewarded_action_heatmap.png')
 
 
-# evaluate the policy
-rewards = np.loadtxt('test_folder/flatten_traj/maxent/S33A6-tran/inferred_rewards_maxent_direction.csv', delimiter=',')
-q_values = maxent.find_policy(n_states, rewards, n_actions, discount, transition_probabilities)
-print("Q-values shape: ", q_values.shape)
-# save the q_values as a CSV file
-np.savetxt('q_values_maxent_direction.csv', q_values, delimiter=',')
-plot_most_rewarded_action(q_values, n_states)
+# # evaluate the policy
+# rewards = np.loadtxt('test_folder/flatten_traj/maxent/S33A6-tran/inferred_rewards_maxent_direction.csv', delimiter=',')
+# q_values = maxent.find_policy(n_states, rewards, n_actions, discount, transition_probabilities)
+# print("Q-values shape: ", q_values.shape)
+# # save the q_values as a CSV file
+# np.savetxt('q_values_maxent_direction.csv', q_values, delimiter=',')
+# plot_most_rewarded_action(q_values, n_states)
 

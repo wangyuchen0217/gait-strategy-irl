@@ -4,9 +4,9 @@ import matplotlib.pyplot as plt
 mean_rewards = []
 th4s = []
 maxs = []
-for i in range(7):
+for i in range(10):
     no = (i + 1)*10
-    datapath = 'direc_inferred_rewards' + str(no) + '.csv'
+    datapath = 'test_folder/flatten_traj/maxent/S33A6-tran/direc_inferred_rewards' + str(no) + '.csv'
     # calculate the mean reward
     data = np.loadtxt(datapath, delimiter=',')
     mean_reward = np.mean(data)
@@ -21,7 +21,7 @@ for i in range(7):
 
 
 plt.figure(figsize=(10, 8))
-plt.plot(maxs)
+plt.plot(mean_rewards)
 plt.show()
 
 

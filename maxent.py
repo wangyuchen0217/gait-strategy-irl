@@ -84,7 +84,7 @@ def customirl(feature_matrix, n_actions, discount, transition_probability,
 
 
 def maxentirl(feature_matrix, n_actions, discount, transition_probability,
-        trajectories, epochs, learning_rate):
+        trajectories, epochs, learning_rate, test_folder):
     """
     Find the reward function for the given trajectories.
 
@@ -118,6 +118,7 @@ def maxentirl(feature_matrix, n_actions, discount, transition_probability,
                                                      trajectories)
 
     # Gradient descent on alpha.
+    mean_rewards = []
     for i in range(epochs):
         # print("i: {}".format(i))
         r = feature_matrix.dot(alpha)
@@ -133,22 +134,32 @@ def maxentirl(feature_matrix, n_actions, discount, transition_probability,
         '''
 
         alpha += learning_rate * grad
+        rewards = feature_matrix.dot(alpha).reshape((n_states,))
+
+        # record the mean reward
+        mean_reward = np.mean(rewards)
+        mean_rewards.append(mean_reward)
+        plt.figure(figsize=(10, 8))
+        plt.plot(mean_rewards)
+        plt.xlabel('Epochs')
+        plt.ylabel('Mean Reward')
+        plt.title('Training Progress')
+        plt.savefig(test_folder+'mean_rewards.png')
 
         # Print progress every 10 epochs
         if (i + 1) % 10 == 0:
             elapsed_time = time.time() - start_time
             print(f"Epoch {i + 1}/{epochs} - Time elapsed: {elapsed_time:.2f}s")
-            rewards = feature_matrix.dot(alpha).reshape((n_states,))
             '''
             # (revised) Normalize rewards to range [0, 1] (or use a different range if needed)
             rewards = (rewards - rewards.min()) / (rewards.max() - rewards.min())
             # (revised) traking the gradient norm
             print(f"--------------------- Gradient norm: {grad_norm:.4f}")
             '''
-            plot_grid_based_rewards(rewards, n_direction_bins=5, n_vel_bins=28, epoch=str(i+1))
-            np.savetxt('direc_inferred_rewards'+str(i+1)+'.csv', rewards, delimiter=',')
+            plot_grid_based_rewards(rewards, n_direction_bins=5, n_vel_bins=28, epoch=str(i+1), test_folder=test_folder)
+            np.savetxt(test_folder+'direc_inferred_rewards'+str(i+1)+'.csv', rewards, delimiter=',')
 
-    return feature_matrix.dot(alpha).reshape((n_states,))
+    return rewards
 
 def find_svf(n_states, trajectories):
     """

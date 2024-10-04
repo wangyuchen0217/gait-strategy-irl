@@ -97,16 +97,18 @@ def plot_transition_heatmaps(transition_probabilities):
 plot_transition_heatmaps(transition_probabilities)
 
 # Apply MaxEnt IRL
-epochs = 100
+epochs = 200
 learning_rate = 0.01
 discount = 0.9
+test_folder = 'test_folder/flatten_traj/maxent/S33A6-tran-lengthen/'
 
-# # train irl
-# rewards = maxentirl(feature_matrix, mdp.n_actions, discount, transition_probabilities, trajectories, epochs, learning_rate)
-# #Output the inferred rewards
-# print("Inferred Rewards:", rewards.shape)
-# # Save the inferred rewards as a CSV file
-# np.savetxt('inferred_rewards_maxent_direction.csv', rewards, delimiter=',')
+# train irl
+rewards = maxentirl(feature_matrix, mdp.n_actions, discount, transition_probabilities, 
+                                        trajectories, epochs, learning_rate, test_folder)
+#Output the inferred rewards
+print("Inferred Rewards:", rewards.shape)
+# Save the inferred rewards as a CSV file
+np.savetxt(test_folder+'inferred_rewards_maxent_direction.csv', rewards, delimiter=',')
 
 
 def plot_most_rewarded_action(q_values, n_states):
@@ -123,10 +125,10 @@ def plot_most_rewarded_action(q_values, n_states):
 
 
 # # evaluate the policy
-# rewards = np.loadtxt('test_folder/flatten_traj/maxent/S33A6-tran/inferred_rewards_maxent_direction.csv', delimiter=',')
+# rewards = np.loadtxt(test_folder+'inferred_rewards_maxent_direction.csv', delimiter=',')
 # q_values = maxent.find_policy(n_states, rewards, n_actions, discount, transition_probabilities)
 # print("Q-values shape: ", q_values.shape)
 # # save the q_values as a CSV file
-# np.savetxt('q_values_maxent_direction.csv', q_values, delimiter=',')
+# np.savetxt(test_folder+'q_values_maxent_direction.csv', q_values, delimiter=',')
 # plot_most_rewarded_action(q_values, n_states)
 

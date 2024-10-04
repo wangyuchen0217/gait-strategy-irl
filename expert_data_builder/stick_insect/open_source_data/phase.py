@@ -36,7 +36,7 @@ def detect_transitions(leg_data):
 
 
 
-file_path = 'expert_data_builder/stick_insect/Carausius/Animal12_110415_00_22_gait.csv'
+file_path = 'expert_data_builder/stick_insect/Carausius/Animal12_110415_00_32_gait.csv'
 gait_data = pd.read_csv(file_path)
 
 # Detect transitions for each leg
@@ -57,7 +57,6 @@ print("Phase differences between LF and RF (radians):", phase_diff_LF_RF)
 print("Phase differences between LM and RM (radians):", phase_diff_LM_RM)
 print("Phase differences between LH and RH (radians):", phase_diff_LH_RH)
 print("---------------------------------")
-
 phase_diff_LF_LM = dynamic_phase_diff(transitions['LF'], transitions['LM'])
 phase_diff_LF_LH = dynamic_phase_diff(transitions['LF'], transitions['LH'])
 phase_diff_RF_RM = dynamic_phase_diff(transitions['RF'], transitions['RM'])
@@ -66,4 +65,23 @@ print("Phase differences between LF and LM (radians):", phase_diff_LF_LM)
 print("Phase differences between LF and LH (radians):", phase_diff_LF_LH)
 print("Phase differences between RF and RM (radians):", phase_diff_RF_RM)
 print("Phase differences between RF and RH (radians):", phase_diff_RF_RH)
+print("---------------------------------")
 
+# Bin the Phase Differences: Low/Mid/High Phase Differences
+n_bins = 3
+phase_diff_bins = np.linspace(0, 2*np.pi, n_bins+1)
+phase_diff_LF_RF_binned = np.digitize(phase_diff_LF_RF, phase_diff_bins)
+phase_diff_LM_RM_binned = np.digitize(phase_diff_LM_RM, phase_diff_bins)
+phase_diff_LH_RH_binned = np.digitize(phase_diff_LH_RH, phase_diff_bins)
+print("Binned Phase Differences between LF and RF:", phase_diff_LF_RF_binned)
+print("Binned Phase Differences between LM and RM:", phase_diff_LM_RM_binned)
+print("Binned Phase Differences between LH and RH:", phase_diff_LH_RH_binned)
+print("---------------------------------")
+phase_diff_LF_LM_binned = np.digitize(phase_diff_LF_LM, phase_diff_bins)
+phase_diff_LF_LH_binned = np.digitize(phase_diff_LF_LH, phase_diff_bins)
+phase_diff_RF_RM_binned = np.digitize(phase_diff_RF_RM, phase_diff_bins)
+phase_diff_RF_RH_binned = np.digitize(phase_diff_RF_RH, phase_diff_bins)
+print("Binned Phase Differences between LF and LM:", phase_diff_LF_LM_binned)
+print("Binned Phase Differences between LF and LH:", phase_diff_LF_LH_binned)
+print("Binned Phase Differences between RF and RM:", phase_diff_RF_RM_binned)
+print("Binned Phase Differences between RF and RH:", phase_diff_RF_RH_binned)

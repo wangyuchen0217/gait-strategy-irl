@@ -100,7 +100,7 @@ plot_transition_heatmaps(transition_probabilities)
 epochs = 200
 learning_rate = 0.01
 discount = 0.9
-test_folder = 'test_folder/flatten_traj/maxent/S33A6-tran/'
+test_folder = 'test_folder/flatten_traj/maxent/S33A6-tran-lengthen/'
 n_bin1=n_direction_bins
 n_bin2=n_velocity_bins
 lable_bin1="Direction Bins"

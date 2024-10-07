@@ -101,6 +101,11 @@ epochs = 100
 learning_rate = 0.01
 discount = 0.9
 test_folder = 'test_folder/flatten_traj/maxent/S49A6-tran/'
+n_bin1=n_acceleration_bins
+n_bin2=n_velocity_bins
+lable_bin1="Acceleration Bins"
+lable_bin2="Velocity Bins"
+
 
 # train irl
 rewards = maxentirl(feature_matrix, mdp.n_actions, discount, transition_probabilities, 
@@ -111,23 +116,14 @@ print("Inferred Rewards:", rewards.shape)
 np.savetxt(test_folder+'inferred_rewards_maxent_velocity.csv', rewards, delimiter=',')
 
 
-def plot_most_rewarded_action(q_values):
-    # Find the action with the highest Q-value for each state
-    most_rewarded_action = np.argmax(q_values, axis=1)
-    print("Most rewarded action shape: ", most_rewarded_action.shape)
-    # Plot the heatmap (reshaping if the states are grid-like, otherwise just plot)
-    plt.figure(figsize=(10, 8))
-    sns.heatmap(most_rewarded_action.reshape(n_velocity_bins, n_acceleration_bins), cmap="YlGnBu", annot=True)
-    plt.title("Most Rewarded Action for Each State")
-    plt.xlabel("State Index")
-    plt.ylabel("State Index")
-    plt.savefig('most_rewarded_action_heatmap.png')
-
-
 # # evaluate the policy
-# rewards = np.loadtxt(test_folder+'inferred_rewards_maxent_direction.csv', delimiter=',')
+# rewards = np.loadtxt(test_folder+'inferred_rewards_maxent_velocity.csv', delimiter=',')
 # q_values = maxent.find_policy(n_states, rewards, n_actions, discount, transition_probabilities)
 # print("Q-values shape: ", q_values.shape)
 # # save the q_values as a CSV file
-# np.savetxt(test_folder+'q_values_maxent_direction.csv', q_values, delimiter=',')
-# plot_most_rewarded_action(q_values)
+# np.savetxt(test_folder+'q_values_maxent_velocity.csv', q_values, delimiter=',')
+# plot_most_rewarded_action(q_values, n_bin1, n_bin2, lable_bin1, lable_bin2, test_folder)
+# plot_q_table(q_values, test_folder)
+# plot_action_reward_subplots(q_values, n_bin1, n_bin2, n_actions, lable_bin1, lable_bin2, test_folder)
+# plot_singlestate_action(q_values, n_states, n_bin1, lable_bin1, test_folder)
+# plot_singlestate_action(q_values, n_states, n_bin2, lable_bin2, test_folder)

@@ -18,6 +18,14 @@ def plot_gait(gait_data):
     plt.title('Gait Phase')
     plt.show()
 
+# Function to detect transitions from swing (0) to stance (1) for each leg
+def detect_transitions(leg_data):
+    transitions = []
+    for i in range(1, len(leg_data)):
+        if leg_data[i-1] == 0 and leg_data[i] == 1:
+            transitions.append(i)  # Record the index of stance phase start
+    return transitions
+
 def dynamic_phase_diff(leg1_stance_times, leg2_stance_times):
     phase_diffs = []
     
@@ -42,16 +50,8 @@ def dynamic_phase_diff(leg1_stance_times, leg2_stance_times):
     
     return np.array(phase_diffs)
 
-# Function to detect transitions from swing (0) to stance (1) for each leg
-def detect_transitions(leg_data):
-    transitions = []
-    for i in range(1, len(leg_data)):
-        if leg_data[i-1] == 0 and leg_data[i] == 1:
-            transitions.append(i)  # Record the index of stance phase start
-    return transitions
 
-
-file_path = 'expert_data_builder/stick_insect/Carausius/Animal12_110415_00_32_gait.csv'
+file_path = 'expert_data_builder/stick_insect/Carausius/Animal12_110415_00_22_gait.csv'
 gait_data = pd.read_csv(file_path)
 plot_gait(gait_data)
 

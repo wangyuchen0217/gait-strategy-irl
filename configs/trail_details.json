@@ -95,29 +95,29 @@
         "id_3": "39",
         "length": 2131
     },
-
-
-
     "T13": {
         "insect_name": "Aretaon",
         "insect_number": "Animal11",
         "id_1": "100723",
         "id_2": "00",
-        "id_3": "01"
+        "id_3": "01",
+        "length": 1101
     },
     "T14": {
         "insect_name": "Aretaon",
         "insect_number": "Animal11",
         "id_1": "100723",
         "id_2": "00",
-        "id_3": "04"
+        "id_3": "04",
+        "length": 814
     },
     "T15": {
         "insect_name": "Aretaon",
         "insect_number": "Animal11",
         "id_1": "100723",
         "id_2": "00",
-        "id_3": "05"
+        "id_3": "05",
+        "length": 1308
     },
     "T16": {
         "insect_name": "Aretaon",
@@ -182,36 +182,37 @@
         "id_2": "48",
         "id_3": "13"
     },
-
-
-
     "T25": {
         "insect_name": "Medauroidea",
         "insect_number": "Animal06",
         "id_1": "110919",
         "id_2": "00",
-        "id_3": "15"
+        "id_3": "15",
+        "length": 3073
     },
     "T26": {
         "insect_name": "Medauroidea",
         "insect_number": "Animal06",
         "id_1": "110919",
         "id_2": "00",
-        "id_3": "16"
+        "id_3": "16",
+        "length": 4592
     },
     "T27": {
         "insect_name": "Medauroidea",
         "insect_number": "Animal06",
         "id_1": "110919",
         "id_2": "00",
-        "id_3": "31"
+        "id_3": "31",
+        "length": 3907
     },
     "T28": {
         "insect_name": "Medauroidea",
         "insect_number": "Animal06",
         "id_1": "110919",
         "id_2": "08",
-        "id_3": "06"
+        "id_3": "06",
+        "length": 4187
     },
     "T29": {
         "insect_name": "Medauroidea",

@@ -22,12 +22,12 @@ def json_reader(subject:str):
     # Inspect the keys of the dictionary to understand the structure of the file
     print(mat_contents.keys())
 
-    return mat_contents, file_name
+    return mat_contents, file_name, insect_name
 
 
 def mat_reader_vel(subject:str, save=False, visualizaiton=False):
     # Load the .mat file
-    mat_contents, file_name = json_reader(subject)
+    mat_contents, file_name, insect_name = json_reader(subject)
     with open("configs/trail_details.json", "r") as f:
         trail_details = json.load(f)  
     # Extract specific data from the dictionary
@@ -36,7 +36,7 @@ def mat_reader_vel(subject:str, save=False, visualizaiton=False):
     vel = pd.DataFrame(vel, index=None, columns=["vel"])
 
     if save:
-        save_path = 'expert_data_builder/stick_insect/Carausius/' + file_name + '_vel.csv'
+        save_path = 'expert_data_builder/stick_insect/'+ insect_name +'/' + file_name + '_vel.csv'
         vel.to_csv(save_path, index=False)
         print(vel.shape) # the 1st value is nan
 
@@ -53,7 +53,7 @@ def mat_reader_vel(subject:str, save=False, visualizaiton=False):
 
 def mat_reader_direction(subject:str, save=False, visualizaiton=False):
     # Load the .mat file
-    mat_contents, file_name = json_reader(subject)
+    mat_contents, file_name, insect_name = json_reader(subject)
     with open("configs/trail_details.json", "r") as f:
         trail_details = json.load(f)  
     # Extract specific data from the dictionary    
@@ -63,7 +63,7 @@ def mat_reader_direction(subject:str, save=False, visualizaiton=False):
     direction = pd.DataFrame(T3_yaw, index=None, columns=["direction"])
     
     if save:
-        save_path = 'expert_data_builder/stick_insect/Carausius/' + file_name + '_direction.csv'
+        save_path = 'expert_data_builder/stick_insect/'+ insect_name +'/' + file_name + '_direction.csv'
         direction.to_csv(save_path, index=False)
         print(direction.shape)
 
@@ -81,7 +81,7 @@ def mat_reader_direction(subject:str, save=False, visualizaiton=False):
 
 def mat_reader_gait(subject:str, save=False):
     # Load the .mat file
-    mat_contents, file_name = json_reader(subject)
+    mat_contents, file_name, insect_name = json_reader(subject)
     with open("configs/trail_details.json", "r") as f:
         trail_details = json.load(f)  
     # Extract specific data from the dictionary
@@ -94,14 +94,14 @@ def mat_reader_gait(subject:str, save=False):
     gait = pd.DataFrame(gait_info, index=None, columns=["LF", "LM", "LH", "RF", "RM", "RH", "incontact"])
 
     if save:
-        save_path = 'expert_data_builder/stick_insect/Carausius/' + file_name + '_gait.csv'
+        save_path = 'expert_data_builder/stick_insect/'+ insect_name +'/' + file_name + '_gait.csv'
         gait.to_csv(save_path, index=False)
         print(gait.shape)
 
 
 def mat_reader_joint_angle(subject:str, save=False, visualizaiton=False):
     # Load the .mat file
-    mat_contents, file_name = json_reader(subject)
+    mat_contents, file_name, insect_name = json_reader(subject)
     with open("configs/trail_details.json", "r") as f:
         trail_details = json.load(f)
 
@@ -156,7 +156,7 @@ def mat_reader_joint_angle(subject:str, save=False, visualizaiton=False):
                                                                                                 "LF_ThC", "LM_ThC", "LH_ThC", "RF_ThC", "RM_ThC", "RH_ThC",
                                                                                                 "LF_FTi", "LM_FTi", "LH_FTi", "RF_FTi", "RM_FTi", "RH_FTi"])
     if save:
-        save_path = 'expert_data_builder/stick_insect/Carausius/' + file_name + '.csv'
+        save_path = 'expert_data_builder/stick_insect/'+ insect_name +'/' + file_name + '.csv'
         dataset.to_csv(save_path, index=False)
         print(dataset.shape)
 
@@ -183,7 +183,8 @@ def mat_reader_joint_angle(subject:str, save=False, visualizaiton=False):
 if __name__ == '__main__':
     # input the total number of subjects
     subjects = 3 # 12
-    for i in range(13, subjects + 1):
+    # for i in range(1, subjects + 1):
+    for i in range(25, 28):
         subject_number = f"{i:02}"
         mat_reader_joint_angle(subject_number, save=True, visualizaiton=False)
         mat_reader_vel(subject_number, save=True, visualizaiton=True)

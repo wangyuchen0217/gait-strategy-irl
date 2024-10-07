@@ -184,7 +184,7 @@ def plot_singlestate_action(q_values, n_states, n_bin, lable_bin, test_folder):
     plt.xlabel("Actions", fontsize=14)
     plt.ylabel(lable_bin, fontsize=14)
     plt.colorbar(label='Reward Value')
-    plt.savefig(test_folder+lable_bin+"_action_reward_heatmap.png")
+    plt.savefig(test_folder+"Action "+lable_bin+"Reward Heatmap.png")
 
 # evaluate the policy
 rewards = np.loadtxt(test_folder+'inferred_rewards_maxent_direction.csv', delimiter=',')

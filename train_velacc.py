@@ -97,7 +97,7 @@ def plot_transition_heatmaps(transition_probabilities):
 plot_transition_heatmaps(transition_probabilities)
 
 # Apply MaxEnt IRL
-epochs = 200
+epochs = 100
 learning_rate = 0.01
 discount = 0.9
 test_folder = 'test_folder/flatten_traj/maxent/S49A6-tran/'

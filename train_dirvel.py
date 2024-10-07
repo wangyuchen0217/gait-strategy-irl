@@ -101,6 +101,10 @@ epochs = 200
 learning_rate = 0.01
 discount = 0.9
 test_folder = 'test_folder/flatten_traj/maxent/S33A6-tran/'
+n_bin1=n_direction_bins
+n_bin2=n_velocity_bins
+lable_bin1="Direction Bins"
+lable_bin2="Velocity Bins"
 
 # # train irl
 # rewards = maxentirl(feature_matrix, mdp.n_actions, discount, transition_probabilities, 
@@ -132,6 +136,36 @@ def plot_q_table(q_values, test_folder):
     plt.colorbar(label='Reward Value')
     plt.savefig(test_folder+"q_table_heatmap.png")
 
+def plot_action_reward_subplots(q_values, n_bin1, n_bin2, n_actions, lable_bin1, lable_bin2, test_folder):
+    n_states = n_bin1 * n_bin2
+    # Set up the figure and the 2x3 subplot grid
+    fig, axes = plt.subplots(2, 3, figsize=(18, 12))
+    axes = axes.flatten()
+    # Iterate over each action index to create a subplot
+    for action_index in range(n_actions):
+        # Initialize a grid to store the reward for the specified action per (direction, velocity) pair
+        reward_grid = np.zeros((n_bin2, n_bin1))
+        # Populate the reward grid based on the reward for the specified action
+        for state_index in range(n_states):
+            bin2 = state_index // n_bin1
+            bin1 = state_index % n_bin1
+            # Extract the reward for the specified action
+            reward_grid[bin2, bin1] = q_values[state_index, action_index]
+        # Plotting the heatmap using imshow in the appropriate subplot
+        ax = axes[action_index]
+        img = ax.imshow(reward_grid, cmap='viridis', aspect='auto')
+        ax.set_title(f"Action {action_index}", fontsize=16)
+        ax.set_xticks(ticks=np.arange(0, n_bin1), labels=np.arange(-20, 5, step=5), fontsize=12)
+        ax.set_yticks(ticks=np.arange(0, n_bin2)[::3], labels=np.arange(0, 140, step=5)[::3], fontsize=12)
+        ax.set_xlabel(lable_bin1, fontsize=14)
+        ax.set_ylabel(lable_bin2, fontsize=14)
+    # Add a color bar to the last subplot, shared across all subplots
+    # change the ax position
+    # cb_ax = fig.add_axes([0.92, 0.15, 0.02, 0.7])
+    fig.colorbar(img, ax=axes, orientation='vertical', fraction=0.02, pad=0.04)
+    plt.tight_layout(rect=[0, 0, 0.88, 1])
+    plt.savefig(test_folder+"action_reward_subplots.png")
+
 
 # evaluate the policy
 rewards = np.loadtxt(test_folder+'inferred_rewards_maxent_direction.csv', delimiter=',')
@@ -141,4 +175,4 @@ print("Q-values shape: ", q_values.shape)
 np.savetxt(test_folder+'q_values_maxent_direction.csv', q_values, delimiter=',')
 plot_most_rewarded_action(q_values, test_folder)
 plot_q_table(q_values, test_folder)
-
+plot_action_reward_subplots(q_values, n_bin1, n_bin2, n_actions, lable_bin1, lable_bin2, test_folder)

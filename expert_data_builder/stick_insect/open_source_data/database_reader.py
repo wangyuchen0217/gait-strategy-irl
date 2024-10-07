@@ -88,7 +88,9 @@ def mat_reader_gait(subject:str, save=False):
     gait = mat_contents['gait']
     pattern = gait['pattern'][0, 0]
     incontact = gait['incontact'][0, 0]
-    gait_info = np.concatenate((pattern, incontact), axis=1)
+    right = pattern[:, 0:3]
+    left = pattern[:, 3:6]
+    gait_info = np.concatenate((left, right, incontact), axis=1)
     gait = pd.DataFrame(gait_info, index=None, columns=["LF", "LM", "LH", "RF", "RM", "RH", "incontact"])
 
     if save:
@@ -184,6 +186,6 @@ if __name__ == '__main__':
     for i in range(1, subjects + 1):
         subject_number = f"{i:02}"
         # mat_reader_joint_angle(subject_number, save=False, visualizaiton=False)
-        mat_reader_vel(subject_number, save=False, visualizaiton=True)
-        mat_reader_direction(subject_number, save=False, visualizaiton=True)
-        # mat_reader_gait(subject_number, save=True)
+        # mat_reader_vel(subject_number, save=False, visualizaiton=True)
+        # mat_reader_direction(subject_number, save=False, visualizaiton=True)
+        mat_reader_gait(subject_number, save=True)

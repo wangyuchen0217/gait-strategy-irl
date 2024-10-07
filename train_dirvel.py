@@ -100,7 +100,7 @@ plot_transition_heatmaps(transition_probabilities)
 epochs = 200
 learning_rate = 0.01
 discount = 0.9
-test_folder = 'test_folder/flatten_traj/maxent/S33A6-tran-lengthen/'
+test_folder = 'test_folder/flatten_traj/maxent/S33A6-tran/'
 
 # # train irl
 # rewards = maxentirl(feature_matrix, mdp.n_actions, discount, transition_probabilities, 
@@ -111,7 +111,7 @@ test_folder = 'test_folder/flatten_traj/maxent/S33A6-tran-lengthen/'
 # np.savetxt(test_folder+'inferred_rewards_maxent_direction.csv', rewards, delimiter=',')
 
 
-def plot_most_rewarded_action(q_values, n_states):
+def plot_most_rewarded_action(q_values, test_folder):
     # Find the action with the highest Q-value for each state
     most_rewarded_action = np.argmax(q_values, axis=1)
     print("Most rewarded action shape: ", most_rewarded_action.shape)
@@ -121,7 +121,16 @@ def plot_most_rewarded_action(q_values, n_states):
     plt.title("Most Rewarded Action for Each State")
     plt.xlabel("State Index")
     plt.ylabel("State Index")
-    plt.savefig('most_rewarded_action_heatmap.png')
+    plt.savefig(test_folder+'most_rewarded_action_heatmap.png')
+
+def plot_q_table(q_values, test_folder):
+    plt.figure(figsize=(10, 8))
+    plt.title("Q-Table Heatmap (State-Action Rewards)", fontsize=16)
+    plt.xlabel("Actions", fontsize=14)
+    plt.ylabel("States", fontsize=14)
+    plt.imshow(q_values, cmap='viridis', aspect='auto')
+    plt.colorbar(label='Reward Value')
+    plt.savefig(test_folder+"q_table_heatmap.png")
 
 
 # evaluate the policy
@@ -130,5 +139,6 @@ q_values = maxent.find_policy(n_states, rewards, n_actions, discount, transition
 print("Q-values shape: ", q_values.shape)
 # save the q_values as a CSV file
 np.savetxt(test_folder+'q_values_maxent_direction.csv', q_values, delimiter=',')
-plot_most_rewarded_action(q_values, n_states)
+plot_most_rewarded_action(q_values, test_folder)
+plot_q_table(q_values, test_folder)
 

@@ -111,7 +111,7 @@ print("Inferred Rewards:", rewards.shape)
 np.savetxt(test_folder+'inferred_rewards_maxent_velocity.csv', rewards, delimiter=',')
 
 
-def plot_most_rewarded_action(q_values, n_states):
+def plot_most_rewarded_action(q_values):
     # Find the action with the highest Q-value for each state
     most_rewarded_action = np.argmax(q_values, axis=1)
     print("Most rewarded action shape: ", most_rewarded_action.shape)
@@ -130,4 +130,4 @@ def plot_most_rewarded_action(q_values, n_states):
 # print("Q-values shape: ", q_values.shape)
 # # save the q_values as a CSV file
 # np.savetxt(test_folder+'q_values_maxent_direction.csv', q_values, delimiter=',')
-# plot_most_rewarded_action(q_values, n_states)
+# plot_most_rewarded_action(q_values)

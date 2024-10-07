@@ -115,7 +115,7 @@ lable_bin2="Velocity Bins"
 # np.savetxt(test_folder+'inferred_rewards_maxent_direction.csv', rewards, delimiter=',')
 
 
-def plot_most_rewarded_action(q_values, test_folder):
+def plot_most_rewarded_action(q_values, lable_bin1, lable_bin2, test_folder):
     # Find the action with the highest Q-value for each state
     most_rewarded_action = np.argmax(q_values, axis=1)
     print("Most rewarded action shape: ", most_rewarded_action.shape)
@@ -123,8 +123,8 @@ def plot_most_rewarded_action(q_values, test_folder):
     plt.figure(figsize=(10, 8))
     sns.heatmap(most_rewarded_action.reshape(n_velocity_bins, n_direction_bins), cmap="YlGnBu", annot=True)
     plt.title("Most Rewarded Action for Each State")
-    plt.xlabel("State Index")
-    plt.ylabel("State Index")
+    plt.xlabel(lable_bin1)
+    plt.ylabel(lable_bin2)
     plt.savefig(test_folder+'most_rewarded_action_heatmap.png')
 
 def plot_q_table(q_values, test_folder):
@@ -155,8 +155,8 @@ def plot_action_reward_subplots(q_values, n_bin1, n_bin2, n_actions, lable_bin1,
         ax = axes[action_index]
         img = ax.imshow(reward_grid, cmap='viridis', aspect='auto')
         ax.set_title(f"Action {action_index}", fontsize=16)
-        ax.set_xticks(ticks=np.arange(0, n_bin1), labels=np.arange(-20, 5, step=5), fontsize=12)
-        ax.set_yticks(ticks=np.arange(0, n_bin2)[::3], labels=np.arange(0, 140, step=5)[::3], fontsize=12)
+        # ax.set_xticks(ticks=np.arange(0, n_bin1), labels=np.arange(-20, 5, step=5), fontsize=12)
+        # ax.set_yticks(ticks=np.arange(0, n_bin2)[::3], labels=np.arange(0, 140, step=5)[::3], fontsize=12)
         ax.set_xlabel(lable_bin1, fontsize=14)
         ax.set_ylabel(lable_bin2, fontsize=14)
     # Add a color bar to the last subplot, shared across all subplots
@@ -173,6 +173,6 @@ q_values = maxent.find_policy(n_states, rewards, n_actions, discount, transition
 print("Q-values shape: ", q_values.shape)
 # save the q_values as a CSV file
 np.savetxt(test_folder+'q_values_maxent_direction.csv', q_values, delimiter=',')
-plot_most_rewarded_action(q_values, test_folder)
+plot_most_rewarded_action(q_values, lable_bin1, lable_bin2, test_folder)
 plot_q_table(q_values, test_folder)
 plot_action_reward_subplots(q_values, n_bin1, n_bin2, n_actions, lable_bin1, lable_bin2, test_folder)

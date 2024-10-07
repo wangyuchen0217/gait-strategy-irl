@@ -100,15 +100,15 @@ plot_transition_heatmaps(transition_probabilities)
 epochs = 200
 learning_rate = 0.01
 discount = 0.9
-test_folder = 'test_folder/flatten_traj/maxent/S33A6-tran-lengthen/'
+test_folder = 'test_folder/flatten_traj/maxent/S49A6-tran/'
 
-# # train irl
-# rewards = maxentirl(feature_matrix, mdp.n_actions, discount, transition_probabilities, 
-#                                         trajectories, epochs, learning_rate, test_folder)
-# #Output the inferred rewards
-# print("Inferred Rewards:", rewards.shape)
-# # Save the inferred rewards as a CSV file
-# np.savetxt(test_folder+'inferred_rewards_maxent_direction.csv', rewards, delimiter=',')
+# train irl
+rewards = maxentirl(feature_matrix, mdp.n_actions, discount, transition_probabilities, 
+                                        trajectories, epochs, learning_rate, test_folder)
+#Output the inferred rewards
+print("Inferred Rewards:", rewards.shape)
+# Save the inferred rewards as a CSV file
+np.savetxt(test_folder+'inferred_rewards_maxent_velocity.csv', rewards, delimiter=',')
 
 
 def plot_most_rewarded_action(q_values, n_states):

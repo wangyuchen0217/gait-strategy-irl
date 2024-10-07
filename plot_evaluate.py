@@ -2,13 +2,13 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-def plot_most_rewarded_action(q_values, lable_bin1, lable_bin2, test_folder):
+def plot_most_rewarded_action(q_values, n_bin1, n_bin2, lable_bin1, lable_bin2, test_folder):
     # Find the action with the highest Q-value for each state
     most_rewarded_action = np.argmax(q_values, axis=1)
     print("Most rewarded action shape: ", most_rewarded_action.shape)
     # Plot the heatmap (reshaping if the states are grid-like, otherwise just plot)
     plt.figure(figsize=(10, 8))
-    sns.heatmap(most_rewarded_action.reshape(n_velocity_bins, n_direction_bins), cmap="YlGnBu", annot=True)
+    sns.heatmap(most_rewarded_action.reshape(n_bin2, n_bin1), cmap="YlGnBu", annot=True)
     plt.title("Most Rewarded Action for Each State")
     plt.xlabel(lable_bin1)
     plt.ylabel(lable_bin2)

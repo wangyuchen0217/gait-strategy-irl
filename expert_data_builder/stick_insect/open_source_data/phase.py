@@ -3,6 +3,21 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 
+def plot_gait(gait_data):
+    gait = gait_data.to_numpy()
+    gait = gait[:,:-1]
+    plt.figure(figsize=(7, 6))
+    for leg in range(gait.shape[1]):
+        plt.fill_between(range(gait.shape[0]), 
+                        leg * 1.5, leg * 1.5 + 1, 
+                        where=gait[:, leg] == 1, 
+                        color='black', step='mid')
+    plt.yticks([leg * 1.5 + 0.5 for leg in range(6)], ['LF', 'LM', 'LH', 'RF', 'RM', 'RH']) 
+    plt.gca().invert_yaxis()
+    plt.xlabel('Time Step')
+    plt.title('Gait Phase')
+    plt.show()
+
 def dynamic_phase_diff(leg1_stance_times, leg2_stance_times):
     phase_diffs = []
     
@@ -36,25 +51,9 @@ def detect_transitions(leg_data):
     return transitions
 
 
-
 file_path = 'expert_data_builder/stick_insect/Carausius/Animal12_110415_00_32_gait.csv'
 gait_data = pd.read_csv(file_path)
-
-
-gait = gait_data.to_numpy()
-gait = gait[:,:-1]
-plt.figure(figsize=(7, 6))
-labels = ['LF', 'LM', 'LH', 'RF', 'RM', 'RH']
-for leg in range(gait.shape[1]):
-    plt.fill_between(range(gait.shape[0]), 
-                    leg * 1.5, leg * 1.5 + 1, 
-                    where=gait[:, leg] == 1, 
-                    color='black', step='mid')
-plt.yticks([leg * 1.5 + 0.5 for leg in range(6)], ['LF', 'LM', 'LH', 'RF', 'RM', 'RH']) 
-plt.gca().invert_yaxis()
-plt.xlabel('Time Step')
-plt.title('Gait Phase')
-plt.show()
+plot_gait(gait_data)
 
 # Detect transitions for each leg
 transitions = {}

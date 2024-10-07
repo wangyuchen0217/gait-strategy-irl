@@ -166,6 +166,25 @@ def plot_action_reward_subplots(q_values, n_bin1, n_bin2, n_actions, lable_bin1,
     plt.tight_layout(rect=[0, 0, 0.88, 1])
     plt.savefig(test_folder+"action_reward_subplots.png")
 
+def plot_singlestate_action(q_values, n_states, n_bin, lable_bin, test_folder):
+    n_actions = q_values.shape[1]
+    # Initialize a grid to store the aggregated reward per (direction bin, action)
+    reward_grid = np.zeros((n_bin, n_actions))
+    # Populate the reward grid by aggregating over velocity bins
+    for state_index in range(n_states):
+        bin = state_index % n_bin
+        # Sum rewards across velocity bins for each direction bin and action
+        reward_grid[bin, :] += q_values[state_index, :]
+    # # Normalize by the number of velocity bins to get an average if needed
+    # reward_grid /= n_vel_bins
+    plt.figure(figsize=(10, 8))
+    plt.imshow(reward_grid, cmap='viridis', aspect='auto')
+    plt.title("Reward Heatmap: "+lable_bin+" vs. Action", fontsize=16)
+    # plt.yticks(ticks=np.arange(0, n_bin), labels=np.arange(-20, 5, step=5), fontsize=12)
+    plt.xlabel("Actions", fontsize=14)
+    plt.ylabel(lable_bin, fontsize=14)
+    plt.colorbar(label='Reward Value')
+    plt.savefig(test_folder+lable_bin+"_action_reward_heatmap.png")
 
 # evaluate the policy
 rewards = np.loadtxt(test_folder+'inferred_rewards_maxent_direction.csv', delimiter=',')
@@ -176,3 +195,5 @@ np.savetxt(test_folder+'q_values_maxent_direction.csv', q_values, delimiter=',')
 plot_most_rewarded_action(q_values, lable_bin1, lable_bin2, test_folder)
 plot_q_table(q_values, test_folder)
 plot_action_reward_subplots(q_values, n_bin1, n_bin2, n_actions, lable_bin1, lable_bin2, test_folder)
+plot_singlestate_action(q_values, n_states, n_bin1, lable_bin1, test_folder)
+plot_singlestate_action(q_values, n_states, n_bin2, lable_bin2, test_folder)

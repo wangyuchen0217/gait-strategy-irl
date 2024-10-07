@@ -156,7 +156,8 @@ def maxentirl(feature_matrix, n_actions, discount, transition_probability,
             # (revised) traking the gradient norm
             print(f"--------------------- Gradient norm: {grad_norm:.4f}")
             '''
-            plot_grid_based_rewards(rewards, n_direction_bins=5, n_vel_bins=28, epoch=str(i+1), test_folder=test_folder)
+            # plot_grid_based_rewards(rewards, n_direction_bins=5, n_vel_bins=28, epoch=str(i+1), test_folder=test_folder)
+            plot_grid_based_rewards(rewards, n_acceleration_bins=21, n_vel_bins=28, epoch=str(i+1), test_folder=test_folder)
             np.savetxt(test_folder+'direc_inferred_rewards'+str(i+1)+'.csv', rewards, delimiter=',')
 
     return rewards

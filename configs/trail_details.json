@@ -94,5 +94,179 @@
         "id_2": "48",
         "id_3": "39",
         "length": 2131
+    },
+
+
+
+    "T13": {
+        "insect_name": "Aretaon",
+        "insect_number": "Animal11",
+        "id_1": "100723",
+        "id_2": "00",
+        "id_3": "01"
+    },
+    "T14": {
+        "insect_name": "Aretaon",
+        "insect_number": "Animal11",
+        "id_1": "100723",
+        "id_2": "00",
+        "id_3": "04"
+    },
+    "T15": {
+        "insect_name": "Aretaon",
+        "insect_number": "Animal11",
+        "id_1": "100723",
+        "id_2": "00",
+        "id_3": "05"
+    },
+    "T16": {
+        "insect_name": "Aretaon",
+        "insect_number": "Animal11",
+        "id_1": "100723",
+        "id_2": "08",
+        "id_3": "08"
+    },
+    "T17": {
+        "insect_name": "Aretaon",
+        "insect_number": "Animal11",
+        "id_1": "100723",
+        "id_2": "08",
+        "id_3": "23"
+    },
+    "T18": {
+        "insect_name": "Aretaon",
+        "insect_number": "Animal11",
+        "id_1": "100723",
+        "id_2": "08",
+        "id_3": "28"
+    },
+    "T19": {
+        "insect_name": "Aretaon",
+        "insect_number": "Animal11",
+        "id_1": "100723",
+        "id_2": "24",
+        "id_3": "26"
+    },
+    "T20": {
+        "insect_name": "Aretaon",
+        "insect_number": "Animal12",
+        "id_1": "100729",
+        "id_2": "24",
+        "id_3": "08"
+    },
+    "T21": {
+        "insect_name": "Aretaon",
+        "insect_number": "Animal13",
+        "id_1": "100730",
+        "id_2": "24",
+        "id_3": "04"
+    },
+    "T22": {
+        "insect_name": "Aretaon",
+        "insect_number": "Animal12",
+        "id_1": "100729",
+        "id_2": "48",
+        "id_3": "18"
+    },
+    "T23": {
+        "insect_name": "Aretaon",
+        "insect_number": "Animal13",
+        "id_1": "100730",
+        "id_2": "48",
+        "id_3": "12"
+    },
+    "T24": {
+        "insect_name": "Aretaon",
+        "insect_number": "Animal13",
+        "id_1": "100730",
+        "id_2": "48",
+        "id_3": "13"
+    },
+
+
+
+    "T25": {
+        "insect_name": "Medauroidea",
+        "insect_number": "Animal06",
+        "id_1": "110919",
+        "id_2": "00",
+        "id_3": "15"
+    },
+    "T26": {
+        "insect_name": "Medauroidea",
+        "insect_number": "Animal06",
+        "id_1": "110919",
+        "id_2": "00",
+        "id_3": "16"
+    },
+    "T27": {
+        "insect_name": "Medauroidea",
+        "insect_number": "Animal06",
+        "id_1": "110919",
+        "id_2": "00",
+        "id_3": "31"
+    },
+    "T28": {
+        "insect_name": "Medauroidea",
+        "insect_number": "Animal06",
+        "id_1": "110919",
+        "id_2": "08",
+        "id_3": "06"
+    },
+    "T29": {
+        "insect_name": "Medauroidea",
+        "insect_number": "Animal06",
+        "id_1": "110919",
+        "id_2": "08",
+        "id_3": "14"
+    },
+    "T30": {
+        "insect_name": "Medauroidea",
+        "insect_number": "Animal06",
+        "id_1": "110919",
+        "id_2": "08",
+        "id_3": "21"
+    },
+    "T31": {
+        "insect_name": "Medauroidea",
+        "insect_number": "Animal06",
+        "id_1": "110919",
+        "id_2": "24",
+        "id_3": "09"
+    },
+    "T32": {
+        "insect_name": "Medauroidea",
+        "insect_number": "Animal06",
+        "id_1": "110919",
+        "id_2": "24",
+        "id_3": "11"
+    },
+    "T33": {
+        "insect_name": "Medauroidea",
+        "insect_number": "Animal06",
+        "id_1": "110919",
+        "id_2": "24",
+        "id_3": "30"
+    },
+    "T34": {
+        "insect_name": "Medauroidea",
+        "insect_number": "Animal06",
+        "id_1": "110919",
+        "id_2": "48",
+        "id_3": "04"
+    },
+    "T35": {
+        "insect_name": "Medauroidea",
+        "insect_number": "Animal06",
+        "id_1": "110919",
+        "id_2": "48",
+        "id_3": "05"
+    },
+    "T36": {
+        "insect_name": "Medauroidea",
+        "insect_number": "Animal06",
+        "id_1": "110919",
+        "id_2": "48",
+        "id_3": "40"
     }
 }

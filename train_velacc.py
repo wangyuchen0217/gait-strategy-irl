@@ -14,34 +14,34 @@ data = pd.read_csv('expert_demonstration/expert/CarausiusC00.csv')
 
 # Prepare the MDP
 n_velocity_bins = data['Velocity Bin'].nunique()
-n_direction_bins = data['Direction Bin'].nunique()
+n_acceleration_bins = data['Acceleration Bin'].nunique()
 n_gait_categories = data['Gait Category'].nunique()
 print("---------------------------------")
 print("Velocity bins: ", n_velocity_bins)
-print("Direction bins: ", n_direction_bins)
+print("Acceleration bins: ", n_acceleration_bins)
 print("Gait categories: ", n_gait_categories)
 print("---------------------------------")
 
-mdp = MDP(n_velocity_bins, n_direction_bins, n_gait_categories, discount=0.9)
+mdp = MDP(n_velocity_bins, n_acceleration_bins, n_gait_categories, discount=0.9)
 
 # Create a feature matrix (n_states, n_dimensions)
 n_states = mdp.n_states
 n_actions = mdp.n_actions
-feature_matrix = np.zeros((n_states, n_velocity_bins + n_direction_bins))
+feature_matrix = np.zeros((n_states, n_velocity_bins + n_acceleration_bins))
 print("Feature matrix shape: ", feature_matrix.shape)
 
 # Populate the feature matrix (one-hot encoding)
 for index, row in data.iterrows():
     # set the row index
-    state_index = int((row['Velocity Bin']-1) * n_direction_bins + (row['Direction Bin']-1))
+    state_index = int((row['Velocity Bin']-1) * n_acceleration_bins + (row['Acceleration Bin']-1))
     # set the one-hot encoding (column index)
-    feature_matrix[state_index, (row['Direction Bin']-1)] = 1
-    feature_matrix[state_index, n_velocity_bins + (row['Direction Bin']-1)] = 1
+    feature_matrix[state_index, (row['Acceleration Bin']-1)] = 1
+    feature_matrix[state_index, n_velocity_bins + (row['Acceleration Bin']-1)] = 1
 
 def generate_trajectory(data, n_direction_bins):
     trajectory = []
     for index, row in data.iterrows():
-        state_index = int((row['Velocity Bin'] - 1) * n_direction_bins + (row['Direction Bin'] - 1))
+        state_index = int((row['Velocity Bin'] - 1) * n_acceleration_bins + (row['Acceleration Bin'] - 1))
         action = int(row['Gait Category'])
         trajectory.append([state_index, action])
     return trajectory
@@ -69,7 +69,7 @@ def build_transition_matrix_from_indices(data, n_states, n_actions):
 '''flatten_traj'''
 trajectories = []
 for index, row in data.iterrows():
-    state_index = int((row['Velocity Bin']-1) * n_direction_bins + (row['Direction Bin']-1))
+    state_index = int((row['Velocity Bin']-1) * n_acceleration_bins + (row['Acceleration Bin']-1))
     action = int(row['Gait Category'])
     trajectories.append([(state_index, action)])
 trajectories = np.array(trajectories)
@@ -92,7 +92,7 @@ def plot_transition_heatmaps(transition_probabilities):
         plt.xlabel("Next State Index")
         plt.ylabel("Current State Index")
     plt.tight_layout()
-    plt.savefig('transition_heatmaps.png')
+    plt.savefig('transition_heatmaps_velacc.png')
 
 plot_transition_heatmaps(transition_probabilities)
 
@@ -117,17 +117,17 @@ def plot_most_rewarded_action(q_values, n_states):
     print("Most rewarded action shape: ", most_rewarded_action.shape)
     # Plot the heatmap (reshaping if the states are grid-like, otherwise just plot)
     plt.figure(figsize=(10, 8))
-    sns.heatmap(most_rewarded_action.reshape(n_velocity_bins, n_direction_bins), cmap="YlGnBu", annot=True)
+    sns.heatmap(most_rewarded_action.reshape(n_velocity_bins, n_acceleration_bins), cmap="YlGnBu", annot=True)
     plt.title("Most Rewarded Action for Each State")
     plt.xlabel("State Index")
     plt.ylabel("State Index")
     plt.savefig('most_rewarded_action_heatmap.png')
 
 
-# evaluate the policy
-rewards = np.loadtxt(test_folder+'inferred_rewards_maxent_direction.csv', delimiter=',')
-q_values = maxent.find_policy(n_states, rewards, n_actions, discount, transition_probabilities)
-print("Q-values shape: ", q_values.shape)
-# save the q_values as a CSV file
-np.savetxt(test_folder+'q_values_maxent_direction.csv', q_values, delimiter=',')
-plot_most_rewarded_action(q_values, n_states)
+# # evaluate the policy
+# rewards = np.loadtxt(test_folder+'inferred_rewards_maxent_direction.csv', delimiter=',')
+# q_values = maxent.find_policy(n_states, rewards, n_actions, discount, transition_probabilities)
+# print("Q-values shape: ", q_values.shape)
+# # save the q_values as a CSV file
+# np.savetxt(test_folder+'q_values_maxent_direction.csv', q_values, delimiter=',')
+# plot_most_rewarded_action(q_values, n_states)

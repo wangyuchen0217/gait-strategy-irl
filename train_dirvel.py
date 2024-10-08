@@ -11,7 +11,7 @@ import torch
 import os
 
 # Load the dataset
-data = pd.read_csv('expert_demonstration/expert/AretaonC00.csv')
+data = pd.read_csv('expert_demonstration/expert/MedauroideaC00.csv')
 
 # Prepare the MDP
 n_velocity_bins = data['Velocity Bin'].nunique()
@@ -100,7 +100,7 @@ def plot_transition_heatmaps(transition_probabilities, test_folder):
 epochs = 100
 learning_rate = 0.01
 discount = 0.9
-test_folder = 'test_folder/flatten_traj/maxent/S22A6-tran/'
+test_folder = 'test_folder/flatten_traj/maxent/S35A6-tran/'
 n_bin1=n_direction_bins
 n_bin2=n_velocity_bins
 lable_bin1="Direction Bins"

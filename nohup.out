@@ -1,0 +1,20 @@
+---------------------------------
+Velocity bins:  28
+Acceleration bins:  21
+Gait categories:  6
+---------------------------------
+Number of states:  588
+Number of actions:  6
+Transition probabilities shape:  (588, 6, 588)
+Rewards shape:  (588, 6)
+Feature matrix shape:  (588, 49)
+Transition probabilities shape:  (588, 6, 588)
+---------------------------------
+Starting IRL:
+Epoch 10/100 - Time elapsed: 93407.17s
+Traceback (most recent call last):
+  File "train_velacc.py", line 106, in <module>
+    lable_bin1="Acceleration Bins"
+  File "/home/yuchen/insect_walking_irl/maxent.py", line 160, in maxentirl
+    plot_grid_based_rewards(rewards, n_acceleration_bins=21, n_vel_bins=28, epoch=str(i+1), test_folder=test_folder)
+TypeError: plot_grid_based_rewards() got an unexpected keyword argument 'test_folder'

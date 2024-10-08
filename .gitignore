@@ -2,8 +2,18 @@ trained_policy/trained_policy_mce_irl.pth
 
 nohup.out
 
+# Aretaon Diection Velocity
 train_As22A6.log
 run_As22a6.pid
 
+# Aretaon Velocity Acceleration
 train_As31a6.log
 run_As31a6.pid
+
+# Medauroidea Direction Velocity
+train_As35a6.log
+run_As35a6.pid
+
+# Medauroidea Velocity Acceleration
+train_As41a6.log
+run_As41a6.pid

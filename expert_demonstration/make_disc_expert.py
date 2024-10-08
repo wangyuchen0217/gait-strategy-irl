@@ -35,16 +35,19 @@ def calculate_acceleration(vel):
     return acc
 
 insect_state_name = 'CarausiusC00'
+No1 = "01"
+No2 = "02"
+No3 = "03"
 
-vel_01, direction_01, gait_01 = get_cont_data("01")
-vel_02, direction_02, gait_02 = get_cont_data("02")
-vel_03, direction_03, gait_03 = get_cont_data("03")
+vel_01, direction_01, gait_01 = get_cont_data(No1)
+vel_02, direction_02, gait_02 = get_cont_data(No2)
+vel_03, direction_03, gait_03 = get_cont_data(No3)
 acc_01, acc_02, acc_03 = calculate_acceleration(vel_01), calculate_acceleration(vel_02), calculate_acceleration(vel_03)
 vel = np.concatenate((vel_01[1:], vel_02[1:], vel_03[1:]), axis=0)
 direction = np.concatenate((direction_01[1:], direction_02[1:], direction_03[1:]), axis=0)
 gait = np.concatenate((gait_01[1:], gait_02[1:], gait_03[1:]), axis=0)
 acc = np.concatenate((acc_01, acc_02, acc_03), axis=0)
-print("length of T01, T02, T03: ", len(acc_01), len(acc_02), len(acc_03))
+print("length of T"+No1+", T"+No2+", T"+No3+": ", len(acc_01), len(acc_02), len(acc_03))
 print("length of faltten trajectory:", len(acc))
 
 # save vel and acc

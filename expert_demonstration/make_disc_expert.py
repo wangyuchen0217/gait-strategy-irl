@@ -34,10 +34,10 @@ def calculate_acceleration(vel):
     acc = np.diff(vel, axis=0) / 0.005
     return acc
 
-insect_state_name = 'AretaonC00'
-No1 = "13"
-No2 = "14"
-No3 = "15"
+insect_state_name = 'MedauroideaC00'
+No1 = "25"
+No2 = "26"
+No3 = "27"
 
 vel_01, direction_01, gait_01 = get_cont_data(No1)
 vel_02, direction_02, gait_02 = get_cont_data(No2)
@@ -84,11 +84,13 @@ grouped_gait_combinations = {
     '010101': 3,
     # tetrapod gait (noncanonical)
     '111010': 2,
+    '111001': 2,
     '110110': 2,
     '110011': 2, 
     '101101': 2,
     '100111': 2, 
     '011110': 2, 
+    '011101': 2,
     '011011': 2,
     '010111': 2,
     '001111': 2, 
@@ -96,6 +98,8 @@ grouped_gait_combinations = {
     '110010': 1,
     '101001': 1, 
     '011010': 1,
+    '011001': 1,
+    '010011': 1,
     '001011': 1, 
     # rare noncanonical
     '101000': 0, 

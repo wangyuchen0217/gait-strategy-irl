@@ -34,10 +34,10 @@ def calculate_acceleration(vel):
     acc = np.diff(vel, axis=0) / 0.005
     return acc
 
-insect_state_name = 'CarausiusC00'
-No1 = "01"
-No2 = "02"
-No3 = "03"
+insect_state_name = 'AretaonC00'
+No1 = "13"
+No2 = "14"
+No3 = "15"
 
 vel_01, direction_01, gait_01 = get_cont_data(No1)
 vel_02, direction_02, gait_02 = get_cont_data(No2)
@@ -134,15 +134,23 @@ grouped_gait_combinations = {
     # tetrapod gait (noncanonical)
     '111010': 2,
     '110110': 2,
+    '110011': 2, 
     '101101': 2,
+    '100111': 2, 
     '011011': 2,
+    '011110': 2, 
     '010111': 2,
+    '001111': 2, 
     # tripod gait (noncanonical)
     '110010': 1,
     '011010': 1,
+    '101001': 1, 
+    '001011': 1, 
     # rare noncanonical
     '100010': 0,
     '001010': 0,
+    '101000': 0, 
+    '000101': 0,
     '000010': 0,
 }
 
@@ -162,7 +170,7 @@ analysis_df = pd.DataFrame({
         'Gait Category': gait_data['Category']
     })
 
-save = False
+save = True
 if save:
     save_path = 'expert_demonstration/expert/'+insect_state_name+'.csv'
     analysis_df.to_csv(save_path, index=False, header=True)

@@ -149,6 +149,7 @@ grouped_gait_combinations = {
 # Combine the first six columns into a string for each row to represent the gait pattern
 gait_data = pd.DataFrame(gait)
 gait_data['Gait Pattern'] = gait_data.iloc[:, :6].astype(str).agg(''.join, axis=1)
+print(gait_data['Gait Pattern'])
 # Categorize each gait pattern based on the possible combinations
 gait_data['Category'] = gait_data['Gait Pattern'].map(grouped_gait_combinations).astype(int)
 # Display the categorized data

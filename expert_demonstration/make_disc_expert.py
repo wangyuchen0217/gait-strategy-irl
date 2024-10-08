@@ -34,6 +34,8 @@ def calculate_acceleration(vel):
     acc = np.diff(vel, axis=0) / 0.005
     return acc
 
+insect_state_name = 'CarausiusC00'
+
 vel_01, direction_01, gait_01 = get_cont_data("01")
 vel_02, direction_02, gait_02 = get_cont_data("02")
 vel_03, direction_03, gait_03 = get_cont_data("03")
@@ -46,8 +48,8 @@ print("length of T01, T02, T03: ", len(acc_01), len(acc_02), len(acc_03))
 print("length of faltten trajectory:", len(acc))
 
 # save vel and acc
-# plot_histogram(acc, title='Acceleration Data Distribution', xlabel='Acceleration', savename='CarausuisC00_histogram_acc')
-# plot_histogram(vel, title='Velocity Data Distribution', xlabel='Velocity', savename='CarausuisC00_histogram_vel')
+plot_histogram(acc, title='Acceleration Data Distribution', xlabel='Acceleration', savename=insect_state_name+'_histogram_acc')
+plot_histogram(vel, title='Velocity Data Distribution', xlabel='Velocity', savename=insect_state_name+'_histogram_vel')
 
 # bin the data
 vel_bin_edges = np.arange(0, 145, 5) # should be 145
@@ -159,7 +161,7 @@ analysis_df = pd.DataFrame({
 
 save = False
 if save:
-    save_path = 'expert_demonstration/expert/CarausiusC00.csv'
+    save_path = 'expert_demonstration/expert/'+insect_state_name+'.csv'
     analysis_df.to_csv(save_path, index=False, header=True)
 
 # heat map
@@ -167,5 +169,5 @@ if save:
 # heatmap_direction_vel_action(vel_binned, direction_binned)
 
 # plot states
-# plot_states(vel_01, vel_02, vel_03, direction_01, direction_02, direction_03, acc_01, acc_02, acc_03)
+plot_states(vel_01, vel_02, vel_03, direction_01, direction_02, direction_03, acc_01, acc_02, acc_03, insect_state_name)
 

@@ -8,9 +8,10 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from plot_evaluate import *
 import torch
+import os
 
 # Load the dataset
-data = pd.read_csv('expert_demonstration/expert/CarausiusC00.csv')
+data = pd.read_csv('expert_demonstration/expert/AretaonC00.csv')
 
 # Prepare the MDP
 n_velocity_bins = data['Velocity Bin'].nunique()
@@ -83,7 +84,7 @@ transition_probabilities = build_transition_matrix_from_indices(trajectories[0],
 print("Transition probabilities shape: ", transition_probabilities.shape)
 print("---------------------------------")
 
-def plot_transition_heatmaps(transition_probabilities):
+def plot_transition_heatmaps(transition_probabilities, test_folder):
     plt.figure(figsize=(18, 12))
     for action in range(6):
         plt.subplot(2, 3, action+1)
@@ -92,20 +93,23 @@ def plot_transition_heatmaps(transition_probabilities):
         plt.xlabel("Next State Index")
         plt.ylabel("Current State Index")
     plt.tight_layout()
-    plt.savefig('transition_heatmaps.png')
+    plt.savefig(test_folder+'transition_heatmaps.png')
 
-plot_transition_heatmaps(transition_probabilities)
 
 # Apply MaxEnt IRL
-epochs = 200
+epochs = 100
 learning_rate = 0.01
 discount = 0.9
-test_folder = 'test_folder/flatten_traj/maxent/S33A6-tran-lengthen/'
+test_folder = 'test_folder/flatten_traj/maxent/S22A6-tran/'
 n_bin1=n_direction_bins
 n_bin2=n_velocity_bins
 lable_bin1="Direction Bins"
 lable_bin2="Velocity Bins"
 
+# check if there is test_folder, if not create one
+if not os.path.exists(test_folder):
+    os.makedirs(test_folder)
+plot_transition_heatmaps(transition_probabilities, test_folder)
 
 # # train irl
 # rewards = maxentirl(feature_matrix, mdp.n_actions, discount, transition_probabilities, 
@@ -116,14 +120,14 @@ lable_bin2="Velocity Bins"
 # np.savetxt(test_folder+'inferred_rewards_maxent_direction.csv', rewards, delimiter=',')
 
 
-# evaluate the policy
-rewards = np.loadtxt(test_folder+'inferred_rewards_maxent_direction.csv', delimiter=',')
-q_values = maxent.find_policy(n_states, rewards, n_actions, discount, transition_probabilities)
-print("Q-values shape: ", q_values.shape)
-# save the q_values as a CSV file
-np.savetxt(test_folder+'q_values_maxent_direction.csv', q_values, delimiter=',')
-plot_most_rewarded_action(q_values, n_bin1, n_bin2, lable_bin1, lable_bin2, test_folder)
-plot_q_table(q_values, test_folder)
-plot_action_reward_subplots(q_values, n_bin1, n_bin2, n_actions, lable_bin1, lable_bin2, test_folder)
-plot_singlestate_action(q_values, n_states, n_bin1, lable_bin1, test_folder)
-plot_singlestate_action(q_values, n_states, n_bin2, lable_bin2, test_folder)
+# # evaluate the policy
+# rewards = np.loadtxt(test_folder+'inferred_rewards_maxent_direction.csv', delimiter=',')
+# q_values = maxent.find_policy(n_states, rewards, n_actions, discount, transition_probabilities)
+# print("Q-values shape: ", q_values.shape)
+# # save the q_values as a CSV file
+# np.savetxt(test_folder+'q_values_maxent_direction.csv', q_values, delimiter=',')
+# plot_most_rewarded_action(q_values, n_bin1, n_bin2, lable_bin1, lable_bin2, test_folder)
+# plot_q_table(q_values, test_folder)
+# plot_action_reward_subplots(q_values, n_bin1, n_bin2, n_actions, lable_bin1, lable_bin2, test_folder)
+# plot_singlestate_action(q_values, n_states, n_bin1, lable_bin1, test_folder)
+# plot_singlestate_action(q_values, n_states, n_bin2, lable_bin2, test_folder)

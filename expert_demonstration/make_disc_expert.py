@@ -34,10 +34,10 @@ def calculate_acceleration(vel):
     acc = np.diff(vel, axis=0) / 0.005
     return acc
 
-insect_state_name = 'MedauroideaC00'
-No1 = "25"
-No2 = "26"
-No3 = "27"
+insect_state_name = 'AretaonC00'
+No1 = "13"
+No2 = "14"
+No3 = "15"
 
 vel_01, direction_01, gait_01 = get_cont_data(No1)
 vel_02, direction_02, gait_02 = get_cont_data(No2)
@@ -55,11 +55,11 @@ plot_histogram(acc, title='Acceleration Data Distribution', xlabel='Acceleration
 plot_histogram(vel, title='Velocity Data Distribution', xlabel='Velocity', savename=insect_state_name+'_histogram_vel')
 
 # bin the data
-vel_bin_edges = np.arange(0, 145, 5) # should be 145
+vel_bin_edges = np.arange(0, 95, 5) # the end value should be 1 unit larger
 vel_binned = np.digitize(vel, vel_bin_edges, right=True)
-direction_bin_edges = np.arange(-20, 10, 5)
+direction_bin_edges = np.arange(-20, 5, 5)
 direction_binned = np.digitize(direction, direction_bin_edges, right=True)
-acc_bin_edges = np.arange(-3000, 2500, 250)
+acc_bin_edges = np.arange(-2000, 1750, 250)
 acc_binned = np.digitize(acc, acc_bin_edges, right=True)
 
 # Define grouped gait combinations (6 types)

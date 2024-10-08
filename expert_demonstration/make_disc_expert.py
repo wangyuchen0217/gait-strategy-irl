@@ -138,18 +138,22 @@ grouped_gait_combinations = {
     '011011': 2,
     '010111': 2,
     # tripod gait (noncanonical)
-    '010110': 1,
-    '010011': 1,
+    # '010110': 1,
+    # '010011': 1,
+    '110010': 1,
+    '011010': 1,
     # rare noncanonical
-    '010100': 0,
-    '010001': 0,
-    '010000': 0,
+    # '010100': 0,
+    # '010001': 0,
+    # '010000': 0,
+    '100010': 0,
+    '001010': 0,
+    '000010': 0,
 }
 
 # Combine the first six columns into a string for each row to represent the gait pattern
 gait_data = pd.DataFrame(gait)
 gait_data['Gait Pattern'] = gait_data.iloc[:, :6].astype(str).agg(''.join, axis=1)
-print(gait_data['Gait Pattern'])
 # Categorize each gait pattern based on the possible combinations
 gait_data['Category'] = gait_data['Gait Pattern'].map(grouped_gait_combinations).astype(int)
 # Display the categorized data

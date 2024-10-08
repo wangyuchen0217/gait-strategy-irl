@@ -1,1 +1,6 @@
 trained_policy/trained_policy_mce_irl.pth
+
+nohup.out
+
+train_As22A6.log
+run_As22a6.pid

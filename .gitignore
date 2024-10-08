@@ -3,7 +3,7 @@ trained_policy/trained_policy_mce_irl.pth
 nohup.out
 
 # Aretaon Diection Velocity
-train_As22A6.log
+train_As22a6.log
 run_As22a6.pid
 
 # Aretaon Velocity Acceleration

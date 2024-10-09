@@ -84,7 +84,7 @@ def customirl(feature_matrix, n_actions, discount, transition_probability,
 
 
 def maxentirl(feature_matrix, n_actions, discount, transition_probability,
-        trajectories, epochs, learning_rate, test_folder):
+        trajectories, epochs, learning_rate, n_bin1, n_bin2, lable_bin1, lable_bin2, test_folder):
     """
     Find the reward function for the given trajectories.
 
@@ -156,8 +156,7 @@ def maxentirl(feature_matrix, n_actions, discount, transition_probability,
             # (revised) traking the gradient norm
             print(f"--------------------- Gradient norm: {grad_norm:.4f}")
             '''
-            # plot_grid_based_rewards(rewards, n_direction_bins=11, n_vel_bins=24, epoch=str(i+1), test_folder=test_folder)
-            plot_grid_based_rewards(rewards, n_acceleration_bins=13, n_vel_bins=18, epoch=str(i+1), test_folder=test_folder)
+            plot_grid_based_rewards(rewards, n_bin1, n_bin2, lable_bin1, lable_bin2, str(i+1), test_folder)
             np.savetxt(test_folder+'direc_inferred_rewards'+str(i+1)+'.csv', rewards, delimiter=',')
 
     return rewards

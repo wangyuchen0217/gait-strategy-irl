@@ -89,12 +89,20 @@ print("---------------------------------")
 
 def plot_transition_heatmaps(transition_probabilities, test_folder):
     plt.figure(figsize=(18, 12))
-    for action in range(6):
-        plt.subplot(2, 3, action+1)
-        sns.heatmap(transition_probabilities[:, action, :], cmap="YlGnBu", annot=False)
-        plt.title(f"Transition Probabilities for Action {action+1}")
-        plt.xlabel("Next State Index")
-        plt.ylabel("Current State Index")
+    if n_actions == 6:
+        for action in range(6):
+            plt.subplot(2, 3, action+1)
+            sns.heatmap(transition_probabilities[:, action, :], cmap="YlGnBu", annot=False)
+            plt.title(f"Transition Probabilities for Action {action+1}")
+            plt.xlabel("Next State Index")
+            plt.ylabel("Current State Index")
+    else:
+        for action in range(5):
+            plt.subplot(2, 3, action+1)
+            sns.heatmap(transition_probabilities[:, action, :], cmap="YlGnBu", annot=False)
+            plt.title(f"Transition Probabilities for Action {action+1}")
+            plt.xlabel("Next State Index")
+            plt.ylabel("Current State Index")
     plt.tight_layout()
     plt.savefig(test_folder+'transition_heatmaps.png')
 
@@ -103,24 +111,24 @@ def plot_transition_heatmaps(transition_probabilities, test_folder):
 epochs = 100
 learning_rate = 0.01
 discount = 0.9
-test_folder = 'test_folder/flatten_traj/maxent/S35A6-tran/'
+test_folder = 'test_folder/flatten_traj/maxent/S35A5-tran/'
 n_bin1=n_direction_bins
 n_bin2=n_velocity_bins
 lable_bin1="Direction Bins"
 lable_bin2="Velocity Bins"
 
-# # check if there is test_folder, if not create one
-# if not os.path.exists(test_folder):
-#     os.makedirs(test_folder)
-# plot_transition_heatmaps(transition_probabilities, test_folder)
+# check if there is test_folder, if not create one
+if not os.path.exists(test_folder):
+    os.makedirs(test_folder)
+plot_transition_heatmaps(transition_probabilities, test_folder)
 
-# # train irl
-# rewards = maxentirl(feature_matrix, mdp.n_actions, discount, transition_probabilities, 
-#                                         trajectories, epochs, learning_rate, test_folder)
-# #Output the inferred rewards
-# print("Inferred Rewards:", rewards.shape)
-# # Save the inferred rewards as a CSV file
-# np.savetxt(test_folder+'inferred_rewards_maxent_direction.csv', rewards, delimiter=',')
+# train irl
+rewards = maxentirl(feature_matrix, mdp.n_actions, discount, transition_probabilities, 
+                                        trajectories, epochs, learning_rate, test_folder)
+#Output the inferred rewards
+print("Inferred Rewards:", rewards.shape)
+# Save the inferred rewards as a CSV file
+np.savetxt(test_folder+'inferred_rewards_maxent_direction.csv', rewards, delimiter=',')
 
 
 # # evaluate the policy

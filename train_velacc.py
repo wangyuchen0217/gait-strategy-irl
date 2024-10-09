@@ -54,6 +54,9 @@ def build_transition_matrix_from_indices(data, n_states, n_actions):
         state, action = data[i]          # Current state and action
         next_state, _ = data[i + 1]      # Infer the next state from the next tuple
         # Increment the count for this transition
+        # Medauroidea only has 5 actions (1-5)
+        if n_actions < 6:
+            action -= 1
         transition_counts[state, action, next_state] += 1
     # Compute the sums of transition counts along axis 2
     counts_sum = np.sum(transition_counts, axis=2, keepdims=True)
@@ -86,12 +89,20 @@ print("---------------------------------")
 
 def plot_transition_heatmaps(transition_probabilities, test_folder):
     plt.figure(figsize=(18, 12))
-    for action in range(6):
-        plt.subplot(2, 3, action+1)
-        sns.heatmap(transition_probabilities[:, action, :], cmap="YlGnBu", annot=False)
-        plt.title(f"Transition Probabilities for Action {action+1}")
-        plt.xlabel("Next State Index")
-        plt.ylabel("Current State Index")
+    if n_actions == 6:
+        for action in range(6):
+            plt.subplot(2, 3, action+1)
+            sns.heatmap(transition_probabilities[:, action, :], cmap="YlGnBu", annot=False)
+            plt.title(f"Transition Probabilities for Action {action+1}")
+            plt.xlabel("Next State Index")
+            plt.ylabel("Current State Index")
+    else:
+        for action in range(5):
+            plt.subplot(2, 3, action+1)
+            sns.heatmap(transition_probabilities[:, action, :], cmap="YlGnBu", annot=False)
+            plt.title(f"Transition Probabilities for Action {action+1}")
+            plt.xlabel("Next State Index")
+            plt.ylabel("Current State Index")
     plt.tight_layout()
     plt.savefig(test_folder+'transition_heatmaps.png')
 
@@ -100,24 +111,24 @@ def plot_transition_heatmaps(transition_probabilities, test_folder):
 epochs = 100
 learning_rate = 0.01
 discount = 0.9
-test_folder = 'test_folder/flatten_traj/maxent/S41A6-tran/'
+test_folder = 'test_folder/flatten_traj/maxent/S14A5-tran/'
 n_bin1=n_acceleration_bins
 n_bin2=n_velocity_bins
 lable_bin1="Acceleration Bins"
 lable_bin2="Velocity Bins"
 
-# # check if there is test_folder, if not create one
-# if not os.path.exists(test_folder):
-#     os.makedirs(test_folder)
-# plot_transition_heatmaps(transition_probabilities, test_folder)
+# check if there is test_folder, if not create one
+if not os.path.exists(test_folder):
+    os.makedirs(test_folder)
+plot_transition_heatmaps(transition_probabilities, test_folder)
 
-# # train irl
-# rewards = maxentirl(feature_matrix, mdp.n_actions, discount, transition_probabilities, 
-#                                         trajectories, epochs, learning_rate, test_folder)
-# #Output the inferred rewards
-# print("Inferred Rewards:", rewards.shape)
-# # Save the inferred rewards as a CSV file
-# np.savetxt(test_folder+'inferred_rewards_maxent_velocity.csv', rewards, delimiter=',')
+# train irl
+rewards = maxentirl(feature_matrix, mdp.n_actions, discount, transition_probabilities, 
+                                        trajectories, epochs, learning_rate, test_folder)
+#Output the inferred rewards
+print("Inferred Rewards:", rewards.shape)
+# Save the inferred rewards as a CSV file
+np.savetxt(test_folder+'inferred_rewards_maxent_velocity.csv', rewards, delimiter=',')
 
 
 # # evaluate the policy

@@ -17,7 +17,7 @@ data = pd.read_csv('expert_demonstration/expert/MedauroideaC00.csv')
 n_velocity_bins = data['Velocity Bin'].nunique()
 n_acceleration_bins = data['Acceleration Bin'].nunique()
 # Medauroidea has no bin5 for acceleration
-n_acceleration_bins = n_acceleration_bins + 1
+# n_acceleration_bins = n_acceleration_bins + 1
 n_gait_categories = data['Gait Category'].nunique()
 print("---------------------------------")
 print("Velocity bins: ", n_velocity_bins)

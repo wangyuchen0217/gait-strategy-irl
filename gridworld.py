@@ -40,7 +40,7 @@ class CustomMDP(object):
 
         # Transition probabilities and rewards will be provided by user or learned
         self.transition_probabilities = np.zeros((self.n_states, self.n_actions, self.n_states))
-        self.rewards = np.zeros((self.n_states, self.n_actions))
+        self.rewards = np.zeros((self.n_states,))
         print("Transition probabilities shape: ", self.transition_probabilities.shape)
         print("Rewards shape: ", self.rewards.shape)
         

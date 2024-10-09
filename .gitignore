@@ -17,3 +17,7 @@ run_Ms35a5.pid
 # Medauroidea Velocity Acceleration
 train_Ms41a5.log
 run_Ms41a5.pid
+
+# Carausius Velocity Acceleration
+train_Cs49a6.log
+run_Cs49a6.pid

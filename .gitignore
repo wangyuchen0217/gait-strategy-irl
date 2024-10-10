@@ -21,3 +21,11 @@ run_Ms41a5.pid
 # Carausius Velocity Acceleration
 train_Cs49a6.log
 run_Cs49a6.pid
+
+# All Direction Velocity
+train_all_dir.log
+run_all_dir.pid
+
+# All Velocity Acceleration
+train_all_acc.log
+run_all_acc.pid

@@ -2,7 +2,7 @@
 # StickInsect-v1: Motor
 # StickInsect-v2: PosVel sensor
 
-model: StickInsect-v0 # StickInsect-v0
+model: Sim-v0 # StickInsect-v0
 exclude_xy: True
 env:
   seed: 42

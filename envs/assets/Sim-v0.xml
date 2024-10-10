@@ -38,7 +38,9 @@
 
       <body name="LF_leg" pos="-0.19 0 -0.04">
         <geom fromto="0.0 0.0 0.0 0.0 0.13 0.0" name="LF_cox_geom" size="0.05" type="capsule"/>
+        <joint axis="0 -1 0" name="LF_Sup" pos="0.0 0.0 0.0" range="-7 24" type="hinge"/>
         <body name="LF_femur" pos="0.0 0.13 0">
+          <joint axis="1 0 0" name="LF_CTr" pos="0.0 0.0 0.0" range="-25 32" type="hinge" />
           <joint axis="0 0 -1" name="LF_ThC" pos="0.0 0.0 0.0" range="-5 71" type="hinge"/>
           <geom fromto="0.0 0.0 0.0 0.0 1.58 0.0" name="LF_femur_geom" size="0.06" type="capsule"/>
           <body pos="0.0 1.58 0.0">
@@ -50,7 +52,9 @@
 
       <body name="RF_leg" pos="-0.19 0 -0.04">
         <geom fromto="0.0 0.0 0.0 0.0 -0.13 0.0" name="RF_cox_geom" size="0.05" type="capsule"/>
+        <joint axis="0 -1 0" name="RF_Sup" pos="0.0 0.0 0.0" range="-7 24" type="hinge"/>
         <body name="RF_femur" pos="0.0 -0.13 0">
+          <joint axis="-1 0 0" name="RF_CTr" pos="0.0 0.0 0.0" range="-25 32" type="hinge"/>
           <joint axis="0 0 1" name="RF_ThC" pos="0.0 0.0 0.0" range="-5 71" type="hinge"/>
           <geom fromto="0.0 0.0 0.0 0.0 -1.58 0.0" name="RF_femur_geom" size="0.06" type="capsule"/>
           <body pos="0.0 -1.58 0.0">
@@ -62,7 +66,9 @@
 
       <body name="LM_leg" pos="-2.1 0.0 -0.46">
         <geom fromto="0.0 0.0 0.0 0.0 0.14 0.0" name="LM_cox_geom" size="0.05" type="capsule" />
+        <joint axis="0 -1 0" name="LM_Sup" pos="0.0 0.0 0.0" range="-26 37" type="hinge" />
         <body name="LM_femur" pos="0.0 0.14 0">
+          <joint axis="1 0 0" name="LM_CTr" pos="0.0 0.0 0.0" range="-24 34" type="hinge"/>
           <joint axis="0 0 -1" name="LM_ThC" pos="0.0 0.0 0.0" range="-48 30" type="hinge"/>
           <geom fromto="0.0 0.0 0.0 0.0 1.16 0.0" name="LM_femur_geom" size="0.06" type="capsule"/>
           <body pos="0.0 1.16 0.0">
@@ -74,7 +80,9 @@
 
       <body name="RM_leg" pos="-2.1 0.0 -0.46">
         <geom fromto="0.0 0.0 0.0 0.0 -0.14 0.0" name="RM_cox_geom" size="0.05" type="capsule" />
+        <joint axis="0 -1 0" name="RM_Sup" pos="0.0 0.0 0.0" range="-26 37" type="hinge"/>
         <body name="RM_femur" pos="0.0 -0.14 0">
+          <joint axis="-1 0 0" name="RM_CTr" pos="0.0 0.0 0.0" range="-24 34" type="hinge"/>
           <joint axis="0 0 1" name="RM_ThC" pos="0.0 0.0 0.0" range="-48 30" type="hinge"/>
           <geom fromto="0.0 0.0 0.0 0.0 -1.16 0.0" name="RM_femur_geom" size="0.06" type="capsule"/>
           <body pos="0.0 -1.16 0.0">
@@ -86,7 +94,9 @@
 
       <body name="LH_leg" pos="-3.3 0.0 -0.56">
         <geom fromto="0.0 0.0 0.0 0.0 0.15 0.0" name="LH_cox_geom" size="0.05" type="capsule"/>
+        <joint axis="0 -1 0" name="LH_Sup" pos="0.0 0.0 0.0" range="-18 20" type="hinge"/>
         <body name="LH_femur" pos="0.0 0.15 0">
+          <joint axis="1 0 0" name="LH_CTr" pos="0.0 0.0 0.0" range="-10 50" type="hinge"/>
           <joint axis="0 0 -1" name="LH_ThC" pos="0.0 0.0 0.0" range="-65 -10" type="hinge"/>
           <geom fromto="0.0 0.0 0.0 0.0 1.39 0.0" name="LH_femur_geom" size="0.06" type="capsule"/>
           <body pos="0.0 1.39 0.0">
@@ -98,7 +108,9 @@
 
       <body name="RH_leg" pos="-3.3 0.0 -0.56">
         <geom fromto="0.0 0.0 0.0 0.0 -0.15 0.0" name="RH_cox_geom" size="0.05" type="capsule"/>
+        <joint axis="0 -1 0" name="RH_Sup" pos="0.0 0.0 0.0" range="-18 20" type="hinge"/>
         <body name="RH_femur" pos="0.0 -0.15 0">
+          <joint axis="-1 0 0" name="RH_CTr" pos="0.0 0.0 0.0" range="-10 50" type="hinge"/>
           <joint axis="0 0 1" name="RH_ThC" pos="0.0 0.0 0.0" range="-65 -10" type="hinge"/>
           <geom fromto="0.0 0.0 0.0 0.0 -1.39 0.0" name="RH_femur_geom" size="0.06" type="capsule"/>
           <body pos="0.0 -1.39 0.0">
@@ -112,34 +124,38 @@
     </body>
   </worldbody>
 
+    <equality>
+        <!-- front legs -->
+        <joint name="joint_constraint_LF_Sup" joint1="LF_Sup" joint2="LF_ThC" polycoef="-0.0551 0.601 -1.023 1.101 -0.377"/>
+        <joint name="joint_constraint_RF_Sup" joint1="RF_Sup" joint2="RF_ThC" polycoef="-0.0551 0.601 -1.023 1.101 -0.377"/>
+        <joint name="joint_constraint_LF_CTr" joint1="LF_CTr" joint2="LF_ThC" polycoef="0.0985 0.999 -4.336 5.904 -2.566"/>
+        <joint name="joint_constraint_RF_CTr" joint1="RF_CTr" joint2="RF_ThC" polycoef="0.0985 0.999 -4.336 5.904 -2.566"/>
+        <!-- midddle legs -->
+        <joint name="joint_constraint_LM_Sup" joint1="LM_Sup" joint2="LM_ThC" polycoef="0.263 0.948 -0.111 -0.690 0.031"/>
+        <joint name="joint_constraint_RM_Sup" joint1="RM_Sup" joint2="RM_ThC" polycoef="0.263 0.948 -0.111 -0.690 0.031"/>
+        <joint name="joint_constraint_LM_CTr" joint1="LM_CTr" joint2="LM_ThC" polycoef="-0.0212 0.0588 0.715 0.643 0.0830"/>
+        <joint name="joint_constraint_RM_CTr" joint1="RM_CTr" joint2="RM_ThC" polycoef="-0.0212 0.0588 0.715 0.643 0.0830"/>
+        <!-- hind legs -->
+        <joint name="joint_constraint_LH_Sup" joint1="LH_Sup" joint2="LH_ThC" polycoef="0.515 1.006 0.373 -0.610 -0.611"/>
+        <joint name="joint_constraint_RH_Sup" joint1="RH_Sup" joint2="RH_ThC" polycoef="0.515 1.006 0.373 -0.610 -0.611"/>
+        <joint name="joint_constraint_LH_CTr" joint1="LH_CTr" joint2="LH_ThC" polycoef="0.544 0.838 3.161 4.366 1.691"/>
+        <joint name="joint_constraint_RH_CTr" joint1="RH_CTr" joint2="RH_ThC" polycoef="0.544 0.838 3.161 4.366 1.691"/>
+    </equality>
+
   <actuator>
-    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="LF_ThC" gear="1" kp="300" kv="200"/>
-    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="LM_ThC" gear="1" kp="300" kv="200"/>
-    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="LH_ThC" gear="1" kp="300" kv="200"/>
-    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="RF_ThC" gear="1" kp="300" kv="200"/>
-    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="RM_ThC" gear="1" kp="300" kv="200"/>
-    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="RH_ThC" gear="1" kp="300" kv="200"/>
+    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="LF_ThC" gear="1" kp="300" kv="100"/>
+    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="LM_ThC" gear="1" kp="300" kv="100"/>
+    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="LH_ThC" gear="1" kp="300" kv="100"/>
+    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="RF_ThC" gear="1" kp="300" kv="100"/>
+    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="RM_ThC" gear="1" kp="300" kv="100"/>
+    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="RH_ThC" gear="1" kp="300" kv="100"/>
 
-    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="LF_FTi" gear="1" kp="300" kv="200"/>
-    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="LM_FTi" gear="1" kp="300" kv="200"/>
-    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="LH_FTi" gear="1" kp="300" kv="200"/>
-    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="RF_FTi" gear="1" kp="300" kv="200"/>
-    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="RM_FTi" gear="1" kp="300" kv="200"/>
-    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="RH_FTi" gear="1" kp="300" kv="200"/>
-
-    <velocity joint="LF_ThC" gear="1" ctrllimited="true" ctrlrange="-600 600"/>
-    <velocity joint="LM_ThC" gear="1" ctrllimited="true" ctrlrange="-600 600"/>
-    <velocity joint="LH_ThC" gear="1" ctrllimited="true" ctrlrange="-600 600"/>
-    <velocity joint="RF_ThC" gear="1" ctrllimited="true" ctrlrange="-600 600"/>
-    <velocity joint="RM_ThC" gear="1" ctrllimited="true" ctrlrange="-600 600"/>
-    <velocity joint="RH_ThC" gear="1" ctrllimited="true" ctrlrange="-600 600"/>
-
-    <velocity joint="LF_FTi" gear="1" ctrllimited="true" ctrlrange="-600 600"/>
-    <velocity joint="LM_FTi" gear="1" ctrllimited="true" ctrlrange="-600 600"/>
-    <velocity joint="LH_FTi" gear="1" ctrllimited="true" ctrlrange="-600 600"/>
-    <velocity joint="RF_FTi" gear="1" ctrllimited="true" ctrlrange="-600 600"/>
-    <velocity joint="RM_FTi" gear="1" ctrllimited="true" ctrlrange="-600 600"/>
-    <velocity joint="RH_FTi" gear="1" ctrllimited="true" ctrlrange="-600 600"/>
+    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="LF_FTi" gear="1" kp="300" kv="100"/>
+    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="LM_FTi" gear="1" kp="300" kv="100"/>
+    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="LH_FTi" gear="1" kp="300" kv="100"/>
+    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="RF_FTi" gear="1" kp="300" kv="100"/>
+    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="RM_FTi" gear="1" kp="300" kv="100"/>
+    <position ctrllimited="true" ctrlrange="-3.141592654 3.141592654" joint="RH_FTi" gear="1" kp="300" kv="100"/>
 
   </actuator>
 

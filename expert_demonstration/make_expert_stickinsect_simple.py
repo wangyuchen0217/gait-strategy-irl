@@ -54,15 +54,9 @@ joint_movement = data_smooth(joint_movement) # smooth the data
 
 # FTi joint angle minus 90 degree
 joint_movement[:,-6:] = joint_movement[:,-6:] - 90
-
 # simplized data
 joint_movement = joint_movement[:, 12:]
-
-dt = 0.005  # The timestep of your data
-# Calculate velocities and accelerations
-velocities = np.diff(joint_movement, axis=0) / dt
-# Pad the arrays to match the length of the original data
-velocities = np.vstack((velocities, np.zeros((1, velocities.shape[1])))) # [2459, 24]
+print("joint_movement:", joint_movement.shape)
 
 #  Set up simulation without rendering
 model_name = config_data.get("model")
@@ -102,8 +96,7 @@ with mujoco.viewer.launch_passive(model, data) as viewer:
             break
         # implement the joint angle data
         joint_angle = np.deg2rad(joint_movement[j])
-        data.ctrl[:12] = joint_angle
-        data.ctrl[12:] = velocities[j]
+        data.ctrl[:] = joint_angle
         mujoco.mj_step(model, data)
         viewer.sync()
         with viewer.lock():
@@ -137,7 +130,7 @@ with mujoco.viewer.launch_passive(model, data) as viewer:
 obs_states = np.array([obs_state]) # [1, 2459, 48] only joint angles and velocities, [1, 2459, 61] w/ torso
 print("expert_demo:", obs_states.shape)
 # np.save("StickInsect-v0-m3t-32-obs.npy", obs_states)
-actions = np.array([np.hstack((np.deg2rad(joint_movement), velocities))])
+actions = np.array(np.deg2rad(joint_movement))
 print("actions:", actions.shape)
 # np.save("StickInsect-v0-m3t-32-act.npy", actions)
 contact_matrix = np.array(contact_matrix) # [2459, 6]

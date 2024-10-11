@@ -129,14 +129,14 @@ with mujoco.viewer.launch_passive(model, data) as viewer:
 # record observation state and action
 obs_states = np.array([obs_state]) # [1, 2459, 48] only joint angles and velocities, [1, 2459, 61] w/ torso
 # simplify the states: no Sup and CTr
-columns = list(range(0, 7)) + [9, 10, 13, 14, 17, 18, 21, 22, 25, 26, 29, 30] + \
+columns = list(range(2, 7)) + [9, 10, 13, 14, 17, 18, 21, 22, 25, 26, 29, 30] + \
                     list(range(31, 37)) + [39, 40, 43, 44, 47, 48, 51, 52, 55, 56, 59, 60]
 obs_states = obs_states[:, :, columns]
 print("expert_demo:", obs_states.shape)
-# np.save("Sim-StickInsect-obs.npy", obs_states)
+np.save("Sim-StickInsect-obs.npy", obs_states)
 actions = np.array(np.deg2rad(joint_movement))
 print("actions:", actions.shape)
-# np.save("Sim-StickInsect-act.npy", actions)
+np.save("Sim-StickInsect-act.npy", actions)
 contact_matrix = np.array(contact_matrix) # [2459, 6]
 print("contact_matrix:", contact_matrix.shape)
 # pd.DataFrame(contact_matrix).to_csv("contact_matrix.csv", header=["LF", "LM", "LH", "RF", "RM", "RH"], index=None)

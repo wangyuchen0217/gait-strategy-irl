@@ -6,6 +6,9 @@ def plot_most_rewarded_action(q_values, n_bin1, n_bin2, lable_bin1, lable_bin2, 
     # Find the action with the highest Q-value for each state
     most_rewarded_action = np.argmax(q_values, axis=1)
     print("Most rewarded action shape: ", most_rewarded_action.shape)
+    # Adjust the annotation for 5 actions case to be 1 to 5
+    if  q_values.shape[1] == 5:
+        most_rewarded_action = most_rewarded_action + 1
     # Plot the heatmap (reshaping if the states are grid-like, otherwise just plot)
     plt.figure(figsize=(10, 8))
     sns.heatmap(most_rewarded_action.reshape(n_bin2, n_bin1), cmap="YlGnBu", annot=True)
@@ -17,6 +20,8 @@ def plot_most_rewarded_action(q_values, n_bin1, n_bin2, lable_bin1, lable_bin2, 
 def plot_q_table(q_values, test_folder):
     plt.figure(figsize=(10, 8))
     plt.title("Q-Table Heatmap (State-Action Rewards)", fontsize=16)
+    if q_values.shape[1] == 5:
+        plt.xticks(ticks=np.arange(q_values.shape[1]), labels=np.arange(1, q_values.shape[1]+1))
     plt.xlabel("Actions", fontsize=14)
     plt.ylabel("States", fontsize=14)
     plt.imshow(q_values, cmap='viridis', aspect='auto')
@@ -70,5 +75,7 @@ def plot_singlestate_action(q_values, n_states, n_bin, lable_bin, test_folder):
     # plt.yticks(ticks=np.arange(0, n_bin), labels=np.arange(-20, 5, step=5), fontsize=12)
     plt.xlabel("Actions", fontsize=14)
     plt.ylabel(lable_bin, fontsize=14)
+    if q_values.shape[1] == 5:
+        plt.xticks(ticks=np.arange(q_values.shape[1]), labels=np.arange(1, q_values.shape[1]+1))
     plt.colorbar(label='Reward Value')
     plt.savefig(test_folder+"Action "+lable_bin+"Reward Heatmap.png")

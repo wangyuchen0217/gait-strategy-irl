@@ -112,7 +112,7 @@ def plot_transition_heatmaps(transition_probabilities, test_folder):
 epochs = 100
 learning_rate = 0.01
 discount = 0.9
-test_folder = 'test_folder/flatten_traj/maxent/S35A5-tran/'
+test_folder = 'test_folder/flatten_traj/maxent/Medauroidea/dirvel-S35A5/'
 n_bin1=n_direction_bins
 n_bin2=n_velocity_bins
 lable_bin1="Direction Bins"

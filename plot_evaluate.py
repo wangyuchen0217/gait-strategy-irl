@@ -44,9 +44,11 @@ def plot_action_reward_subplots(q_values, n_bin1, n_bin2, n_actions, lable_bin1,
             # Extract the reward for the specified action
             reward_grid[bin2, bin1] = q_values[state_index, action_index]
         # Plotting the heatmap using imshow in the appropriate subplot
-        ax = axes[action_index]
+        # ax = axes[action_index]
+        ax = axes[action_index+1 if n_actions==5 else action_index]  # Shift the index for 5 actions        
         img = ax.imshow(reward_grid, cmap='viridis', aspect='auto')
-        ax.set_title(f"Action {action_index}", fontsize=16)
+        # ax.set_title(f"Action {action_index}", fontsize=16)
+        ax.set_title(f"Action {action_index+1 if n_actions==5 else action_index}", fontsize=16)
         # ax.set_xticks(ticks=np.arange(0, n_bin1), labels=np.arange(-20, 5, step=5), fontsize=12)
         # ax.set_yticks(ticks=np.arange(0, n_bin2)[::3], labels=np.arange(0, 140, step=5)[::3], fontsize=12)
         ax.set_xlabel(lable_bin1, fontsize=14)
@@ -54,6 +56,9 @@ def plot_action_reward_subplots(q_values, n_bin1, n_bin2, n_actions, lable_bin1,
     # Add a color bar to the last subplot, shared across all subplots
     # change the ax position
     # cb_ax = fig.add_axes([0.92, 0.15, 0.02, 0.7])
+    # Leave the first subplot empty if there are only 5 actions
+    if n_actions == 5:
+        axes[0].axis('off')  # Hide the first subplot (action 0)
     fig.colorbar(img, ax=axes, orientation='vertical', fraction=0.02, pad=0.04)
     plt.tight_layout(rect=[0, 0, 0.88, 1])
     plt.savefig(test_folder+"action_reward_subplots.png")

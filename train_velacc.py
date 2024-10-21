@@ -12,12 +12,15 @@ import os
 
 # Load the dataset
 # ['CarausiusC00', 'AretaonC00', 'MedauroideaC00', 'C00']
-source = 'CarausiusC00'
+source = 'MedauroideaC00'
 data = pd.read_csv('expert_demonstration/expert/'+source+'.csv')
 
 # Prepare the MDP
 n_velocity_bins = data['Velocity Bin'].nunique()
 n_acceleration_bins = data['Acceleration Bin'].nunique()
+# Medauroidea has no bin5 for acceleration, Carausius has no bin21 for acceleration
+if source == 'MedauroideaC00' or source == 'CarausiusC00':
+    n_acceleration_bins = n_acceleration_bins + 1
 n_gait_categories = data['Gait Category'].nunique()
 print("---------------------------------")
 print("Velocity bins: ", n_velocity_bins)
@@ -113,7 +116,7 @@ def plot_transition_heatmaps(transition_probabilities, test_folder):
 epochs = 100
 learning_rate = 0.01
 discount = 0.9
-test_folder = 'test_folder/flatten_traj/maxent/S49A6-tran/'
+test_folder = 'test_folder/flatten_traj/maxent/S41A5-tran/'
 n_bin1=n_acceleration_bins
 n_bin2=n_velocity_bins
 lable_bin1="Acceleration Bins"

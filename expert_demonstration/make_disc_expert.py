@@ -9,7 +9,7 @@ import seaborn as sns
 from plot_expert import *
 
 
-def get_cont_data(subject:str):
+def get_cont_data(subject:str, trim=False, trim_len:int=0):
     with open("configs/trail_details.json", "r") as f:
         trail_details = json.load(f)
     insect_name = trail_details[f"T{subject}"]["insect_name"]
@@ -27,6 +27,10 @@ def get_cont_data(subject:str):
     vel = pd.read_csv(vel_path, header=[0], index_col=None).to_numpy()[1:-1]
     direction = pd.read_csv(direction_path, header=[0], index_col=None).to_numpy()[1:-1]
     gait = pd.read_csv(gait_path, header=[0], index_col=None).to_numpy()[1:-1]
+    if trim:
+        vel = vel[:-trim_len]
+        direction = direction[:-trim_len]
+        gait = gait[:-trim_len]
     return vel, direction, gait
 
 def calculate_acceleration(vel):
@@ -34,11 +38,12 @@ def calculate_acceleration(vel):
     acc = np.diff(vel, axis=0) / 0.005
     return acc
 
-insect_state_name = 'C00' # ['CarausiusC00', 'AretaonC00', 'MedauroideaC00', 'C00']
-No1, No2, No3 = "01", "02", "03"
+data_source = 'MedauroideaC00T' # ['CarausiusC00', 'AretaonC00', 'MedauroideaC00', 'MedauroideaC00T', 'C00', 'C00T']
+No1, No2, No3 = "25", "26", "27" #"01", "02", "03"
 No13, No14, No15 = "13", "14", "15"
 No25, No26, No27 = "25", "26", "27"
 
+# When the data source is [all]
 vel_01, direction_01, gait_01 = get_cont_data(No1)
 vel_02, direction_02, gait_02 = get_cont_data(No2)
 vel_03, direction_03, gait_03 = get_cont_data(No3)
@@ -47,26 +52,43 @@ vel_13, direction_13, gait_13 = get_cont_data(No13)
 vel_14, direction_14, gait_14 = get_cont_data(No14)
 vel_15, direction_15, gait_15 = get_cont_data(No15)
 acc_13, acc_14, acc_15 = calculate_acceleration(vel_13), calculate_acceleration(vel_14), calculate_acceleration(vel_15)
-vel_25, direction_25, gait_25 = get_cont_data(No25)
-vel_26, direction_26, gait_26 = get_cont_data(No26)
-vel_27, direction_27, gait_27 = get_cont_data(No27)
-acc_25, acc_26, acc_27 = calculate_acceleration(vel_25), calculate_acceleration(vel_26), calculate_acceleration(vel_27)
+if data_source == 'C00T':
+    vel_25, direction_25, gait_25 = get_cont_data(No25, trim=True, trim_len=800)
+    vel_26, direction_26, gait_26 = get_cont_data(No26, trim=True, trim_len=2200)
+    vel_27, direction_27, gait_27 = get_cont_data(No27, trim=True, trim_len=1600)
+    acc_25, acc_26, acc_27 = calculate_acceleration(vel_25), calculate_acceleration(vel_26), calculate_acceleration(vel_27)
+else:
+    vel_25, direction_25, gait_25 = get_cont_data(No25)
+    vel_26, direction_26, gait_26 = get_cont_data(No26)
+    vel_27, direction_27, gait_27 = get_cont_data(No27)
+    acc_25, acc_26, acc_27 = calculate_acceleration(vel_25), calculate_acceleration(vel_26), calculate_acceleration(vel_27)
 vel = np.concatenate((vel_01[1:], vel_02[1:], vel_03[1:], vel_13[1:], vel_14[1:], vel_15[1:], vel_25[1:], vel_26[1:], vel_27[1:]), axis=0)
 direction = np.concatenate((direction_01[1:], direction_02[1:], direction_03[1:], direction_13[1:], direction_14[1:], direction_15[1:], direction_25[1:], direction_26[1:], direction_27[1:]), axis=0)
 gait = np.concatenate((gait_01[1:], gait_02[1:], gait_03[1:], gait_13[1:], gait_14[1:], gait_15[1:], gait_25[1:], gait_26[1:], gait_27[1:]), axis=0)
 acc = np.concatenate((acc_01, acc_02, acc_03, acc_13, acc_14, acc_15, acc_25, acc_26, acc_27), axis=0)
 print("flatten trajectory length: ", len(acc))
 
-# vel = np.concatenate((vel_01[1:], vel_02[1:], vel_03[1:]), axis=0)
-# direction = np.concatenate((direction_01[1:], direction_02[1:], direction_03[1:]), axis=0)
-# gait = np.concatenate((gait_01[1:], gait_02[1:], gait_03[1:]), axis=0)
-# acc = np.concatenate((acc_01, acc_02, acc_03), axis=0)
-# print("length of T"+No1+", T"+No2+", T"+No3+": ", len(acc_01), len(acc_02), len(acc_03))
-# print("length of faltten trajectory:", len(acc))
+# # When the data source is [one insect]
+if data_source == 'MedauroideaC00T':
+    vel_01, direction_01, gait_01 = get_cont_data(No1, trim=True, trim_len=800)
+    vel_02, direction_02, gait_02 = get_cont_data(No2, trim=True, trim_len=2200)
+    vel_03, direction_03, gait_03 = get_cont_data(No3, trim=True, trim_len=1600)
+    acc_01, acc_02, acc_03 = calculate_acceleration(vel_01), calculate_acceleration(vel_02), calculate_acceleration(vel_03)
+else:
+    vel_01, direction_01, gait_01 = get_cont_data(No1)
+    vel_02, direction_02, gait_02 = get_cont_data(No2)
+    vel_03, direction_03, gait_03 = get_cont_data(No3)
+    acc_01, acc_02, acc_03 = calculate_acceleration(vel_01), calculate_acceleration(vel_02), calculate_acceleration(vel_03)
+vel = np.concatenate((vel_01[1:], vel_02[1:], vel_03[1:]), axis=0)
+direction = np.concatenate((direction_01[1:], direction_02[1:], direction_03[1:]), axis=0)
+gait = np.concatenate((gait_01[1:], gait_02[1:], gait_03[1:]), axis=0)
+acc = np.concatenate((acc_01, acc_02, acc_03), axis=0)
+print("length of T"+No1+", T"+No2+", T"+No3+": ", len(acc_01), len(acc_02), len(acc_03))
+print("length of faltten trajectory:", len(acc))
 
 # save vel and acc
-plot_histogram(acc, title='Acceleration Data Distribution', xlabel='Acceleration', savename=insect_state_name+'_histogram_acc')
-plot_histogram(vel, title='Velocity Data Distribution', xlabel='Velocity', savename=insect_state_name+'_histogram_vel')
+plot_histogram(acc, title='Acceleration Data Distribution', xlabel='Acceleration', savename=data_source+'_histogram_acc')
+plot_histogram(vel, title='Velocity Data Distribution', xlabel='Velocity', savename=data_source+'_histogram_vel')
 
 # bin the data
 vel_bin_edges = np.arange(0, 145, 5) # the end value should be 1 unit larger
@@ -146,9 +168,9 @@ analysis_df = pd.DataFrame({
         'Gait Category': gait_data['Category']
     })
 
-save = True
+save = False
 if save:
-    save_path = 'expert_demonstration/expert/'+insect_state_name+'.csv'
+    save_path = 'expert_demonstration/expert/'+data_source+'.csv'
     analysis_df.to_csv(save_path, index=False, header=True)
 
 # heat map
@@ -156,5 +178,5 @@ if save:
 # heatmap_direction_vel_action(vel_binned, direction_binned)
 
 # plot states
-# plot_states(vel_01, vel_02, vel_03, direction_01, direction_02, direction_03, acc_01, acc_02, acc_03, insect_state_name)
+# plot_states(vel_01, vel_02, vel_03, direction_01, direction_02, direction_03, acc_01, acc_02, acc_03, data_source)
 

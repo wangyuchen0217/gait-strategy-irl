@@ -2,30 +2,17 @@ trained_policy/trained_policy_mce_irl.pth
 
 nohup.out
 
-# Aretaon Diection Velocity
-train_As22a6.log
-run_As22a6.pid
-
-# Aretaon Velocity Acceleration
-train_As31a6.log
-run_As31a6.pid
-
-# Medauroidea Direction Velocity
-train_Ms35a5.log
-run_Ms35a5.pid
-
-# Medauroidea Velocity Acceleration
-train_Ms41a5.log
-run_Ms41a5.pid
-
-# Carausius Velocity Acceleration
-train_Cs49a6.log
-run_Cs49a6.pid
-
-# All Direction Velocity
-train_all_dir.log
-run_all_dir.pid
-
 # All Velocity Acceleration
 train_all_acc.log
 run_all_acc.pid
+
+# add trimmed data training
+train_m_dirvel.log
+run_m_dirvel.pid
+train_m_accvel.log
+run_m_accvel.pid
+
+train_all_dirvel.log
+run_all_dirvel.pid
+train_all_accvel.log
+run_all_accvel.pid

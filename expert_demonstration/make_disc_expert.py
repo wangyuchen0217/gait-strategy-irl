@@ -43,30 +43,30 @@ No1, No2, No3 = "25", "26", "27" #"01", "02", "03"
 No13, No14, No15 = "13", "14", "15"
 No25, No26, No27 = "25", "26", "27"
 
-# When the data source is [all]
-vel_01, direction_01, gait_01 = get_cont_data(No1)
-vel_02, direction_02, gait_02 = get_cont_data(No2)
-vel_03, direction_03, gait_03 = get_cont_data(No3)
-acc_01, acc_02, acc_03 = calculate_acceleration(vel_01), calculate_acceleration(vel_02), calculate_acceleration(vel_03)
-vel_13, direction_13, gait_13 = get_cont_data(No13)
-vel_14, direction_14, gait_14 = get_cont_data(No14)
-vel_15, direction_15, gait_15 = get_cont_data(No15)
-acc_13, acc_14, acc_15 = calculate_acceleration(vel_13), calculate_acceleration(vel_14), calculate_acceleration(vel_15)
-if data_source == 'C00T':
-    vel_25, direction_25, gait_25 = get_cont_data(No25, trim=True, trim_len=800)
-    vel_26, direction_26, gait_26 = get_cont_data(No26, trim=True, trim_len=2200)
-    vel_27, direction_27, gait_27 = get_cont_data(No27, trim=True, trim_len=1600)
-    acc_25, acc_26, acc_27 = calculate_acceleration(vel_25), calculate_acceleration(vel_26), calculate_acceleration(vel_27)
-else:
-    vel_25, direction_25, gait_25 = get_cont_data(No25)
-    vel_26, direction_26, gait_26 = get_cont_data(No26)
-    vel_27, direction_27, gait_27 = get_cont_data(No27)
-    acc_25, acc_26, acc_27 = calculate_acceleration(vel_25), calculate_acceleration(vel_26), calculate_acceleration(vel_27)
-vel = np.concatenate((vel_01[1:], vel_02[1:], vel_03[1:], vel_13[1:], vel_14[1:], vel_15[1:], vel_25[1:], vel_26[1:], vel_27[1:]), axis=0)
-direction = np.concatenate((direction_01[1:], direction_02[1:], direction_03[1:], direction_13[1:], direction_14[1:], direction_15[1:], direction_25[1:], direction_26[1:], direction_27[1:]), axis=0)
-gait = np.concatenate((gait_01[1:], gait_02[1:], gait_03[1:], gait_13[1:], gait_14[1:], gait_15[1:], gait_25[1:], gait_26[1:], gait_27[1:]), axis=0)
-acc = np.concatenate((acc_01, acc_02, acc_03, acc_13, acc_14, acc_15, acc_25, acc_26, acc_27), axis=0)
-print("flatten trajectory length: ", len(acc))
+# # When the data source is [all]
+# vel_01, direction_01, gait_01 = get_cont_data(No1)
+# vel_02, direction_02, gait_02 = get_cont_data(No2)
+# vel_03, direction_03, gait_03 = get_cont_data(No3)
+# acc_01, acc_02, acc_03 = calculate_acceleration(vel_01), calculate_acceleration(vel_02), calculate_acceleration(vel_03)
+# vel_13, direction_13, gait_13 = get_cont_data(No13)
+# vel_14, direction_14, gait_14 = get_cont_data(No14)
+# vel_15, direction_15, gait_15 = get_cont_data(No15)
+# acc_13, acc_14, acc_15 = calculate_acceleration(vel_13), calculate_acceleration(vel_14), calculate_acceleration(vel_15)
+# if data_source == 'C00T':
+#     vel_25, direction_25, gait_25 = get_cont_data(No25, trim=True, trim_len=800)
+#     vel_26, direction_26, gait_26 = get_cont_data(No26, trim=True, trim_len=2200)
+#     vel_27, direction_27, gait_27 = get_cont_data(No27, trim=True, trim_len=1600)
+#     acc_25, acc_26, acc_27 = calculate_acceleration(vel_25), calculate_acceleration(vel_26), calculate_acceleration(vel_27)
+# else:
+#     vel_25, direction_25, gait_25 = get_cont_data(No25)
+#     vel_26, direction_26, gait_26 = get_cont_data(No26)
+#     vel_27, direction_27, gait_27 = get_cont_data(No27)
+#     acc_25, acc_26, acc_27 = calculate_acceleration(vel_25), calculate_acceleration(vel_26), calculate_acceleration(vel_27)
+# vel = np.concatenate((vel_01[1:], vel_02[1:], vel_03[1:], vel_13[1:], vel_14[1:], vel_15[1:], vel_25[1:], vel_26[1:], vel_27[1:]), axis=0)
+# direction = np.concatenate((direction_01[1:], direction_02[1:], direction_03[1:], direction_13[1:], direction_14[1:], direction_15[1:], direction_25[1:], direction_26[1:], direction_27[1:]), axis=0)
+# gait = np.concatenate((gait_01[1:], gait_02[1:], gait_03[1:], gait_13[1:], gait_14[1:], gait_15[1:], gait_25[1:], gait_26[1:], gait_27[1:]), axis=0)
+# acc = np.concatenate((acc_01, acc_02, acc_03, acc_13, acc_14, acc_15, acc_25, acc_26, acc_27), axis=0)
+# print("flatten trajectory length: ", len(acc))
 
 # # When the data source is [one insect]
 if data_source == 'MedauroideaC00T':
@@ -91,11 +91,11 @@ plot_histogram(acc, title='Acceleration Data Distribution', xlabel='Acceleration
 plot_histogram(vel, title='Velocity Data Distribution', xlabel='Velocity', savename=data_source+'_histogram_vel')
 
 # bin the data
-vel_bin_edges = np.arange(0, 145, 5) # the end value should be 1 unit larger
+vel_bin_edges = np.arange(0, 120, 5) # the end value should be 1 unit larger
 vel_binned = np.digitize(vel, vel_bin_edges, right=True)
-direction_bin_edges = np.arange(-25, 35, 5)
+direction_bin_edges = np.arange(-10, 15, 5)
 direction_binned = np.digitize(direction, direction_bin_edges, right=True)
-acc_bin_edges = np.arange(-3000, 2750, 250)
+acc_bin_edges = np.arange(-1250, 1750, 250)
 acc_binned = np.digitize(acc, acc_bin_edges, right=True)
 # print binned group
 direction_bin_group = np.unique(direction_binned)
@@ -168,15 +168,14 @@ analysis_df = pd.DataFrame({
         'Gait Category': gait_data['Category']
     })
 
-save = False
+save = True
 if save:
     save_path = 'expert_demonstration/expert/'+data_source+'.csv'
     analysis_df.to_csv(save_path, index=False, header=True)
 
+# plot states
+plot_states(vel_01, vel_02, vel_03, direction_01, direction_02, direction_03, acc_01, acc_02, acc_03, data_source)
+
 # heat map
 # heatmap_direction_vel_reward(analysis_df)
 # heatmap_direction_vel_action(vel_binned, direction_binned)
-
-# plot states
-# plot_states(vel_01, vel_02, vel_03, direction_01, direction_02, direction_03, acc_01, acc_02, acc_03, data_source)
-

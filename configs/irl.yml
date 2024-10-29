@@ -11,6 +11,32 @@ irl:
   pca_dimension: 10
   n_bins: 2
 
+  # data source
+CarausiusC00:
+  vel_bin_params: [0, 145, 5]
+  direction_bin_params: [-20, 10, 5]
+  acc_bin_params: [-3000, 2750, 250]
+AretaonC00:
+  vel_bin_params: [0, 95, 5]
+  direction_bin_params: [-20, 5, 5]
+  acc_bin_params: [-2000, 1500, 250]
+MedauroideaC00T:
+  vel_bin_params: [0, 120, 5]
+  direction_bin_params: [-10, 15, 5]
+  acc_bin_params: [-1250, 1750, 250]
+C00T:
+  vel_bin_params: [0, 145, 5]
+  direction_bin_params: [-20, 15, 5]
+  acc_bin_params: [-3000, 2750, 250]
+MedauroideaC00:
+  vel_bin_params: [0, 125, 5]
+  direction_bin_params: [-25, 35, 5]
+  acc_bin_params: [-2750, 2000, 250]
+C00:
+  vel_bin_params: [0, 145, 5]
+  direction_bin_params: [-25, 35, 5]
+  acc_bin_params: [-3000, 2750, 250]
+
 # SrickInsect-v0-m2.npy: 
 #   PosVel w/o torso mujoco210 kp30000
 # StickInsect-v0-m2t.npy: 

@@ -12,7 +12,7 @@ import os
 
 # Load the dataset
 # ['CarausiusC00', 'AretaonC00', 'MedauroideaC00', 'MedauroideaC00T', 'C00', 'C00T']
-data = pd.read_csv('expert_demonstration/expert/MedauroideaC00T.csv') 
+data = pd.read_csv('expert_demonstration/expert/C00T.csv') 
 
 # Prepare the MDP
 n_velocity_bins = data['Velocity Bin'].nunique()
@@ -112,7 +112,7 @@ def plot_transition_heatmaps(transition_probabilities, test_folder):
 epochs = 100
 learning_rate = 0.01
 discount = 0.9
-test_folder = 'test_folder/flatten_traj/maxent/Medauroidea/dirvel-S27A5/'
+test_folder = 'test_folder/flatten_traj/maxent/All/dirvel-S34A6/'
 n_bin1=n_direction_bins
 n_bin2=n_velocity_bins
 lable_bin1="Direction Bins"

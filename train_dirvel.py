@@ -12,7 +12,8 @@ import os
 
 # Load the dataset
 # ['CarausiusC00', 'AretaonC00', 'MedauroideaC00', 'MedauroideaC00T', 'C00', 'C00T']
-data = pd.read_csv('expert_demonstration/expert/C00T.csv') 
+source = 'MedauroideaC00T'
+data = pd.read_csv('expert_demonstration/expert/'+source+'.csv')
 
 # Prepare the MDP
 n_velocity_bins = data['Velocity Bin'].nunique()

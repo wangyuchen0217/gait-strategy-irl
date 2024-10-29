@@ -42,7 +42,7 @@ def calculate_acceleration(vel):
 with open("configs/irl.yml", "r") as f:
     irl_config = yaml.safe_load(f)
 
-data_source = 'CarausiusC00' # ['CarausiusC00', 'AretaonC00', 'MedauroideaC00', 'MedauroideaC00T', 'C00', 'C00T']
+data_source = 'MedauroideaC00' # ['CarausiusC00', 'AretaonC00', 'MedauroideaC00', 'MedauroideaC00T', 'C00', 'C00T']
 No1, No2, No3 = "01", "02", "03"
 No13, No14, No15 = "13", "14", "15"
 No25, No26, No27 = "25", "26", "27"

@@ -78,6 +78,18 @@ def mat_reader_direction(subject:str, save=False, visualizaiton=False):
         plt.grid()
         plt.show()
 
+def mat_antenna_reader(subject:str, save=False, visualizaiton=False):
+    # Load the .mat file
+    mat_contents, file_name, insect_name = json_reader(subject)
+    with open("configs/trail_details.json", "r") as f:
+        trail_details = json.load(f)  
+    # Extract specific data from the dictionary    
+    antL, antR = mat_contents['antL'], mat_contents['antR']
+    scpL, scpR, pedL, pedR = antL['scp'][0, 0], antR['scp'][0, 0], antL['ped'][0, 0], antR['ped'][0, 0]
+    scpL_angle, scpR_angle = scpL['angle'][0, 0].reshape(-1, 1), scpR['angle'][0, 0].reshape(-1, 1)
+    pedL_angle, pedR_angle = pedL['angle'][0, 0].reshape(-1, 1), pedR['angle'][0, 0].reshape(-1, 1)
+    antenna = np.concatenate((scpL_angle, scpR_angle, pedL_angle, pedR_angle), axis=1)
+    antenna = pd.DataFrame(antenna, index=None, columns=["scpL", "scpR", "pedL", "pedR"])
 
 def mat_reader_gait(subject:str, save=False):
     # Load the .mat file

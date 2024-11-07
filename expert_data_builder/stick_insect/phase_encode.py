@@ -4,12 +4,11 @@ import json
 import os
 import matplotlib.pyplot as plt
 from scipy.signal import find_peaks
+from sklearn.cluster import KMeans
 
 def time_eplased_antenna_contact(joint_data):
 # This funtion calculates the time elapsed since the last antenna contact
 # i.e. the time since the last valley in the joint data
-    print(len(joint_data))
-    print(len(joint_data[1]))
     time_elapsed = np.zeros_like(joint_data, dtype=float)
     for j in range(len(joint_data[1])):
         for i in range(len(joint_data)):
@@ -38,9 +37,65 @@ def get_data(subject:str):
         antenna = pd.read_csv(antenna_path, header=[0], index_col=None).to_numpy()
     return antenna
 
-antenna_01 = get_data("01")
-encoded_antenna_01 = time_eplased_antenna_contact(antenna_01)
+def antenna_visualization(original_data, clustered_data, lable, save=False):
+    # subplot the encoded antenna data and the original antenna data
+    plt.figure(figsize=(20, 10))  # Adjusted to better fit two y-axes for each subplot
+    # HS left
+    plt.subplot(4, 1, 1)
+    plt.plot(original_data[:, 0], label='Original')
+    ax1 = plt.gca()
+    ax2 = ax1.twinx()  # Create a second y-axis for the encoded data
+    ax2.step(range(len(clustered_data)), clustered_data[:,0], where='post', color='orange', label=lable, linestyle='-')
+    ax1.set_ylabel('rad')
+    ax2.set_ylabel('time elapsed')
+    plt.title("HS left")
+    # HS right
+    plt.subplot(4, 1, 2)
+    plt.plot(original_data[:, 1], label='Original')
+    ax1 = plt.gca()
+    ax2 = ax1.twinx()
+    ax2.step(range(len(clustered_data)), clustered_data[:,1], where='post', color='orange', label=lable, linestyle='-')
+    ax1.set_ylabel('rad')
+    ax2.set_ylabel('time elapsed')
+    plt.title("HS right")
+    # SP left
+    plt.subplot(4, 1, 3)
+    plt.plot(original_data[:, 2], label='Original')
+    ax1 = plt.gca()
+    ax2 = ax1.twinx()
+    ax2.step(range(len(clustered_data)), clustered_data[:,2], where='post', color='orange', label=lable, linestyle='-')
+    ax1.set_ylabel('rad')
+    ax2.set_ylabel('time elapsed')
+    plt.title("SP left")
+    # SP right
+    plt.subplot(4, 1, 4)
+    plt.plot(original_data[:, 3], label='Original')
+    ax1 = plt.gca()
+    ax2 = ax1.twinx()
+    ax2.step(range(len(clustered_data)), clustered_data[:,3], where='post', color='orange', label=lable, linestyle='-')
+    ax1.set_ylabel('rad')
+    ax2.set_ylabel('time elapsed')
+    plt.title("SP right")
+    plt.tight_layout()
+    if save:
+        plt.savefig(f"{lable}.png")
+    else:
+        plt.show()
 
-# plot
-plt.plot(encoded_antenna_01)
-plt.show()
+antenna_01 = get_data("01")
+# encoded_antenna_01 = time_eplased_antenna_contact(antenna_01)
+# np.savetxt("antenna_01.csv", encoded_antenna_01, delimiter=","
+path = "antenna_01.csv"
+encoded_antenna_01 = pd.read_csv(path, header=None).to_numpy()
+# discretize the data: binning by log scale
+log_transformed_data = np.log1p(encoded_antenna_01) 
+# KMeans clustering
+kmeans_log = KMeans(n_clusters=10)
+discrete_data = kmeans_log.fit_predict(log_transformed_data.flatten().reshape(-1, 1))
+discrete_data = discrete_data.reshape(log_transformed_data.shape)
+
+# visualize the encoded antenna data and the original antenna data
+antenna_visualization(antenna_01, encoded_antenna_01, 'time elapsed')
+antenna_visualization(antenna_01, log_transformed_data, 'log time elapsed')
+antenna_visualization(antenna_01, discrete_data, 'discrete time elapsed')
+

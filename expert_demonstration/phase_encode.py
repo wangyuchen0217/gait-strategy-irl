@@ -96,7 +96,7 @@ discrete_data = discrete_data.reshape(log_transformed_data.shape)
 # Save the discretized data
 
 # visualize the encoded antenna data and the original antenna data
-antenna_visualization(antenna_01, encoded_antenna_01, 'time elapsed')
-antenna_visualization(antenna_01, log_transformed_data, 'log time elapsed')
-antenna_visualization(antenna_01, discrete_data, 'discrete time elapsed')
+antenna_visualization(antenna_01, encoded_antenna_01, 'time elapsed', save=True)
+antenna_visualization(antenna_01, log_transformed_data, 'log time elapsed', save=True)
+antenna_visualization(antenna_01, discrete_data, 'discrete time elapsed', save=False)
 

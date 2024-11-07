@@ -93,6 +93,7 @@ log_transformed_data = np.log1p(encoded_antenna_01)
 kmeans_log = KMeans(n_clusters=10)
 discrete_data = kmeans_log.fit_predict(log_transformed_data.flatten().reshape(-1, 1))
 discrete_data = discrete_data.reshape(log_transformed_data.shape)
+# Save the discretized data
 
 # visualize the encoded antenna data and the original antenna data
 antenna_visualization(antenna_01, encoded_antenna_01, 'time elapsed')

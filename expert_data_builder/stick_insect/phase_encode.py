@@ -2,22 +2,28 @@ import numpy as np
 import pandas as pd
 import json
 import os
+import matplotlib.pyplot as plt
 from scipy.signal import find_peaks
 
-def time_since_last_valley(joint_data, threshold_intervals):
-    inverted_data = (-joint_data)
-    valleys, _ = find_peaks(inverted_data)
-    # Initialize an array to store the time since last valley
-    time_since_valley = np.zeros_like(joint_data, dtype=float)
-    # Loop through the joint data to calculate the time since the last valley
-    last_valley = 0
-    for i in range(1, len(joint_data)):
-        # Check if the current point is a valley
-        if i in valleys:
-            last_valley = i
-        # Calculate time since the last valley
-        time_since_valley[i] = i - last_valley
-    return time_since_valley
+def time_eplased_antenna_contact(joint_data):
+# This funtion calculates the time elapsed since the last antenna contact
+# i.e. the time since the last valley in the joint data
+    print(len(joint_data))
+    print(len(joint_data[1]))
+    time_elapsed = np.zeros_like(joint_data, dtype=float)
+    for j in range(len(joint_data[1])):
+        for i in range(len(joint_data)):
+            inverted_data = -joint_data[:, j]
+            valley_idx, _ = find_peaks(inverted_data)
+            # Loop to calculate the time elapsed since the last valley
+            last_valley = 0
+            for i in range(1, len(joint_data)):
+                # Check if the current point is a valley
+                if i in valley_idx:
+                    last_valley = i
+                # Calculate time since the last valley
+                time_elapsed[i, j] = i - last_valley
+    return time_elapsed
 
 def get_data(subject:str):
     with open("configs/trail_details.json", "r") as f:
@@ -33,9 +39,8 @@ def get_data(subject:str):
     return antenna
 
 antenna_01 = get_data("01")
-encoded_antenna_01 = time_since_last_valley(antenna_01, 0)
+encoded_antenna_01 = time_eplased_antenna_contact(antenna_01)
 
 # plot
-import matplotlib.pyplot as plt
 plt.plot(encoded_antenna_01)
 plt.show()

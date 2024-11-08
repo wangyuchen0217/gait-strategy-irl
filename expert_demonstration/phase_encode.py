@@ -61,45 +61,45 @@ def time_eplased_antenna_contact(joint_data):
                 time_elapsed[i, j] = i - last_valley
     return time_elapsed
 
-def antenna_visualization(original_data, clustered_data, lable, save=False):
+def antenna_visualization(original_data, clustered_data, lable, save=False, fontsize=16):
     # subplot the encoded antenna data and the original antenna data
-    plt.figure(figsize=(20, 10))  # Adjusted to better fit two y-axes for each subplot
+    plt.figure(figsize=(15, 10))  # Adjusted to better fit two y-axes for each subplot
     # HS left
     plt.subplot(4, 1, 1)
     plt.plot(original_data[:, 0], label='Original')
     ax1 = plt.gca()
     ax2 = ax1.twinx()  # Create a second y-axis for the encoded data
     ax2.step(range(len(clustered_data)), clustered_data[:,0], where='post', color='orange', label=lable, linestyle='-')
-    ax1.set_ylabel('rad')
-    ax2.set_ylabel('time elapsed')
-    plt.title("HS left")
+    ax1.set_ylabel('rad', fontsize=fontsize)
+    ax2.set_ylabel('time elapsed', fontsize=fontsize)
+    plt.title("HS left", fontsize=fontsize)
     # HS right
     plt.subplot(4, 1, 2)
     plt.plot(original_data[:, 1], label='Original')
     ax1 = plt.gca()
     ax2 = ax1.twinx()
     ax2.step(range(len(clustered_data)), clustered_data[:,1], where='post', color='orange', label=lable, linestyle='-')
-    ax1.set_ylabel('rad')
-    ax2.set_ylabel('time elapsed')
-    plt.title("HS right")
+    ax1.set_ylabel('rad', fontsize=fontsize)
+    ax2.set_ylabel('time elapsed', fontsize=fontsize)
+    plt.title("HS right", fontsize=fontsize)
     # SP left
     plt.subplot(4, 1, 3)
     plt.plot(original_data[:, 2], label='Original')
     ax1 = plt.gca()
     ax2 = ax1.twinx()
     ax2.step(range(len(clustered_data)), clustered_data[:,2], where='post', color='orange', label=lable, linestyle='-')
-    ax1.set_ylabel('rad')
-    ax2.set_ylabel('time elapsed')
-    plt.title("SP left")
+    ax1.set_ylabel('rad', fontsize=fontsize)
+    ax2.set_ylabel('time elapsed', fontsize=fontsize)
+    plt.title("SP left", fontsize=fontsize)
     # SP right
     plt.subplot(4, 1, 4)
     plt.plot(original_data[:, 3], label='Original')
     ax1 = plt.gca()
     ax2 = ax1.twinx()
     ax2.step(range(len(clustered_data)), clustered_data[:,3], where='post', color='orange', label=lable, linestyle='-')
-    ax1.set_ylabel('rad')
-    ax2.set_ylabel('time elapsed')
-    plt.title("SP right")
+    ax1.set_ylabel('rad', fontsize=fontsize)
+    ax2.set_ylabel('time elapsed', fontsize=fontsize)
+    plt.title("SP right", fontsize=fontsize)
     plt.tight_layout()
     if save:
         plt.savefig(f"{lable}.png")
@@ -108,11 +108,12 @@ def antenna_visualization(original_data, clustered_data, lable, save=False):
 
 antenna_01 = get_data("01")
 smoothed_antenna_01 = smooth(antenna_01)
-t_elps_antenna_01 = time_eplased_antenna_contact(smoothed_antenna_01)
-np.savetxt("encoded_antenna_01.csv", t_elps_antenna_01, delimiter=",")
 
-# path = "antenna_01.csv"
-# encoded_antenna_01 = pd.read_csv(path, header=None).to_numpy()
+# t_elps_antenna_01 = time_eplased_antenna_contact(smoothed_antenna_01)
+# np.savetxt("encoded_antenna_01.csv", t_elps_antenna_01, delimiter=",")
+path = "encoded_antenna_01.csv"
+t_elps_antenna_01 = pd.read_csv(path, header=None).to_numpy()
+
 # discretize the data: binning by log scale
 log_antenna_01 = np.log1p(t_elps_antenna_01) 
 # KMeans clustering

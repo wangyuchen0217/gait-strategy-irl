@@ -108,22 +108,22 @@ def antenna_visualization(original_data, clustered_data, lable, save=False):
 
 antenna_01 = get_data("01")
 smoothed_antenna_01 = smooth(antenna_01)
-encoded_antenna_01 = time_eplased_antenna_contact(smoothed_antenna_01)
-np.savetxt("encoded_antenna_01.csv", encoded_antenna_01, delimiter=",")
+t_elps_antenna_01 = time_eplased_antenna_contact(smoothed_antenna_01)
+np.savetxt("encoded_antenna_01.csv", t_elps_antenna_01, delimiter=",")
 
 # path = "antenna_01.csv"
 # encoded_antenna_01 = pd.read_csv(path, header=None).to_numpy()
 # discretize the data: binning by log scale
-log_transformed_data = np.log1p(encoded_antenna_01) 
+log_antenna_01 = np.log1p(t_elps_antenna_01) 
 # KMeans clustering
 kmeans_log = KMeans(n_clusters=10)
-discrete_data = kmeans_log.fit_predict(log_transformed_data.flatten().reshape(-1, 1))
-discrete_data = discrete_data.reshape(log_transformed_data.shape)
+discrete_data = kmeans_log.fit_predict(log_antenna_01.flatten().reshape(-1, 1))
+discrete_data = discrete_data.reshape(log_antenna_01.shape)
 # Save the discretized data
 
 # visualize the encoded antenna data and the original antenna data
 antenna_visualization(antenna_01, smoothed_antenna_01, 'smoothed', save=True)
-antenna_visualization(antenna_01, encoded_antenna_01, 'time elapsed', save=True)
-antenna_visualization(antenna_01, log_transformed_data, 'log time elapsed', save=True)
+antenna_visualization(antenna_01, t_elps_antenna_01, 'time elapsed', save=True)
+antenna_visualization(antenna_01, log_antenna_01, 'log time elapsed', save=True)
 antenna_visualization(antenna_01, discrete_data, 'discrete time elapsed', save=True)
 

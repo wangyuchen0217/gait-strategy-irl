@@ -20,7 +20,7 @@ def get_data(subject:str):
         antenna = pd.read_csv(antenna_path, header=[0], index_col=None).to_numpy()
     return antenna
 
-def Kalman1D(observations,damping=2):
+def Kalman1D(observations,damping=1):
     # to return the smoothed time series data
     observation_covariance = damping
     initial_value_guess = observations[0]
@@ -38,9 +38,10 @@ def Kalman1D(observations,damping=2):
     return pred_state
 
 def smooth(data):
+    smoothed_data = np.zeros_like(data, dtype=float)
     for i in range(data.shape[1]):
-        data[:, i] = Kalman1D(data[:, i], damping=1).reshape(-1)
-    return data
+        smoothed_data[:, i] = Kalman1D(data[:, i], damping=1).reshape(-1)
+    return smoothed_data
 
 def time_eplased_antenna_contact(joint_data):
 # This funtion calculates the time elapsed since the last antenna contact
@@ -121,7 +122,8 @@ discrete_data = discrete_data.reshape(log_transformed_data.shape)
 # Save the discretized data
 
 # visualize the encoded antenna data and the original antenna data
+antenna_visualization(antenna_01, smoothed_antenna_01, 'smoothed', save=True)
 antenna_visualization(antenna_01, encoded_antenna_01, 'time elapsed', save=True)
-antenna_visualization(antenna_01, log_transformed_data, 'log time elapsed', save=True)
-antenna_visualization(antenna_01, discrete_data, 'discrete time elapsed', save=False)
+# antenna_visualization(antenna_01, log_transformed_data, 'log time elapsed', save=True)
+# antenna_visualization(antenna_01, discrete_data, 'discrete time elapsed', save=False)
 

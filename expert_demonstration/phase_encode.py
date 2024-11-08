@@ -3,8 +3,44 @@ import pandas as pd
 import json
 import os
 import matplotlib.pyplot as plt
+from pykalman import KalmanFilter
 from scipy.signal import find_peaks
 from sklearn.cluster import KMeans
+
+def get_data(subject:str):
+    with open("configs/trail_details.json", "r") as f:
+        trail_details = json.load(f)
+        insect_name = trail_details[f"T{subject}"]["insect_name"]
+        insect_number = trail_details[f"T{subject}"]["insect_number"]
+        id_1 = trail_details[f"T{subject}"]["id_1"]
+        id_2 = trail_details[f"T{subject}"]["id_2"]
+        id_3 = trail_details[f"T{subject}"]["id_3"]
+        antenna_path = os.path.join("expert_data_builder/stick_insect", insect_name,
+                                                        f"{insect_number}_{id_1}_{id_2}_{id_3}_antenna.csv")
+        antenna = pd.read_csv(antenna_path, header=[0], index_col=None).to_numpy()
+    return antenna
+
+def Kalman1D(observations,damping=1):
+    # to return the smoothed time series data
+    observation_covariance = damping
+    initial_value_guess = observations[0]
+    transition_matrix = 1
+    transition_covariance = 0.03
+    initial_value_guess
+    kf = KalmanFilter(
+            initial_state_mean=initial_value_guess,
+            initial_state_covariance=observation_covariance,
+            observation_covariance=observation_covariance,
+            transition_covariance=transition_covariance,
+            transition_matrices=transition_matrix
+        )
+    pred_state, state_cov = kf.smooth(observations)
+    return pred_state
+
+def smooth(data):
+    for i in range(data.shape[1]):
+        data[:, i] = Kalman1D(data[:, i], damping=1).reshape(-1)
+    return data
 
 def time_eplased_antenna_contact(joint_data):
 # This funtion calculates the time elapsed since the last antenna contact
@@ -23,19 +59,6 @@ def time_eplased_antenna_contact(joint_data):
                 # Calculate time since the last valley
                 time_elapsed[i, j] = i - last_valley
     return time_elapsed
-
-def get_data(subject:str):
-    with open("configs/trail_details.json", "r") as f:
-        trail_details = json.load(f)
-        insect_name = trail_details[f"T{subject}"]["insect_name"]
-        insect_number = trail_details[f"T{subject}"]["insect_number"]
-        id_1 = trail_details[f"T{subject}"]["id_1"]
-        id_2 = trail_details[f"T{subject}"]["id_2"]
-        id_3 = trail_details[f"T{subject}"]["id_3"]
-        antenna_path = os.path.join("expert_data_builder/stick_insect", insect_name,
-                                                        f"{insect_number}_{id_1}_{id_2}_{id_3}_antenna.csv")
-        antenna = pd.read_csv(antenna_path, header=[0], index_col=None).to_numpy()
-    return antenna
 
 def antenna_visualization(original_data, clustered_data, lable, save=False):
     # subplot the encoded antenna data and the original antenna data
@@ -83,10 +106,12 @@ def antenna_visualization(original_data, clustered_data, lable, save=False):
         plt.show()
 
 antenna_01 = get_data("01")
-# encoded_antenna_01 = time_eplased_antenna_contact(antenna_01)
-# np.savetxt("antenna_01.csv", encoded_antenna_01, delimiter=","
-path = "antenna_01.csv"
-encoded_antenna_01 = pd.read_csv(path, header=None).to_numpy()
+smoothed_antenna_01 = smooth(antenna_01)
+encoded_antenna_01 = time_eplased_antenna_contact(smoothed_antenna_01)
+np.savetxt("encoded_antenna_01.csv", encoded_antenna_01, delimiter=",")
+
+# path = "antenna_01.csv"
+# encoded_antenna_01 = pd.read_csv(path, header=None).to_numpy()
 # discretize the data: binning by log scale
 log_transformed_data = np.log1p(encoded_antenna_01) 
 # KMeans clustering

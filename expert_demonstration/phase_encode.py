@@ -20,7 +20,7 @@ def get_data(subject:str):
         antenna = pd.read_csv(antenna_path, header=[0], index_col=None).to_numpy()
     return antenna
 
-def Kalman1D(observations,damping=1):
+def Kalman1D(observations,damping=2):
     # to return the smoothed time series data
     observation_covariance = damping
     initial_value_guess = observations[0]

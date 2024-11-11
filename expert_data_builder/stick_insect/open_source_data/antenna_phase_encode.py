@@ -116,7 +116,7 @@ def plot_time_elapsed_histogram_subplots(data, bin_step, save=False, subject="01
         plt.show()
 
 
-subject= "03"
+subject= "02"
 # Load the antenna data
 antenna_01 = get_data(subject)
 # Smooth the antenna data: detect the contact points
@@ -136,7 +136,7 @@ discrete_data = np.digitize(t_elps_antenna_01, bin_edges)
 save_discrete_data(discrete_data)
 
 # Visualize the encoded antenna data and the original antenna data
-antenna_visualization(antenna_01, smoothed_antenna_01, 'smoothed', subject=subject, save=False)
-antenna_visualization(antenna_01, t_elps_antenna_01, 'time_elapsed', subject=subject, save=False)
-antenna_visualization(antenna_01, discrete_data, 'discretized', subject=subject, save=False)
-plot_time_elapsed_histogram_subplots(discrete_data, bin_step, subject=subject, save=False)
+antenna_visualization(antenna_01, smoothed_antenna_01, 'smoothed', subject=subject, save=True)
+antenna_visualization(antenna_01, t_elps_antenna_01, 'time_elapsed', subject=subject, save=True)
+antenna_visualization(antenna_01, discrete_data, 'discretized', subject=subject, save=True)
+plot_time_elapsed_histogram_subplots(discrete_data, bin_step, subject=subject, save=True)

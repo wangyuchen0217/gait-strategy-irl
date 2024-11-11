@@ -69,9 +69,10 @@ def save_discrete_data(discrete_data):
         id_1 = trail_details[f"T{subject}"]["id_1"]
         id_2 = trail_details[f"T{subject}"]["id_2"]
         id_3 = trail_details[f"T{subject}"]["id_3"]
+    discrete_data = pd.DataFrame(discrete_data, columns=['HS_left', 'HS_right', 'SP_left', 'SP_right'], index=None)
     save_path = os.path.join("expert_data_builder/stick_insect", insect_name,
                                                         f"{insect_number}_{id_1}_{id_2}_{id_3}_antenna_dist.csv")
-    np.savetxt(save_path, discrete_data, delimiter=",", fmt='%d')
+    discrete_data.to_csv(save_path, index=False, header=True)
 
 def antenna_visualization(original_data, clustered_data, label, save=False, fontsize=16, subject="01"):
     titles = ["HS left", "HS right", "SP left", "SP right"]
@@ -116,7 +117,7 @@ def plot_time_elapsed_histogram_subplots(data, bin_step, save=False, subject="01
         plt.show()
 
 
-subject= "02"
+subject= "03"
 # Load the antenna data
 antenna_01 = get_data(subject)
 # Smooth the antenna data: detect the contact points

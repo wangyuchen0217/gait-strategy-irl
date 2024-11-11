@@ -140,8 +140,8 @@ q_values = maxent.find_policy(n_states, rewards, n_actions, discount, transition
 print("Q-values shape: ", q_values.shape)
 # save the q_values as a CSV file
 np.savetxt(test_folder+'q_values_maxent_direction.csv', q_values, delimiter=',')
-plot_most_rewarded_action(q_values, n_bin1, n_bin2, lable_bin1, lable_bin2, test_folder)
+plot_most_rewarded_action(q_values, n_bin1, n_bin2, label_bin1, label_bin2, test_folder)
 plot_q_table(q_values, test_folder)
-plot_action_reward_subplots(q_values, n_bin1, n_bin2, n_actions, lable_bin1, lable_bin2, test_folder)
-plot_singlestate_action(q_values, n_states, n_bin1, lable_bin1, test_folder)
-plot_singlestate_action(q_values, n_states, n_bin2, lable_bin2, test_folder)
+plot_action_reward_subplots(q_values, n_bin1, n_bin2, n_actions, label_bin1, label_bin2, test_folder)
+plot_singlestate_action(q_values, n_states, n_bin1, label_bin1, test_folder)
+plot_singlestate_action(q_values, n_states, n_bin2, label_bin2, test_folder)

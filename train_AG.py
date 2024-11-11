@@ -15,6 +15,7 @@ with open('configs/irl.yml') as file:
     v = yaml.load(file, Loader=yaml.FullLoader)
 # Set the device
 device = torch.device(f"cuda:{v['cuda']}" if torch.cuda.is_available() and v['cuda'] >= 0 else "cpu")
+print("Device: ", device)
 # Load the dataset
 source = v['data_source']
 data = pd.read_csv('expert_demonstration/expert/'+source+'.csv')
@@ -162,7 +163,7 @@ plot_transition_heatmaps(transition_probabilities, test_folder)
 
 # train irl
 rewards = maxentirl(feature_matrix, n_actions, discount, transition_probabilities, 
-                                        trajectories, epochs, learning_rate, n_bins, labels, test_folder)
+                                        trajectories, epochs, learning_rate, n_bins, labels, test_folder, device)
 #Output the inferred rewards
 print("Inferred Rewards:", rewards.shape)
 # Save the inferred rewards as a CSV file

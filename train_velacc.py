@@ -117,10 +117,13 @@ epochs = 100
 learning_rate = 0.01
 discount = 0.9
 test_folder = 'test_folder/flatten_traj/maxent/Medauroidea/accvel-S34A5-trim/'
-n_bin1=n_acceleration_bins
-n_bin2=n_velocity_bins
-lable_bin1="Acceleration Bins"
-lable_bin2="Velocity Bins"
+n_bin1 = n_acceleration_bins
+n_bin2 = n_velocity_bins
+n_bins = [n_bin1, n_bin2]
+lable_bin1 = "Acceleration Bins"
+lable_bin2 = "Velocity Bins"
+labels = [lable_bin1, lable_bin2]
+
 
 # # check if there is test_folder, if not create one
 # if not os.path.exists(test_folder):
@@ -129,11 +132,12 @@ lable_bin2="Velocity Bins"
 
 # # train irl
 # rewards = maxentirl(feature_matrix, mdp.n_actions, discount, transition_probabilities, 
-#                                         trajectories, epochs, learning_rate, n_bin1, n_bin2, lable_bin1, lable_bin2, test_folder)
+#                                         trajectories, epochs, learning_rate, n_bins, labels, test_folder)
 # #Output the inferred rewards
 # print("Inferred Rewards:", rewards.shape)
 # # Save the inferred rewards as a CSV file
 # np.savetxt(test_folder+'inferred_rewards_maxent_velocity.csv', rewards, delimiter=',')
+
 
 # evaluate the policy
 rewards = np.loadtxt(test_folder+'inferred_rewards_maxent_velocity.csv', delimiter=',')

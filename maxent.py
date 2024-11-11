@@ -58,13 +58,6 @@ def maxentirl(feature_matrix, n_actions, discount, transition_probability,
                                          transition_probability, trajectories)
         grad = feature_expectations - feature_matrix.T.dot(expected_svf)
 
-        '''
-        # (revised) Add L2 regularization term to the gradient
-        lambda_reg = 0.01  # Adjust this value as needed
-        grad -= lambda_reg * alpha
-        grad_norm = np.linalg.norm(grad)
-        '''
-
         alpha += learning_rate * grad
         rewards = feature_matrix.dot(alpha).reshape((n_states,))
 
@@ -82,13 +75,7 @@ def maxentirl(feature_matrix, n_actions, discount, transition_probability,
         if (i + 1) % 10 == 0:
             elapsed_time = time.time() - start_time
             print(f"Epoch {i + 1}/{epochs} - Time elapsed: {elapsed_time:.2f}s")
-            '''
-            # (revised) Normalize rewards to range [0, 1] (or use a different range if needed)
-            rewards = (rewards - rewards.min()) / (rewards.max() - rewards.min())
-            # (revised) traking the gradient norm
-            print(f"--------------------- Gradient norm: {grad_norm:.4f}")
-            '''
-            plot_grid_based_rewards(rewards, n_bin1, n_bin2, lable_bin1, lable_bin2, str(i+1), test_folder)
+            plot_training_rewards_2d(rewards, n_bin1, n_bin2, lable_bin1, lable_bin2, str(i+1), test_folder)
             np.savetxt(test_folder+'inferred_rewards'+str(i+1)+'.csv', rewards, delimiter=',')
 
     return rewards

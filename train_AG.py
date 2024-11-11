@@ -15,7 +15,6 @@ with open('configs/irl.yml') as file:
     v = yaml.load(file, Loader=yaml.FullLoader)
 # Set the device
 device = torch.device(f"cuda:{v['cuda']}" if torch.cuda.is_available() and v['cuda'] >= 0 else "cpu")
-print("Device: ", device)
 # Load the dataset
 source = v['data_source']
 data = pd.read_csv('expert_demonstration/expert/'+source+'.csv')

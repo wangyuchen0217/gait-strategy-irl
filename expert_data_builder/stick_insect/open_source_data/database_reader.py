@@ -213,7 +213,7 @@ if __name__ == '__main__':
     # input the total number of subjects
     subjects = 3 # 12
     # for i in range(1, subjects + 1):
-    for i in range(1, 3):
+    for i in range(1, 4):
         subject_number = f"{i:02}"
         mat_reader_joint_angle(subject_number, save=True, visualizaiton=False)
         # mat_reader_vel(subject_number, save=True, visualizaiton=True)

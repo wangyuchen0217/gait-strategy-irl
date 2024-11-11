@@ -61,7 +61,7 @@ def time_eplased_antenna_contact(joint_data):
                 time_elapsed[i, j] = i - last_valley
     return time_elapsed
 
-def antenna_visualization(original_data, clustered_data, label, save=False, fontsize=16):
+def antenna_visualization(original_data, clustered_data, label, save=False, fontsize=16, subject="01"):
     titles = ["HS left", "HS right", "SP left", "SP right"]
     plt.figure(figsize=(15, 10))
     for i in range(4):
@@ -76,11 +76,11 @@ def antenna_visualization(original_data, clustered_data, label, save=False, font
         plt.title(titles[i], fontsize=fontsize)
     plt.tight_layout()
     if save:
-        plt.savefig(f"{label}.png")
+        plt.savefig(f"expert_demonstration/expert/plot/Carausius_T{subject}_antenna_{label}.png")
     else:
         plt.show()
 
-def plot_time_elapsed_histogram_subplots(data, bin_step):
+def plot_time_elapsed_histogram_subplots(data, bin_step, save=False, subject="01"):
     column_names=['HS left', 'HS right', 'SP left', 'SP right']
     data = pd.DataFrame(data, columns=column_names)
     num_columns = len(column_names)
@@ -98,18 +98,19 @@ def plot_time_elapsed_histogram_subplots(data, bin_step):
     fig.text(0.04, 0.5, 'Count', va='center', rotation='vertical')
     plt.suptitle('Distribution of Discrete Antenna Time Elapsed Bins')
     plt.tight_layout(rect=[0.05, 0.05, 1, 0.95])
-    plt.show()
+    if save:
+        plt.savefig(f"expert_demonstration/expert/plot/Carausius_T{subject}_antenna_histogram.png")
+    else:
+        plt.show()
 
 
+subject= "03"
 # Load the antenna data
-antenna_01 = get_data("01")
+antenna_01 = get_data(subject)
 # Smooth the antenna data: detect the contact points
 smoothed_antenna_01 = smooth(antenna_01, damping=3)
 # Calculate the time elapsed since the last antenna contact (valley)
-# t_elps_antenna_01 = time_eplased_antenna_contact(smoothed_antenna_01)
-# np.savetxt("encoded_antenna_01.csv", t_elps_antenna_01, delimiter=",")
-path = "encoded_antenna_01.csv"
-t_elps_antenna_01 = pd.read_csv(path, header=None).to_numpy()
+t_elps_antenna_01 = time_eplased_antenna_contact(smoothed_antenna_01)
 
 # Discretize the data: binning
 min_val = np.min(t_elps_antenna_01)
@@ -119,9 +120,20 @@ bin_step = 30
 bin_edges = np.arange(min_val, max_val+bin_step, bin_step)
 discrete_data = np.digitize(t_elps_antenna_01, bin_edges)
 
-# Visualize the encoded antenna data and the original antenna data
-antenna_visualization(antenna_01, smoothed_antenna_01, 'smoothed', save=True)
-antenna_visualization(antenna_01, t_elps_antenna_01, 'time elapsed', save=True)
-antenna_visualization(antenna_01, discrete_data, 'discrete time elapsed', save=True)
-plot_time_elapsed_histogram_subplots(discrete_data, bin_step)
+# Save the discrete data
+with open("configs/trail_details.json", "r") as f:
+    trail_details = json.load(f)
+    insect_name = trail_details[f"T{subject}"]["insect_name"]
+    insect_number = trail_details[f"T{subject}"]["insect_number"]
+    id_1 = trail_details[f"T{subject}"]["id_1"]
+    id_2 = trail_details[f"T{subject}"]["id_2"]
+    id_3 = trail_details[f"T{subject}"]["id_3"]
+save_path = os.path.join("expert_data_builder/stick_insect", insect_name,
+                                                f"{insect_number}_{id_1}_{id_2}_{id_3}_antenna_dist.csv")
+np.savetxt(save_path, discrete_data, delimiter=",", fmt='%d')
 
+# Visualize the encoded antenna data and the original antenna data
+antenna_visualization(antenna_01, smoothed_antenna_01, 'smoothed', subject=subject, save=False)
+antenna_visualization(antenna_01, t_elps_antenna_01, 'time_elapsed', subject=subject, save=False)
+antenna_visualization(antenna_01, discrete_data, 'discretized', subject=subject, save=False)
+plot_time_elapsed_histogram_subplots(discrete_data, bin_step, subject=subject, save=False)

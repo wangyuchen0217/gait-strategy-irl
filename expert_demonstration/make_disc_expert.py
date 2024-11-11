@@ -48,7 +48,7 @@ def get_antenna_dist(subject:str):
     id_2 = trail_details[f"T{subject}"]["id_2"]
     id_3 = trail_details[f"T{subject}"]["id_3"]
     antenna_path = os.path.join("expert_data_builder/stick_insect", insect_name,
-                                                    f"{insect_number}_{id_1}_{id_2}_{id_3}_antenna.csv")
+                                                    f"{insect_number}_{id_1}_{id_2}_{id_3}_antenna_dist.csv")
     antenna = pd.read_csv(antenna_path, header=[0], index_col=None).to_numpy()
     return antenna
 

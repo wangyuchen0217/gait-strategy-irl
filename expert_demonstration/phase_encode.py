@@ -37,10 +37,10 @@ def Kalman1D(observations,damping=1):
     pred_state, state_cov = kf.smooth(observations)
     return pred_state
 
-def smooth(data):
+def smooth(data, damping=1):
     smoothed_data = np.zeros_like(data, dtype=float)
     for i in range(data.shape[1]):
-        smoothed_data[:, i] = Kalman1D(data[:, i], damping=1).reshape(-1)
+        smoothed_data[:, i] = Kalman1D(data[:, i], damping=damping).reshape(-1)
     return smoothed_data
 
 def time_eplased_antenna_contact(joint_data):
@@ -106,26 +106,47 @@ def antenna_visualization(original_data, clustered_data, lable, save=False, font
     else:
         plt.show()
 
+def plot_time_elapsed_histogram_subplots(data, column_names=['HS left', 'HS right', 'SP left', 'SP right'], x_tick_multiplier=30):
+    data = pd.DataFrame(data, columns=column_names)
+    num_columns = len(column_names)
+    fig, axes = plt.subplots(nrows=1, ncols=num_columns, figsize=(20, 5), sharey=True)
+    for i, col in enumerate(column_names):
+        count_per_bin = data[col].value_counts().sort_index()
+        axes[i].bar(count_per_bin.index, count_per_bin.values, color='skyblue', edgecolor='black')
+        axes[i].set_title(f'Distribution for {col}')
+        x_ticks = count_per_bin.index
+        axes[i].set_xticks(x_ticks)
+        axes[i].set_xticklabels([int(tick * x_tick_multiplier) for tick in x_ticks])
+        axes[i].set_xlabel('Time Elapsed (t)')
+        axes[i].grid(axis='y', linestyle='--', alpha=0.5) 
+    # Set common y-axis label
+    fig.text(0.04, 0.5, 'Count', va='center', rotation='vertical')
+    plt.suptitle('Distribution of Discrete Antenna Time Elapsed Bins')
+    plt.tight_layout(rect=[0.05, 0.05, 1, 0.95])
+    plt.show()
 
 
+# Load the antenna data
 antenna_01 = get_data("01")
-smoothed_antenna_01 = smooth(antenna_01)
-
+# Smooth the antenna data: detect the contact points
+smoothed_antenna_01 = smooth(antenna_01, damping=3)
+# Calculate the time elapsed since the last antenna contact (valley)
 # t_elps_antenna_01 = time_eplased_antenna_contact(smoothed_antenna_01)
 # np.savetxt("encoded_antenna_01.csv", t_elps_antenna_01, delimiter=",")
 path = "encoded_antenna_01.csv"
 t_elps_antenna_01 = pd.read_csv(path, header=None).to_numpy()
 
-# binning the data: binning by linear scale
+# Discretize the data: binning
 min_val = np.min(t_elps_antenna_01)
 max_val = np.max(t_elps_antenna_01)
-print(min_val, max_val)
-bin_step = 10
-bin_edges = np.linspace(min_val, max_val+bin_step, bin_step)
+print(f"min_val: {min_val}, max_val: {max_val}")
+bin_step = 30
+bin_edges = np.arange(min_val, max_val+bin_step, bin_step)
 discrete_data = np.digitize(t_elps_antenna_01, bin_edges)
 
-# visualize the encoded antenna data and the original antenna data
+# Visualize the encoded antenna data and the original antenna data
 antenna_visualization(antenna_01, smoothed_antenna_01, 'smoothed', save=True)
 antenna_visualization(antenna_01, t_elps_antenna_01, 'time elapsed', save=True)
 antenna_visualization(antenna_01, discrete_data, 'discrete time elapsed', save=True)
+plot_time_elapsed_histogram_subplots(discrete_data)
 

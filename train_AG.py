@@ -29,10 +29,12 @@ print("---------------------------------")
 
 # Create a feature matrix (n_states, n_dimensions)
 n_states = n_HS_left_bins * n_HS_right_bins * n_SP_left_bins * n_SP_right_bins
+d_states = n_HS_left_bins + n_HS_right_bins + n_SP_left_bins + n_SP_right_bins
 n_actions = n_gait_categories
-feature_matrix = np.zeros((n_states, n_HS_left_bins + n_HS_right_bins + n_SP_left_bins + n_SP_right_bins))
+feature_matrix = np.zeros((n_states, d_states))
 print("Number of states: ", n_states)
 print("Number of actions: ", n_actions)
+print("Dimension of states: ", d_states)
 print(f"Rewards shape: ({n_states},)")
 print("Feature matrix shape: ", feature_matrix.shape)
 
@@ -134,11 +136,15 @@ def plot_transition_heatmaps(transition_probabilities, test_folder):
 epochs = 100
 learning_rate = 0.01
 discount = 0.9
-test_folder = 'test_folder/maxent/Carausius/ante-S34A6/'
-n_bin1=n_direction_bins
-n_bin2=n_velocity_bins
-lable_bin1="Direction Bins"
-lable_bin2="Velocity Bins"
+test_folder = 'test_folder/maxent/Carausius/ante-S39A6/'
+n_bin1=n_HS_left_bins
+n_bin2=n_HS_right_bins
+n_bin3=n_SP_left_bins
+n_bin4=n_SP_right_bins
+lable_bin1="HS Left Bins"
+lable_bin2="HS Right Bins"
+lable_bin3="SP Left Bins"
+lable_bin4="SP Right Bins"
 
 # check if there is test_folder, if not create one
 if not os.path.exists(test_folder):

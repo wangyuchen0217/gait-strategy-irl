@@ -108,32 +108,32 @@ print("length of faltten trajectory:", len(acc))
 # plot_histogram(acc, title='Acceleration Data Distribution', xlabel='Acceleration', savename=data_source+'_histogram_acc')
 # plot_histogram(vel, title='Velocity Data Distribution', xlabel='Velocity', savename=data_source+'_histogram_vel')
 
-# bin the data
-vel_start, vel_end, vel_step = irl_config[data_source]['vel_bin_params']
-direction_start, direction_end, direction_step = irl_config[data_source]['direction_bin_params']
-acc_start, acc_end, acc_step = irl_config[data_source]['acc_bin_params']
-vel_bin_edges = np.arange(vel_start, vel_end, vel_step) # the end value should be 1 unit larger
-vel_binned = np.digitize(vel, vel_bin_edges, right=True)
-direction_bin_edges = np.arange(direction_start, direction_end, direction_step)
-direction_binned = np.digitize(direction, direction_bin_edges, right=True)
-acc_bin_edges = np.arange(acc_start, acc_end, acc_step)
-acc_binned = np.digitize(acc, acc_bin_edges, right=True)
-# print binned group
-direction_bin_group = np.unique(direction_binned)
-vel_bin_group = np.unique(vel_binned)
-acc_bin_group = np.unique(acc_binned)
-print("direction binned group: ", direction_bin_group)
-print("vel binned group: ", vel_bin_group)
-print("acc binned group: ", acc_bin_group)
+# # bin the data
+# vel_start, vel_end, vel_step = irl_config[data_source]['vel_bin_params']
+# direction_start, direction_end, direction_step = irl_config[data_source]['direction_bin_params']
+# acc_start, acc_end, acc_step = irl_config[data_source]['acc_bin_params']
+# vel_bin_edges = np.arange(vel_start, vel_end, vel_step) # the end value should be 1 unit larger
+# vel_binned = np.digitize(vel, vel_bin_edges, right=True)
+# direction_bin_edges = np.arange(direction_start, direction_end, direction_step)
+# direction_binned = np.digitize(direction, direction_bin_edges, right=True)
+# acc_bin_edges = np.arange(acc_start, acc_end, acc_step)
+# acc_binned = np.digitize(acc, acc_bin_edges, right=True)
+# # print binned group
+# direction_bin_group = np.unique(direction_binned)
+# vel_bin_group = np.unique(vel_binned)
+# acc_bin_group = np.unique(acc_binned)
+# print("direction binned group: ", direction_bin_group)
+# print("vel binned group: ", vel_bin_group)
+# print("acc binned group: ", acc_bin_group)
 
 # get the binned antenna data
 antenna_dist_01 = get_antenna_dist(No1)
 antenna_dist_02 = get_antenna_dist(No2)
 antenna_dist_03 = get_antenna_dist(No3)
-antenna_dist = np.concatenate((antenna_dist_01, antenna_dist_02, antenna_dist_03), axis=0)
-# the first value of vel and the last value of gait are not valid
-HS_left, HS_right, SP_left, SP_right = antenna_dist[1:-1, 0], antenna_dist[1:-1, 1], antenna_dist[1:-1, 2], antenna_dist[1:-1, 3]
-print("length of HS_left, HS_right, SP_left, SP_right: ", len(HS_left), len(HS_right), len(SP_left), len(SP_right))
+# the first value of vel and the last value of gait are not valid, acc calculation length is 1 less due to diff
+antenna_dist = np.concatenate((antenna_dist_01[2:-1], antenna_dist_02[2:-1], antenna_dist_03[2:-1]), axis=0)
+HS_left, HS_right, SP_left, SP_right = antenna_dist[:, 0], antenna_dist[:, 1], antenna_dist[:, 2], antenna_dist[:, 3]
+print("length of antennae: ", len(HS_left))
 
 # Define grouped gait combinations (6 types)
 grouped_gait_combinations = {

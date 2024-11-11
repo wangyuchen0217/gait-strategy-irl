@@ -61,6 +61,18 @@ def time_eplased_antenna_contact(joint_data):
                 time_elapsed[i, j] = i - last_valley
     return time_elapsed
 
+def save_discrete_data(discrete_data):
+    with open("configs/trail_details.json", "r") as f:
+        trail_details = json.load(f)
+        insect_name = trail_details[f"T{subject}"]["insect_name"]
+        insect_number = trail_details[f"T{subject}"]["insect_number"]
+        id_1 = trail_details[f"T{subject}"]["id_1"]
+        id_2 = trail_details[f"T{subject}"]["id_2"]
+        id_3 = trail_details[f"T{subject}"]["id_3"]
+    save_path = os.path.join("expert_data_builder/stick_insect", insect_name,
+                                                        f"{insect_number}_{id_1}_{id_2}_{id_3}_antenna_dist.csv")
+    np.savetxt(save_path, discrete_data, delimiter=",", fmt='%d')
+
 def antenna_visualization(original_data, clustered_data, label, save=False, fontsize=16, subject="01"):
     titles = ["HS left", "HS right", "SP left", "SP right"]
     plt.figure(figsize=(15, 10))
@@ -121,16 +133,7 @@ bin_edges = np.arange(min_val, max_val+bin_step, bin_step)
 discrete_data = np.digitize(t_elps_antenna_01, bin_edges)
 
 # Save the discrete data
-with open("configs/trail_details.json", "r") as f:
-    trail_details = json.load(f)
-    insect_name = trail_details[f"T{subject}"]["insect_name"]
-    insect_number = trail_details[f"T{subject}"]["insect_number"]
-    id_1 = trail_details[f"T{subject}"]["id_1"]
-    id_2 = trail_details[f"T{subject}"]["id_2"]
-    id_3 = trail_details[f"T{subject}"]["id_3"]
-save_path = os.path.join("expert_data_builder/stick_insect", insect_name,
-                                                f"{insect_number}_{id_1}_{id_2}_{id_3}_antenna_dist.csv")
-np.savetxt(save_path, discrete_data, delimiter=",", fmt='%d')
+save_discrete_data(discrete_data)
 
 # Visualize the encoded antenna data and the original antenna data
 antenna_visualization(antenna_01, smoothed_antenna_01, 'smoothed', subject=subject, save=False)

@@ -1,8 +1,6 @@
 import numpy as np
 import pandas as pd
 from gridworld import CustomMDP as MDP
-import maxent
-from maxent import customirl
 from maxent import maxentirl
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -12,7 +10,7 @@ import os
 
 # Load the dataset
 # ['CarausiusC00', 'AretaonC00', 'MedauroideaC00', 'MedauroideaC00T', 'C00', 'C00T']
-source = 'MedauroideaC00T'
+source = 'CarausiusC00'
 data = pd.read_csv('expert_demonstration/expert/'+source+'.csv')
 
 # Prepare the MDP
@@ -113,34 +111,36 @@ def plot_transition_heatmaps(transition_probabilities, test_folder):
 epochs = 100
 learning_rate = 0.01
 discount = 0.9
-test_folder = 'test_folder/flatten_traj/maxent/All/dirvel-S34A6/'
+test_folder = 'test_folder/maxent/test/'
 n_bin1=n_direction_bins
 n_bin2=n_velocity_bins
+n_bins = [n_bin1, n_bin2]
 lable_bin1="Direction Bins"
 lable_bin2="Velocity Bins"
+lables = [lable_bin1, lable_bin2]
 
-# # check if there is test_folder, if not create one
-# if not os.path.exists(test_folder):
-#     os.makedirs(test_folder)
-# plot_transition_heatmaps(transition_probabilities, test_folder)
+# check if there is test_folder, if not create one
+if not os.path.exists(test_folder):
+    os.makedirs(test_folder)
+plot_transition_heatmaps(transition_probabilities, test_folder)
 
-# # train irl
-# rewards = maxentirl(feature_matrix, mdp.n_actions, discount, transition_probabilities, 
-#                                         trajectories, epochs, learning_rate, n_bin1, n_bin2, lable_bin1, lable_bin2, test_folder)
-# #Output the inferred rewards
-# print("Inferred Rewards:", rewards.shape)
-# # Save the inferred rewards as a CSV file
-# np.savetxt(test_folder+'inferred_rewards_maxent_direction.csv', rewards, delimiter=',')
+# train irl
+rewards = maxentirl(feature_matrix, mdp.n_actions, discount, transition_probabilities, 
+                                        trajectories, epochs, learning_rate, n_bins, lables, test_folder)
+#Output the inferred rewards
+print("Inferred Rewards:", rewards.shape)
+# Save the inferred rewards as a CSV file
+np.savetxt(test_folder+'inferred_rewards_maxent_direction.csv', rewards, delimiter=',')
 
 
-# evaluate the policy
-rewards = np.loadtxt(test_folder+'inferred_rewards_maxent_direction.csv', delimiter=',')
-q_values = maxent.find_policy(n_states, rewards, n_actions, discount, transition_probabilities)
-print("Q-values shape: ", q_values.shape)
-# save the q_values as a CSV file
-np.savetxt(test_folder+'q_values_maxent_direction.csv', q_values, delimiter=',')
-plot_most_rewarded_action(q_values, n_bin1, n_bin2, lable_bin1, lable_bin2, test_folder)
-plot_q_table(q_values, test_folder)
-plot_action_reward_subplots(q_values, n_bin1, n_bin2, n_actions, lable_bin1, lable_bin2, test_folder)
-plot_singlestate_action(q_values, n_states, n_bin1, lable_bin1, test_folder)
-plot_singlestate_action(q_values, n_states, n_bin2, lable_bin2, test_folder)
+# # evaluate the policy
+# rewards = np.loadtxt(test_folder+'inferred_rewards_maxent_direction.csv', delimiter=',')
+# q_values = maxent.find_policy(n_states, rewards, n_actions, discount, transition_probabilities)
+# print("Q-values shape: ", q_values.shape)
+# # save the q_values as a CSV file
+# np.savetxt(test_folder+'q_values_maxent_direction.csv', q_values, delimiter=',')
+# plot_most_rewarded_action(q_values, n_bin1, n_bin2, lable_bin1, lable_bin2, test_folder)
+# plot_q_table(q_values, test_folder)
+# plot_action_reward_subplots(q_values, n_bin1, n_bin2, n_actions, lable_bin1, lable_bin2, test_folder)
+# plot_singlestate_action(q_values, n_states, n_bin1, lable_bin1, test_folder)
+# plot_singlestate_action(q_values, n_states, n_bin2, lable_bin2, test_folder)

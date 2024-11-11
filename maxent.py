@@ -16,7 +16,7 @@ from plot_train import *
 
 
 def maxentirl(feature_matrix, n_actions, discount, transition_probability,
-        trajectories, epochs, learning_rate, n_bin1, n_bin2, lable_bin1, lable_bin2, test_folder):
+        trajectories, epochs, learning_rate, n_bins, labels, test_folder):
     """
     Find the reward function for the given trajectories.
 
@@ -75,7 +75,10 @@ def maxentirl(feature_matrix, n_actions, discount, transition_probability,
         if (i + 1) % 10 == 0:
             elapsed_time = time.time() - start_time
             print(f"Epoch {i + 1}/{epochs} - Time elapsed: {elapsed_time:.2f}s")
-            plot_training_rewards_2d(rewards, n_bin1, n_bin2, lable_bin1, lable_bin2, str(i+1), test_folder)
+            if d_states == 2:
+                plot_training_rewards_2d(rewards, n_bins, labels, str(i+1), test_folder)
+            elif d_states == 4:
+                plot_training_rewards_4d(rewards, n_bins, labels, str(i+1), test_folder)
             np.savetxt(test_folder+'inferred_rewards'+str(i+1)+'.csv', rewards, delimiter=',')
 
     return rewards

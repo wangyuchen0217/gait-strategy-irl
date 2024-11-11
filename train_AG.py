@@ -7,10 +7,16 @@ import seaborn as sns
 from plot_evaluate import *
 import torch
 import os
+import yaml
 
+
+# Load the configuration file
+with open('configs/irl.yml') as file:
+    v = yaml.load(file, Loader=yaml.FullLoader)
+# Set the device
+device = torch.device(f"cuda:{v['cuda']}" if torch.cuda.is_available() and v['cuda'] >= 0 else "cpu")
 # Load the dataset
-# ['CarausiusC00', 'AretaonC00', 'MedauroideaC00', 'MedauroideaC00T', 'C00', 'C00T']
-source = 'CarausiusC00AG'
+source = v['data_source']
 data = pd.read_csv('expert_demonstration/expert/'+source+'.csv')
 
 # Prepare the MDP
@@ -141,10 +147,13 @@ n_bin1=n_HS_left_bins
 n_bin2=n_HS_right_bins
 n_bin3=n_SP_left_bins
 n_bin4=n_SP_right_bins
-lable_bin1="HS Left Bins"
-lable_bin2="HS Right Bins"
-lable_bin3="SP Left Bins"
-lable_bin4="SP Right Bins"
+n_bins=[n_bin1, n_bin2, n_bin3, n_bin4]
+label_bin1="HS Left Bins"
+label_bin2="HS Right Bins"
+label_bin3="SP Left Bins"
+label_bin4="SP Right Bins"
+labels=[label_bin1, label_bin2, label_bin3, label_bin4]
+
 
 # check if there is test_folder, if not create one
 if not os.path.exists(test_folder):
@@ -153,7 +162,7 @@ plot_transition_heatmaps(transition_probabilities, test_folder)
 
 # train irl
 rewards = maxentirl(feature_matrix, n_actions, discount, transition_probabilities, 
-                                        trajectories, epochs, learning_rate, n_bin1, n_bin2, lable_bin1, lable_bin2, test_folder)
+                                        trajectories, epochs, learning_rate, n_bins, labels, test_folder)
 #Output the inferred rewards
 print("Inferred Rewards:", rewards.shape)
 # Save the inferred rewards as a CSV file

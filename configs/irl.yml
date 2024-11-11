@@ -1,17 +1,16 @@
-# StickInsect-v0: PosVel
-# StickInsect-v1: Motor
-# StickInsect-v2: PosVel sensor
-
 model: Sim-v0 # StickInsect-v0
 exclude_xy: True
 env:
   seed: 42
   horizon: 3000
-irl:
-  pca_dimension: 10
-  n_bins: 2
+  
 
-  # data source
+cuda: 0
+data_source: CarausiusC00AG
+# CarausiusC00, AretaonC00, MedauroideaC00
+# MedauroideaC00T, C00T, C00
+# CarausiusC00AG
+
 CarausiusC00:
   vel_bin_params: [0, 145, 5]
   direction_bin_params: [-20, 10, 5]
@@ -37,16 +36,3 @@ C00:
   direction_bin_params: [-25, 35, 5]
   acc_bin_params: [-3000, 2750, 250]
 
-# SrickInsect-v0-m2.npy: 
-#   PosVel w/o torso mujoco210 kp30000
-# StickInsect-v0-m2t.npy: 
-#   PosVel w/ torso mujoco210 kp30000
-# StickInsect-v0-m3t.npy: 
-#   PosVel w/ torso mujoco316 kp300 kv100
-# StickInsect-v0-m3t-12.npy: 
-#   PosVel w/ torso mujoco316 kp100 kv200
-
-# StickInsect-v0-m3t-12-obs/act.npy: 
-#   PosVel w/ torso mujoco316 kp100 kv200
-# StickInsect-v0-m3t-31-obs/act.npy: 
-#   PosVel w/ torso mujoco316 kp300 kv100

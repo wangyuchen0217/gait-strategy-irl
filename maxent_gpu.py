@@ -9,6 +9,7 @@ from itertools import product
 
 import numpy as np
 import numpy.random as rn
+import torch
 import value_iteration
 import time
 import matplotlib.pyplot as plt
@@ -16,7 +17,7 @@ from plot_train import *
 
 
 def maxentirl(feature_matrix, n_actions, discount, transition_probability,
-        trajectories, epochs, learning_rate, n_bin1, n_bin2, lable_bin1, lable_bin2, test_folder):
+        trajectories, epochs, learning_rate, n_bin1, n_bin2, lable_bin1, lable_bin2, test_folder, device):
     """
     Find the reward function for the given trajectories.
 
@@ -44,6 +45,7 @@ def maxentirl(feature_matrix, n_actions, discount, transition_probability,
 
     # Initialise weights.
     alpha = rn.uniform(size=(d_states,))
+    alpha = torch.rand(d_states, device=device)
 
     # Calculate the feature expectations \tilde{phi}.
     feature_expectations = find_feature_expectations(feature_matrix,
@@ -53,10 +55,10 @@ def maxentirl(feature_matrix, n_actions, discount, transition_probability,
     mean_rewards = []
     for i in range(epochs):
         # print("i: {}".format(i))
-        r = feature_matrix.dot(alpha)
+        r = torch.matmul(feature_matrix, alpha)
         expected_svf = find_expected_svf(n_states, r, n_actions, discount,
-                                         transition_probability, trajectories)
-        grad = feature_expectations - feature_matrix.T.dot(expected_svf)
+                                         transition_probability, trajectories, device)
+        grad = feature_expectations - torch.matmul(feature_matrix.T, expected_svf)
 
         '''
         # (revised) Add L2 regularization term to the gradient
@@ -66,10 +68,10 @@ def maxentirl(feature_matrix, n_actions, discount, transition_probability,
         '''
 
         alpha += learning_rate * grad
-        rewards = feature_matrix.dot(alpha).reshape((n_states,))
+        rewards = torch.matmul(feature_matrix, alpha).reshape((n_states,))
 
         # record the mean reward
-        mean_reward = np.mean(rewards)
+        mean_reward = torch.mean(rewards).item()
         mean_rewards.append(mean_reward)
         plt.figure(figsize=(10, 8))
         plt.plot(mean_rewards)
@@ -89,11 +91,11 @@ def maxentirl(feature_matrix, n_actions, discount, transition_probability,
             print(f"--------------------- Gradient norm: {grad_norm:.4f}")
             '''
             plot_grid_based_rewards(rewards, n_bin1, n_bin2, lable_bin1, lable_bin2, str(i+1), test_folder)
-            np.savetxt(test_folder+'inferred_rewards'+str(i+1)+'.csv', rewards, delimiter=',')
+            np.savetxt(test_folder+'inferred_rewards'+str(i+1)+'.csv', rewards.cpu().numpy(), delimiter=',')
 
     return rewards
 
-def find_svf(n_states, trajectories):
+def find_svf(n_states, trajectories, device):
     """
     Find the state visitation frequency from trajectories.
 
@@ -104,7 +106,7 @@ def find_svf(n_states, trajectories):
     -> State visitation frequencies vector with shape (N,).
     """
 
-    svf = np.zeros(n_states)
+    svf = torch.zeros(n_states, device=device)
 
     for trajectory in trajectories:
         for state, _, _ in trajectory:
@@ -114,7 +116,7 @@ def find_svf(n_states, trajectories):
 
     return svf
 
-def find_feature_expectations(feature_matrix, trajectories):
+def find_feature_expectations(feature_matrix, trajectories, device):
     """
     Find the feature expectations for the given trajectories. This is the
     average path feature vector.
@@ -128,7 +130,7 @@ def find_feature_expectations(feature_matrix, trajectories):
     -> Feature expectations vector with shape (D,).
     """
 
-    feature_expectations = np.zeros(feature_matrix.shape[1])
+    feature_expectations = torch.zeros(feature_matrix.shape[1], device=device)
 
     for trajectory in trajectories:
         for state, _ in trajectory:
@@ -139,7 +141,7 @@ def find_feature_expectations(feature_matrix, trajectories):
     return feature_expectations
 
 def find_expected_svf(n_states, r, n_actions, discount,
-                      transition_probability, trajectories):
+                      transition_probability, trajectories, device):
     """
     Find the expected state visitation frequencies using algorithm 1 from
     Ziebart et al. 2008.
@@ -163,14 +165,14 @@ def find_expected_svf(n_states, r, n_actions, discount,
     # policy = find_policy(n_states, r, n_actions, discount,
     #                                 transition_probability)
     policy = value_iteration.find_policy(n_states, n_actions,
-                                         transition_probability, r, discount)
+                                         transition_probability, r, discount, device)
 
-    start_state_count = np.zeros(n_states)
+    start_state_count = torch.zeros(n_states, device=device)
     for trajectory in trajectories:
         start_state_count[trajectory[0, 0]] += 1
     p_start_state = start_state_count/n_trajectories
 
-    expected_svf = np.tile(p_start_state, (trajectory_length, 1)).T
+    expected_svf = torch.tile(p_start_state, (trajectory_length, 1)).T
     for t in range(1, trajectory_length):
         expected_svf[:, t] = 0
         for i, j, k in product(range(n_states), range(n_actions), range(n_states)):
@@ -189,9 +191,9 @@ def softmax(x1, x2):
     -> softmax(x1, x2)
     """
 
-    max_x = max(x1, x2)
-    min_x = min(x1, x2)
-    return max_x + np.log(1 + np.exp(min_x - max_x))
+    max_x = torch.max(torch.tensor([x1, x2]))
+    min_x = torch.min(torch.tensor([x1, x2]))
+    return max_x + torch.log(1 + torch.exp(min_x - max_x))
 
 def find_policy(n_states, r, n_actions, discount,
                            transition_probability):

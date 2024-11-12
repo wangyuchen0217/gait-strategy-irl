@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 import maxent
-from maxent_gpu import maxentirl
+from maxent_gpu import maxentirl as maxentirl_gpu
 import matplotlib.pyplot as plt
 import seaborn as sns
 from plot_evaluate import *
@@ -165,7 +165,9 @@ if not os.path.exists(test_folder):
 plot_transition_heatmaps(transition_probabilities, test_folder)
 
 # train irl
-rewards = maxentirl(feature_matrix, n_actions, discount, transition_probabilities, 
+feature_matrix = torch.tensor(feature_matrix, device=device, dtype=torch.float32).to(device)
+transition_probabilities = torch.tensor(transition_probabilities, device=device, dtype=torch.float32).to(device)
+rewards = maxentirl_gpu(feature_matrix, n_actions, discount, transition_probabilities, 
                                         trajectories, epochs, learning_rate, n_bins, labels, test_folder, device)
 #Output the inferred rewards
 print("Inferred Rewards:", rewards.shape)

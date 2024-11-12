@@ -146,7 +146,7 @@ def plot_transition_heatmaps(transition_probabilities, test_folder):
 epochs = 100
 learning_rate = 0.01
 discount = 0.9
-test_folder = 'test_folder/maxent/Carausius/ante-S39A6/'
+test_folder = v['test_folder']
 n_bin1=n_HS_left_bins
 n_bin2=n_HS_right_bins
 n_bin3=n_SP_left_bins
@@ -159,20 +159,20 @@ label_bin4="SP Right Bins"
 labels=[label_bin1, label_bin2, label_bin3, label_bin4]
 
 
-# check if there is test_folder, if not create one
-if not os.path.exists(test_folder):
-    os.makedirs(test_folder)
-plot_transition_heatmaps(transition_probabilities, test_folder)
+# # check if there is test_folder, if not create one
+# if not os.path.exists(test_folder):
+#     os.makedirs(test_folder)
+# plot_transition_heatmaps(transition_probabilities, test_folder)
 
-# train irl
-feature_matrix = torch.tensor(feature_matrix, device=device, dtype=torch.float32).to(device)
-transition_probabilities = torch.tensor(transition_probabilities, device=device, dtype=torch.float32).to(device)
-rewards = maxentirl_gpu(feature_matrix, n_actions, discount, transition_probabilities, 
-                                        trajectories, epochs, learning_rate, n_bins, labels, test_folder, device)
-#Output the inferred rewards
-print("Inferred Rewards:", rewards.shape)
-# Save the inferred rewards as a CSV file
-np.savetxt(test_folder+'inferred_rewards_maxent_direction.csv', rewards, delimiter=',')
+# # train irl
+# feature_matrix = torch.tensor(feature_matrix, device=device, dtype=torch.float32).to(device)
+# transition_probabilities = torch.tensor(transition_probabilities, device=device, dtype=torch.float32).to(device)
+# rewards = maxentirl_gpu(feature_matrix, n_actions, discount, transition_probabilities, 
+#                                         trajectories, epochs, learning_rate, n_bins, labels, test_folder, device)
+# #Output the inferred rewards
+# print("Inferred Rewards:", rewards.shape)
+# # Save the inferred rewards as a CSV file
+# np.savetxt(test_folder+'inferred_rewards_maxent_direction.csv', rewards, delimiter=',')
 
 
 # # evaluate the policy

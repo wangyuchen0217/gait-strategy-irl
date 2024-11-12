@@ -6,7 +6,7 @@ env:
   
 
 cuda: 0
-data_source: CarausiusC00AG
+data_source: CarausiusC00
 # CarausiusC00, AretaonC00, MedauroideaC00
 # MedauroideaC00T, C00T, C00
 # CarausiusC00AG

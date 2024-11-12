@@ -10,7 +10,7 @@ from itertools import product
 import numpy as np
 import numpy.random as rn
 import torch
-import value_iteration
+import value_iteration_gpu
 import time
 import matplotlib.pyplot as plt
 from plot_train import *
@@ -42,6 +42,7 @@ def maxentirl(feature_matrix, n_actions, discount, transition_probability,
     print("Starting IRL:")
     start_time = time.time()
 
+    feature_matrix = torch.tensor(feature_matrix, device=device, dtype=torch.float32)
     n_states, d_states = feature_matrix.shape
 
     # Initialise weights.
@@ -50,7 +51,7 @@ def maxentirl(feature_matrix, n_actions, discount, transition_probability,
 
     # Calculate the feature expectations \tilde{phi}.
     feature_expectations = find_feature_expectations(feature_matrix,
-                                                     trajectories)
+                                                     trajectories, device)
 
     # Gradient descent on alpha.
     mean_rewards = []
@@ -120,14 +121,15 @@ def find_feature_expectations(feature_matrix, trajectories, device):
                             trajectories and L is the trajectory length.
     -> Feature expectations vector with shape (D,).
     """
-
+    # feature_matrix = torch.tensor(feature_matrix, device=device)
+    feature_matrix = feature_matrix.clone().detach().to(device)
     feature_expectations = torch.zeros(feature_matrix.shape[1], device=device)
 
     for trajectory in trajectories:
         for state, _ in trajectory:
             feature_expectations += feature_matrix[state]
 
-    feature_expectations /= trajectories.shape[0]
+    feature_expectations /= len(trajectories)
 
     return feature_expectations
 
@@ -155,7 +157,7 @@ def find_expected_svf(n_states, r, n_actions, discount,
 
     # policy = find_policy(n_states, r, n_actions, discount,
     #                                 transition_probability)
-    policy = value_iteration.find_policy(n_states, n_actions,
+    policy = value_iteration_gpu.find_policy(n_states, n_actions,
                                          transition_probability, r, discount, device)
 
     start_state_count = torch.zeros(n_states, device=device)

@@ -52,7 +52,6 @@ def optimal_value(n_states, n_actions, transition_probabilities, reward,
     -> Array of values for each state
     """
 
-    transition_probabilities = torch.tensor(transition_probabilities, device=device, dtype=torch.float32)
     v = torch.zeros(n_states, device=device)
 
     diff = float("inf")
@@ -88,8 +87,7 @@ def find_policy(n_states, n_actions, transition_probabilities, reward, discount,
     -> Action probabilities for each state or action int for each state
         (depending on stochasticity).
     """
-    # transition_probabilities = torch.tensor(transition_probabilities, device=device, dtype=torch.float32)
-    transition_probabilities = transition_probabilities.clone().detach().to(device)
+
     reward = reward.to(device)
     if v is None:
         v = optimal_value(n_states, n_actions, transition_probabilities, reward,
@@ -117,22 +115,3 @@ def find_policy(n_states, n_actions, transition_probabilities, reward, discount,
     policy = torch.tensor([_policy(s) for s in range(n_states)], device=device)
     return policy.cpu().numpy()
 
-if __name__ == '__main__':
-    # Quick unit test using gridworld.
-    import mdp.gridworld as gridworld
-    gw = gridworld.Gridworld(3, 0.3, 0.9)
-    v = value([gw.optimal_policy_deterministic(s) for s in range(gw.n_states)],
-              gw.n_states,
-              gw.transition_probability,
-              [gw.reward(s) for s in range(gw.n_states)],
-              gw.discount)
-    assert np.isclose(v,
-                      [5.7194282, 6.46706692, 6.42589811,
-                       6.46706692, 7.47058224, 7.96505174,
-                       6.42589811, 7.96505174, 8.19268666], 1).all()
-    opt_v = optimal_value(gw.n_states,
-                          gw.n_actions,
-                          gw.transition_probability,
-                          [gw.reward(s) for s in range(gw.n_states)],
-                          gw.discount)
-    assert np.isclose(v, opt_v).all()

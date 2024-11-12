@@ -42,7 +42,6 @@ def maxentirl(feature_matrix, n_actions, discount, transition_probability,
     print("Starting IRL:")
     start_time = time.time()
 
-    feature_matrix = torch.tensor(feature_matrix, device=device, dtype=torch.float32)
     n_states, d_states = feature_matrix.shape
 
     # Initialise weights.
@@ -121,8 +120,7 @@ def find_feature_expectations(feature_matrix, trajectories, device):
                             trajectories and L is the trajectory length.
     -> Feature expectations vector with shape (D,).
     """
-    # feature_matrix = torch.tensor(feature_matrix, device=device)
-    feature_matrix = feature_matrix.clone().detach().to(device)
+
     feature_expectations = torch.zeros(feature_matrix.shape[1], device=device)
 
     for trajectory in trajectories:
@@ -260,9 +258,9 @@ def expected_value_difference(n_states, n_actions, transition_probability,
     -> Expected value difference. float.
     """
 
-    policy = value_iteration.find_policy(n_states, n_actions,
+    policy = value_iteration_gpu.find_policy(n_states, n_actions,
         transition_probability, reward, discount)
-    value = value_iteration.value(policy.argmax(axis=1), n_states,
+    value = value_iteration_gpu.value(policy.argmax(axis=1), n_states,
         transition_probability, true_reward, discount)
 
     evd = optimal_value.dot(p_start_state) - value.dot(p_start_state)

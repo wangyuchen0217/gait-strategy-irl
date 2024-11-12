@@ -78,6 +78,35 @@ def mat_reader_direction(subject:str, save=False, visualizaiton=False):
         plt.grid()
         plt.show()
 
+def mat_antenna_reader(subject:str, save=False, visualizaiton=False):
+    # Load the .mat file
+    mat_contents, file_name, insect_name = json_reader(subject)
+    with open("configs/trail_details.json", "r") as f:
+        trail_details = json.load(f)  
+    # Extract specific data from the dictionary    
+    antL, antR = mat_contents['antL'], mat_contents['antR']
+    scpL, scpR, pedL, pedR = antL['scp'][0, 0], antR['scp'][0, 0], antL['ped'][0, 0], antR['ped'][0, 0]
+    scpL_angle, scpR_angle = scpL['angle'][0, 0].reshape(-1, 1), scpR['angle'][0, 0].reshape(-1, 1)
+    pedL_angle, pedR_angle = pedL['angle'][0, 0].reshape(-1, 1), pedR['angle'][0, 0].reshape(-1, 1)
+    antenna = np.concatenate((scpL_angle, scpR_angle, pedL_angle, pedR_angle), axis=1)
+    antenna = pd.DataFrame(antenna, index=None, columns=["scpL", "scpR", "pedL", "pedR"])
+
+    if save:
+        save_path = 'expert_data_builder/stick_insect/'+ insect_name +'/' + file_name + '_antenna.csv'
+        antenna.to_csv(save_path, index=False)
+        print(antenna.shape)
+
+    if visualizaiton:
+        plt.figure(figsize=(12, 3))
+        plt.plot(antenna)
+        plt.ylim(-1.5, 2.5)
+        plt.xticks(fontsize=14)
+        plt.yticks(fontsize=14)
+        plt.xlabel('Time Steps', fontsize=14)
+        plt.ylabel('antenna (rad)', fontsize=14)
+        plt.legend(["scpL", "scpR", "pedL", "pedR"])
+        plt.grid()
+        plt.show()
 
 def mat_reader_gait(subject:str, save=False):
     # Load the .mat file
@@ -184,9 +213,10 @@ if __name__ == '__main__':
     # input the total number of subjects
     subjects = 3 # 12
     # for i in range(1, subjects + 1):
-    for i in range(25, 28):
+    for i in range(1, 4):
         subject_number = f"{i:02}"
         mat_reader_joint_angle(subject_number, save=True, visualizaiton=False)
-        mat_reader_vel(subject_number, save=True, visualizaiton=True)
-        mat_reader_direction(subject_number, save=True, visualizaiton=True)
-        mat_reader_gait(subject_number, save=True)
+        # mat_reader_vel(subject_number, save=True, visualizaiton=True)
+        # mat_reader_direction(subject_number, save=True, visualizaiton=True)
+        # mat_reader_gait(subject_number, save=True)
+        mat_antenna_reader(subject_number, save=True, visualizaiton=True)

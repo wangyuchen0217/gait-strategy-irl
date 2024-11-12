@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from plot_expert import *
 import yaml
+import expert_data_builder.stick_insect.open_source_data.antenna_phase_encode as ape
 
 
 def get_cont_data(subject:str, trim=False, trim_len:int=0):
@@ -39,7 +40,7 @@ def calculate_acceleration(vel):
     acc = np.diff(vel, axis=0) / 0.005
     return acc
 
-def get_antenna_dist(subject:str):
+def load_antenna_dist(subject:str):
     with open("configs/trail_details.json", "r") as f:
         trail_details = json.load(f)
     insect_name = trail_details[f"T{subject}"]["insect_name"]
@@ -127,9 +128,9 @@ print("length of faltten trajectory:", len(acc))
 # print("acc binned group: ", acc_bin_group)
 
 # get the binned antenna data
-antenna_dist_01 = get_antenna_dist(No1)
-antenna_dist_02 = get_antenna_dist(No2)
-antenna_dist_03 = get_antenna_dist(No3)
+antenna_dist_01 = ape.get_antenna_dist(No1, bin_step=60)
+antenna_dist_02 = ape.get_antenna_dist(No2, bin_step=60)
+antenna_dist_03 = ape.get_antenna_dist(No3, bin_step=60)
 # the first value of vel and the last value of gait are not valid, acc calculation length is 1 less due to diff
 antenna_dist = np.concatenate((antenna_dist_01[2:-1], antenna_dist_02[2:-1], antenna_dist_03[2:-1]), axis=0)
 HS_left, HS_right, SP_left, SP_right = antenna_dist[:, 0], antenna_dist[:, 1], antenna_dist[:, 2], antenna_dist[:, 3]

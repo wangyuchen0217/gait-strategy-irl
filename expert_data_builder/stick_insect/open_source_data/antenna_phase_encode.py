@@ -61,7 +61,7 @@ def time_eplased_antenna_contact(joint_data):
                 time_elapsed[i, j] = i - last_valley
     return time_elapsed
 
-def save_discrete_data(discrete_data):
+def save_discrete_data(subject, discrete_data):
     with open("configs/trail_details.json", "r") as f:
         trail_details = json.load(f)
         insect_name = trail_details[f"T{subject}"]["insect_name"]
@@ -116,28 +116,54 @@ def plot_time_elapsed_histogram_subplots(data, bin_step, save=False, subject="01
     else:
         plt.show()
 
+def get_antenna_dist(subject:str, bin_step=30):
+    # Load the antenna data
+    antenna_01 = get_data(subject)
+    # Smooth the antenna data: detect the contact points
+    smoothed_antenna_01 = smooth(antenna_01, damping=3)
+    # Calculate the time elapsed since the last antenna contact (valley)
+    t_elps_antenna_01 = time_eplased_antenna_contact(smoothed_antenna_01)
 
-subject= "03"
-# Load the antenna data
-antenna_01 = get_data(subject)
-# Smooth the antenna data: detect the contact points
-smoothed_antenna_01 = smooth(antenna_01, damping=3)
-# Calculate the time elapsed since the last antenna contact (valley)
-t_elps_antenna_01 = time_eplased_antenna_contact(smoothed_antenna_01)
+    # Discretize the data: binning
+    min_val = np.min(t_elps_antenna_01)
+    max_val = np.max(t_elps_antenna_01)
+    print(f"min_val: {min_val}, max_val: {max_val}")
+    bin_edges = np.arange(min_val, max_val+bin_step, bin_step)
+    discrete_data = np.digitize(t_elps_antenna_01, bin_edges)
 
-# Discretize the data: binning
-min_val = np.min(t_elps_antenna_01)
-max_val = np.max(t_elps_antenna_01)
-print(f"min_val: {min_val}, max_val: {max_val}")
-bin_step = 30
-bin_edges = np.arange(min_val, max_val+bin_step, bin_step)
-discrete_data = np.digitize(t_elps_antenna_01, bin_edges)
+    # Save the discrete data
+    save_discrete_data(subject, discrete_data)
 
-# Save the discrete data
-save_discrete_data(discrete_data)
+    # Visualize the encoded antenna data and the original antenna data
+    antenna_visualization(antenna_01, smoothed_antenna_01, 'smoothed', subject=subject, save=True)
+    antenna_visualization(antenna_01, t_elps_antenna_01, 'time_elapsed', subject=subject, save=True)
+    antenna_visualization(antenna_01, discrete_data, 'discretized', subject=subject, save=True)
+    plot_time_elapsed_histogram_subplots(discrete_data, bin_step, subject=subject, save=True)
 
-# Visualize the encoded antenna data and the original antenna data
-antenna_visualization(antenna_01, smoothed_antenna_01, 'smoothed', subject=subject, save=True)
-antenna_visualization(antenna_01, t_elps_antenna_01, 'time_elapsed', subject=subject, save=True)
-antenna_visualization(antenna_01, discrete_data, 'discretized', subject=subject, save=True)
-plot_time_elapsed_histogram_subplots(discrete_data, bin_step, subject=subject, save=True)
+    return discrete_data
+
+if __name__ == "__main__":
+    subject= "03"
+    # Load the antenna data
+    antenna_01 = get_data(subject)
+    # Smooth the antenna data: detect the contact points
+    smoothed_antenna_01 = smooth(antenna_01, damping=3)
+    # Calculate the time elapsed since the last antenna contact (valley)
+    t_elps_antenna_01 = time_eplased_antenna_contact(smoothed_antenna_01)
+
+    # Discretize the data: binning
+    min_val = np.min(t_elps_antenna_01)
+    max_val = np.max(t_elps_antenna_01)
+    print(f"min_val: {min_val}, max_val: {max_val}")
+    bin_step = 30
+    bin_edges = np.arange(min_val, max_val+bin_step, bin_step)
+    discrete_data = np.digitize(t_elps_antenna_01, bin_edges)
+
+    # Save the discrete data
+    save_discrete_data(subject, discrete_data)
+
+    # Visualize the encoded antenna data and the original antenna data
+    antenna_visualization(antenna_01, smoothed_antenna_01, 'smoothed', subject=subject, save=True)
+    antenna_visualization(antenna_01, t_elps_antenna_01, 'time_elapsed', subject=subject, save=True)
+    antenna_visualization(antenna_01, discrete_data, 'discretized', subject=subject, save=True)
+    plot_time_elapsed_histogram_subplots(discrete_data, bin_step, subject=subject, save=True)

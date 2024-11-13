@@ -6,7 +6,7 @@ env:
   
 # irl: maxent
 cuda: 1
-data_source: MedauroideaC00_untrimmed
+data_source: C00_untrimmed
 test_folder: 'test_folder/maxent/Carausius/ante-gait/'
 # CarausiusC00, AretaonC00, MedauroideaC00, C00
 # MedauroideaC00_untrimmed, C00_untrimmed

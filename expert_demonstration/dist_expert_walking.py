@@ -54,13 +54,12 @@ def load_antenna_dist(subject:str):
     return antenna
 
 
-with open("configs/irl.yml", "r") as f:
-    irl_config = yaml.safe_load(f)
+with open('configs/irl.yml') as file:
+    v = yaml.load(file, Loader=yaml.FullLoader)
 
 data_source = 'CarausiusC00AG' # ['CarausiusC00', 'AretaonC00', 'MedauroideaC00', 'MedauroideaC00T', 'C00', 'C00T']
-No1, No2, No3 = "01", "02", "03"
-No13, No14, No15 = "13", "14", "15"
-No25, No26, No27 = "25", "26", "27"
+data_source = v['data_source']
+No1, No2, No3 = data_source['No1'], data_source['No2'], data_source['No3']
 
 # # When the data source is [all]
 # vel_01, direction_01, gait_01 = get_cont_data(No1)
@@ -110,9 +109,9 @@ print("length of faltten trajectory:", len(acc))
 # plot_histogram(vel, title='Velocity Data Distribution', xlabel='Velocity', savename=data_source+'_histogram_vel')
 
 # # bin the data
-# vel_start, vel_end, vel_step = irl_config[data_source]['vel_bin_params']
-# direction_start, direction_end, direction_step = irl_config[data_source]['direction_bin_params']
-# acc_start, acc_end, acc_step = irl_config[data_source]['acc_bin_params']
+# vel_start, vel_end, vel_step = v[data_source]['vel_bin_params']
+# direction_start, direction_end, direction_step = v[data_source]['direction_bin_params']
+# acc_start, acc_end, acc_step = v[data_source]['acc_bin_params']
 # vel_bin_edges = np.arange(vel_start, vel_end, vel_step) # the end value should be 1 unit larger
 # vel_binned = np.digitize(vel, vel_bin_edges, right=True)
 # direction_bin_edges = np.arange(direction_start, direction_end, direction_step)
@@ -127,14 +126,6 @@ print("length of faltten trajectory:", len(acc))
 # print("vel binned group: ", vel_bin_group)
 # print("acc binned group: ", acc_bin_group)
 
-# get the binned antenna data
-antenna_dist_01 = ape.get_antenna_dist(No1, bin_step=60)
-antenna_dist_02 = ape.get_antenna_dist(No2, bin_step=60)
-antenna_dist_03 = ape.get_antenna_dist(No3, bin_step=60)
-# the first value of vel and the last value of gait are not valid, acc calculation length is 1 less due to diff
-antenna_dist = np.concatenate((antenna_dist_01[2:-1], antenna_dist_02[2:-1], antenna_dist_03[2:-1]), axis=0)
-HS_left, HS_right, SP_left, SP_right = antenna_dist[:, 0], antenna_dist[:, 1], antenna_dist[:, 2], antenna_dist[:, 3]
-print("length of antennae: ", len(HS_left))
 
 # Define grouped gait combinations (6 types)
 grouped_gait_combinations = {

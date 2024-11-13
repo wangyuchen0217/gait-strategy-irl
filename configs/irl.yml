@@ -4,7 +4,7 @@ env:
   seed: 42
   horizon: 3000
   
-
+# irl: maxent
 cuda: 1
 data_source: CarausiusC00AG
 test_folder: 'test_folder/maxent/Carausius/ante-gait/'
@@ -12,27 +12,58 @@ test_folder: 'test_folder/maxent/Carausius/ante-gait/'
 # MedauroideaC00T, C00T, C00
 # CarausiusC00AG
 
+# expert demonstration
 CarausiusC00:
+  No1: "01"
+  No2: "02"
+  No3: "03"
   vel_bin_params: [0, 145, 5]
   direction_bin_params: [-20, 10, 5]
   acc_bin_params: [-3000, 2750, 250]
 AretaonC00:
+  No1: "13"
+  No2: "14"
+  No3: "15"
   vel_bin_params: [0, 95, 5]
   direction_bin_params: [-20, 5, 5]
   acc_bin_params: [-2000, 1500, 250]
-MedauroideaC00T:
+MedauroideaC00:
+  No1: "25"
+  No2: "26"
+  No3: "27"
   vel_bin_params: [0, 120, 5]
   direction_bin_params: [-10, 15, 5]
   acc_bin_params: [-1250, 1750, 250]
-C00T:
+C00:
+  No1: "01"
+  No2: "02"
+  No3: "03"
+  No13: "13"
+  No14: "14"
+  No15: "15"
+  No25: "25"
+  No26: "26"
+  No27: "27"
   vel_bin_params: [0, 145, 5]
   direction_bin_params: [-20, 15, 5]
   acc_bin_params: [-3000, 2750, 250]
-MedauroideaC00:
+MedauroideaC00_untrimmed:
+  No1: "25"
+  No2: "26"
+  No3: "27"
   vel_bin_params: [0, 125, 5]
   direction_bin_params: [-25, 35, 5]
   acc_bin_params: [-2750, 2000, 250]
-C00:
+C00_untrimmed:
+  No1: "01"
+  No2: "02"
+  No3: "03"
+  No13: "13"
+  No14: "14"
+  No15: "15"
+  No25: "25"
+  No26: "26"
+  No27: "27"
   vel_bin_params: [0, 145, 5]
   direction_bin_params: [-25, 35, 5]
   acc_bin_params: [-3000, 2750, 250]

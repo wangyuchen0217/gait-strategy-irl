@@ -49,29 +49,27 @@ def load_antenna_dist(subject:str):
     return antenna
 
 
-with open("configs/irl.yml", "r") as f:
-    irl_config = yaml.safe_load(f)
+with open('configs/irl.yml') as file:
+    v = yaml.load(file, Loader=yaml.FullLoader)
 
-data_source = 'CarausiusC00AG' # ['CarausiusC00', 'AretaonC00', 'MedauroideaC00', 'MedauroideaC00T', 'C00', 'C00T']
-No1, No2, No3 = "01", "02", "03"
+# Load the dataset
+data_source = str(v['data_source'])
+No1, No2, No3 = v[data_source]['No1'], v[data_source]['No2'], v[data_source]['No3']
 
 # When the data source is [one insect]
 if data_source == 'MedauroideaC00T':
     vel_01, direction_01, gait_01 = get_cont_data(No1, trim=True, trim_len=800)
     vel_02, direction_02, gait_02 = get_cont_data(No2, trim=True, trim_len=2200)
     vel_03, direction_03, gait_03 = get_cont_data(No3, trim=True, trim_len=1600)
-    acc_01, acc_02, acc_03 = calculate_acceleration(vel_01), calculate_acceleration(vel_02), calculate_acceleration(vel_03)
 else:
     vel_01, direction_01, gait_01 = get_cont_data(No1)
     vel_02, direction_02, gait_02 = get_cont_data(No2)
     vel_03, direction_03, gait_03 = get_cont_data(No3)
-    acc_01, acc_02, acc_03 = calculate_acceleration(vel_01), calculate_acceleration(vel_02), calculate_acceleration(vel_03)
 vel = np.concatenate((vel_01[1:], vel_02[1:], vel_03[1:]), axis=0)
 direction = np.concatenate((direction_01[1:], direction_02[1:], direction_03[1:]), axis=0)
 gait = np.concatenate((gait_01[1:], gait_02[1:], gait_03[1:]), axis=0)
-acc = np.concatenate((acc_01, acc_02, acc_03), axis=0)
-print("length of T"+No1+", T"+No2+", T"+No3+": ", len(acc_01), len(acc_02), len(acc_03))
-print("length of faltten trajectory:", len(acc))
+print("length of T"+No1+", T"+No2+", T"+No3+": ", len(gait_01), len(gait_02), len(gait_03))
+print("length of faltten trajectory:", len(gait))
 
 # get the binned antenna data
 antenna_dist_01 = ape.get_antenna_dist(No1, bin_step=60)
@@ -82,50 +80,8 @@ antenna_dist = np.concatenate((antenna_dist_01[2:-1], antenna_dist_02[2:-1], ant
 HS_left, HS_right, SP_left, SP_right = antenna_dist[:, 0], antenna_dist[:, 1], antenna_dist[:, 2], antenna_dist[:, 3]
 print("length of antennae: ", len(HS_left))
 
-# Define grouped gait combinations (6 types)
-grouped_gait_combinations = {
-    # representative noncanonical
-    '111111': 5,
-    '111110': 5,
-    '111101': 5,
-    '111011': 5,
-    '110111': 5,
-    '101111': 5,
-    '011111': 5,
-    # tetrapod gait
-    '110101': 4,
-    '110011': 4,
-    '101110': 4,
-    '101011': 4,
-    '011110': 4,
-    '011101': 4,
-    # tripod gait
-    '101010': 3,
-    '010101': 3,
-    # tetrapod gait (noncanonical)
-    '111010': 2,
-    '111001': 2,
-    '110110': 2,
-    '101101': 2,
-    '100111': 2, 
-    '011011': 2,
-    '010111': 2,
-    '001111': 2, 
-    # tripod gait (noncanonical)
-    '110010': 1,
-    '101001': 1, 
-    '011010': 1,
-    '011001': 1,
-    '010011': 1,
-    '001011': 1, 
-    # rare noncanonical
-    '101000': 0, 
-    '100010': 0,
-    '001010': 0,
-    '000101': 0,
-    '000010': 0,
-}
-
+# Load grouped gait combinations (6 types)
+grouped_gait_combinations = v['grouped_gait_combinations']
 # Combine the first six columns into a string for each row to represent the gait pattern
 gait_data = pd.DataFrame(gait)
 gait_data['Gait Pattern'] = gait_data.iloc[:, :6].astype(str).agg(''.join, axis=1)

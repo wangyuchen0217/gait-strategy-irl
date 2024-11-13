@@ -6,7 +6,7 @@ env:
   
 # irl: maxent
 cuda: 1
-data_source: C00_untrimmed
+data_source: CarausiusC00AG
 test_folder: 'test_folder/maxent/Carausius/ante-gait/'
 # CarausiusC00, AretaonC00, MedauroideaC00, C00
 # MedauroideaC00_untrimmed, C00_untrimmed
@@ -67,6 +67,10 @@ C00_untrimmed:
   vel_bin_params: [0, 145, 5]
   direction_bin_params: [-25, 35, 5]
   acc_bin_params: [-3000, 2750, 250]
+CarausiusC00AG:
+  No1: "01"
+  No2: "02"
+  No3: "03"
 
 grouped_gait_combinations:
   # representative noncanonical

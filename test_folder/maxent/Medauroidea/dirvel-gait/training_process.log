@@ -1,0 +1,17 @@
+Logging started at 2024/11/13_17:11:48
+NVIDIA RTX A6000
+Process ID: 4153250
+---------------------------------
+Velocity bins: 23
+Direction bins: 4
+Gait categories: 5
+---------------------------------
+Number of states: 92
+Number of actions: 5
+Dimension of states: 27
+Rewards shape: (92,)
+Feature matrix shape: (92, 27)
+Transition probabilities shape: (92, 5, 92)
+---------------------------------
+Device: cuda:2
+Starting IRL:

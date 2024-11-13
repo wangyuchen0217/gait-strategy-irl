@@ -45,22 +45,18 @@ source = v['data_source']
 data = pd.read_csv('expert_demonstration/expert/'+source+'.csv')
 
 # Prepare the MDP
-n_HS_left_bins = data['HS left'].nunique()
-n_HS_right_bins = data['HS right'].nunique()
-n_SP_left_bins = data['SP left'].nunique()
-n_SP_right_bins = data['SP right'].nunique()
+n_velocity_bins = data['Velocity Bin'].nunique()
+n_direction_bins = data['Direction Bin'].nunique()
 n_gait_categories = data['Gait Category'].nunique()
 print("---------------------------------")
-print(f"HS left bins: {n_HS_left_bins}")
-print(f"HS right bins: {n_HS_right_bins}")
-print(f"SP left bins: {n_SP_left_bins}")
-print(f"SP right bins: {n_SP_right_bins}")
-print(f"Gait Categories: {n_gait_categories}")
+print(f"Velocity bins: {n_velocity_bins}")
+print(f"Direction bins: {n_direction_bins}")
+print(f"Gait categories: {n_gait_categories}")
 print("---------------------------------")
 
 # Create a feature matrix (n_states, n_dimensions)
-n_states = n_HS_left_bins * n_HS_right_bins * n_SP_left_bins * n_SP_right_bins
-d_states = n_HS_left_bins + n_HS_right_bins + n_SP_left_bins + n_SP_right_bins
+n_states = n_velocity_bins * n_direction_bins
+d_states = n_velocity_bins + n_direction_bins
 n_actions = n_gait_categories
 feature_matrix = np.zeros((n_states, d_states))
 print(f"Number of states: {n_states}")
@@ -72,29 +68,16 @@ print(f"Feature matrix shape: {feature_matrix.shape}")
 # Populate the feature matrix (one-hot encoding)
 for index, row in data.iterrows():
     # set the row index
-    state_index = int((row['HS left']-1) * n_HS_right_bins * n_SP_left_bins * n_SP_right_bins +
-                        (row['HS right']-1) * n_SP_left_bins * n_SP_right_bins +
-                        (row['SP left']-1) * n_SP_right_bins +
-                        (row['SP right']-1))
+    state_index = int((row['Velocity Bin']-1) * n_direction_bins + (row['Direction Bin']-1))
     # set the one-hot encoding (column index)
-    feature_matrix[state_index, row['HS left']-1] = 1
-    feature_matrix[state_index, n_HS_left_bins + row['HS right']-1] = 1
-    feature_matrix[state_index, n_HS_left_bins + n_HS_right_bins + row['SP left']-1] = 1
-    feature_matrix[state_index, n_HS_left_bins + n_HS_right_bins + n_SP_left_bins + row['SP right']-1] = 1
+    feature_matrix[state_index, (row['Direction Bin']-1)] = 1
+    feature_matrix[state_index, n_velocity_bins + (row['Direction Bin']-1)] = 1
 
-def generate_trajectory(data, n_HS_right_bins, n_SP_left_bins, n_SP_right_bins):
+def generate_trajectory(data, n_direction_bins):
     trajectory = []
     for index, row in data.iterrows():
-        # Calculate state_index with four dimensions
-        state_index = int(
-            (row['HS left'] - 1) * n_HS_right_bins * n_SP_left_bins * n_SP_right_bins +
-            (row['HS right'] - 1) * n_SP_left_bins * n_SP_right_bins +
-            (row['SP left'] - 1) * n_SP_right_bins +
-            (row['SP right'] - 1)
-        )
-        # Get the action (assuming action is still 'Gait Category')
+        state_index = int((row['Velocity Bin'] - 1) * n_direction_bins + (row['Direction Bin'] - 1))
         action = int(row['Gait Category'])
-        # Append the state-action pair to the trajectory list
         trajectory.append([state_index, action])
     return trajectory
 
@@ -124,12 +107,7 @@ def build_transition_matrix_from_indices(data, n_states, n_actions):
 '''flatten_traj'''
 trajectories = []
 for index, row in data.iterrows():
-    state_index = int(
-        (row['HS left'] - 1) * n_HS_right_bins * n_SP_left_bins * n_SP_right_bins +
-        (row['HS right'] - 1) * n_SP_left_bins * n_SP_right_bins +
-        (row['SP left'] - 1) * n_SP_right_bins +
-        (row['SP right'] - 1)
-    )
+    state_index = int((row['Velocity Bin']-1) * n_direction_bins + (row['Direction Bin']-1))
     action = int(row['Gait Category'])
     trajectories.append([(state_index, action)])
 trajectories = np.array(trajectories)
@@ -167,16 +145,12 @@ def plot_transition_heatmaps(transition_probabilities, test_folder):
 epochs = 100
 learning_rate = 0.01
 discount = 0.9
-n_bin1=n_HS_left_bins
-n_bin2=n_HS_right_bins
-n_bin3=n_SP_left_bins
-n_bin4=n_SP_right_bins
-n_bins=[n_bin1, n_bin2, n_bin3, n_bin4]
-label_bin1="HS Left Bins"
-label_bin2="HS Right Bins"
-label_bin3="SP Left Bins"
-label_bin4="SP Right Bins"
-labels=[label_bin1, label_bin2, label_bin3, label_bin4]
+n_bin1=n_direction_bins
+n_bin2=n_velocity_bins
+n_bins = [n_bin1, n_bin2]
+label_bin1="Direction Bins"
+label_bin2="Velocity Bins"
+labels = [label_bin1, label_bin2]
 
 plot_transition_heatmaps(transition_probabilities, test_folder)
 
@@ -198,8 +172,8 @@ np.savetxt(test_folder+'inferred_rewards.csv', rewards, delimiter=',')
 # print("Q-values shape: ", q_values.shape)
 # # save the q_values as a CSV file
 # np.savetxt(test_folder+'q_values_maxent_direction.csv', q_values, delimiter=',')
-# plot_most_rewarded_action(q_values, n_bin1, n_bin2, lable_bin1, lable_bin2, test_folder)
+# plot_most_rewarded_action(q_values, n_bin1, n_bin2, label_bin1, label_bin2, test_folder)
 # plot_q_table(q_values, test_folder)
-# plot_action_reward_subplots(q_values, n_bin1, n_bin2, n_actions, lable_bin1, lable_bin2, test_folder)
-# plot_singlestate_action(q_values, n_states, n_bin1, lable_bin1, test_folder)
-# plot_singlestate_action(q_values, n_states, n_bin2, lable_bin2, test_folder)
+# plot_action_reward_subplots(q_values, n_bin1, n_bin2, n_actions, label_bin1, label_bin2, test_folder)
+# plot_singlestate_action(q_values, n_states, n_bin1, label_bin1, test_folder)
+# plot_singlestate_action(q_values, n_states, n_bin2, label_bin2, test_folder)

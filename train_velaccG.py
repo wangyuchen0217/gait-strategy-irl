@@ -1,60 +1,85 @@
 import numpy as np
 import pandas as pd
-from gridworld import CustomMDP as MDP
-from maxent import maxentirl
+import maxent
 from maxent_gpu import maxentirl as maxentirl_gpu
-import numpy as np
-import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 from plot_evaluate import *
 import torch
 import os
+import sys
 import yaml
+import logging
+from datetime import datetime
 
 # Load the configuration file
 with open('configs/irl.yml') as file:
     v = yaml.load(file, Loader=yaml.FullLoader)
+
+# check if there is test_folder, if not create one
+test_folder = v['test_folder']
+if not os.path.exists(test_folder):
+    os.makedirs(test_folder)
+
+# Set up logging configuration
+current_time = datetime.now().strftime("%Y/%m/%d_%H:%M:%S")
+log_filename = f"{test_folder}training_process.log"
+logging.basicConfig(
+    filename=log_filename,    
+    level=logging.INFO,
+    format='%(message)s',
+    filemode='w'
+    )
+sys.stdout = LoggerWriter(logging.info)
+print(f"Logging started at {current_time}")
+
 # Set the device
 device = torch.device(f"cuda:{v['cuda']}" if torch.cuda.is_available() and v['cuda'] >= 0 else "cpu")
 if torch.cuda.is_available():
     print(torch.cuda.get_device_name(v['cuda']))
 else:
     print("Running on CPU")
+print(f"Process ID: {os.getpid()}")
 # Load the dataset
 source = v['data_source']
 data = pd.read_csv('expert_demonstration/expert/'+source+'.csv')
 
 # Prepare the MDP
 n_velocity_bins = data['Velocity Bin'].nunique()
-n_direction_bins = data['Direction Bin'].nunique()
+n_acceleration_bins = data['Acceleration Bin'].nunique()
+# Medauroidea has no bin5 for acceleration, Carausius has no bin21 for acceleration
+if source in ['CarausiusC00', 'MedauroideaC00', 'C00', 'C00T']:
+    n_acceleration_bins = n_acceleration_bins + 1
 n_gait_categories = data['Gait Category'].nunique()
 print("---------------------------------")
-print("Velocity bins: ", n_velocity_bins)
-print("Direction bins: ", n_direction_bins)
-print("Gait categories: ", n_gait_categories)
+print(f"Velocity bins: {n_velocity_bins}")
+print(f"Acceleration bins: {n_acceleration_bins}")
+print(f"Gait categories: {n_gait_categories}")
 print("---------------------------------")
 
-mdp = MDP(n_velocity_bins, n_direction_bins, n_gait_categories, discount=0.9)
-
 # Create a feature matrix (n_states, n_dimensions)
-n_states = mdp.n_states
-n_actions = mdp.n_actions
-feature_matrix = np.zeros((n_states, n_velocity_bins + n_direction_bins))
-print("Feature matrix shape: ", feature_matrix.shape)
+n_states = n_velocity_bins * n_acceleration_bins
+d_states = n_velocity_bins + n_acceleration_bins
+n_actions = n_gait_categories
+feature_matrix = np.zeros((n_states, d_states))
+print(f"Number of states: {n_states}")
+print(f"Number of actions: {n_actions}")
+print(f"Dimension of states: {d_states}")
+print(f"Rewards shape: ({n_states},)")
+print(f"Feature matrix shape: {feature_matrix.shape}")
 
 # Populate the feature matrix (one-hot encoding)
 for index, row in data.iterrows():
     # set the row index
-    state_index = int((row['Velocity Bin']-1) * n_direction_bins + (row['Direction Bin']-1))
+    state_index = int((row['Velocity Bin']-1) * n_acceleration_bins + (row['Acceleration Bin']-1))
     # set the one-hot encoding (column index)
-    feature_matrix[state_index, (row['Direction Bin']-1)] = 1
-    feature_matrix[state_index, n_velocity_bins + (row['Direction Bin']-1)] = 1
+    feature_matrix[state_index, (row['Acceleration Bin']-1)] = 1
+    feature_matrix[state_index, n_velocity_bins + (row['Acceleration Bin']-1)] = 1
 
-def generate_trajectory(data, n_direction_bins):
+def generate_trajectory(data, n_acceleration_bins):
     trajectory = []
     for index, row in data.iterrows():
-        state_index = int((row['Velocity Bin'] - 1) * n_direction_bins + (row['Direction Bin'] - 1))
+        state_index = int((row['Velocity Bin'] - 1) * n_acceleration_bins + (row['Acceleration Bin'] - 1))
         action = int(row['Gait Category'])
         trajectory.append([state_index, action])
     return trajectory
@@ -85,7 +110,7 @@ def build_transition_matrix_from_indices(data, n_states, n_actions):
 '''flatten_traj'''
 trajectories = []
 for index, row in data.iterrows():
-    state_index = int((row['Velocity Bin']-1) * n_direction_bins + (row['Direction Bin']-1))
+    state_index = int((row['Velocity Bin']-1) * n_acceleration_bins + (row['Acceleration Bin']-1))
     action = int(row['Gait Category'])
     trajectories.append([(state_index, action)])
 trajectories = np.array(trajectories)
@@ -96,7 +121,7 @@ trajectories = trajectories.reshape(1, len_trajectories, 2)
 # # print("Trajectories: ", len(trajectories), len(trajectories[0]), len(trajectories[0][0]))
 
 transition_probabilities = build_transition_matrix_from_indices(trajectories[0], n_states, n_actions)
-print("Transition probabilities shape: ", transition_probabilities.shape)
+print(f"Transition probabilities shape: {transition_probabilities.shape}")
 print("---------------------------------")
 
 def plot_transition_heatmaps(transition_probabilities, test_folder):
@@ -123,19 +148,15 @@ def plot_transition_heatmaps(transition_probabilities, test_folder):
 epochs = 100
 learning_rate = 0.01
 discount = 0.9
-test_folder = 'test_folder/maxent/test/'
-n_bin1=n_direction_bins
-n_bin2=n_velocity_bins
+n_bin1 = n_acceleration_bins
+n_bin2 = n_velocity_bins
 n_bins = [n_bin1, n_bin2]
-label_bin1="Direction Bins"
-label_bin2="Velocity Bins"
-labels = [label_bin1, label_bin2]
+lable_bin1 = "Acceleration Bins"
+lable_bin2 = "Velocity Bins"
+labels = [lable_bin1, lable_bin2]
 
-
-# check if there is test_folder, if not create one
-if not os.path.exists(test_folder):
-    os.makedirs(test_folder)
 plot_transition_heatmaps(transition_probabilities, test_folder)
+
 
 # train irl
 feature_matrix = torch.tensor(feature_matrix, device=device, dtype=torch.float32).to(device)
@@ -145,17 +166,17 @@ rewards = maxentirl_gpu(feature_matrix, n_actions, discount, transition_probabil
 #Output the inferred rewards
 print("Inferred Rewards:", rewards.shape)
 # Save the inferred rewards as a CSV file
-np.savetxt(test_folder+'inferred_rewards_maxent_direction.csv', rewards, delimiter=',')
+np.savetxt(test_folder+'inferred_rewards.csv', rewards, delimiter=',')
 
 
 # # evaluate the policy
-# rewards = np.loadtxt(test_folder+'inferred_rewards_maxent_direction.csv', delimiter=',')
+# rewards = np.loadtxt(test_folder+'inferred_rewards.csv', delimiter=',')
 # q_values = maxent.find_policy(n_states, rewards, n_actions, discount, transition_probabilities)
 # print("Q-values shape: ", q_values.shape)
 # # save the q_values as a CSV file
-# np.savetxt(test_folder+'q_values_maxent_direction.csv', q_values, delimiter=',')
-# plot_most_rewarded_action(q_values, n_bin1, n_bin2, label_bin1, label_bin2, test_folder)
+# np.savetxt(test_folder+'q_values_maxent_velocity.csv', q_values, delimiter=',')
+# plot_most_rewarded_action(q_values, n_bin1, n_bin2, lable_bin1, lable_bin2, test_folder)
 # plot_q_table(q_values, test_folder)
-# plot_action_reward_subplots(q_values, n_bin1, n_bin2, n_actions, label_bin1, label_bin2, test_folder)
-# plot_singlestate_action(q_values, n_states, n_bin1, label_bin1, test_folder)
-# plot_singlestate_action(q_values, n_states, n_bin2, label_bin2, test_folder)
+# plot_action_reward_subplots(q_values, n_bin1, n_bin2, n_actions, lable_bin1, lable_bin2, test_folder)
+# plot_singlestate_action(q_values, n_states, n_bin1, lable_bin1, test_folder)
+# plot_singlestate_action(q_values, n_states, n_bin2, lable_bin2, test_folder)

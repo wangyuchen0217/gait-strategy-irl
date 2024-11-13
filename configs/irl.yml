@@ -5,9 +5,9 @@ env:
   horizon: 3000
   
 
-cuda: 0
+cuda: 1
 data_source: CarausiusC00AG
-test_folder: 'test_folder/maxent/Carausius/ante-S20A6/'
+test_folder: 'test_folder/maxent/Carausius/ante-gait/'
 # CarausiusC00, AretaonC00, MedauroideaC00
 # MedauroideaC00T, C00T, C00
 # CarausiusC00AG

@@ -2,6 +2,18 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 
+# Redirect stdout to the log file
+class LoggerWriter:
+    def __init__(self, level):
+        self.level = level
+
+    def write(self, message):
+        if message.strip():  # Only log non-empty messages
+            self.level(message)
+
+    def flush(self):
+        pass  # Required for compatibility
+
 def plot_most_rewarded_action(q_values, n_bin1, n_bin2, lable_bin1, lable_bin2, test_folder):
     # Find the action with the highest Q-value for each state
     most_rewarded_action = np.argmax(q_values, axis=1)

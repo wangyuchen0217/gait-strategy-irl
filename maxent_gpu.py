@@ -38,7 +38,7 @@ def maxentirl(feature_matrix, n_actions, discount, transition_probability,
     """
 
     # Initialize the start time
-    print("Device: ", device)
+    print(f"Device: {device}")
     print("Starting IRL:")
     start_time = time.time()
 

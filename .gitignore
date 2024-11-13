@@ -1,18 +1,3 @@
 trained_policy/trained_policy_mce_irl.pth
 
 nohup.out
-
-# All Velocity Acceleration
-train_all_acc.log
-run_all_acc.pid
-
-# add trimmed data training
-train_m_dirvel.log
-run_m_dirvel.pid
-train_m_accvel.log
-run_m_accvel.pid
-
-train_all_dirvel.log
-run_all_dirvel.pid
-train_all_accvel.log
-run_all_accvel.pid

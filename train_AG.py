@@ -7,18 +7,39 @@ import seaborn as sns
 from plot_evaluate import *
 import torch
 import os
+import sys
 import yaml
-
+import logging
+from datetime import datetime
 
 # Load the configuration file
 with open('configs/irl.yml') as file:
     v = yaml.load(file, Loader=yaml.FullLoader)
+
+# check if there is test_folder, if not create one
+test_folder = v['test_folder']
+if not os.path.exists(test_folder):
+    os.makedirs(test_folder)
+
+# Set up logging configuration
+current_time = datetime.now().strftime("%Y/%m/%d_%H:%M:%S")
+log_filename = f"{test_folder}training_process.log"
+logging.basicConfig(
+    filename=log_filename,    
+    level=logging.INFO,
+    format='%(message)s',
+    filemode='w'
+    )
+sys.stdout = LoggerWriter(logging.info)
+print(f"Logging started at {current_time}")
+
 # Set the device
 device = torch.device(f"cuda:{v['cuda']}" if torch.cuda.is_available() and v['cuda'] >= 0 else "cpu")
 if torch.cuda.is_available():
     print(torch.cuda.get_device_name(v['cuda']))
 else:
     print("Running on CPU")
+print(f"Process ID: {os.getpid()}")
 # Load the dataset
 source = v['data_source']
 data = pd.read_csv('expert_demonstration/expert/'+source+'.csv')
@@ -30,11 +51,11 @@ n_SP_left_bins = data['SP left'].nunique()
 n_SP_right_bins = data['SP right'].nunique()
 n_gait_categories = data['Gait Category'].nunique()
 print("---------------------------------")
-print("HS left bins: ", n_HS_left_bins)
-print("HS right bins: ", n_HS_right_bins)
-print("SP left bins: ", n_SP_left_bins)
-print("SP right bins: ", n_SP_right_bins)
-print("Gait categories: ", n_gait_categories)
+print(f"HS left bins: {n_HS_left_bins}")
+print(f"HS right bins: {n_HS_right_bins}")
+print(f"SP left bins: {n_SP_left_bins}")
+print(f"SP right bins: {n_SP_right_bins}")
+print(f"Gait Categories: {n_gait_categories}")
 print("---------------------------------")
 
 # Create a feature matrix (n_states, n_dimensions)
@@ -42,11 +63,11 @@ n_states = n_HS_left_bins * n_HS_right_bins * n_SP_left_bins * n_SP_right_bins
 d_states = n_HS_left_bins + n_HS_right_bins + n_SP_left_bins + n_SP_right_bins
 n_actions = n_gait_categories
 feature_matrix = np.zeros((n_states, d_states))
-print("Number of states: ", n_states)
-print("Number of actions: ", n_actions)
-print("Dimension of states: ", d_states)
+print(f"Number of states: {n_states}")
+print(f"Number of actions: {n_actions}")
+print(f"Dimension of states: {d_states}")
 print(f"Rewards shape: ({n_states},)")
-print("Feature matrix shape: ", feature_matrix.shape)
+print(f"Feature matrix shape: {feature_matrix.shape}")
 
 # Populate the feature matrix (one-hot encoding)
 for index, row in data.iterrows():
@@ -119,7 +140,7 @@ trajectories = trajectories.reshape(1, len_trajectories, 2)
 # # print("Trajectories: ", len(trajectories), len(trajectories[0]), len(trajectories[0][0]))
 
 transition_probabilities = build_transition_matrix_from_indices(trajectories[0], n_states, n_actions)
-print("Transition probabilities shape: ", transition_probabilities.shape)
+print(f"Transition probabilities shape: {transition_probabilities.shape}")
 print("---------------------------------")
 
 def plot_transition_heatmaps(transition_probabilities, test_folder):
@@ -146,7 +167,6 @@ def plot_transition_heatmaps(transition_probabilities, test_folder):
 epochs = 100
 learning_rate = 0.01
 discount = 0.9
-test_folder = v['test_folder']
 n_bin1=n_HS_left_bins
 n_bin2=n_HS_right_bins
 n_bin3=n_SP_left_bins
@@ -158,11 +178,7 @@ label_bin3="SP Left Bins"
 label_bin4="SP Right Bins"
 labels=[label_bin1, label_bin2, label_bin3, label_bin4]
 
-
-# # check if there is test_folder, if not create one
-# if not os.path.exists(test_folder):
-#     os.makedirs(test_folder)
-# plot_transition_heatmaps(transition_probabilities, test_folder)
+plot_transition_heatmaps(transition_probabilities, test_folder)
 
 # # train irl
 # feature_matrix = torch.tensor(feature_matrix, device=device, dtype=torch.float32).to(device)

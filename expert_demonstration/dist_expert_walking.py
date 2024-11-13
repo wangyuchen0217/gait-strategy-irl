@@ -57,9 +57,10 @@ def load_antenna_dist(subject:str):
 with open('configs/irl.yml') as file:
     v = yaml.load(file, Loader=yaml.FullLoader)
 
-data_source = 'CarausiusC00AG' # ['CarausiusC00', 'AretaonC00', 'MedauroideaC00', 'MedauroideaC00T', 'C00', 'C00T']
-data_source = v['data_source']
-No1, No2, No3 = data_source['No1'], data_source['No2'], data_source['No3']
+# Load the dataset
+data_source = str(v['data_source'])
+No1, No2, No3 = v[data_source]['No1'], v[data_source]['No2'], v[data_source]['No3']
+print(No1, No2, No3)
 
 # # When the data source is [all]
 # vel_01, direction_01, gait_01 = get_cont_data(No1)
@@ -70,7 +71,7 @@ No1, No2, No3 = data_source['No1'], data_source['No2'], data_source['No3']
 # vel_14, direction_14, gait_14 = get_cont_data(No14)
 # vel_15, direction_15, gait_15 = get_cont_data(No15)
 # acc_13, acc_14, acc_15 = calculate_acceleration(vel_13), calculate_acceleration(vel_14), calculate_acceleration(vel_15)
-# if data_source == 'C00T':
+# if data_source == 'C00':
 #     vel_25, direction_25, gait_25 = get_cont_data(No25, trim=True, trim_len=800)
 #     vel_26, direction_26, gait_26 = get_cont_data(No26, trim=True, trim_len=2200)
 #     vel_27, direction_27, gait_27 = get_cont_data(No27, trim=True, trim_len=1600)
@@ -87,7 +88,7 @@ No1, No2, No3 = data_source['No1'], data_source['No2'], data_source['No3']
 # print("flatten trajectory length: ", len(acc))
 
 # When the data source is [one insect]
-if data_source == 'MedauroideaC00T':
+if data_source == 'MedauroideaC00':
     vel_01, direction_01, gait_01 = get_cont_data(No1, trim=True, trim_len=800)
     vel_02, direction_02, gait_02 = get_cont_data(No2, trim=True, trim_len=2200)
     vel_03, direction_03, gait_03 = get_cont_data(No3, trim=True, trim_len=1600)
@@ -104,73 +105,30 @@ acc = np.concatenate((acc_01, acc_02, acc_03), axis=0)
 print("length of T"+No1+", T"+No2+", T"+No3+": ", len(acc_01), len(acc_02), len(acc_03))
 print("length of faltten trajectory:", len(acc))
 
-# # save vel and acc
-# plot_histogram(acc, title='Acceleration Data Distribution', xlabel='Acceleration', savename=data_source+'_histogram_acc')
-# plot_histogram(vel, title='Velocity Data Distribution', xlabel='Velocity', savename=data_source+'_histogram_vel')
+# save vel and acc
+plot_histogram(acc, title='Acceleration Data Distribution', xlabel='Acceleration', savename=data_source+'_histogram_acc')
+plot_histogram(vel, title='Velocity Data Distribution', xlabel='Velocity', savename=data_source+'_histogram_vel')
 
-# # bin the data
-# vel_start, vel_end, vel_step = v[data_source]['vel_bin_params']
-# direction_start, direction_end, direction_step = v[data_source]['direction_bin_params']
-# acc_start, acc_end, acc_step = v[data_source]['acc_bin_params']
-# vel_bin_edges = np.arange(vel_start, vel_end, vel_step) # the end value should be 1 unit larger
-# vel_binned = np.digitize(vel, vel_bin_edges, right=True)
-# direction_bin_edges = np.arange(direction_start, direction_end, direction_step)
-# direction_binned = np.digitize(direction, direction_bin_edges, right=True)
-# acc_bin_edges = np.arange(acc_start, acc_end, acc_step)
-# acc_binned = np.digitize(acc, acc_bin_edges, right=True)
-# # print binned group
-# direction_bin_group = np.unique(direction_binned)
-# vel_bin_group = np.unique(vel_binned)
-# acc_bin_group = np.unique(acc_binned)
-# print("direction binned group: ", direction_bin_group)
-# print("vel binned group: ", vel_bin_group)
-# print("acc binned group: ", acc_bin_group)
+# bin the data
+vel_start, vel_end, vel_step = v[data_source]['vel_bin_params']
+direction_start, direction_end, direction_step = v[data_source]['direction_bin_params']
+acc_start, acc_end, acc_step = v[data_source]['acc_bin_params']
+vel_bin_edges = np.arange(vel_start, vel_end, vel_step) # the end value should be 1 unit larger
+vel_binned = np.digitize(vel, vel_bin_edges, right=True)
+direction_bin_edges = np.arange(direction_start, direction_end, direction_step)
+direction_binned = np.digitize(direction, direction_bin_edges, right=True)
+acc_bin_edges = np.arange(acc_start, acc_end, acc_step)
+acc_binned = np.digitize(acc, acc_bin_edges, right=True)
+# print binned group
+direction_bin_group = np.unique(direction_binned)
+vel_bin_group = np.unique(vel_binned)
+acc_bin_group = np.unique(acc_binned)
+print("direction binned group: ", direction_bin_group)
+print("vel binned group: ", vel_bin_group)
+print("acc binned group: ", acc_bin_group)
 
-
-# Define grouped gait combinations (6 types)
-grouped_gait_combinations = {
-    # representative noncanonical
-    '111111': 5,
-    '111110': 5,
-    '111101': 5,
-    '111011': 5,
-    '110111': 5,
-    '101111': 5,
-    '011111': 5,
-    # tetrapod gait
-    '110101': 4,
-    '110011': 4,
-    '101110': 4,
-    '101011': 4,
-    '011110': 4,
-    '011101': 4,
-    # tripod gait
-    '101010': 3,
-    '010101': 3,
-    # tetrapod gait (noncanonical)
-    '111010': 2,
-    '111001': 2,
-    '110110': 2,
-    '101101': 2,
-    '100111': 2, 
-    '011011': 2,
-    '010111': 2,
-    '001111': 2, 
-    # tripod gait (noncanonical)
-    '110010': 1,
-    '101001': 1, 
-    '011010': 1,
-    '011001': 1,
-    '010011': 1,
-    '001011': 1, 
-    # rare noncanonical
-    '101000': 0, 
-    '100010': 0,
-    '001010': 0,
-    '000101': 0,
-    '000010': 0,
-}
-
+# Load grouped gait combinations (6 types)
+grouped_gait_combinations = v['grouped_gait_combinations']
 # Combine the first six columns into a string for each row to represent the gait pattern
 gait_data = pd.DataFrame(gait)
 gait_data['Gait Pattern'] = gait_data.iloc[:, :6].astype(str).agg(''.join, axis=1)
@@ -179,20 +137,11 @@ gait_data['Category'] = gait_data['Gait Pattern'].map(grouped_gait_combinations)
 # Display the categorized data
 print(gait_data[['Gait Pattern', 'Category']])
 
-# # Combine velocity, direction, and gait pattern into a single DataFrame for analysis
-# analysis_df = pd.DataFrame({
-#         'Velocity Bin': vel_binned.flatten(),
-#         'Acceleration Bin': acc_binned.flatten(),
-#         'Direction Bin': direction_binned.flatten(),
-#         'Gait Category': gait_data['Category']
-#     })
-
-# Combine antenna data and gait pattern into a single DataFrame for analysis
+# Combine velocity, direction, and gait pattern into a single DataFrame for analysis
 analysis_df = pd.DataFrame({
-        'HS left': HS_left,
-        'HS right': HS_right,
-        'SP left': SP_left,
-        'SP right': SP_right,
+        'Velocity Bin': vel_binned.flatten(),
+        'Acceleration Bin': acc_binned.flatten(),
+        'Direction Bin': direction_binned.flatten(),
         'Gait Category': gait_data['Category']
     })
 

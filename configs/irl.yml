@@ -6,10 +6,10 @@ env:
   
 # irl: maxent
 cuda: 1
-data_source: CarausiusC00AG
+data_source: AretaonC00
 test_folder: 'test_folder/maxent/Carausius/ante-gait/'
-# CarausiusC00, AretaonC00, MedauroideaC00
-# MedauroideaC00T, C00T, C00
+# CarausiusC00, AretaonC00, MedauroideaC00, C00
+# MedauroideaC00_untrimmed, C00_untrimmed
 # CarausiusC00AG
 
 # expert demonstration
@@ -68,3 +68,44 @@ C00_untrimmed:
   direction_bin_params: [-25, 35, 5]
   acc_bin_params: [-3000, 2750, 250]
 
+grouped_gait_combinations:
+  # representative noncanonical
+  '111111': 5
+  '111110': 5
+  '111101': 5
+  '111011': 5
+  '110111': 5
+  '101111': 5
+  '011111': 5
+  # tetrapod gait
+  '110101': 4
+  '110011': 4
+  '101110': 4
+  '101011': 4
+  '011110': 4
+  '011101': 4
+  # tripod gait
+  '101010': 3
+  '010101': 3
+  # tetrapod gait (noncanonical)
+  '111010': 2
+  '111001': 2
+  '110110': 2
+  '101101': 2
+  '100111': 2
+  '011011': 2
+  '010111': 2
+  '001111': 2
+  # tripod gait (noncanonical)
+  '110010': 1
+  '101001': 1
+  '011010': 1
+  '011001': 1
+  '010011': 1
+  '001011': 1
+  # rare noncanonical
+  '101000': 0
+  '100010': 0
+  '001010': 0
+  '000101': 0
+  '000010': 0

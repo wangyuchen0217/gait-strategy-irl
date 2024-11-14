@@ -104,7 +104,7 @@ def find_policy(n_states, n_actions, transition_probabilities, reward, discount,
                 Q[i, j] = torch.dot(p, reward + discount * v)
         Q = Q - Q.max(dim=1, keepdim=True).values  # For numerical stability.
         Q = torch.exp(Q) / torch.exp(Q).sum(dim=1, keepdim=True)
-        return Q.cpu().numpy()
+        return Q
     
     def _policy(s):
         return max(range(n_actions),
@@ -113,5 +113,5 @@ def find_policy(n_states, n_actions, transition_probabilities, reward, discount,
                        reward + discount * v
                    ).item())
     policy = torch.tensor([_policy(s) for s in range(n_states)], device=device)
-    return policy.cpu().numpy()
+    return policy
 

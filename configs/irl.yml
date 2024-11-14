@@ -5,9 +5,9 @@ env:
   horizon: 3000
   
 # irl: maxent
-cuda: 3
+cuda: 0
 data_source: CarausiusC00
-test_folder: 'test_folder/maxent/Carausius/accvel-gait/'
+test_folder: 'test_folder/maxent/test/'
 # CarausiusC00, AretaonC00, MedauroideaC00, C00
 # MedauroideaC00_untrimmed, C00_untrimmed
 # CarausiusC00AG

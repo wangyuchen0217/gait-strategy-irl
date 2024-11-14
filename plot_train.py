@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-import numpy as np
+import os
 
 
 def plot_training_rewards_2d(rewards, n_bins, labels, epoch, test_folder):
@@ -13,6 +13,7 @@ def plot_training_rewards_2d(rewards, n_bins, labels, epoch, test_folder):
     plt.ylabel(label_bin2, fontsize=14)
     plt.colorbar(label='Reward Value')
     plt.savefig(test_folder+'reward_heatmap_'+ epoch +'.png')
+    plt.close()
 
 def plot_training_rewards_4d(rewards, n_bins, labels, epoch, test_folder):
     n_bin1, n_bin2, n_bin3, n_bin4 = n_bins[0], n_bins[1], n_bins[2], n_bins[3]
@@ -25,4 +26,5 @@ def plot_training_rewards_4d(rewards, n_bins, labels, epoch, test_folder):
     plt.ylabel(label_bin2, fontsize=14)
     plt.colorbar(label='Reward Value')
     plt.savefig(test_folder+'reward_heatmap_'+ epoch +'.png')
+    plt.close()
 

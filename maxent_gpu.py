@@ -72,15 +72,16 @@ def maxentirl(feature_matrix, n_actions, discount, transition_probability,
         plt.ylabel('Mean Reward')
         plt.title('Training Progress')
         plt.savefig(test_folder+'mean_rewards.png')
+        plt.close()
 
         # Print progress every 10 epochs
         if (i + 1) % 10 == 0:
             elapsed_time = time.time() - start_time
             print(f"Epoch {i + 1}/{epochs} - Time elapsed: {elapsed_time:.2f}s")
-            if d_states == 2:
-                plot_training_rewards_2d(rewards.cpu(), n_bins, labels, str(i + 1), test_folder)
-            elif d_states == 4:
-                plot_training_rewards_4d(rewards.cpu(), n_bins, labels, str(i + 1), test_folder)
+            if len(n_bins) == 2:
+                plot_training_rewards_2d(rewards.cpu().numpy(), n_bins, labels, str(i + 1), test_folder)
+            elif len(n_bins) == 4:
+                plot_training_rewards_4d(rewards.cpu().numpy(), n_bins, labels, str(i + 1), test_folder)
             torch.save(rewards, test_folder + 'inferred_rewards' + str(i + 1) + '.pt')
 
     return rewards

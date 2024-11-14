@@ -166,9 +166,18 @@ def find_expected_svf(n_states, r, n_actions, discount,
     # Expected state visitation frequencies.
     expected_svf = torch.zeros((n_states, trajectory_length), device=device)
     expected_svf[:, 0] = p_start_state
-
+    transition_probability = transition_probability.view(n_states, n_actions, n_states)
+    # Iterate through each timestep
     for t in range(1, trajectory_length):
-        expected_svf[:, t] = torch.matmul(expected_svf[:, t - 1], torch.matmul(policy, transition_probability))
+        # Propagate state visitation frequency to the next timestep
+        # Compute the contribution of each state-action pair to all next states
+        expected_svf_t_minus_1 = expected_svf[:, t - 1].unsqueeze(1).expand(-1, n_actions)  # Shape: (n_states, n_actions)
+        # Multiply policy by previous visitation frequencies
+        # Now we have the expected frequency of taking each action in each state
+        expected_action_visitation = policy * expected_svf_t_minus_1  # Shape: (n_states, n_actions)
+        # Sum over actions, effectively performing a batch matrix multiplication
+        # For each state-action pair, determine how it contributes to next states
+        expected_svf[:, t] = torch.einsum('sai,sa->i', transition_probability, expected_action_visitation)
 
     return expected_svf.sum(dim=1)
 

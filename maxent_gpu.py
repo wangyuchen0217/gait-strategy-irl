@@ -45,7 +45,6 @@ def maxentirl(feature_matrix, n_actions, discount, transition_probability,
     n_states, d_states = feature_matrix.shape
 
     # Initialise weights.
-    alpha = rn.uniform(size=(d_states,))
     alpha = torch.rand(d_states, device=device)
 
     # Calculate the feature expectations \tilde{phi}.
@@ -79,10 +78,10 @@ def maxentirl(feature_matrix, n_actions, discount, transition_probability,
             elapsed_time = time.time() - start_time
             print(f"Epoch {i + 1}/{epochs} - Time elapsed: {elapsed_time:.2f}s")
             if d_states == 2:
-                plot_training_rewards_2d(rewards, n_bins, labels, str(i+1), test_folder)
+                plot_training_rewards_2d(rewards.cpu(), n_bins, labels, str(i + 1), test_folder)
             elif d_states == 4:
-                plot_training_rewards_4d(rewards, n_bins, labels, str(i+1), test_folder)
-            np.savetxt(test_folder+'inferred_rewards'+str(i+1)+'.csv', rewards.cpu().numpy(), delimiter=',')
+                plot_training_rewards_4d(rewards.cpu(), n_bins, labels, str(i + 1), test_folder)
+            torch.save(rewards, test_folder + 'inferred_rewards' + str(i + 1) + '.pt')
 
     return rewards
 
@@ -123,9 +122,10 @@ def find_feature_expectations(feature_matrix, trajectories, device):
 
     feature_expectations = torch.zeros(feature_matrix.shape[1], device=device)
 
+    # Using indexing to efficiently accumulate feature expectations.
     for trajectory in trajectories:
-        for state, _ in trajectory:
-            feature_expectations += feature_matrix[state]
+        states = trajectory[:, 0].long()
+        feature_expectations += feature_matrix[states].sum(dim=0)
 
     feature_expectations /= len(trajectories)
 
@@ -159,19 +159,18 @@ def find_expected_svf(n_states, r, n_actions, discount,
                                          transition_probability, r, discount, device)
 
     start_state_count = torch.zeros(n_states, device=device)
-    for trajectory in trajectories:
-        start_state_count[trajectory[0, 0]] += 1
-    p_start_state = start_state_count/n_trajectories
+    start_states = trajectories[:, 0, 0].long()
+    start_state_count.index_add_(0, start_states, torch.ones_like(start_states, dtype=torch.float, device=device))
+    p_start_state = start_state_count / n_trajectories
 
-    expected_svf = torch.tile(p_start_state, (trajectory_length, 1)).T
+    # Expected state visitation frequencies.
+    expected_svf = torch.zeros((n_states, trajectory_length), device=device)
+    expected_svf[:, 0] = p_start_state
+
     for t in range(1, trajectory_length):
-        expected_svf[:, t] = 0
-        for i, j, k in product(range(n_states), range(n_actions), range(n_states)):
-            expected_svf[k, t] += (expected_svf[i, t-1] *
-                                  policy[i, j] * # Stochastic policy
-                                  transition_probability[i, j, k])
+        expected_svf[:, t] = torch.matmul(expected_svf[:, t - 1], torch.matmul(policy, transition_probability))
 
-    return expected_svf.sum(axis=1)
+    return expected_svf.sum(dim=1)
 
 def softmax(x1, x2):
     """

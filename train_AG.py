@@ -184,6 +184,7 @@ plot_transition_heatmaps(transition_probabilities, test_folder)
 # train irl
 feature_matrix = torch.tensor(feature_matrix, device=device, dtype=torch.float32).to(device)
 transition_probabilities = torch.tensor(transition_probabilities, device=device, dtype=torch.float32).to(device)
+trajectories = torch.tensor(trajectories, device=device, dtype=torch.int64).to(device)
 rewards = maxentirl_gpu(feature_matrix, n_actions, discount, transition_probabilities, 
                                         trajectories, epochs, learning_rate, n_bins, labels, test_folder, device)
 #Output the inferred rewards

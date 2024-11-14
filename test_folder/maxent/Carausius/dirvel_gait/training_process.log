@@ -1,0 +1,22 @@
+Logging started at 2024/11/14_16:49:30
+NVIDIA RTX A6000
+Process ID: 998101
+---------------------------------
+Velocity bins: 28
+Direction bins: 5
+Gait categories: 6
+---------------------------------
+Number of states: 140
+Number of actions: 6
+Dimension of states: 33
+Rewards shape: (140,)
+Feature matrix shape: (140, 33)
+Transition probabilities shape: (140, 6, 140)
+---------------------------------
+Device: cuda:1
+Starting IRL:
+Epoch 10/100 - Time elapsed: 113.28s
+Epoch 20/100 - Time elapsed: 223.30s
+Epoch 30/100 - Time elapsed: 527.37s
+Epoch 40/100 - Time elapsed: 844.85s
+Epoch 50/100 - Time elapsed: 1163.45s

@@ -17,3 +17,4 @@ Transition probabilities shape: (625, 6, 625)
 ---------------------------------
 Device: cuda:3
 Starting IRL:
+Epoch 10/100 - Time elapsed: 453.80s

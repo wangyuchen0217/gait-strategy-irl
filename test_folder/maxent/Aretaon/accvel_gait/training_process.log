@@ -16,3 +16,14 @@ Transition probabilities shape: (234, 6, 234)
 Device: cuda:2
 Starting IRL:
 Epoch 10/100 - Time elapsed: 376.29s
+Epoch 20/100 - Time elapsed: 792.58s
+Epoch 30/100 - Time elapsed: 1208.81s
+Epoch 40/100 - Time elapsed: 1635.46s
+Epoch 50/100 - Time elapsed: 2064.29s
+Epoch 60/100 - Time elapsed: 2489.14s
+Epoch 70/100 - Time elapsed: 2893.77s
+Epoch 80/100 - Time elapsed: 3316.43s
+Epoch 90/100 - Time elapsed: 3742.29s
+Epoch 100/100 - Time elapsed: 4163.75s
+Inferred Rewards:
+torch.Size([234])

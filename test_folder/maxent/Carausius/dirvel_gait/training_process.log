@@ -20,3 +20,10 @@ Epoch 20/100 - Time elapsed: 223.30s
 Epoch 30/100 - Time elapsed: 527.37s
 Epoch 40/100 - Time elapsed: 844.85s
 Epoch 50/100 - Time elapsed: 1163.45s
+Epoch 60/100 - Time elapsed: 1485.63s
+Epoch 70/100 - Time elapsed: 1776.69s
+Epoch 80/100 - Time elapsed: 1977.16s
+Epoch 90/100 - Time elapsed: 2072.59s
+Epoch 100/100 - Time elapsed: 2168.19s
+Inferred Rewards:
+torch.Size([140])

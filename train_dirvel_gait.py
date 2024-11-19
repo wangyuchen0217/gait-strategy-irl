@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import maxent
 from maxent import maxentirl
+import maxent_gpu
 from maxent_gpu import maxentirl as maxentirl_gpu
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -159,27 +160,23 @@ labels = [label_bin1, label_bin2]
 plot_transition_heatmaps(transition_probabilities, test_folder)
 
 if mode == 'train':
-# train irl
+    # train irl
     feature_matrix = torch.tensor(feature_matrix, device=device, dtype=torch.float32).to(device)
     transition_probabilities = torch.tensor(transition_probabilities, device=device, dtype=torch.float32).to(device)
     trajectories = torch.tensor(trajectories, device=device, dtype=torch.int64).to(device)
     rewards = maxentirl_gpu(feature_matrix, n_actions, discount, transition_probabilities, 
                                             trajectories, epochs, learning_rate, n_bins, labels, test_folder, device)
-    # rewards = maxentirl(feature_matrix, n_actions, discount, transition_probabilities, 
-    #                                         trajectories, epochs, learning_rate, n_bins, labels, test_folder)
     #Output the inferred rewards
     print("Inferred Rewards:", rewards.shape)
-    # Save the inferred rewards as a CSV file
-    np.savetxt(test_folder+'inferred_rewards.csv', rewards, delimiter=',')
+    # Save the inferred rewards as a pt file
+    torch.save(rewards, test_folder+'inferred_rewards.pt')
 
 
 if mode == 'evaluate':
     # evaluate the policy
-    # rewards = np.loadtxt(test_folder+'inferred_rewards.csv', delimiter=',')
-    # load the pt file and convert it to a numpy array
     rewards = torch.load(test_folder+'inferred_rewards100.pt', map_location=f"cuda:{v['cuda']}")
     rewards = rewards.cpu().clone().numpy()
-    q_values = maxent.find_policy(n_states, rewards, n_actions, discount, transition_probabilities)
+    q_values = maxent_gpu.find_policy(n_states, rewards, n_actions, discount, transition_probabilities)
     print("Q-values shape: ", q_values.shape)
     # save the q_values as a CSV file
     np.savetxt(test_folder+'q_values_maxent_direction.csv', q_values, delimiter=',')

@@ -1,7 +1,5 @@
 import numpy as np
 import pandas as pd
-import maxent
-from maxent import maxentirl
 import maxent_gpu
 from maxent_gpu import maxentirl as maxentirl_gpu
 import matplotlib.pyplot as plt
@@ -174,7 +172,7 @@ if mode == 'train':
 
 if mode == 'evaluate':
     # evaluate the policy
-    rewards = torch.load(test_folder+'inferred_rewards100.pt', map_location=f"cuda:{v['cuda']}")
+    rewards = torch.load(test_folder+'inferred_rewards.pt', map_location=f"cuda:{v['cuda']}")
     rewards = rewards.cpu().clone().numpy()
     q_values = maxent_gpu.find_policy(n_states, rewards, n_actions, discount, transition_probabilities)
     print("Q-values shape: ", q_values.shape)

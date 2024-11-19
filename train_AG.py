@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-import maxent
+import maxent_gpu
 from maxent_gpu import maxentirl as maxentirl_gpu
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -15,31 +15,34 @@ from datetime import datetime
 # Load the configuration file
 with open('configs/irl.yml') as file:
     v = yaml.load(file, Loader=yaml.FullLoader)
+mode = v['mode']
 
 # check if there is test_folder, if not create one
 test_folder = v['test_folder']
 if not os.path.exists(test_folder):
     os.makedirs(test_folder)
 
-# Set up logging configuration
-current_time = datetime.now().strftime("%Y/%m/%d_%H:%M:%S")
-log_filename = f"{test_folder}training_process.log"
-logging.basicConfig(
-    filename=log_filename,    
-    level=logging.INFO,
-    format='%(message)s',
-    filemode='w'
-    )
-sys.stdout = LoggerWriter(logging.info)
-print(f"Logging started at {current_time}")
+if mode == 'train':
+    # Set up logging configuration
+    current_time = datetime.now().strftime("%Y/%m/%d_%H:%M:%S")
+    log_filename = f"{test_folder}training_process.log"
+    logging.basicConfig(
+        filename=log_filename,    
+        level=logging.INFO,
+        format='%(message)s',
+        filemode='w'
+        )
+    sys.stdout = LoggerWriter(logging.info)
+    print(f"Logging started at {current_time}")
 
-# Set the device
-device = torch.device(f"cuda:{v['cuda']}" if torch.cuda.is_available() and v['cuda'] >= 0 else "cpu")
-if torch.cuda.is_available():
-    print(torch.cuda.get_device_name(v['cuda']))
-else:
-    print("Running on CPU")
-print(f"Process ID: {os.getpid()}")
+    # Set the device
+    device = torch.device(f"cuda:{v['cuda']}" if torch.cuda.is_available() and v['cuda'] >= 0 else "cpu")
+    if torch.cuda.is_available():
+        print(torch.cuda.get_device_name(v['cuda']))
+    else:
+        print("Running on CPU")
+    print(f"Process ID: {os.getpid()}")
+
 # Load the dataset
 source = v['data_source']
 data = pd.read_csv('expert_demonstration/expert/'+source+'.csv')
@@ -180,27 +183,29 @@ labels=[label_bin1, label_bin2, label_bin3, label_bin4]
 
 plot_transition_heatmaps(transition_probabilities, test_folder)
 
+if mode == 'train':
+    # train irl
+    feature_matrix = torch.tensor(feature_matrix, device=device, dtype=torch.float32).to(device)
+    transition_probabilities = torch.tensor(transition_probabilities, device=device, dtype=torch.float32).to(device)
+    trajectories = torch.tensor(trajectories, device=device, dtype=torch.int64).to(device)
+    rewards = maxentirl_gpu(feature_matrix, n_actions, discount, transition_probabilities, 
+                                            trajectories, epochs, learning_rate, n_bins, labels, test_folder, device)
+    #Output the inferred rewards
+    print("Inferred Rewards:", rewards.shape)
+    # Save the inferred rewards as a pt file
+    torch.save(rewards, test_folder+'inferred_rewards.pt')
 
-# train irl
-feature_matrix = torch.tensor(feature_matrix, device=device, dtype=torch.float32).to(device)
-transition_probabilities = torch.tensor(transition_probabilities, device=device, dtype=torch.float32).to(device)
-trajectories = torch.tensor(trajectories, device=device, dtype=torch.int64).to(device)
-rewards = maxentirl_gpu(feature_matrix, n_actions, discount, transition_probabilities, 
-                                        trajectories, epochs, learning_rate, n_bins, labels, test_folder, device)
-#Output the inferred rewards
-print("Inferred Rewards:", rewards.shape)
-# Save the inferred rewards as a CSV file
-np.savetxt(test_folder+'inferred_rewards.csv', rewards, delimiter=',')
 
-
-# # evaluate the policy
-# rewards = np.loadtxt(test_folder+'inferred_rewards.csv', delimiter=',')
-# q_values = maxent.find_policy(n_states, rewards, n_actions, discount, transition_probabilities)
-# print("Q-values shape: ", q_values.shape)
-# # save the q_values as a CSV file
-# np.savetxt(test_folder+'q_values_maxent_direction.csv', q_values, delimiter=',')
-# plot_most_rewarded_action(q_values, n_bin1, n_bin2, lable_bin1, lable_bin2, test_folder)
-# plot_q_table(q_values, test_folder)
-# plot_action_reward_subplots(q_values, n_bin1, n_bin2, n_actions, lable_bin1, lable_bin2, test_folder)
-# plot_singlestate_action(q_values, n_states, n_bin1, lable_bin1, test_folder)
-# plot_singlestate_action(q_values, n_states, n_bin2, lable_bin2, test_folder)
+if mode == 'evaluate':
+    # evaluate the policy
+    rewards = torch.load(test_folder+'inferred_rewards.pt', map_location=f"cuda:{v['cuda']}")
+    rewards = rewards.cpu().clone().numpy()
+    q_values = maxent_gpu.find_policy(n_states, rewards, n_actions, discount, transition_probabilities)
+    print("Q-values shape: ", q_values.shape)
+    # save the q_values as a CSV file
+    np.savetxt(test_folder+'q_values_maxent_direction.csv', q_values, delimiter=',')
+    plot_most_rewarded_action(q_values, n_bin1, n_bin2, label_bin1, label_bin2, test_folder)
+    plot_q_table(q_values, test_folder)
+    plot_action_reward_subplots(q_values, n_bin1, n_bin2, n_actions, label_bin1, label_bin2, test_folder)
+    plot_singlestate_action(q_values, n_states, n_bin1, label_bin1, test_folder)
+    plot_singlestate_action(q_values, n_states, n_bin2, label_bin2, test_folder)

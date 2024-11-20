@@ -118,7 +118,7 @@ def plot_most_rewarded_action_4d_subplots(q_values, n_bin1, n_bin2, n_bin3, n_bi
     most_rewarded_action_4d = most_rewarded_action.reshape(n_bin4, n_bin3, n_bin2, n_bin1)
     # Create subplots for different slices of the 4D state space
     fig, axes = plt.subplots(n_bin3, n_bin4, figsize=(15, 15))
-    fig.suptitle("Most Rewarded Action for Each State for Different Fixed Values", fontsize=16)
+    fig.suptitle("Most Rewarded Action for Each State", fontsize=16)
     for i in range(n_bin3):
         for j in range(n_bin4):
             ax = axes[i, j]
@@ -133,30 +133,56 @@ def plot_action_reward_all_combinations(q_values, n_bin1, n_bin2, n_bin3, n_bin4
                                         label_bin1, label_bin2, label_bin3, label_bin4, test_folder):
     # Reshape q_values into its 4D form for easier slicing
     q_values_4d = q_values.reshape((n_bin4, n_bin3, n_bin2, n_bin1, n_actions))
-
     # Set up the figure for subplots for all combinations of bin3 and bin4
     fig, axes = plt.subplots(n_bin3, n_bin4, figsize=(18, 18))
+    fig.suptitle("Max Reward for All Actions in Each State Combination", fontsize=16)
     axes = axes.flatten()
-
     # Iterate over each combination of `bin3` and `bin4` to create a subplot for each
     for i in range(n_bin3):
         for j in range(n_bin4):
             ax = axes[j + i * n_bin4]  # Calculate the proper index for the subplot
-
             # Initialize a grid to store the reward for the specified action per (bin1, bin2) pair
             reward_grid = np.zeros((n_bin2, n_bin1))
-
             # Populate the reward grid for the current `bin3` and `bin4` combination
             for bin2 in range(n_bin2):
                 for bin1 in range(n_bin1):
                     reward_grid[bin2, bin1] = np.max(q_values_4d[j, i, bin2, bin1, :])  # Find the max reward across actions for each state
-
             # Plotting the heatmap for the current slice
             sns.heatmap(reward_grid, cmap="viridis", ax=ax)
-            ax.set_title(f"{label_bin3}={i}, {label_bin4}={j}")
+            ax.set_title(f"{label_bin3}:{i}, {label_bin4}:{j}")
             ax.set_xlabel(label_bin1)
             ax.set_ylabel(label_bin2)
-
     # Adjust the layout and save the figure
-    plt.tight_layout()
+    plt.tight_layout(rect=[0, 0.03, 1, 0.95])
     plt.savefig(test_folder + "action_reward_all_combinations.png")
+
+def plot_action_reward_individual(q_values, n_bin1, n_bin2, n_bin3, n_bin4, n_actions, 
+                                  label_bin1, label_bin2, label_bin3, label_bin4, test_folder):
+    # Reshape q_values into its 4D form for easier slicing
+    q_values_4d = q_values.reshape((n_bin4, n_bin3, n_bin2, n_bin1, n_actions))
+    # Iterate over each action to create a separate figure for each action
+    for action_index in range(n_actions):
+        # Set up the figure for subplots for all combinations of bin3 and bin4
+        fig, axes = plt.subplots(n_bin3, n_bin4, figsize=(18, 18))
+        fig.suptitle(f"Reward for Action {action_index + 1} in Each State Combination", fontsize=16)
+        axes = axes.flatten()
+        # Iterate over each combination of `bin3` and `bin4` to create a subplot for each
+        for i in range(n_bin3):
+            for j in range(n_bin4):
+                ax = axes[j + i * n_bin4]  # Calculate the proper index for the subplot
+                # Initialize a grid to store the reward for the specified action per (bin1, bin2) pair
+                reward_grid = np.zeros((n_bin2, n_bin1))
+                # Populate the reward grid for the current `bin3` and `bin4` combination
+                for bin2 in range(n_bin2):
+                    for bin1 in range(n_bin1):
+                        reward_grid[bin2, bin1] = q_values_4d[j, i, bin2, bin1, action_index]  # Extract reward for the specific action
+                # Plotting the heatmap for the current slice
+                sns.heatmap(reward_grid, cmap="viridis", ax=ax)
+                ax.set_title(f"{label_bin3}={i}, {label_bin4}={j}")
+                ax.set_xlabel(label_bin1)
+                ax.set_ylabel(label_bin2)
+        # Adjust the layout and save the figure
+        plt.tight_layout(rect=[0, 0.03, 1, 0.95])
+        plt.savefig(f"{test_folder}action_reward_subplots_action_{action_index}.png")
+        plt.close(fig)  # Close the figure to avoid overlap in subsequent iterations
+

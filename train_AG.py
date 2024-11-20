@@ -212,4 +212,6 @@ if mode == 'evaluate':
     # plot the action-reward subplots
     plot_action_reward_all_combinations(q_values, n_bin1, n_bin2, n_bin3, n_bin4, n_actions, 
                                         label_bin1, label_bin2, label_bin3, label_bin4, test_folder)
+    plot_action_reward_individual(q_values, n_bin1, n_bin2, n_bin3, n_bin4, n_actions, 
+                                  label_bin1, label_bin2, label_bin3, label_bin4, test_folder)
     # plot the single state action

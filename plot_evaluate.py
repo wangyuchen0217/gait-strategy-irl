@@ -101,40 +101,13 @@ def plot_singlestate_action(q_values, n_states, n_bin, label_bin, test_folder):
     if q_values.shape[1] == 5:
         plt.xticks(ticks=np.arange(q_values.shape[1]), labels=np.arange(1, q_values.shape[1]+1))
     plt.colorbar(label='Reward Value')
-    plt.savefig(test_folder+"Action "+label_bin+"Reward Heatmap.png")
+    plt.savefig(test_folder+"Action "+label_bin+" Reward Heatmap.png")
 
 
 
 '''Plotting functions for the 4-dimension states'''
-def plot_most_rewarded_action4d(q_values, n_bin1, n_bin2, n_bin3, n_bin4, label_1, label_2, test_folder):
-    # Find the action with the highest Q-value for each state
-    most_rewarded_action = np.argmax(q_values, axis=1)
-    print("Most rewarded action shape: ", most_rewarded_action.shape)
-    # Adjust the annotation for 5 actions case to be 1 to 5
-    if  q_values.shape[1] == 5:
-        most_rewarded_action = most_rewarded_action + 1
-    # Reshape the 4D state space to 2D by fixing two dimensions
-    most_rewarded_action_4d = most_rewarded_action.reshape(n_bin4, n_bin3, n_bin2, n_bin1)
-    if label_1 == "HS Left Bins" and label_2 == "HS Right Bins":
-        most_rewarded_action_2d = most_rewarded_action_4d[0, 0, :, :]
-        # Plot the heatmap (reshaping if the states are grid-like, otherwise just plot)
-        plt.figure(figsize=(10, 8))
-        sns.heatmap(most_rewarded_action_2d, cmap="YlGnBu", annot=True)
-        plt.title("Most Rewarded Action for Each State")
-        plt.xlabel(label_1)
-        plt.ylabel(label_2)
-        plt.savefig(test_folder+'most_rewarded_action_heatmap_HS.png')
-    elif label_1 == "SP Left Bins" and label_2 == "SP Right Bins":
-        most_rewarded_action_2d = most_rewarded_action_4d[:, :, 0, 0]
-        # Plot the heatmap (reshaping if the states are grid-like, otherwise just plot)
-        plt.figure(figsize=(10, 8))
-        sns.heatmap(most_rewarded_action_2d, cmap="YlGnBu", annot=True)
-        plt.title("Most Rewarded Action for Each State")
-        plt.xlabel(label_1)
-        plt.ylabel(label_2)
-        plt.savefig(test_folder+'most_rewarded_action_heatmap_SP.png')
-
-def plot_most_rewarded_action_4d_subplots(q_values, n_bin1, n_bin2, n_bin3, n_bin4, label_bin1, label_bin2, test_folder):
+def plot_most_rewarded_action_4d_subplots(q_values, n_bin1, n_bin2, n_bin3, n_bin4, 
+                                          label_bin1, label_bin2, label_bin3, label_bin4, test_folder):
     # Find the action with the highest Q-value for each state
     most_rewarded_action = np.argmax(q_values, axis=1)
     print("Most rewarded action shape: ", most_rewarded_action.shape)
@@ -150,7 +123,7 @@ def plot_most_rewarded_action_4d_subplots(q_values, n_bin1, n_bin2, n_bin3, n_bi
         for j in range(n_bin4):
             ax = axes[i, j]
             sns.heatmap(most_rewarded_action_4d[j, i, :, :], cmap="YlGnBu", annot=True, ax=ax)
-            ax.set_title(f"Fixed Indices: n_bin3={i}, n_bin4={j}")
+            ax.set_title(f"{label_bin3}:{i}, {label_bin4}:{j}")
             ax.set_xlabel(label_bin1)
             ax.set_ylabel(label_bin2)
     plt.tight_layout(rect=[0, 0.03, 1, 0.95])
@@ -173,6 +146,7 @@ def plot_action_reward_subplots4d(q_values, n_bin1, n_bin2, n_bin3, n_bin4, n_ac
                     # Calculate the state index based on the bin locations of all 4 dimensions
                     state_index = (fixed_bin * n_bin3 * n_bin2 * n_bin1) + (fixed_bin * n_bin2 * n_bin1) + (bin2 * n_bin1) + bin1
                     reward_grid[bin2, bin1] = q_values[state_index, action_index]
+                    print("State index: ", state_index)
             # Plotting the heatmap using imshow in the appropriate subplot
             # ax = axes[action_index]
             ax = axes[action_index+1 if n_actions==5 else action_index]  # Shift the index for 5 actions        
@@ -202,6 +176,7 @@ def plot_action_reward_subplots4d(q_values, n_bin1, n_bin2, n_bin3, n_bin4, n_ac
                     # Calculate the state index based on the bin locations of all 4 dimensions
                     state_index = (bin4 * n_bin3 * n_bin2 * n_bin1) + (bin3 * n_bin2 * n_bin1) + (fixed_bin * n_bin1) + fixed_bin
                     reward_grid[bin4, bin3] = q_values[state_index, action_index]
+                    print("State index: ", state_index)
             # Plotting the heatmap using imshow in the appropriate subplot
             # ax = axes[action_index]
             ax = axes[action_index+1 if n_actions==5 else action_index]  # Shift the index for 5 actions        
@@ -221,3 +196,59 @@ def plot_action_reward_subplots4d(q_values, n_bin1, n_bin2, n_bin3, n_bin4, n_ac
         fig.colorbar(img, ax=axes, orientation='vertical', fraction=0.02, pad=0.04)
         plt.tight_layout(rect=[0, 0, 0.88, 1])
         plt.savefig(test_folder+"action_reward_subplots_SP.png")       
+
+def plot_singlestate_action4d(q_values, n_bin1, n_bin2, n_bin3, n_bin4, label, test_folder):
+    n_actions = q_values.shape[1]
+    # Define fixed values for bin3 and bin4
+    fixed_bin = 0 
+    if label == "HS Left Bins":
+        # Initialize a grid to store the aggregated reward per (bin1, action)
+        reward_grid = np.zeros((n_bin1, n_actions))
+        # Populate the reward grid by aggregating over bin2 for each bin1 and action
+        for bin1 in range(n_bin1):
+            # Calculate the state index based on fixed bin3 and bin4, and the current bin1 and bin2
+            state_index = (fixed_bin * n_bin3 * n_bin2 * n_bin1) + (fixed_bin * n_bin2 * n_bin1) + (fixed_bin * n_bin1) + bin1
+            # Sum rewards across bin2 for each bin1 and action
+            reward_grid[bin1, :] += q_values[state_index, :]
+            print("State index: ", state_index)
+    elif label == "HS Right Bins":
+        # Initialize a grid to store the aggregated reward per (bin2, action)
+        reward_grid = np.zeros((n_bin2, n_actions))
+        # Populate the reward grid by aggregating over bin1 for each bin2 and action
+        for bin2 in range(n_bin2):
+            # Calculate the state index based on fixed bin3 and bin4, and the current bin1 and bin2
+            state_index = (fixed_bin * n_bin3 * n_bin2 * n_bin1) + (fixed_bin * n_bin2 * n_bin1) + (bin2 * (n_bin1-1)) + n_bin1
+            # Sum rewards across bin1 for each bin2 and action
+            reward_grid[bin2, :] += q_values[state_index, :]
+            print("State index: ", state_index)
+    elif label == "SP Left Bins":
+        # Initialize a grid to store the aggregated reward per (bin3, action)
+        reward_grid = np.zeros((n_bin3, n_actions))
+        # Populate the reward grid by aggregating over bin4 for each bin3 and action
+        for bin3 in range(n_bin3):
+            # Calculate the state index based on fixed bin1 and bin2, and the current bin3 and bin4
+            state_index = (fixed_bin * n_bin3 * n_bin2 * (n_bin1-1)) + (bin3 * n_bin2 * (n_bin1-1)) + (n_bin2 * (n_bin1-1)) + n_bin1
+            # Sum rewards across bin4 for each bin3 and action
+            reward_grid[bin3, :] += q_values[state_index, :]
+            print("State index: ", state_index)
+    elif label == "SP Right Bins":
+        # Initialize a grid to store the aggregated reward per (bin4, action)
+        reward_grid = np.zeros((n_bin4, n_actions))
+        # Populate the reward grid by aggregating over bin3 for each bin4 and action
+        for bin4 in range(n_bin4):
+            # Calculate the state index based on fixed bin1 and bin2, and the current bin3 and bin4
+            state_index = (bin4 * n_bin3 * n_bin2 * (n_bin1-1)) + (n_bin3 * n_bin2 * (n_bin1-1)) + (n_bin2 * (n_bin1-1)) + n_bin1
+            # Sum rewards across bin3 for each bin4 and action
+            reward_grid[bin4, :] += q_values[state_index, :]
+            print("State index: ", state_index)
+    # Plot the aggregated reward heatmap
+    plt.figure(figsize=(10, 8))
+    plt.imshow(reward_grid, cmap='viridis', aspect='auto')
+    plt.title(f"Reward Heatmap: {label} vs. Action", fontsize=16)
+    plt.xlabel("Actions", fontsize=14)
+    plt.ylabel(label, fontsize=14)
+    if n_actions == 5:
+        plt.xticks(ticks=np.arange(n_actions), labels=np.arange(1, n_actions + 1))
+    plt.colorbar(label='Reward Value')
+    plt.savefig(test_folder + f"Action {label} Reward Heatmap.png")
+    plt.close()

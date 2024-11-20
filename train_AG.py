@@ -205,16 +205,15 @@ if mode == 'evaluate':
     # save the q_values as a CSV file
     np.savetxt(test_folder+'q_values_maxent_direction.csv', q_values, delimiter=',')
     # plot the most rewarded action
-    plot_most_rewarded_action_4d_subplots(q_values, n_bin1, n_bin2, n_bin3, n_bin4, label_bin1, label_bin2, test_folder)
-    plot_most_rewarded_action4d(q_values, n_bin1, n_bin2, n_bin3, n_bin4, label_bin1, label_bin2, test_folder)
-    plot_most_rewarded_action4d(q_values, n_bin1, n_bin2, n_bin3, n_bin4, label_bin3, label_bin4, test_folder)
+    plot_most_rewarded_action_4d_subplots(q_values, n_bin1, n_bin2, n_bin3, n_bin4, 
+                                          label_bin1, label_bin2, label_bin3, label_bin4, test_folder)
     # plot the Q-table
     plot_q_table(q_values, test_folder)
     # plot the action-reward subplots
     plot_action_reward_subplots4d(q_values, n_bin1, n_bin2, n_bin3, n_bin4, n_actions, label_bin1, label_bin2, test_folder)
     plot_action_reward_subplots4d(q_values, n_bin1, n_bin2, n_bin3, n_bin4, n_actions, label_bin3, label_bin4, test_folder)
     # plot the single state action
-    plot_singlestate_action(q_values, n_states, n_bin1, label_bin1, test_folder)
-    plot_singlestate_action(q_values, n_states, n_bin2, label_bin2, test_folder)
-    plot_singlestate_action(q_values, n_states, n_bin3, label_bin3, test_folder)
-    plot_singlestate_action(q_values, n_states, n_bin4, label_bin4, test_folder)
+    plot_singlestate_action4d(q_values, n_bin1, n_bin2, n_bin3, n_bin4, label_bin1, test_folder)
+    plot_singlestate_action4d(q_values, n_bin1, n_bin2, n_bin3, n_bin4, label_bin2, test_folder)
+    plot_singlestate_action4d(q_values, n_bin1, n_bin2, n_bin3, n_bin4, label_bin3, test_folder)
+    plot_singlestate_action4d(q_values, n_bin1, n_bin2, n_bin3, n_bin4, label_bin4, test_folder)

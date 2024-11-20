@@ -29,7 +29,7 @@ def plot_most_rewarded_action(q_values, n_bin1, n_bin2, label_bin1, label_bin2, 
     plt.ylabel(label_bin2)
     plt.savefig(test_folder+'most_rewarded_action_heatmap.png')
 
-def plot_most_rewarded_action4d(q_values, n_bin1, n_bin2, n_bin3, n_bin4, label_bin1, label_bin2, label_bin3, label_bin4, test_folder):
+def plot_most_rewarded_action4d(q_values, n_bin1, n_bin2, n_bin3, n_bin4, label_1, label_2, test_folder):
     # Find the action with the highest Q-value for each state
     most_rewarded_action = np.argmax(q_values, axis=1)
     print("Most rewarded action shape: ", most_rewarded_action.shape)
@@ -37,19 +37,47 @@ def plot_most_rewarded_action4d(q_values, n_bin1, n_bin2, n_bin3, n_bin4, label_
     if  q_values.shape[1] == 5:
         most_rewarded_action = most_rewarded_action + 1
     # Reshape the 4D state space to 2D by fixing two dimensions
-    # Assume fixed_indices is a tuple (i, j) representing fixed indices for n_bin3 and n_bin4
-    fixed_indices=(0, 0)
-    fixed_i, fixed_j = fixed_indices
     most_rewarded_action_4d = most_rewarded_action.reshape(n_bin4, n_bin3, n_bin2, n_bin1)
-    # Extract a 2D slice by fixing two of the dimensions
-    most_rewarded_action_2d = most_rewarded_action_4d[0, 0, :, :]
-    # Plot the heatmap (reshaping if the states are grid-like, otherwise just plot)
-    plt.figure(figsize=(10, 8))
-    sns.heatmap(most_rewarded_action_2d, cmap="YlGnBu", annot=True)
-    plt.title("Most Rewarded Action for Each State")
-    plt.xlabel(label_bin1)
-    plt.ylabel(label_bin2)
-    plt.savefig(test_folder+'most_rewarded_action_heatmap.png')
+    if label_1 == "HS Left Bins" and label_2 == "HS Right Bins":
+        most_rewarded_action_2d = most_rewarded_action_4d[0, 0, :, :]
+        # Plot the heatmap (reshaping if the states are grid-like, otherwise just plot)
+        plt.figure(figsize=(10, 8))
+        sns.heatmap(most_rewarded_action_2d, cmap="YlGnBu", annot=True)
+        plt.title("Most Rewarded Action for Each State")
+        plt.xlabel(label_1)
+        plt.ylabel(label_2)
+        plt.savefig(test_folder+'most_rewarded_action_heatmap_HS.png')
+    elif label_1 == "SP Left Bins" and label_2 == "SP Right Bins":
+        most_rewarded_action_2d = most_rewarded_action_4d[:, :, 0, 0]
+        # Plot the heatmap (reshaping if the states are grid-like, otherwise just plot)
+        plt.figure(figsize=(10, 8))
+        sns.heatmap(most_rewarded_action_2d, cmap="YlGnBu", annot=True)
+        plt.title("Most Rewarded Action for Each State")
+        plt.xlabel(label_1)
+        plt.ylabel(label_2)
+        plt.savefig(test_folder+'most_rewarded_action_heatmap_SP.png')
+
+def plot_most_rewarded_action_4d_subplots(q_values, n_bin1, n_bin2, n_bin3, n_bin4, label_bin1, label_bin2, test_folder):
+    # Find the action with the highest Q-value for each state
+    most_rewarded_action = np.argmax(q_values, axis=1)
+    print("Most rewarded action shape: ", most_rewarded_action.shape)
+    # Adjust the annotation for 5 actions case to be 1 to 5
+    if q_values.shape[1] == 5:
+        most_rewarded_action = most_rewarded_action + 1
+    # Reshape most_rewarded_action array to its original 4D shape
+    most_rewarded_action_4d = most_rewarded_action.reshape(n_bin4, n_bin3, n_bin2, n_bin1)
+    # Create subplots for different slices of the 4D state space
+    fig, axes = plt.subplots(n_bin3, n_bin4, figsize=(15, 15))
+    fig.suptitle("Most Rewarded Action for Each State for Different Fixed Values", fontsize=16)
+    for i in range(n_bin3):
+        for j in range(n_bin4):
+            ax = axes[i, j]
+            sns.heatmap(most_rewarded_action_4d[j, i, :, :], cmap="YlGnBu", annot=True, ax=ax)
+            ax.set_title(f"Fixed Indices: n_bin3={i}, n_bin4={j}")
+            ax.set_xlabel(label_bin1)
+            ax.set_ylabel(label_bin2)
+    plt.tight_layout(rect=[0, 0.03, 1, 0.95])
+    plt.savefig(test_folder + 'most_rewarded_action_heatmap_subplots.png')
 
 def plot_q_table(q_values, test_folder):
     plt.figure(figsize=(10, 8))
@@ -96,6 +124,51 @@ def plot_action_reward_subplots(q_values, n_bin1, n_bin2, n_actions, label_bin1,
     fig.colorbar(img, ax=axes, orientation='vertical', fraction=0.02, pad=0.04)
     plt.tight_layout(rect=[0, 0, 0.88, 1])
     plt.savefig(test_folder+"action_reward_subplots.png")
+
+def plot_action_reward_subplots_4d(q_values, n_bin1, n_bin2, n_bin3, n_bin4, n_actions, label_bin1, label_bin2, label_bin3, label_bin4, test_folder):
+    # Set up the figure and the 2x3 subplot grid (assuming there are up to 6 actions)
+    fig, axes = plt.subplots(2, 3, figsize=(18, 12))
+    axes = axes.flatten()
+
+    # Loop through fixed values for the third and fourth dimensions to generate slices of the heatmap
+    for fixed_bin3 in range(n_bin3):
+        for fixed_bin4 in range(n_bin4):
+            fig, axes = plt.subplots(2, 3, figsize=(18, 12))
+            axes = axes.flatten()
+            # Iterate over each action index to create a subplot
+            for action_index in range(n_actions):
+                # Initialize a grid to store the reward for the specified action per (dimension 1, dimension 2) pair
+                reward_grid = np.zeros((n_bin2, n_bin1))
+
+                # Populate the reward grid based on the reward for the specified action
+                for bin2 in range(n_bin2):
+                    for bin1 in range(n_bin1):
+                        # Calculate the state index based on the bin locations of all 4 dimensions
+                        state_index = (fixed_bin4 * n_bin3 * n_bin2 * n_bin1) + (fixed_bin3 * n_bin2 * n_bin1) + (bin2 * n_bin1) + bin1
+                        reward_grid[bin2, bin1] = q_values[state_index, action_index]
+
+                # Plotting the heatmap in the appropriate subplot
+                ax = axes[action_index + 1 if n_actions == 5 else action_index]  # Shift the index for 5 actions
+                img = ax.imshow(reward_grid, cmap='viridis', aspect='auto')
+
+                # Set labels and titles
+                ax.set_title(f"Action {action_index + 1 if n_actions == 5 else action_index} (Fixed {label_bin3}={fixed_bin3}, {label_bin4}={fixed_bin4})", fontsize=14)
+                ax.set_xlabel(label_bin1, fontsize=12)
+                ax.set_ylabel(label_bin2, fontsize=12)
+
+            # Leave the first subplot empty if there are only 5 actions
+            if n_actions == 5:
+                axes[0].axis('off')  # Hide the first subplot (action 0)
+
+            # Add a color bar to the last subplot, shared across all subplots
+            fig.colorbar(img, ax=axes, orientation='vertical', fraction=0.02, pad=0.04)
+
+            # Save the plot for the current combination of fixed_bin3 and fixed_bin4
+            plt.tight_layout(rect=[0, 0, 0.88, 1])
+            plt.savefig(f"{test_folder}action_reward_subplots_fixed_{label_bin3}_{fixed_bin3}_{label_bin4}_{fixed_bin4}.png")
+            plt.close()
+
+
 
 def plot_singlestate_action(q_values, n_states, n_bin, label_bin, test_folder):
     n_actions = q_values.shape[1]

@@ -36,10 +36,16 @@ def plot_most_rewarded_action4d(q_values, n_bin1, n_bin2, n_bin3, n_bin4, label_
     # Adjust the annotation for 5 actions case to be 1 to 5
     if  q_values.shape[1] == 5:
         most_rewarded_action = most_rewarded_action + 1
+    # Reshape the 4D state space to 2D by fixing two dimensions
+    # Assume fixed_indices is a tuple (i, j) representing fixed indices for n_bin3 and n_bin4
+    fixed_indices=(0, 0)
+    fixed_i, fixed_j = fixed_indices
+    most_rewarded_action_4d = most_rewarded_action.reshape(n_bin4, n_bin3, n_bin2, n_bin1)
+    # Extract a 2D slice by fixing two of the dimensions
+    most_rewarded_action_2d = most_rewarded_action_4d[0, 0, :, :]
     # Plot the heatmap (reshaping if the states are grid-like, otherwise just plot)
     plt.figure(figsize=(10, 8))
-    most_rewarded_action = most_rewarded_action.reshape(n_bin1, n_bin2, n_bin3, n_bin4)
-    sns.heatmap(most_rewarded_action[:,:,0,0], cmap="YlGnBu", annot=True)
+    sns.heatmap(most_rewarded_action_2d, cmap="YlGnBu", annot=True)
     plt.title("Most Rewarded Action for Each State")
     plt.xlabel(label_bin1)
     plt.ylabel(label_bin2)

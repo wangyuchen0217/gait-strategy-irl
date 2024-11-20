@@ -125,42 +125,71 @@ def plot_action_reward_subplots(q_values, n_bin1, n_bin2, n_actions, label_bin1,
     plt.tight_layout(rect=[0, 0, 0.88, 1])
     plt.savefig(test_folder+"action_reward_subplots.png")
 
-def plot_action_reward_subplots4d(q_values, n_bin1, n_bin2, n_bin3, n_bin4, n_actions, label_bin1, label_bin2, test_folder):
+def plot_action_reward_subplots4d(q_values, n_bin1, n_bin2, n_bin3, n_bin4, n_actions, label_1, label_2, test_folder):
     # Set up the figure and the 2x3 subplot grid
     fig, axes = plt.subplots(2, 3, figsize=(18, 12))
     axes = axes.flatten()
     # Define fixed values for bin3 and bin4 to create a slice for visualization
-    fixed_bin3 = 0  # Example fixed value for bin3
-    fixed_bin4 = 0  # Example fixed value for bin4
+    fixed_bin = 0  # Example fixed value for bin3
     # Iterate over each action index to create a subplot
-    for action_index in range(n_actions):
-        # Initialize a grid to store the reward for the specified action per (direction, velocity) pair
-        reward_grid = np.zeros((n_bin2, n_bin1))
-        # Populate the reward grid based on the reward for the specified action
-        for bin2 in range(n_bin2):
-            for bin1 in range(n_bin1):
-                # Calculate the state index based on the bin locations of all 4 dimensions
-                state_index = (fixed_bin4 * n_bin3 * n_bin2 * n_bin1) + (fixed_bin3 * n_bin2 * n_bin1) + (bin2 * n_bin1) + bin1
-                reward_grid[bin2, bin1] = q_values[state_index, action_index]
-        # Plotting the heatmap using imshow in the appropriate subplot
-        # ax = axes[action_index]
-        ax = axes[action_index+1 if n_actions==5 else action_index]  # Shift the index for 5 actions        
-        img = ax.imshow(reward_grid, cmap='viridis', aspect='auto')
-        # ax.set_title(f"Action {action_index}", fontsize=16)
-        ax.set_title(f"Action {action_index+1 if n_actions==5 else action_index}", fontsize=16)
-        # ax.set_xticks(ticks=np.arange(0, n_bin1), labels=np.arange(-20, 5, step=5), fontsize=12)
-        # ax.set_yticks(ticks=np.arange(0, n_bin2)[::3], labels=np.arange(0, 140, step=5)[::3], fontsize=12)
-        ax.set_xlabel(label_bin1, fontsize=14)
-        ax.set_ylabel(label_bin2, fontsize=14)
-    # Add a color bar to the last subplot, shared across all subplots
-    # change the ax position
-    # cb_ax = fig.add_axes([0.92, 0.15, 0.02, 0.7])
-    # Leave the first subplot empty if there are only 5 actions
-    if n_actions == 5:
-        axes[0].axis('off')  # Hide the first subplot (action 0)
-    fig.colorbar(img, ax=axes, orientation='vertical', fraction=0.02, pad=0.04)
-    plt.tight_layout(rect=[0, 0, 0.88, 1])
-    plt.savefig(test_folder+"action_reward_subplots.png")
+    if label_1 == "HS Left Bins" and label_2 == "HS Right Bins":
+        for action_index in range(n_actions):
+            # Initialize a grid to store the reward for the specified action per (direction, velocity) pair
+            reward_grid = np.zeros((n_bin2, n_bin1))
+            # Populate the reward grid based on the reward for the specified action
+            for bin2 in range(n_bin2):
+                for bin1 in range(n_bin1):
+                    # Calculate the state index based on the bin locations of all 4 dimensions
+                    state_index = (fixed_bin * n_bin3 * n_bin2 * n_bin1) + (fixed_bin * n_bin2 * n_bin1) + (bin2 * n_bin1) + bin1
+                    reward_grid[bin2, bin1] = q_values[state_index, action_index]
+            # Plotting the heatmap using imshow in the appropriate subplot
+            # ax = axes[action_index]
+            ax = axes[action_index+1 if n_actions==5 else action_index]  # Shift the index for 5 actions        
+            img = ax.imshow(reward_grid, cmap='viridis', aspect='auto')
+            # ax.set_title(f"Action {action_index}", fontsize=16)
+            ax.set_title(f"Action {action_index+1 if n_actions==5 else action_index}", fontsize=16)
+            # ax.set_xticks(ticks=np.arange(0, n_bin1), labels=np.arange(-20, 5, step=5), fontsize=12)
+            # ax.set_yticks(ticks=np.arange(0, n_bin2)[::3], labels=np.arange(0, 140, step=5)[::3], fontsize=12)
+            ax.set_xlabel(label_1, fontsize=14)
+            ax.set_ylabel(label_2, fontsize=14)
+        # Add a color bar to the last subplot, shared across all subplots
+        # change the ax position
+        # cb_ax = fig.add_axes([0.92, 0.15, 0.02, 0.7])
+        # Leave the first subplot empty if there are only 5 actions
+        if n_actions == 5:
+            axes[0].axis('off')  # Hide the first subplot (action 0)
+        fig.colorbar(img, ax=axes, orientation='vertical', fraction=0.02, pad=0.04)
+        plt.tight_layout(rect=[0, 0, 0.88, 1])
+        plt.savefig(test_folder+"action_reward_subplots_HS.png")
+    elif label_1 == "SP Left Bins" and label_2 == "SP Right Bins":
+        for action_index in range(n_actions):
+            # Initialize a grid to store the reward for the specified action per (direction, velocity) pair
+            reward_grid = np.zeros((n_bin4, n_bin3))
+            # Populate the reward grid based on the reward for the specified action
+            for bin4 in range(n_bin4):
+                for bin3 in range(n_bin3):
+                    # Calculate the state index based on the bin locations of all 4 dimensions
+                    state_index = (bin4 * n_bin3 * n_bin2 * n_bin1) + (bin3 * n_bin2 * n_bin1) + (fixed_bin * n_bin1) + fixed_bin
+                    reward_grid[bin4, bin3] = q_values[state_index, action_index]
+            # Plotting the heatmap using imshow in the appropriate subplot
+            # ax = axes[action_index]
+            ax = axes[action_index+1 if n_actions==5 else action_index]  # Shift the index for 5 actions        
+            img = ax.imshow(reward_grid, cmap='viridis', aspect='auto')
+            # ax.set_title(f"Action {action_index}", fontsize=16)
+            ax.set_title(f"Action {action_index+1 if n_actions==5 else action_index}", fontsize=16)
+            # ax.set_xticks(ticks=np.arange(0, n_bin1), labels=np.arange(-20, 5, step=5), fontsize=12)
+            # ax.set_yticks(ticks=np.arange(0, n_bin2)[::3], labels=np.arange(0, 140, step=5)[::3], fontsize=12)
+            ax.set_xlabel(label_1, fontsize=14)
+            ax.set_ylabel(label_2, fontsize=14)
+        # Add a color bar to the last subplot, shared across all subplots
+        # change the ax position
+        # cb_ax = fig.add_axes([0.92, 0.15, 0.02, 0.7])
+        # Leave the first subplot empty if there are only 5 actions
+        if n_actions == 5:
+            axes[0].axis('off')  # Hide the first subplot (action 0)
+        fig.colorbar(img, ax=axes, orientation='vertical', fraction=0.02, pad=0.04)
+        plt.tight_layout(rect=[0, 0, 0.88, 1])
+        plt.savefig(test_folder+"action_reward_subplots_SP.png")       
 
 def plot_singlestate_action(q_values, n_states, n_bin, label_bin, test_folder):
     n_actions = q_values.shape[1]

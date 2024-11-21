@@ -200,6 +200,51 @@ def evaluate_trajectory_metrics(expert_trajectory, replicated_trajectory):
     return mhd, rmspe, swd
 
 if mode == 'test':
-    # Example usage: Generate a new trajectory using the learned policy
-    replicated_trajectory = generate_trajectory(new_data, n_direction_bins)  # Replace `new_data` with your new dataset
-    evaluate_trajectory_metrics(expert_trajectory, replicated_trajectory)# Example usage: Generate a new trajectory using the learned policy
+    # Use the expert trajectory as the ground truth
+    expert_trajectory = trajectories
+    state_indices = expert_trajectory[0, :, 0]
+    actions = expert_trajectory[0, :, 1]
+    # load the q_values
+    q_values = np.loadtxt(test_folder+'q_values_maxent_direction.csv', delimiter=',')
+    # Generate the replicated trajectory
+    # Generate the replicated trajectory
+    replicated_trajectory = []
+    for i in range(len(state_indices)):
+        action_probabilities = q_values[state_indices[i]]
+        # Select the action with the highest probability (greedy policy)
+        action = np.argmax(action_probabilities)
+        replicated_trajectory.append(action)
+
+    # Convert to numpy array
+    replicated_trajectory = np.array(replicated_trajectory)
+    print("Expert Trajectory Shape: ", actions.shape)
+    print("Replicated Trajectory Shape: ", replicated_trajectory.shape)
+
+    # Plot a heat map to show the trajectory using imshow
+    plt.figure(figsize=(10, 3))
+    plt.imshow(q_values[state_indices].T, cmap="plasma", aspect='auto')
+    plt.title("Heatmap of Action Probabilities along the Expert Trajectory")
+    plt.xlabel("Trajectory Step Index")
+    plt.ylabel("Action Index")
+    plt.gca().invert_yaxis()
+    plt.colorbar()
+    plt.tight_layout()
+    plt.savefig(test_folder+'actions_probability_trajectory.png')
+
+    plt.figure(figsize=(10, 6))
+    plt.subplot(2, 1, 1)
+    plt.eventplot([np.where(replicated_trajectory == i)[0] for i in range(6)], lineoffsets=1, linelengths=0.5, colors=['red', 'blue', 'green', 'orange', 'purple', 'brown'])
+    plt.yticks(range(6), labels=["Action 0", "Action 1", "Action 2", "Action 3", "Action 4", "Action 5"])
+    plt.xlabel("Trajectory Step Index")
+    plt.ylabel("Action")
+    plt.title("Actions along the Replicated Trajectory")
+    plt.subplot(2, 1, 2)
+    plt.eventplot([np.where(actions == i)[0] for i in range(6)], lineoffsets=1, linelengths=0.5, colors=['red', 'blue', 'green', 'orange', 'purple', 'brown'])
+    plt.yticks(range(6), labels=["Action 0", "Action 1", "Action 2", "Action 3", "Action 4", "Action 5"])
+    plt.xlabel("Trajectory Step Index")
+    plt.ylabel("Action")
+    plt.title("Actions along the Expert Trajectory")
+    plt.tight_layout()
+    plt.savefig(test_folder+'actions_along_trajectories.png')
+
+

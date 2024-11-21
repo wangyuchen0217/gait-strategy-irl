@@ -11,6 +11,9 @@ import sys
 import yaml
 import logging
 from datetime import datetime
+from scipy.spatial.distance import directed_hausdorff
+from sklearn.metrics import mean_squared_error
+from scipy.stats import wasserstein_distance
 
 # Load the configuration file
 with open('configs/irl.yml') as file:
@@ -86,20 +89,21 @@ for index, row in data.iterrows():
     feature_matrix[state_index, n_HS_left_bins + n_HS_right_bins + n_SP_left_bins + row['SP right']-1] = 1
 
 def generate_trajectory(data, n_HS_right_bins, n_SP_left_bins, n_SP_right_bins):
-    trajectory = []
+    trajectories = []
     for index, row in data.iterrows():
-        # Calculate state_index with four dimensions
         state_index = int(
             (row['HS left'] - 1) * n_HS_right_bins * n_SP_left_bins * n_SP_right_bins +
             (row['HS right'] - 1) * n_SP_left_bins * n_SP_right_bins +
             (row['SP left'] - 1) * n_SP_right_bins +
             (row['SP right'] - 1)
         )
-        # Get the action (assuming action is still 'Gait Category')
         action = int(row['Gait Category'])
-        # Append the state-action pair to the trajectory list
-        trajectory.append([state_index, action])
-    return trajectory
+        trajectories.append([(state_index, action)])
+    trajectories = np.array(trajectories)
+    # reshape the trajectories to (1, len_trajectories, 2)
+    len_trajectories = trajectories.shape[0]
+    trajectories = trajectories.reshape(1, len_trajectories, 2)
+    return trajectories
 
 def build_transition_matrix_from_indices(data, n_states, n_actions):
     transition_counts = np.zeros((n_states, n_actions, n_states))
@@ -123,24 +127,8 @@ def build_transition_matrix_from_indices(data, n_states, n_actions):
     )
     return transition_probabilities
 
-# Generate trajectories from the dataset
-'''flatten_traj'''
-trajectories = []
-for index, row in data.iterrows():
-    state_index = int(
-        (row['HS left'] - 1) * n_HS_right_bins * n_SP_left_bins * n_SP_right_bins +
-        (row['HS right'] - 1) * n_SP_left_bins * n_SP_right_bins +
-        (row['SP left'] - 1) * n_SP_right_bins +
-        (row['SP right'] - 1)
-    )
-    action = int(row['Gait Category'])
-    trajectories.append([(state_index, action)])
-trajectories = np.array(trajectories)
-# reshape the trajectories to (1, len_trajectories, 2)
-len_trajectories = trajectories.shape[0]
-trajectories = trajectories.reshape(1, len_trajectories, 2)
-# # trajectories = trajectories.tolist()
-# # print("Trajectories: ", len(trajectories), len(trajectories[0]), len(trajectories[0][0]))
+# Generate trajectories from the dataset: flatten_traj
+trajectories = generate_trajectory(data, n_HS_right_bins, n_SP_left_bins, n_SP_right_bins)
 
 transition_probabilities = build_transition_matrix_from_indices(trajectories[0], n_states, n_actions)
 print(f"Transition probabilities shape: {transition_probabilities.shape}")
@@ -214,3 +202,78 @@ if mode == 'evaluate':
                                         label_bin1, label_bin2, label_bin3, label_bin4, test_folder)
     plot_action_reward_individual(q_values, n_bin1, n_bin2, n_bin3, n_bin4, n_actions, 
                                   label_bin1, label_bin2, label_bin3, label_bin4, test_folder)
+
+
+def evaluate_trajectory_metrics(expert_trajectory, replicated_trajectory):
+    # Ensure both trajectories are of the same length
+    assert len(expert_trajectory) == len(replicated_trajectory), "Trajectories must be of equal length for comparison."
+    expert_trajectory = expert_trajectory.reshape(-1, 1)
+    replicated_trajectory = replicated_trajectory.reshape(-1, 1)
+    # Modified Hausdorff Distance (MHD)
+    def modified_hausdorff_distance(a, b):
+        forward_hausdorff = directed_hausdorff(a, b)[0]
+        backward_hausdorff = directed_hausdorff(b, a)[0]
+        return max(forward_hausdorff, backward_hausdorff)
+    mhd = modified_hausdorff_distance(expert_trajectory, replicated_trajectory)
+    # Root Mean Square Percentage Error (RMSPE)
+    rmspe = np.sqrt(mean_squared_error(expert_trajectory, replicated_trajectory)) / np.mean(expert_trajectory) * 100
+    # Sliced Wasserstein Distance (SWD)
+    swd = wasserstein_distance(expert_trajectory.flatten(), replicated_trajectory.flatten())
+    print(f"Modified Hausdorff Distance (MHD): {mhd}")
+    print(f"Root Mean Square Percentage Error (RMSPE): {rmspe}%")
+    print(f"Sliced Wasserstein Distance (SWD): {swd}")
+    return mhd, rmspe, swd
+
+if mode == 'test':
+    # Use the expert trajectory as the ground truth
+    expert_trajectory = trajectories
+    state_indices = expert_trajectory[0, :, 0]
+    actions = expert_trajectory[0, :, 1]
+    # load the q_values
+    q_values = np.loadtxt(test_folder+'q_values_maxent_direction.csv', delimiter=',')
+    # Generate the replicated trajectory
+    # Generate the replicated trajectory
+    replicated_trajectory = []
+    for i in range(len(state_indices)):
+        action_probabilities = q_values[state_indices[i]]
+        # Select the action with the highest probability (greedy policy)
+        action = np.argmax(action_probabilities)
+        replicated_trajectory.append(action)
+
+    # Convert to numpy array
+    replicated_trajectory = np.array(replicated_trajectory)
+    print("Expert Trajectory Shape: ", actions.shape)
+    print("Replicated Trajectory Shape: ", replicated_trajectory.shape)
+
+    # Plot a heat map to show the trajectory using imshow
+    plt.figure(figsize=(10, 3))
+    plt.imshow(q_values[state_indices].T, cmap="plasma", aspect='auto')
+    plt.title("Heatmap of Action Probabilities along the Expert Trajectory")
+    plt.xlabel("Trajectory Step Index")
+    plt.ylabel("Action Index")
+    plt.gca().invert_yaxis()
+    plt.colorbar()
+    plt.tight_layout()
+    plt.savefig(test_folder+'actions_probability_trajectory.png')
+
+    plt.figure(figsize=(10, 6))
+    plt.subplot(2, 1, 1)
+    plt.eventplot([np.where(replicated_trajectory == i)[0] for i in range(6)], lineoffsets=1, linelengths=0.5, colors=['red', 'blue', 'green', 'orange', 'purple', 'brown'])
+    plt.yticks(range(6), labels=["Action 0", "Action 1", "Action 2", "Action 3", "Action 4", "Action 5"])
+    plt.xlabel("Trajectory Step Index")
+    plt.ylabel("Action")
+    plt.title("Actions along the Replicated Trajectory")
+    plt.subplot(2, 1, 2)
+    if n_actions == 6:
+        plt.eventplot([np.where(actions == i)[0] for i in range(6)], lineoffsets=1, linelengths=0.5, colors=['red', 'blue', 'green', 'orange', 'purple', 'brown'])
+        plt.yticks(range(6), labels=["Action 0", "Action 1", "Action 2", "Action 3", "Action 4", "Action 5"])
+    elif n_actions == 5:
+        plt.eventplot([np.where(actions == i)[0] for i in range(5)], lineoffsets=1, linelengths=0.5, colors=['red', 'blue', 'green', 'orange', 'purple'])
+        plt.yticks(range(5), labels=["Action 0", "Action 1", "Action 2", "Action 3", "Action 4"])
+    plt.xlabel("Trajectory Step Index")
+    plt.ylabel("Action")
+    plt.title("Actions along the Expert Trajectory")
+    plt.tight_layout()
+    plt.savefig(test_folder+'actions_along_trajectories.png')
+
+    mhd, rmspe, swd = evaluate_trajectory_metrics(actions, replicated_trajectory)

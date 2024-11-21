@@ -184,6 +184,8 @@ if mode == 'evaluate':
 def evaluate_trajectory_metrics(expert_trajectory, replicated_trajectory):
     # Ensure both trajectories are of the same length
     assert len(expert_trajectory) == len(replicated_trajectory), "Trajectories must be of equal length for comparison."
+    expert_trajectory = expert_trajectory.reshape(-1, 1)
+    replicated_trajectory = replicated_trajectory.reshape(-1, 1)
     # Modified Hausdorff Distance (MHD)
     def modified_hausdorff_distance(a, b):
         forward_hausdorff = directed_hausdorff(a, b)[0]
@@ -239,12 +241,16 @@ if mode == 'test':
     plt.ylabel("Action")
     plt.title("Actions along the Replicated Trajectory")
     plt.subplot(2, 1, 2)
-    plt.eventplot([np.where(actions == i)[0] for i in range(6)], lineoffsets=1, linelengths=0.5, colors=['red', 'blue', 'green', 'orange', 'purple', 'brown'])
-    plt.yticks(range(6), labels=["Action 0", "Action 1", "Action 2", "Action 3", "Action 4", "Action 5"])
+    if n_actions == 6:
+        plt.eventplot([np.where(actions == i)[0] for i in range(6)], lineoffsets=1, linelengths=0.5, colors=['red', 'blue', 'green', 'orange', 'purple', 'brown'])
+        plt.yticks(range(6), labels=["Action 0", "Action 1", "Action 2", "Action 3", "Action 4", "Action 5"])
+    elif n_actions == 5:
+        plt.eventplot([np.where(actions == i)[0] for i in range(5)], lineoffsets=1, linelengths=0.5, colors=['red', 'blue', 'green', 'orange', 'purple'])
+        plt.yticks(range(5), labels=["Action 0", "Action 1", "Action 2", "Action 3", "Action 4"])
     plt.xlabel("Trajectory Step Index")
     plt.ylabel("Action")
     plt.title("Actions along the Expert Trajectory")
     plt.tight_layout()
     plt.savefig(test_folder+'actions_along_trajectories.png')
 
-
+    mhd, rmspe, swd = evaluate_trajectory_metrics(actions, replicated_trajectory)

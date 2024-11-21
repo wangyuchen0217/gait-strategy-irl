@@ -11,6 +11,9 @@ import sys
 import yaml
 import logging
 from datetime import datetime
+from scipy.spatial.distance import directed_hausdorff
+from sklearn.metrics import mean_squared_error
+from scipy.stats import wasserstein_distance
 
 # Load the configuration file
 with open('configs/irl.yml') as file:
@@ -77,12 +80,16 @@ for index, row in data.iterrows():
     feature_matrix[state_index, n_velocity_bins + (row['Direction Bin']-1)] = 1
 
 def generate_trajectory(data, n_direction_bins):
-    trajectory = []
+    trajectories = []
     for index, row in data.iterrows():
-        state_index = int((row['Velocity Bin'] - 1) * n_direction_bins + (row['Direction Bin'] - 1))
+        state_index = int((row['Velocity Bin']-1) * n_direction_bins + (row['Direction Bin']-1))
         action = int(row['Gait Category'])
-        trajectory.append([state_index, action])
-    return trajectory
+        trajectories.append([(state_index, action)])
+    trajectories = np.array(trajectories)
+    # reshape the trajectories to (1, len_trajectories, 2)
+    len_trajectories = trajectories.shape[0]
+    trajectories = trajectories.reshape(1, len_trajectories, 2)
+    return trajectories
 
 def build_transition_matrix_from_indices(data, n_states, n_actions):
     transition_counts = np.zeros((n_states, n_actions, n_states))
@@ -106,19 +113,8 @@ def build_transition_matrix_from_indices(data, n_states, n_actions):
     )
     return transition_probabilities
 
-# Generate trajectories from the dataset
-'''flatten_traj'''
-trajectories = []
-for index, row in data.iterrows():
-    state_index = int((row['Velocity Bin']-1) * n_direction_bins + (row['Direction Bin']-1))
-    action = int(row['Gait Category'])
-    trajectories.append([(state_index, action)])
-trajectories = np.array(trajectories)
-# reshape the trajectories to (1, len_trajectories, 2)
-len_trajectories = trajectories.shape[0]
-trajectories = trajectories.reshape(1, len_trajectories, 2)
-# # trajectories = trajectories.tolist()
-# # print("Trajectories: ", len(trajectories), len(trajectories[0]), len(trajectories[0][0]))
+# Generate trajectories from the dataset: flatten_traj
+trajectories = generate_trajectory(data, n_direction_bins)
 
 transition_probabilities = build_transition_matrix_from_indices(trajectories[0], n_states, n_actions)
 print(f"Transition probabilities shape: {transition_probabilities.shape}")
@@ -183,3 +179,27 @@ if mode == 'evaluate':
     plot_action_reward_subplots(q_values, n_bin1, n_bin2, n_actions, label_bin1, label_bin2, test_folder)
     plot_singlestate_action(q_values, n_states, n_bin1, label_bin1, test_folder)
     plot_singlestate_action(q_values, n_states, n_bin2, label_bin2, test_folder)
+
+
+def evaluate_trajectory_metrics(expert_trajectory, replicated_trajectory):
+    # Ensure both trajectories are of the same length
+    assert len(expert_trajectory) == len(replicated_trajectory), "Trajectories must be of equal length for comparison."
+    # Modified Hausdorff Distance (MHD)
+    def modified_hausdorff_distance(a, b):
+        forward_hausdorff = directed_hausdorff(a, b)[0]
+        backward_hausdorff = directed_hausdorff(b, a)[0]
+        return max(forward_hausdorff, backward_hausdorff)
+    mhd = modified_hausdorff_distance(expert_trajectory, replicated_trajectory)
+    # Root Mean Square Percentage Error (RMSPE)
+    rmspe = np.sqrt(mean_squared_error(expert_trajectory, replicated_trajectory)) / np.mean(expert_trajectory) * 100
+    # Sliced Wasserstein Distance (SWD)
+    swd = wasserstein_distance(expert_trajectory.flatten(), replicated_trajectory.flatten())
+    print(f"Modified Hausdorff Distance (MHD): {mhd}")
+    print(f"Root Mean Square Percentage Error (RMSPE): {rmspe}%")
+    print(f"Sliced Wasserstein Distance (SWD): {swd}")
+    return mhd, rmspe, swd
+
+if mode == 'test':
+    # Example usage: Generate a new trajectory using the learned policy
+    replicated_trajectory = generate_trajectory(new_data, n_direction_bins)  # Replace `new_data` with your new dataset
+    evaluate_trajectory_metrics(expert_trajectory, replicated_trajectory)# Example usage: Generate a new trajectory using the learned policy

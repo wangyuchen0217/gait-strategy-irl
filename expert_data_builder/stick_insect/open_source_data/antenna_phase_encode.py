@@ -79,10 +79,10 @@ def antenna_visualization(original_data, clustered_data, label, save=False, font
     plt.figure(figsize=(15, 10))
     for i in range(4):
         plt.subplot(4, 1, i + 1)
-        plt.plot(original_data[:, i], label='Original')
+        plt.plot(original_data[:, i], color='blue', linewidth='2', label='Original')
         ax1 = plt.gca()
         ax2 = ax1.twinx()  # Create a second y-axis for the encoded data
-        ax2.step(range(len(clustered_data)), clustered_data[:, i], where='post', color='orange', label=label, linestyle='-')
+        ax2.step(range(len(clustered_data)), clustered_data[:, i], where='post', color='red', linewidth='2', label=label, linestyle='--')
         # Set labels for both y-axes
         ax1.set_ylabel('rad', fontsize=fontsize)
         ax2.set_ylabel('time elapsed', fontsize=fontsize)
@@ -116,7 +116,7 @@ def plot_time_elapsed_histogram_subplots(data, bin_step, save=False, subject="01
     else:
         plt.show()
 
-def get_antenna_dist(subject:str, bin_step=30):
+def get_antenna_dist(subject:str, bin_step=60):
     # Load the antenna data
     antenna_01 = get_data(subject)
     # Smooth the antenna data: detect the contact points
@@ -143,7 +143,7 @@ def get_antenna_dist(subject:str, bin_step=30):
     return discrete_data
 
 if __name__ == "__main__":
-    subject= "03"
+    subject= "01"
     # Load the antenna data
     antenna_01 = get_data(subject)
     # Smooth the antenna data: detect the contact points
@@ -155,7 +155,7 @@ if __name__ == "__main__":
     min_val = np.min(t_elps_antenna_01)
     max_val = np.max(t_elps_antenna_01)
     print(f"min_val: {min_val}, max_val: {max_val}")
-    bin_step = 30
+    bin_step = 60
     bin_edges = np.arange(min_val, max_val+bin_step, bin_step)
     discrete_data = np.digitize(t_elps_antenna_01, bin_edges)
 

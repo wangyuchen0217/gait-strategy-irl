@@ -155,7 +155,7 @@ def plot_transition_heatmaps(transition_probabilities, test_folder):
 
 
 # Apply MaxEnt IRL
-epochs = 100
+epochs = 1000
 learning_rate = 0.01
 discount = 0.9
 n_bin1=n_HS_left_bins
@@ -235,11 +235,14 @@ if mode == 'test':
     # Generate the replicated trajectory
     # Generate the replicated trajectory
     replicated_trajectory = []
+    action_probability = []
     for i in range(len(state_indices)):
         action_probabilities = q_values[state_indices[i]]
+        action_probability.append(action_probabilities)
         # Select the action with the highest probability (greedy policy)
         action = np.argmax(action_probabilities)
         replicated_trajectory.append(action)
+    np.savetxt(test_folder+'action_probability.csv', action_probability, delimiter=',')
 
     # Convert to numpy array
     replicated_trajectory = np.array(replicated_trajectory)

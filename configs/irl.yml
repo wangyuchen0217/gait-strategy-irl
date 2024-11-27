@@ -6,9 +6,9 @@ env:
   
 # irl: maxent
 cuda: 0
-mode: 'train' # [train, evaluate, test]
-data_source: CarausiusC00
-test_folder: 'test_folder/maxent/Carausius/dirvel_gait_1000/'
+mode: 'test' # [train, evaluate, test]
+data_source: CarausiusC00AG
+test_folder: 'test_folder/maxent/Carausius/ante_gait/'
 # CarausiusC00, AretaonC00, MedauroideaC00, C00
 # MedauroideaC00_untrimmed, C00_untrimmed
 # CarausiusC00AG

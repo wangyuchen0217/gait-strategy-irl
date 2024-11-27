@@ -50,11 +50,12 @@ for i in range(len(state_indices)):
     # Select the action with the highest probability (greedy policy)
     action = np.argmax(action_probabilities)
     replicated_trajectory.append(action)
+replicated_trajectory = np.array(replicated_trajectory)
 
 
 # Plot a heat map to show the trajectory using imshow
 plt.figure(figsize=(10, 3))
-plt.imshow(q_values.T, cmap="plasma", aspect='auto')
+plt.imshow(q_values[state_indices].T, cmap="plasma", aspect='auto')
 plt.title("Heatmap of Action Probabilities along the Expert Trajectory")
 plt.xlabel("Trajectory Step Index")
 plt.ylabel("Action Index")

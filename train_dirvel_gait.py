@@ -141,7 +141,7 @@ def plot_transition_heatmaps(transition_probabilities, test_folder):
 
 
 # Apply MaxEnt IRL
-epochs = 100
+epochs = 1000
 learning_rate = 0.01
 discount = 0.9
 n_bin1=n_direction_bins

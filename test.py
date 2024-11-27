@@ -39,10 +39,10 @@ actions_medauroidea = trajectory_dirvel_medauroidea[:, 1].astype(int)
 
 
 # the policy used
-q_values = q_value_accvel_medauroidea
+q_values = q_value_accvel_carausius
 # the test source
-state_indices = state_indices_accvel_carausius
-actions = actions_carausius
+state_indices = state_indices_accvel_medauroidea
+actions = actions_medauroidea
 
 replicated_trajectory = []
 for i in range(len(state_indices)):

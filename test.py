@@ -41,16 +41,16 @@ actions_medauroidea = trajectory_dirvel_medauroidea[:, 1].astype(int)
 # the policy used
 q_values = q_value_dirvel_carausius
 # the test source
+state_indices = state_indices_dirvel_aretaon
 actions = actions_aretaon
 
 replicated_trajectory = []
-for i in range(len(q_values)):
-    action_probabilities = q_values[i]
+for i in range(len(state_indices)):
+    action_probabilities = q_values[state_indices[i]]
     # Select the action with the highest probability (greedy policy)
     action = np.argmax(action_probabilities)
     replicated_trajectory.append(action)
-replicated_trajectory = np.array(replicated_trajectory)
-print(replicated_trajectory.shape)
+
 
 # Plot a heat map to show the trajectory using imshow
 plt.figure(figsize=(10, 3))

@@ -76,14 +76,17 @@ def save_discrete_data(subject, discrete_data):
 
 def antenna_visualization(original_data, clustered_data, label, save=False, fontsize=16, subject="01"):
     titles = ["HS left", "HS right", "SP left", "SP right"]
-    plt.figure(figsize=(15, 10))
+    plt.figure(figsize=(15, 12))
     for i in range(4):
         plt.subplot(4, 1, i + 1)
-        plt.plot(original_data[:, i], color='blue', linewidth='2', label='Original')
+        plt.plot(original_data[:, i], color='#394E86', linewidth='2', label='Original')
         ax1 = plt.gca()
         ax2 = ax1.twinx()  # Create a second y-axis for the encoded data
-        ax2.step(range(len(clustered_data)), clustered_data[:, i], where='post', color='red', linewidth='2', label=label, linestyle='--')
+        ax2.step(range(len(clustered_data)), clustered_data[:, i], where='post', color='#E45D2D', linewidth='2', label=label, linestyle='--')
         # Set labels for both y-axes
+        ax1.set_xticks(ax1.get_xticks())
+        ax1.set_yticks(ax1.get_yticks())
+        ax1.tick_params(axis='both', labelsize=14)
         ax1.set_ylabel('rad', fontsize=fontsize)
         ax2.set_ylabel('time elapsed', fontsize=fontsize)
         plt.title(titles[i], fontsize=fontsize)
@@ -143,7 +146,7 @@ def get_antenna_dist(subject:str, bin_step=60):
     return discrete_data
 
 if __name__ == "__main__":
-    subject= "01"
+    subject= "03"
     # Load the antenna data
     antenna_01 = get_data(subject)
     # Smooth the antenna data: detect the contact points

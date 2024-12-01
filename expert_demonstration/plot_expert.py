@@ -18,11 +18,11 @@ def plot_bins_histogram(data, title, xlabel, bin_step, savename='CarausuisC00_hi
     count_per_bin.index = range(len(count_per_bin.index))
     plt.figure(figsize=(10, 6))
     plt.bar(count_per_bin.index, count_per_bin.values, color='skyblue', edgecolor='black')
-    plt.title(title)
-    x_ticks = count_per_bin.index
-    plt.xticks(x_ticks, [int(tick * bin_step) for tick in x_ticks])
-    plt.xlabel(xlabel)
-    plt.ylabel('Count')
+    plt.title(title, fontsize=16)
+    plt.xticks(fontsize=14)
+    plt.yticks(fontsize=14)
+    plt.xlabel(xlabel, fontsize=14)
+    plt.ylabel('Count', fontsize=14)
     plt.grid(axis='y', linestyle='--', alpha=0.5)
     plt.savefig('expert_demonstration/expert/plot/' + savename + '.png')
 

@@ -12,6 +12,20 @@ def plot_histogram(data, title, xlabel, ylabel='Frequency', bins=30, savename='C
     plt.grid(True)
     plt.savefig('expert_demonstration/expert/plot/' + savename + '.png')
 
+def plot_bins_histogram(data, title, xlabel, bin_step, savename='CarausuisC00_histogram_vel'):
+    data = pd.DataFrame(data)
+    count_per_bin = data.value_counts().sort_index()
+    count_per_bin.index = range(len(count_per_bin.index))
+    plt.figure(figsize=(10, 6))
+    plt.bar(count_per_bin.index, count_per_bin.values, color='skyblue', edgecolor='black')
+    plt.title(title)
+    x_ticks = count_per_bin.index
+    plt.xticks(x_ticks, [int(tick * bin_step) for tick in x_ticks])
+    plt.xlabel(xlabel)
+    plt.ylabel('Count')
+    plt.grid(axis='y', linestyle='--', alpha=0.5)
+    plt.savefig('expert_demonstration/expert/plot/' + savename + '.png')
+
 def heatmap_direction_vel_reward(analysis_df):
     # Create a pivot table to count occurrences
     pivot_table = analysis_df.pivot_table(

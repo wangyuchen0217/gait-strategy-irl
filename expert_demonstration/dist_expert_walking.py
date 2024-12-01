@@ -110,9 +110,9 @@ acc = np.concatenate((acc_01, acc_02, acc_03), axis=0)
 print("length of T"+No1+", T"+No2+", T"+No3+": ", len(acc_01), len(acc_02), len(acc_03))
 print("length of faltten trajectory:", len(acc))
 
-# save vel and acc
-plot_histogram(acc, title='Acceleration Data Distribution', xlabel='Acceleration', savename=data_source+'_histogram_acc')
-plot_histogram(vel, title='Velocity Data Distribution', xlabel='Velocity', savename=data_source+'_histogram_vel')
+# # save vel and acc
+# plot_histogram(acc, title='Acceleration Data Distribution', xlabel='Acceleration', savename=data_source+'_histogram_acc')
+# plot_histogram(vel, title='Velocity Data Distribution', xlabel='Velocity', savename=data_source+'_histogram_vel')
 
 # bin the data
 vel_start, vel_end, vel_step = v[data_source]['vel_bin_params']
@@ -131,6 +131,9 @@ acc_bin_group = np.unique(acc_binned)
 print("direction binned group: ", direction_bin_group)
 print("vel binned group: ", vel_bin_group)
 print("acc binned group: ", acc_bin_group)
+plot_bins_histogram(vel_binned, title='Discrete Velocity Data Distribution', xlabel='Velocity', bin_step=5, savename=data_source+'_histogram_vel')
+plot_bins_histogram(direction_binned, title='Discrete Direction Data Distribution', xlabel='Direction', bin_step=5, savename=data_source+'_histogram_direction')
+plot_bins_histogram(acc_binned, title='Discrete Acceleration Data Distribution', xlabel='Acceleration', bin_step=250, savename=data_source+'_histogram_acc')
 
 # Load grouped gait combinations (6 types)
 grouped_gait_combinations = v['grouped_gait_combinations']

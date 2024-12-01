@@ -158,6 +158,9 @@ if save:
     save_path = 'expert_demonstration/expert/'+data_source+'.csv'
     analysis_df.to_csv(save_path, index=False, header=True)
 
+# data curve visualization
+plot_data_curve(vel_03, direction_03, acc_03, data_source)
+
 # # plot states
 # plot_states(vel_01, vel_02, vel_03, direction_01, direction_02, direction_03, acc_01, acc_02, acc_03, data_source)
 

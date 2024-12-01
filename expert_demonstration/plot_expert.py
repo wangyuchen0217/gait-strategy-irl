@@ -156,3 +156,32 @@ def plot_states(vel_01, vel_02, vel_03, direction_01, direction_02, direction_03
     axes[2].grid()
     plt.tight_layout()
     plt.savefig('expert_demonstration/expert/plot/'+insect_state_name+'_acc.png')
+
+def plot_data_curve(vel, direction, acc, insect_state_name):
+    fig, axes = plt.subplots(3, 1, figsize=(12, 9))
+    # Plot for velocity
+    axes[0].plot(vel, color='#394E86', linewidth=2)
+    axes[0].set_title(insect_state_name, fontsize=14)
+    axes[0].set_xticks(axes[0].get_xticks())
+    axes[0].set_yticks(axes[0].get_yticks())
+    axes[0].tick_params(axis='both', labelsize=14)
+    axes[0].set_xlabel('Time Steps', fontsize=14)
+    axes[0].set_ylabel('Velocity', fontsize=14)
+    # Plot for direction
+    axes[1].plot(direction, color='#394E86', linewidth=2)
+    axes[1].set_title(insect_state_name, fontsize=14)
+    axes[1].set_xticks(axes[1].get_xticks())
+    axes[1].set_yticks(axes[1].get_yticks())
+    axes[1].tick_params(axis='both', labelsize=14)
+    axes[1].set_xlabel('Time Steps', fontsize=14)
+    axes[1].set_ylabel('Direction', fontsize=14)
+    # Plot for acceleration
+    axes[2].plot(acc, color='#394E86', linewidth=2)
+    axes[2].set_title(insect_state_name, fontsize=14)
+    axes[2].set_xticks(axes[2].get_xticks())
+    axes[2].set_yticks(axes[2].get_yticks())
+    axes[2].tick_params(axis='both', labelsize=14)
+    axes[2].set_xlabel('Time Steps', fontsize=14)
+    axes[2].set_ylabel('Acceleration', fontsize=14)
+    plt.tight_layout()
+    plt.savefig('expert_demonstration/expert/plot/'+insect_state_name+'_curve.png')

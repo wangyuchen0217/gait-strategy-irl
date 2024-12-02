@@ -16,7 +16,7 @@ def plot_bins_histogram(data, title, xlabel, bin_step, savename='CarausuisC00_hi
     data = pd.DataFrame(data)
     count_per_bin = data.value_counts().sort_index()
     count_per_bin.index = range(len(count_per_bin.index))
-    plt.figure(figsize=(10, 6))
+    plt.figure(figsize=(8, 6))
     plt.bar(count_per_bin.index, count_per_bin.values, color='skyblue', edgecolor='black')
     plt.title(title, fontsize=16)
     plt.xticks(fontsize=14)

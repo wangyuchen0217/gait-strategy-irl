@@ -186,7 +186,7 @@ if mode == 'train':
 
 if mode == 'evaluate':
     # evaluate the policy
-    rewards = torch.load(test_folder+'inferred_rewards100.pt', map_location=f"cuda:{v['cuda']}")
+    rewards = torch.load(test_folder+'inferred_rewards900.pt', map_location=f"cuda:{v['cuda']}")
     rewards = rewards.cpu().clone().numpy()
     q_values = maxent_gpu.find_policy(n_states, rewards, n_actions, discount, transition_probabilities)
     print("Q-values shape: ", q_values.shape)

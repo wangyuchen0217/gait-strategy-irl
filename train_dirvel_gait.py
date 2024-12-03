@@ -212,15 +212,15 @@ if mode == 'test':
     # Generate the replicated trajectory
     # # Basic one
     # replicated_trajectory = []
-    # action_posibility = []
+    # action_probability = []
     # for i in range(len(state_indices)):
     #     action_probabilities = q_values[state_indices[i]]
-    #     action_posibility.append(action_probabilities)
+    #     action_probability.append(action_probabilities)
     #     # Select the action with the highest probability (greedy policy)
     #     action = np.argmax(action_probabilities)
     #     replicated_trajectory.append(action)
     # np.savetxt(test_folder+'replicated_trajectory.csv', np.array(replicated_trajectory), delimiter=',')
-    # np.savetxt(test_folder+'action_posibility.csv', np.array(action_posibility), delimiter=',')
+    # np.savetxt(test_folder+'action_probability.csv', np.array(action_probability), delimiter=',')
 
     # Policy refinement
     replicated_trajectory = []

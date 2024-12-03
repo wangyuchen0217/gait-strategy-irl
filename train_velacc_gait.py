@@ -213,41 +213,41 @@ if mode == 'test':
     # load the q_values
     q_values = np.loadtxt(test_folder+'q_values_maxent_velocity.csv', delimiter=',')
     # Generate the replicated trajectory
-    # # Basic one
-    # replicated_trajectory = []
-    # action_posibility = []
-    # for i in range(len(state_indices)):
-    #     action_probabilities = q_values[state_indices[i]]
-    #     action_posibility.append(action_probabilities)
-    #     # Select the action with the highest probability (greedy policy)
-    #     action = np.argmax(action_probabilities)
-    #     replicated_trajectory.append(action)
-    # np.savetxt(test_folder+'replicated_trajectory.csv', np.array(replicated_trajectory), delimiter=',')
-    # np.savetxt(test_folder+'action_posibility.csv', np.array(action_posibility), delimiter=',')
-
-    # Policy refinement
+    # Basic one
     replicated_trajectory = []
     action_probability = []
-    max_counts = []
     for i in range(len(state_indices)):
         action_probabilities = q_values[state_indices[i]]
         action_probability.append(action_probabilities)
-        # check the number of actions with the highest probability
-        max_value = np.max(action_probabilities)
-        max_count = np.sum(action_probabilities == max_value)
-        max_counts.append(max_count)
         # Select the action with the highest probability (greedy policy)
-        if max_count > 1:
-            # action = np.random.choice(np.where(action_probabilities == max_value)[0])
-            action = previous_action if previous_action is not None else np.argmax(action_probabilities)
-            if action not in np.where(action_probabilities == max_value)[0]:
-                print("Action not in the max values:", i, action)
-        else:
-            action = np.argmax(action_probabilities)
-        previous_action = action
+        action = np.argmax(action_probabilities)
         replicated_trajectory.append(action)
-    np.savetxt(test_folder+'action_probability.csv', action_probability, delimiter=',')
-    np.savetxt(test_folder+'max_counts.csv', max_counts, delimiter=',')
+    np.savetxt(test_folder+'replicated_trajectory.csv', np.array(replicated_trajectory), delimiter=',')
+    np.savetxt(test_folder+'action_probability.csv', np.array(action_probability), delimiter=',')
+
+    # # Policy refinement
+    # replicated_trajectory = []
+    # action_probability = []
+    # max_counts = []
+    # for i in range(len(state_indices)):
+    #     action_probabilities = q_values[state_indices[i]]
+    #     action_probability.append(action_probabilities)
+    #     # check the number of actions with the highest probability
+    #     max_value = np.max(action_probabilities)
+    #     max_count = np.sum(action_probabilities == max_value)
+    #     max_counts.append(max_count)
+    #     # Select the action with the highest probability (greedy policy)
+    #     if max_count > 1:
+    #         # action = np.random.choice(np.where(action_probabilities == max_value)[0])
+    #         action = previous_action if previous_action is not None else np.argmax(action_probabilities)
+    #         if action not in np.where(action_probabilities == max_value)[0]:
+    #             print("Action not in the max values:", i, action)
+    #     else:
+    #         action = np.argmax(action_probabilities)
+    #     previous_action = action
+    #     replicated_trajectory.append(action)
+    # np.savetxt(test_folder+'action_probability.csv', action_probability, delimiter=',')
+    # np.savetxt(test_folder+'max_counts.csv', max_counts, delimiter=',')
 
     # Convert to numpy array
     replicated_trajectory = np.array(replicated_trajectory)

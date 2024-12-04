@@ -27,7 +27,7 @@ class DeepIRLFC(nn.Module):
 
 
 def deep_maxent_irl(feature_matrix, transition_probability, discount, 
-                    trajectories, learning_rate, epochs, device):
+                    trajectories, learning_rate, epochs, n_bins, labels, test_folder, device):
     """
     Maximum Entropy Inverse Reinforcement Learning (Maxent IRL)
     inputs:
@@ -37,8 +37,8 @@ def deep_maxent_irl(feature_matrix, transition_probability, discount,
                                         a at state s0
         discount       float - RL discount factor
         trajectories       a list of demonstrations
-        lr          float - learning rate
-        n_iters     int - number of optimization steps
+        learning_rate          float - learning rate
+        epochs     int - number of optimization steps
     returns
         rewards     Nx1 vector - recoverred state rewards
     """
@@ -46,7 +46,7 @@ def deep_maxent_irl(feature_matrix, transition_probability, discount,
     print("Starting IRL:")
     start_time = time.time()
 
-    n_states, n_actions, _ = transition_probability.shape
+    n_states, _, _ = transition_probability.shape
 
     # Initialize neural network model
     nn_r = DeepIRLFC(feature_matrix.shape[1], 3, 3).to(device)
@@ -79,12 +79,19 @@ def deep_maxent_irl(feature_matrix, transition_probability, discount,
         optimizer.step()
 
         # Print progress every 10 epochs
-        if (i + 1) % 1 == 0:
+        if (i + 1) % 10 == 0:
             elapsed_time = time.time() - start_time
             print(f"Epoch {i + 1}/{epochs} - Time elapsed: {elapsed_time:.2f}s")
+            r_np = nn_r.get_rewards(feature_matrix).cpu().numpy()
+            r_np = normalize(r_np).squeeze()
+            if len(n_bins) == 2:
+                plot_training_rewards_2d(r_np, n_bins, labels, str(i + 1), test_folder)
+            elif len(n_bins) == 4:
+                plot_training_rewards_4d(r_np, n_bins, labels, str(i + 1), test_folder)
+            torch.save(rewards, test_folder + 'inferred_rewards' + str(i + 1) + '.pt')
 
-    rewards = nn_r.get_rewards(feature_matrix).cpu().numpy()
-    return normalize(rewards)
+    rewards = torch.tensor(r_np, dtype=torch.float32, device=device)
+    return rewards
 
 
 def compute_state_visition_freq(transition_probability, trajectories, policy, device, deterministic=False):
@@ -92,13 +99,12 @@ def compute_state_visition_freq(transition_probability, trajectories, policy, de
     using dynamic programming
     inputs:
         transition_probability     NxNxN_ACTIONS matrix - transition dynamics
-        gamma   float - discount factor
         trajectories   list of list of Steps - collected from expert
         policy  Nx1 vector (or NxN_ACTIONS if deterministic=False) - policy
     returns:
-        p       Nx1 vector - state visitation frequencies
+        expected_svf       Nx1 vector - state visitation frequencies
     """
-    n_states, n_actions, _ = transition_probability.shape
+    n_states, _, _ = transition_probability.shape
 
     trajectory_length = trajectories.shape[1]
     expected_svf = torch.zeros([n_states, trajectory_length], dtype=torch.float32, device=device)
@@ -114,8 +120,8 @@ def compute_state_visition_freq(transition_probability, trajectories, policy, de
         else:
             for s in range(n_states):
                 expected_svf[s, t + 1] = torch.sum(torch.sum(expected_svf[:, t].unsqueeze(1) * transition_probability[:, :, s] * policy, dim=1))
-    p = torch.sum(expected_svf, dim=1)
-    return p
+    expected_svf = torch.sum(expected_svf, dim=1)
+    return expected_svf
 
 
 def demo_svf(trajectories, n_states):
@@ -124,14 +130,14 @@ def demo_svf(trajectories, n_states):
     input:
         trajectories   list of list of Steps - collected from expert
     returns:
-        p       Nx1 vector - state visitation frequences   
+        svf       Nx1 vector - state visitation frequences   
     """
-    p = torch.zeros(n_states, dtype=torch.float32)
+    svf = torch.zeros(n_states, dtype=torch.float32)
     for traj in trajectories:
         for step in traj:
-            p[step[0]] += 1
-    p = p / len(trajectories)
-    return p
+            svf[step[0]] += 1
+    svf = svf / len(trajectories)
+    return svf
 
 
 def value_iteration(transition_probability, rewards, discount, device, error=0.01, deterministic=False):

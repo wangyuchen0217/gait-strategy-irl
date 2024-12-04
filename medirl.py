@@ -101,7 +101,18 @@ def value_iteration(P_a, rewards, gamma, error=0.01, deterministic=True):
 
 def deep_maxent_irl(feat_map, P_a, gamma, trajs, lr, n_iters, device):
     """
-    Maximum Entropy Inverse Reinforcement Learning (Maxent IRL) using PyTorch.
+    Maximum Entropy Inverse Reinforcement Learning (Maxent IRL)
+    inputs:
+        feat_map    NxD matrix - the features for each state
+        P_a         NxNxN_ACTIONS matrix - P_a[s0, s1, a] is the transition prob of 
+                                        landing at state s1 when taking action 
+                                        a at state s0
+        gamma       float - RL discount factor
+        trajs       a list of demonstrations
+        lr          float - learning rate
+        n_iters     int - number of optimization steps
+    returns
+        rewards     Nx1 vector - recoverred state rewards
     """
     print(f"Device: {device}")
     print("Starting IRL:")

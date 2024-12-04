@@ -1,216 +1,137 @@
 import numpy as np
-import tensorflow as tf
-import tf_utils
-from utils import *
+import torch
+import torch.nn as nn
+import torch.optim as optim
 
 
-class DeepIRLFC:
-    def __init__(self, n_input, lr, n_h1=400, n_h2=300, l2=10, name='deep_irl_fc'):
-        self.n_input = n_input
-        self.lr = lr
-        self.n_h1 = n_h1
-        self.n_h2 = n_h2
-        self.name = name
+class DeepIRLFC(nn.Module):
+    def __init__(self, n_input, n_h1=400, n_h2=300):
+        super(DeepIRLFC, self).__init__()
+        self.fc1 = nn.Linear(n_input, n_h1)
+        self.fc2 = nn.Linear(n_h1, n_h2)
+        self.reward = nn.Linear(n_h2, 1)
+        self.activation = nn.ELU()
 
-        self.sess = tf.Session()
-        self.input_s, self.reward, self.theta = self._build_network(self.name)
-        self.optimizer = tf.train.GradientDescentOptimizer(lr)
-        
-        self.grad_r = tf.placeholder(tf.float32, [None, 1])
-        self.l2_loss = tf.add_n([tf.nn.l2_loss(v) for v in self.theta])
-        self.grad_l2 = tf.gradients(self.l2_loss, self.theta)
-
-        self.grad_theta = tf.gradients(self.reward, self.theta, -self.grad_r)
-        # apply l2 loss gradients
-        self.grad_theta = [tf.add(l2*self.grad_l2[i], self.grad_theta[i]) for i in range(len(self.grad_l2))]
-        self.grad_theta, _ = tf.clip_by_global_norm(self.grad_theta, 100.0)
-
-        self.grad_norms = tf.global_norm(self.grad_theta)
-        self.optimize = self.optimizer.apply_gradients(zip(self.grad_theta, self.theta))
-        self.sess.run(tf.global_variables_initializer())
-
-    def _build_network(self, name):
-        input_s = tf.placeholder(tf.float32, [None, self.n_input])
-        with tf.variable_scope(name):
-            fc1 = tf_utils.fc(input_s, self.n_h1, scope="fc1", activation_fn=tf.nn.elu,
-                initializer=tf.contrib.layers.variance_scaling_initializer(mode="FAN_IN"))
-            fc2 = tf_utils.fc(fc1, self.n_h2, scope="fc2", activation_fn=tf.nn.elu,
-                initializer=tf.contrib.layers.variance_scaling_initializer(mode="FAN_IN"))
-        reward = tf_utils.fc(fc2, 1, scope="reward")
-        theta = tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES, scope=name)
-        return input_s, reward, theta
-
-    def get_theta(self):
-        return self.sess.run(self.theta)
+    def forward(self, x):
+        x = self.activation(self.fc1(x))
+        x = self.activation(self.fc2(x))
+        x = self.reward(x)
+        return x
 
     def get_rewards(self, states):
-        rewards = self.sess.run(self.reward, feed_dict={self.input_s: states})
+        with torch.no_grad():
+            rewards = self.forward(states)
         return rewards
-
-    def apply_grads(self, feat_map, grad_r):
-        grad_r = np.reshape(grad_r, [-1, 1])
-        feat_map = np.reshape(feat_map, [-1, self.n_input])
-        _, grad_theta, l2_loss, grad_norms = self.sess.run([self.optimize, self.grad_theta, self.l2_loss, self.grad_norms], 
-        feed_dict={self.grad_r: grad_r, self.input_s: feat_map})
-        return grad_theta, l2_loss, grad_norms
 
 
 def compute_state_visition_freq(P_a, gamma, trajs, policy, deterministic=False):
-    """compute the expected states visition frequency p(s| theta, T) 
-    using dynamic programming
-
-    inputs:
-        P_a     NxNxN_ACTIONS matrix - transition dynamics
-        gamma   float - discount factor
-        trajs   list of list of Steps - collected from expert
-        policy  Nx1 vector (or NxN_ACTIONS if deterministic=False) - policy
-    
-    returns:
-        p       Nx1 vector - state visitation frequencies
+    """
+    Compute the expected state visitation frequency p(s| theta, T) using dynamic programming.
     """
     N_STATES, _, N_ACTIONS = np.shape(P_a)
 
     T = len(trajs[0])
-    # mu[s, t] is the prob of visiting state s at time t
-    mu = np.zeros([N_STATES, T]) 
+    mu = np.zeros([N_STATES, T])
 
     for traj in trajs:
         mu[traj[0].cur_state, 0] += 1
-    mu[:,0] = mu[:,0]/len(trajs)
+    mu[:, 0] = mu[:, 0] / len(trajs)
 
     for s in range(N_STATES):
-        for t in range(T-1):
+        for t in range(T - 1):
             if deterministic:
-                mu[s, t+1] = sum([mu[pre_s, t]*P_a[pre_s, s, int(policy[pre_s])] for pre_s in range(N_STATES)])
+                mu[s, t + 1] = sum([mu[pre_s, t] * P_a[pre_s, s, int(policy[pre_s])] for pre_s in range(N_STATES)])
             else:
-                mu[s, t+1] = sum([sum([mu[pre_s, t]*P_a[pre_s, s, a1]*policy[pre_s, a1] for a1 in range(N_ACTIONS)]) for pre_s in range(N_STATES)])
+                mu[s, t + 1] = sum([sum([mu[pre_s, t] * P_a[pre_s, s, a1] * policy[pre_s, a1] for a1 in range(N_ACTIONS)]) for pre_s in range(N_STATES)])
     p = np.sum(mu, 1)
     return p
 
 
 def demo_svf(trajs, n_states):
-  """
-  compute state visitation frequences from demonstrations
-
-  input:
-    trajs   list of list of Steps - collected from expert
-  returns:
-    p       Nx1 vector - state visitation frequences   
-  """
-  p = np.zeros(n_states)
-  for traj in trajs:
-    for step in traj:
-      p[step.cur_state] += 1
-  p = p/len(trajs)
-  return p
+    """
+    Compute state visitation frequencies from demonstrations.
+    """
+    p = np.zeros(n_states)
+    for traj in trajs:
+        for step in traj:
+            p[step.cur_state] += 1
+    p = p / len(trajs)
+    return p
 
 
 def value_iteration(P_a, rewards, gamma, error=0.01, deterministic=True):
-  """
-  static value iteration function. Perhaps the most useful function in this repo
-  
-  inputs:
-    P_a         NxNxN_ACTIONS transition probabilities matrix - 
-                              P_a[s0, s1, a] is the transition prob of 
-                              landing at state s1 when taking action 
-                              a at state s0
-    rewards     Nx1 matrix - rewards for all the states
-    gamma       float - RL discount
-    error       float - threshold for a stop
-    deterministic   bool - to return deterministic policy or stochastic policy
-  
-  returns:
-    values    Nx1 matrix - estimated values
-    policy    Nx1 (NxN_ACTIONS if non-det) matrix - policy
-  """
-  N_STATES, _, N_ACTIONS = np.shape(P_a)
+    """
+    Static value iteration function.
+    """
+    N_STATES, _, N_ACTIONS = np.shape(P_a)
+    values = np.zeros([N_STATES])
 
-  values = np.zeros([N_STATES])
+    while True:
+        values_tmp = values.copy()
+        for s in range(N_STATES):
+            values[s] = max([sum([P_a[s, s1, a] * (rewards[s] + gamma * values_tmp[s1]) for s1 in range(N_STATES)]) for a in range(N_ACTIONS)])
+        if max([abs(values[s] - values_tmp[s]) for s in range(N_STATES)]) < error:
+            break
 
-  # estimate values
-  while True:
-    values_tmp = values.copy()
-
-    for s in range(N_STATES):
-      v_s = []
-      values[s] = max([sum([P_a[s, s1, a]*(rewards[s] + gamma*values_tmp[s1]) for s1 in range(N_STATES)]) for a in range(N_ACTIONS)])
-
-    if max([abs(values[s] - values_tmp[s]) for s in range(N_STATES)]) < error:
-      break
-
-  if deterministic:
-    # generate deterministic policy
-    policy = np.zeros([N_STATES])
-    for s in range(N_STATES):
-      policy[s] = np.argmax([sum([P_a[s, s1, a]*(rewards[s]+gamma*values[s1]) 
-                                  for s1 in range(N_STATES)]) 
-                                  for a in range(N_ACTIONS)])
-
-    return values, policy
-  else:
-    # generate stochastic policy
-    policy = np.zeros([N_STATES, N_ACTIONS])
-    for s in range(N_STATES):
-      v_s = np.array([sum([P_a[s, s1, a]*(rewards[s] + gamma*values[s1]) for s1 in range(N_STATES)]) for a in range(N_ACTIONS)])
-      policy[s,:] = np.transpose(v_s/np.sum(v_s))
-    return values, policy
+    if deterministic:
+        policy = np.zeros([N_STATES])
+        for s in range(N_STATES):
+            policy[s] = np.argmax([sum([P_a[s, s1, a] * (rewards[s] + gamma * values[s1]) for s1 in range(N_STATES)]) for a in range(N_ACTIONS)])
+        return values, policy
+    else:
+        policy = np.zeros([N_STATES, N_ACTIONS])
+        for s in range(N_STATES):
+            v_s = np.array([sum([P_a[s, s1, a] * (rewards[s] + gamma * values[s1]) for s1 in range(N_STATES)]) for a in range(N_ACTIONS)])
+            policy[s, :] = v_s / np.sum(v_s)
+        return values, policy
 
 
 def deep_maxent_irl(feat_map, P_a, gamma, trajs, lr, n_iters):
     """
-    Maximum Entropy Inverse Reinforcement Learning (Maxent IRL)
-
-    inputs:
-        feat_map    NxD matrix - the features for each state
-        P_a         NxNxN_ACTIONS matrix - P_a[s0, s1, a] is the transition prob of 
-                                        landing at state s1 when taking action 
-                                        a at state s0
-        gamma       float - RL discount factor
-        trajs       a list of demonstrations
-        lr          float - learning rate
-        n_iters     int - number of optimization steps
-
-    returns
-        rewards     Nx1 vector - recoverred state rewards
+    Maximum Entropy Inverse Reinforcement Learning (Maxent IRL) using PyTorch.
     """
-
-    # tf.set_random_seed(1)
-    
     N_STATES, _, N_ACTIONS = np.shape(P_a)
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    # init nn model
-    nn_r = DeepIRLFC(feat_map.shape[1], lr, 3, 3)
+    # Initialize neural network model
+    nn_r = DeepIRLFC(feat_map.shape[1], 3, 3).to(device)
+    optimizer = optim.SGD(nn_r.parameters(), lr=lr)
+    feat_map = torch.tensor(feat_map, dtype=torch.float32).to(device)
 
-    # find state visitation frequencies using demonstrations
+    # Find state visitation frequencies using demonstrations
     mu_D = demo_svf(trajs, N_STATES)
+    mu_D = torch.tensor(mu_D, dtype=torch.float32).to(device)
 
-    # training 
+    # Training
     for iteration in range(n_iters):
-        if iteration % (n_iters/10) == 0:
-            print('iteration: {}'.format(iteration))
-        
-        # compute the reward matrix
-        rewards = nn_r.get_rewards(feat_map)
-        
-        # compute policy 
-        _, policy = value_iteration(P_a, rewards, gamma, error=0.01, deterministic=True)
-        
-        # compute expected svf
+        if iteration % (n_iters // 10) == 0:
+            print('Iteration: {}'.format(iteration))
+
+        # Compute the reward matrix
+        rewards = nn_r.get_rewards(feat_map).squeeze()
+
+        # Compute policy
+        rewards_np = rewards.cpu().numpy()
+        _, policy = value_iteration(P_a, rewards_np, gamma, error=0.01, deterministic=True)
+
+        # Compute expected state visitation frequencies
         mu_exp = compute_state_visition_freq(P_a, gamma, trajs, policy, deterministic=True)
-        
-        # compute gradients on rewards:
+        mu_exp = torch.tensor(mu_exp, dtype=torch.float32).to(device)
+
+        # Compute gradients on rewards
         grad_r = mu_D - mu_exp
 
-        # apply gradients to the neural network
-        grad_theta, l2_loss, grad_norm = nn_r.apply_grads(feat_map, grad_r)
-        
+        # Apply gradients to the neural network
+        optimizer.zero_grad()
+        loss = -torch.sum(rewards * grad_r)  # Negative sign because we want to maximize
+        l2_loss = sum(param.pow(2.0).sum() for param in nn_r.parameters())
+        loss += l2_loss * 10  # L2 regularization
+        loss.backward()
+        optimizer.step()
 
-    rewards = nn_r.get_rewards(feat_map)
-    # return sigmoid(normalize(rewards))
+    rewards = nn_r.get_rewards(feat_map).cpu().numpy()
     return normalize(rewards)
 
 
-
-
-
-
+def normalize(x):
+    return (x - np.min(x)) / (np.max(x) - np.min(x))

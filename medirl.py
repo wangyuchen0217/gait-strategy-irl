@@ -45,8 +45,7 @@ def deep_maxent_irl(feat_map, P_a, gamma, trajs, lr, n_iters, device):
     print("Starting IRL:")
     start_time = time.time()
 
-    N_STATES, N_ACTIONS, _ = np.shape(P_a)
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    N_STATES, N_ACTIONS, _ = P_a.shape
 
     # Initialize neural network model
     nn_r = DeepIRLFC(feat_map.shape[1], 3, 3).to(device)
@@ -63,11 +62,10 @@ def deep_maxent_irl(feat_map, P_a, gamma, trajs, lr, n_iters, device):
         rewards = nn_r.get_rewards(feat_map).squeeze()
 
         # Compute policy
-        rewards_np = rewards.cpu().numpy()
-        _, policy = value_iteration(P_a, rewards_np, gamma, error=0.01, deterministic=True)
+        _, policy = value_iteration(P_a, rewards, gamma, device, error=0.01, deterministic=False)
 
         # Compute expected state visitation frequencies
-        mu_exp = compute_state_visition_freq(P_a, gamma, trajs, policy, deterministic=True)
+        mu_exp = compute_state_visition_freq(P_a, gamma, trajs, policy, device, deterministic=False)
         mu_exp = torch.tensor(mu_exp, dtype=torch.float32).to(device)
 
         # Compute gradients on rewards
@@ -90,7 +88,7 @@ def deep_maxent_irl(feat_map, P_a, gamma, trajs, lr, n_iters, device):
     return normalize(rewards)
 
 
-def compute_state_visition_freq(P_a, gamma, trajs, policy, deterministic=False):
+def compute_state_visition_freq(P_a, gamma, trajs, policy, device, deterministic=False):
     """compute the expected states visition frequency p(s| theta, T) 
     using dynamic programming
     inputs:
@@ -101,10 +99,10 @@ def compute_state_visition_freq(P_a, gamma, trajs, policy, deterministic=False):
     returns:
         p       Nx1 vector - state visitation frequencies
     """
-    N_STATES, N_ACTIONS, _ = np.shape(P_a)
+    N_STATES, N_ACTIONS, _ = P_a.shape
 
     T = trajs.shape[1]
-    mu = torch.zeros([N_STATES, T], dtype=torch.float32)
+    mu = torch.zeros([N_STATES, T], dtype=torch.float32, device=device)
 
     for traj in trajs:
         mu[traj[0, 0], 0] += 1
@@ -137,30 +135,30 @@ def demo_svf(trajs, n_states):
     return p
 
 
-def value_iteration(P_a, rewards, gamma, error=0.01, deterministic=True):
+def value_iteration(P_a, rewards, gamma, device, error=0.01, deterministic=False):
     """
     Static value iteration function.
     """
-    N_STATES, N_ACTIONS, _ = np.shape(P_a)
-    values = np.zeros([N_STATES])
+    N_STATES, N_ACTIONS, _ = P_a.shape
+    values = torch.zeros(N_STATES, dtype=torch.float32, device=device)
 
     while True:
-        values_tmp = values.copy()
+        values_tmp = values.clone()
         for s in range(N_STATES):
-            values[s] = max([sum([P_a[s, a, s1] * (rewards[s] + gamma * values_tmp[s1]) for s1 in range(N_STATES)]) for a in range(N_ACTIONS)])
-        if max([abs(values[s] - values_tmp[s]) for s in range(N_STATES)]) < error:
+            values[s] = torch.max(torch.stack([torch.sum(P_a[s, a, :] * (rewards[s] + gamma * values_tmp)) for a in range(N_ACTIONS)])).to(device)
+        if torch.max(torch.abs(values - values_tmp)) < error:
             break
 
     if deterministic:
-        policy = np.zeros([N_STATES])
+        policy = torch.zeros(N_STATES, dtype=torch.long, device=device)
         for s in range(N_STATES):
-            policy[s] = np.argmax([sum([P_a[s, a, s1] * (rewards[s] + gamma * values[s1]) for s1 in range(N_STATES)]) for a in range(N_ACTIONS)])
+            policy[s] = torch.argmax(torch.stack([torch.sum(P_a[s, a, :] * (rewards[s] + gamma * values)) for a in range(N_ACTIONS)])).to(device)
         return values, policy
     else:
-        policy = np.zeros([N_STATES, N_ACTIONS])
+        policy = torch.zeros([N_STATES, N_ACTIONS], dtype=torch.float32, device=device)
         for s in range(N_STATES):
-            v_s = np.array([sum([P_a[s, a, s1] * (rewards[s] + gamma * values[s1]) for s1 in range(N_STATES)]) for a in range(N_ACTIONS)])
-            policy[s, :] = v_s / np.sum(v_s)
+            v_s = torch.tensor([torch.sum(P_a[s, a, :] * (rewards[s] + gamma * values)) for a in range(N_ACTIONS)]).to(device)
+            policy[s, :] = v_s / torch.sum(v_s)
         return values, policy
 
 

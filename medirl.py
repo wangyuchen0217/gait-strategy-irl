@@ -50,7 +50,6 @@ def deep_maxent_irl(feat_map, P_a, gamma, trajs, lr, n_iters, device):
     # Initialize neural network model
     nn_r = DeepIRLFC(feat_map.shape[1], 3, 3).to(device)
     optimizer = optim.SGD(nn_r.parameters(), lr=lr)
-    feat_map = torch.tensor(feat_map, dtype=torch.float32).to(device)
 
     # Find state visitation frequencies using demonstrations
     mu_D = demo_svf(trajs, N_STATES)
@@ -66,7 +65,6 @@ def deep_maxent_irl(feat_map, P_a, gamma, trajs, lr, n_iters, device):
 
         # Compute expected state visitation frequencies
         mu_exp = compute_state_visition_freq(P_a, gamma, trajs, policy, device, deterministic=False)
-        mu_exp = torch.tensor(mu_exp, dtype=torch.float32).to(device)
 
         # Compute gradients on rewards
         grad_r = mu_D - mu_exp
@@ -80,7 +78,7 @@ def deep_maxent_irl(feat_map, P_a, gamma, trajs, lr, n_iters, device):
         optimizer.step()
 
         # Print progress every 10 epochs
-        if (i + 1) % 50 == 0:
+        if (i + 1) % 10 == 0:
             elapsed_time = time.time() - start_time
             print(f"Epoch {i + 1}/{n_iters} - Time elapsed: {elapsed_time:.2f}s")
 
@@ -145,14 +143,14 @@ def value_iteration(P_a, rewards, gamma, device, error=0.01, deterministic=False
     while True:
         values_tmp = values.clone()
         for s in range(N_STATES):
-            values[s] = torch.max(torch.stack([torch.sum(P_a[s, a, :] * (rewards[s] + gamma * values_tmp)) for a in range(N_ACTIONS)])).to(device)
+            values[s] = torch.max(torch.stack([torch.sum(P_a[s, a, :] * (rewards[s] + gamma * values_tmp)) for a in range(N_ACTIONS)]))
         if torch.max(torch.abs(values - values_tmp)) < error:
             break
 
     if deterministic:
         policy = torch.zeros(N_STATES, dtype=torch.long, device=device)
         for s in range(N_STATES):
-            policy[s] = torch.argmax(torch.stack([torch.sum(P_a[s, a, :] * (rewards[s] + gamma * values)) for a in range(N_ACTIONS)])).to(device)
+            policy[s] = torch.argmax(torch.stack([torch.sum(P_a[s, a, :] * (rewards[s] + gamma * values)) for a in range(N_ACTIONS)]))
         return values, policy
     else:
         policy = torch.zeros([N_STATES, N_ACTIONS], dtype=torch.float32, device=device)

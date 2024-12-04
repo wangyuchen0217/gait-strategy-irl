@@ -77,7 +77,6 @@ def deep_maxent_irl(feature_matrix, transition_probability, discount,
         loss = -torch.sum(rewards * grad_r)  # Negative sign because we want to maximize
         l2_loss = sum(param.pow(2.0).sum() for param in nn_r.parameters())
         loss += l2_loss * 10  # L2 regularization
-        print(f"Epoch {i + 1}/{epochs} - Loss: {loss.cpu().item()}")
         losses.append(loss.cpu().item())
         loss.backward()
         optimizer.step()
@@ -104,7 +103,7 @@ def deep_maxent_irl(feature_matrix, transition_probability, discount,
         # Print progress every 10 epochs
         if (i + 1) % 10 == 0:
             elapsed_time = time.time() - start_time
-            print(f"Epoch {i + 1}/{epochs} - Time elapsed: {elapsed_time:.2f}s")
+            print(f"Epoch {i + 1}/{epochs} - Time elapsed: {elapsed_time:.2f}s - Loss: {loss.item():.2f}")
             r_np = normalize(rewards.cpu().numpy())
             if len(n_bins) == 2:
                 plot_training_rewards_2d(r_np, n_bins, labels, str(i + 1), test_folder)

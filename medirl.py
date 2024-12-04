@@ -57,6 +57,8 @@ def deep_maxent_irl(feature_matrix, transition_probability, discount,
     svf = torch.tensor(svf, dtype=torch.float32).to(device)
 
     # Training
+    mean_rewards = []
+    losses = []
     for i in range(epochs):
         # Compute the reward matrix
         rewards = nn_r.get_rewards(feature_matrix).squeeze()
@@ -78,12 +80,31 @@ def deep_maxent_irl(feature_matrix, transition_probability, discount,
         loss.backward()
         optimizer.step()
 
+        # record the mean reward
+        mean_reward = torch.mean(rewards).item()
+        mean_rewards.append(mean_reward)
+        plt.figure(figsize=(10, 8))
+        plt.plot(mean_rewards)
+        plt.xlabel('Epochs')
+        plt.ylabel('Mean Reward')
+        plt.title('Training Progress')
+        plt.savefig(test_folder+'mean_rewards.png')
+        plt.close()
+        # record the loss
+        losses.append(loss.item())
+        plt.figure(figsize=(10, 8))
+        plt.plot(losses)
+        plt.xlabel('Epochs')
+        plt.ylabel('Loss')
+        plt.title('Training Progress')
+        plt.savefig(test_folder+'losses.png')
+        plt.close()
+
         # Print progress every 10 epochs
         if (i + 1) % 10 == 0:
             elapsed_time = time.time() - start_time
             print(f"Epoch {i + 1}/{epochs} - Time elapsed: {elapsed_time:.2f}s")
-            r_np = nn_r.get_rewards(feature_matrix).cpu().numpy()
-            r_np = normalize(r_np).squeeze()
+            r_np = normalize(rewards.cpu().numpy())
             if len(n_bins) == 2:
                 plot_training_rewards_2d(r_np, n_bins, labels, str(i + 1), test_folder)
             elif len(n_bins) == 4:

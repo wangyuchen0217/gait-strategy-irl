@@ -142,7 +142,7 @@ def plot_transition_heatmaps(transition_probabilities, test_folder):
 
 
 # Apply MaxEnt IRL
-epochs = 10
+epochs = 100
 learning_rate = 0.01
 discount = 0.9
 n_bin1=n_direction_bins
@@ -162,7 +162,7 @@ if mode == 'train':
     # rewards = maxentirl_gpu(feature_matrix, n_actions, discount, transition_probabilities, 
     #                                         trajectories, epochs, learning_rate, n_bins, labels, test_folder, device)
     rewards = deep_maxent_irl(feature_matrix, transition_probabilities, discount, 
-                    trajectories, learning_rate, epochs, n_bins, labels, test_folder, device)
+                                                          trajectories, learning_rate, epochs, n_bins, labels, test_folder, device)
     #Output the inferred rewards
     print("Inferred Rewards:", rewards.shape)
     # Save the inferred rewards as a pt file

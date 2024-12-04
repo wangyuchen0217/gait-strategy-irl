@@ -25,8 +25,15 @@ class DeepIRLFC(nn.Module):
 
 
 def compute_state_visition_freq(P_a, gamma, trajs, policy, deterministic=False):
-    """
-    Compute the expected state visitation frequency p(s| theta, T) using dynamic programming.
+    """compute the expected states visition frequency p(s| theta, T) 
+    using dynamic programming
+    inputs:
+        P_a     NxNxN_ACTIONS matrix - transition dynamics
+        gamma   float - discount factor
+        trajs   list of list of Steps - collected from expert
+        policy  Nx1 vector (or NxN_ACTIONS if deterministic=False) - policy
+    returns:
+        p       Nx1 vector - state visitation frequencies
     """
     N_STATES, _, N_ACTIONS = np.shape(P_a)
 
@@ -49,7 +56,11 @@ def compute_state_visition_freq(P_a, gamma, trajs, policy, deterministic=False):
 
 def demo_svf(trajs, n_states):
     """
-    Compute state visitation frequencies from demonstrations.
+    compute state visitation frequences from demonstrations
+    input:
+        trajs   list of list of Steps - collected from expert
+    returns:
+        p       Nx1 vector - state visitation frequences   
     """
     p = np.zeros(n_states)
     for traj in trajs:

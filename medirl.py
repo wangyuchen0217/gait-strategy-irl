@@ -46,14 +46,14 @@ def deep_maxent_irl(feature_matrix, transition_probability, discount,
     print("Starting IRL:")
     start_time = time.time()
 
-    N_STATES, N_ACTIONS, _ = transition_probability.shape
+    n_states, n_actions, _ = transition_probability.shape
 
     # Initialize neural network model
     nn_r = DeepIRLFC(feature_matrix.shape[1], 3, 3).to(device)
     optimizer = optim.SGD(nn_r.parameters(), lr=learning_rate)
 
     # Find state visitation frequencies using demonstrations
-    svf = demo_svf(trajectories, N_STATES)
+    svf = demo_svf(trajectories, n_states)
     svf = torch.tensor(svf, dtype=torch.float32).to(device)
 
     # Training
@@ -98,10 +98,10 @@ def compute_state_visition_freq(transition_probability, trajectories, policy, de
     returns:
         p       Nx1 vector - state visitation frequencies
     """
-    N_STATES, N_ACTIONS, _ = transition_probability.shape
+    n_states, n_actions, _ = transition_probability.shape
 
     trajectory_length = trajectories.shape[1]
-    expected_svf = torch.zeros([N_STATES, trajectory_length], dtype=torch.float32, device=device)
+    expected_svf = torch.zeros([n_states, trajectory_length], dtype=torch.float32, device=device)
 
     for traj in trajectories:
         expected_svf[traj[0, 0], 0] += 1
@@ -109,10 +109,10 @@ def compute_state_visition_freq(transition_probability, trajectories, policy, de
 
     for t in range(trajectory_length - 1):
         if deterministic:
-            for s in range(N_STATES):
+            for s in range(n_states):
                 expected_svf[s, t + 1] = torch.sum(expected_svf[:, t] * transition_probability[:, int(policy[s]), s])
         else:
-            for s in range(N_STATES):
+            for s in range(n_states):
                 expected_svf[s, t + 1] = torch.sum(torch.sum(expected_svf[:, t].unsqueeze(1) * transition_probability[:, :, s] * policy, dim=1))
     p = torch.sum(expected_svf, dim=1)
     return p
@@ -138,28 +138,31 @@ def value_iteration(transition_probability, rewards, discount, device, error=0.0
     """
     Static value iteration function.
     """
-    N_STATES, N_ACTIONS, _ = transition_probability.shape
-    values = torch.zeros(N_STATES, dtype=torch.float32, device=device)
+    n_states, n_actions, _ = transition_probability.shape
+    values = torch.zeros(n_states, dtype=torch.float32, device=device)
 
     while True:
         values_tmp = values.clone()
-        for s in range(N_STATES):
-            values[s] = torch.max(torch.stack([torch.sum(transition_probability[s, a, :] * (rewards[s] + discount * values_tmp)) for a in range(N_ACTIONS)]))
+        for s in range(n_states):
+            values[s] = torch.max(torch.stack([torch.sum(transition_probability[s, a, :] * (rewards[s] + discount * values_tmp)) for a in range(n_actions)]))
         if torch.max(torch.abs(values - values_tmp)) < error:
             break
 
     if deterministic:
-        policy = torch.zeros(N_STATES, dtype=torch.long, device=device)
-        for s in range(N_STATES):
-            policy[s] = torch.argmax(torch.stack([torch.sum(transition_probability[s, a, :] * (rewards[s] + discount * values)) for a in range(N_ACTIONS)]))
+        policy = torch.zeros(n_states, dtype=torch.long, device=device)
+        for s in range(n_states):
+            policy[s] = torch.argmax(torch.stack([torch.sum(transition_probability[s, a, :] * (rewards[s] + discount * values)) for a in range(n_actions)]))
         return values, policy
     else:
-        policy = torch.zeros([N_STATES, N_ACTIONS], dtype=torch.float32, device=device)
-        for s in range(N_STATES):
-            v_s = torch.tensor([torch.sum(transition_probability[s, a, :] * (rewards[s] + discount * values)) for a in range(N_ACTIONS)]).to(device)
+        policy = torch.zeros([n_states, n_actions], dtype=torch.float32, device=device)
+        for s in range(n_states):
+            v_s = torch.tensor([torch.sum(transition_probability[s, a, :] * (rewards[s] + discount * values)) for a in range(n_actions)]).to(device)
             policy[s, :] = v_s / torch.sum(v_s)
         return values, policy
 
 
 def normalize(x):
-    return (x - np.min(x)) / (np.max(x) - np.min(x))
+    min_val, max_val = np.min(x), np.max(x)
+    if min_val == max_val:
+        return np.zeros_like(x)
+    return (x - min_val) / (max_val - min_val)

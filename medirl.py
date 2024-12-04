@@ -2,7 +2,9 @@ import numpy as np
 import torch
 import torch.nn as nn
 import torch.optim as optim
-
+import time
+import matplotlib.pyplot as plt
+from plot_train import *
 
 class DeepIRLFC(nn.Module):
     def __init__(self, n_input, n_h1=400, n_h2=300):
@@ -97,10 +99,14 @@ def value_iteration(P_a, rewards, gamma, error=0.01, deterministic=True):
         return values, policy
 
 
-def deep_maxent_irl(feat_map, P_a, gamma, trajs, lr, n_iters):
+def deep_maxent_irl(feat_map, P_a, gamma, trajs, lr, n_iters, device):
     """
     Maximum Entropy Inverse Reinforcement Learning (Maxent IRL) using PyTorch.
     """
+    print(f"Device: {device}")
+    print("Starting IRL:")
+    start_time = time.time()
+
     N_STATES, _, N_ACTIONS = np.shape(P_a)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -114,10 +120,7 @@ def deep_maxent_irl(feat_map, P_a, gamma, trajs, lr, n_iters):
     mu_D = torch.tensor(mu_D, dtype=torch.float32).to(device)
 
     # Training
-    for iteration in range(n_iters):
-        if iteration % (n_iters // 10) == 0:
-            print('Iteration: {}'.format(iteration))
-
+    for i in range(n_iters):
         # Compute the reward matrix
         rewards = nn_r.get_rewards(feat_map).squeeze()
 
@@ -139,6 +142,11 @@ def deep_maxent_irl(feat_map, P_a, gamma, trajs, lr, n_iters):
         loss += l2_loss * 10  # L2 regularization
         loss.backward()
         optimizer.step()
+
+        # Print progress every 10 epochs
+        if (i + 1) % 50 == 0:
+            elapsed_time = time.time() - start_time
+            print(f"Epoch {i + 1}/{n_iters} - Time elapsed: {elapsed_time:.2f}s")
 
     rewards = nn_r.get_rewards(feat_map).cpu().numpy()
     return normalize(rewards)

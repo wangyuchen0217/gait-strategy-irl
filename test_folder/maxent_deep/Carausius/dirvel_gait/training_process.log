@@ -1,0 +1,17 @@
+Logging started at 2024/12/04_15:41:10
+NVIDIA GeForce RTX 4060 Laptop GPU
+Process ID: 18203
+---------------------------------
+Velocity bins: 28
+Direction bins: 5
+Gait categories: 6
+---------------------------------
+Number of states: 140
+Number of actions: 6
+Dimension of states: 33
+Rewards shape: (140,)
+Feature matrix shape: (140, 33)
+Transition probabilities shape: (140, 6, 140)
+---------------------------------
+Device: cuda:0
+Starting IRL:

@@ -26,85 +26,12 @@ class DeepIRLFC(nn.Module):
         return rewards
 
 
-def compute_state_visition_freq(P_a, gamma, trajs, policy, deterministic=False):
-    """compute the expected states visition frequency p(s| theta, T) 
-    using dynamic programming
-    inputs:
-        P_a     NxNxN_ACTIONS matrix - transition dynamics
-        gamma   float - discount factor
-        trajs   list of list of Steps - collected from expert
-        policy  Nx1 vector (or NxN_ACTIONS if deterministic=False) - policy
-    returns:
-        p       Nx1 vector - state visitation frequencies
-    """
-    N_STATES, _, N_ACTIONS = np.shape(P_a)
-
-    T = len(trajs[0])
-    mu = np.zeros([N_STATES, T])
-
-    for traj in trajs:
-        mu[traj[0].cur_state, 0] += 1
-    mu[:, 0] = mu[:, 0] / len(trajs)
-
-    for s in range(N_STATES):
-        for t in range(T - 1):
-            if deterministic:
-                mu[s, t + 1] = sum([mu[pre_s, t] * P_a[pre_s, s, int(policy[pre_s])] for pre_s in range(N_STATES)])
-            else:
-                mu[s, t + 1] = sum([sum([mu[pre_s, t] * P_a[pre_s, s, a1] * policy[pre_s, a1] for a1 in range(N_ACTIONS)]) for pre_s in range(N_STATES)])
-    p = np.sum(mu, 1)
-    return p
-
-
-def demo_svf(trajs, n_states):
-    """
-    compute state visitation frequences from demonstrations
-    input:
-        trajs   list of list of Steps - collected from expert
-    returns:
-        p       Nx1 vector - state visitation frequences   
-    """
-    p = np.zeros(n_states)
-    for traj in trajs:
-        for step in traj:
-            p[step.cur_state] += 1
-    p = p / len(trajs)
-    return p
-
-
-def value_iteration(P_a, rewards, gamma, error=0.01, deterministic=True):
-    """
-    Static value iteration function.
-    """
-    N_STATES, _, N_ACTIONS = np.shape(P_a)
-    values = np.zeros([N_STATES])
-
-    while True:
-        values_tmp = values.copy()
-        for s in range(N_STATES):
-            values[s] = max([sum([P_a[s, s1, a] * (rewards[s] + gamma * values_tmp[s1]) for s1 in range(N_STATES)]) for a in range(N_ACTIONS)])
-        if max([abs(values[s] - values_tmp[s]) for s in range(N_STATES)]) < error:
-            break
-
-    if deterministic:
-        policy = np.zeros([N_STATES])
-        for s in range(N_STATES):
-            policy[s] = np.argmax([sum([P_a[s, s1, a] * (rewards[s] + gamma * values[s1]) for s1 in range(N_STATES)]) for a in range(N_ACTIONS)])
-        return values, policy
-    else:
-        policy = np.zeros([N_STATES, N_ACTIONS])
-        for s in range(N_STATES):
-            v_s = np.array([sum([P_a[s, s1, a] * (rewards[s] + gamma * values[s1]) for s1 in range(N_STATES)]) for a in range(N_ACTIONS)])
-            policy[s, :] = v_s / np.sum(v_s)
-        return values, policy
-
-
 def deep_maxent_irl(feat_map, P_a, gamma, trajs, lr, n_iters, device):
     """
     Maximum Entropy Inverse Reinforcement Learning (Maxent IRL)
     inputs:
         feat_map    NxD matrix - the features for each state
-        P_a         NxNxN_ACTIONS matrix - P_a[s0, s1, a] is the transition prob of 
+        P_a         NxNxN_ACTIONS matrix - P_a[s0, a, s1] is the transition prob of 
                                         landing at state s1 when taking action 
                                         a at state s0
         gamma       float - RL discount factor
@@ -118,7 +45,7 @@ def deep_maxent_irl(feat_map, P_a, gamma, trajs, lr, n_iters, device):
     print("Starting IRL:")
     start_time = time.time()
 
-    N_STATES, _, N_ACTIONS = np.shape(P_a)
+    N_STATES, N_ACTIONS, _ = np.shape(P_a)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     # Initialize neural network model
@@ -161,6 +88,80 @@ def deep_maxent_irl(feat_map, P_a, gamma, trajs, lr, n_iters, device):
 
     rewards = nn_r.get_rewards(feat_map).cpu().numpy()
     return normalize(rewards)
+
+
+def compute_state_visition_freq(P_a, gamma, trajs, policy, deterministic=False):
+    """compute the expected states visition frequency p(s| theta, T) 
+    using dynamic programming
+    inputs:
+        P_a     NxNxN_ACTIONS matrix - transition dynamics
+        gamma   float - discount factor
+        trajs   list of list of Steps - collected from expert
+        policy  Nx1 vector (or NxN_ACTIONS if deterministic=False) - policy
+    returns:
+        p       Nx1 vector - state visitation frequencies
+    """
+    N_STATES, N_ACTIONS, _ = np.shape(P_a)
+
+    T = trajs.shape[1]
+    mu = torch.zeros([N_STATES, T], dtype=torch.float32)
+
+    for traj in trajs:
+        mu[traj[0, 0], 0] += 1
+    mu[:, 0] = mu[:, 0] / len(trajs)
+
+    for t in range(T - 1):
+        if deterministic:
+            for s in range(N_STATES):
+                mu[s, t + 1] = torch.sum(mu[:, t] * P_a[:, int(policy[s]), s])
+        else:
+            for s in range(N_STATES):
+                mu[s, t + 1] = torch.sum(torch.sum(mu[:, t].unsqueeze(1) * P_a[:, :, s] * policy, dim=1))
+    p = torch.sum(mu, dim=1)
+    return p
+
+
+def demo_svf(trajs, n_states):
+    """
+    compute state visitation frequences from demonstrations
+    input:
+        trajs   list of list of Steps - collected from expert
+    returns:
+        p       Nx1 vector - state visitation frequences   
+    """
+    p = torch.zeros(n_states, dtype=torch.float32)
+    for traj in trajs:
+        for step in traj:
+            p[step[0]] += 1
+    p = p / len(trajs)
+    return p
+
+
+def value_iteration(P_a, rewards, gamma, error=0.01, deterministic=True):
+    """
+    Static value iteration function.
+    """
+    N_STATES, N_ACTIONS, _ = np.shape(P_a)
+    values = np.zeros([N_STATES])
+
+    while True:
+        values_tmp = values.copy()
+        for s in range(N_STATES):
+            values[s] = max([sum([P_a[s, a, s1] * (rewards[s] + gamma * values_tmp[s1]) for s1 in range(N_STATES)]) for a in range(N_ACTIONS)])
+        if max([abs(values[s] - values_tmp[s]) for s in range(N_STATES)]) < error:
+            break
+
+    if deterministic:
+        policy = np.zeros([N_STATES])
+        for s in range(N_STATES):
+            policy[s] = np.argmax([sum([P_a[s, a, s1] * (rewards[s] + gamma * values[s1]) for s1 in range(N_STATES)]) for a in range(N_ACTIONS)])
+        return values, policy
+    else:
+        policy = np.zeros([N_STATES, N_ACTIONS])
+        for s in range(N_STATES):
+            v_s = np.array([sum([P_a[s, a, s1] * (rewards[s] + gamma * values[s1]) for s1 in range(N_STATES)]) for a in range(N_ACTIONS)])
+            policy[s, :] = v_s / np.sum(v_s)
+        return values, policy
 
 
 def normalize(x):

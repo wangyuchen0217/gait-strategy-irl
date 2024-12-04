@@ -53,8 +53,8 @@ def deep_maxent_irl(feature_matrix, transition_probability, discount,
     optimizer = optim.SGD(nn_r.parameters(), lr=learning_rate)
 
     # Find state visitation frequencies using demonstrations
-    mu_D = demo_svf(trajectories, N_STATES)
-    mu_D = torch.tensor(mu_D, dtype=torch.float32).to(device)
+    svf = demo_svf(trajectories, N_STATES)
+    svf = torch.tensor(svf, dtype=torch.float32).to(device)
 
     # Training
     for i in range(epochs):
@@ -65,10 +65,10 @@ def deep_maxent_irl(feature_matrix, transition_probability, discount,
         _, policy = value_iteration(transition_probability, rewards, discount, device, error=0.01, deterministic=False)
 
         # Compute expected state visitation frequencies
-        mu_exp = compute_state_visition_freq(transition_probability, trajectories, policy, device, deterministic=False)
+        expected_svf = compute_state_visition_freq(transition_probability, trajectories, policy, device, deterministic=False)
 
         # Compute gradients on rewards
-        grad_r = mu_D - mu_exp
+        grad_r = svf - expected_svf
 
         # Apply gradients to the neural network
         optimizer.zero_grad()
@@ -100,21 +100,21 @@ def compute_state_visition_freq(transition_probability, trajectories, policy, de
     """
     N_STATES, N_ACTIONS, _ = transition_probability.shape
 
-    T = trajectories.shape[1]
-    mu = torch.zeros([N_STATES, T], dtype=torch.float32, device=device)
+    trajectory_length = trajectories.shape[1]
+    expected_svf = torch.zeros([N_STATES, trajectory_length], dtype=torch.float32, device=device)
 
     for traj in trajectories:
-        mu[traj[0, 0], 0] += 1
-    mu[:, 0] = mu[:, 0] / len(trajectories)
+        expected_svf[traj[0, 0], 0] += 1
+    expected_svf[:, 0] = expected_svf[:, 0] / len(trajectories)
 
-    for t in range(T - 1):
+    for t in range(trajectory_length - 1):
         if deterministic:
             for s in range(N_STATES):
-                mu[s, t + 1] = torch.sum(mu[:, t] * transition_probability[:, int(policy[s]), s])
+                expected_svf[s, t + 1] = torch.sum(expected_svf[:, t] * transition_probability[:, int(policy[s]), s])
         else:
             for s in range(N_STATES):
-                mu[s, t + 1] = torch.sum(torch.sum(mu[:, t].unsqueeze(1) * transition_probability[:, :, s] * policy, dim=1))
-    p = torch.sum(mu, dim=1)
+                expected_svf[s, t + 1] = torch.sum(torch.sum(expected_svf[:, t].unsqueeze(1) * transition_probability[:, :, s] * policy, dim=1))
+    p = torch.sum(expected_svf, dim=1)
     return p
 
 

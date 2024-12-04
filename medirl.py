@@ -91,7 +91,7 @@ def deep_maxent_irl(feature_matrix, transition_probability, discount,
         plt.savefig(test_folder+'mean_rewards.png')
         plt.close()
         # record the loss
-        losses.append(loss.item())
+        losses.append(loss)
         plt.figure(figsize=(10, 8))
         plt.plot(losses)
         plt.xlabel('Epochs')

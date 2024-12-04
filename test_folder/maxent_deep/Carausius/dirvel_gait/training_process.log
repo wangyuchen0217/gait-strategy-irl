@@ -1,6 +1,6 @@
-Logging started at 2024/12/04_16:38:13
+Logging started at 2024/12/04_18:36:08
 NVIDIA GeForce RTX 4060 Laptop GPU
-Process ID: 21616
+Process ID: 28792
 ---------------------------------
 Velocity bins: 28
 Direction bins: 5
@@ -15,105 +15,6 @@ Transition probabilities shape: (140, 6, 140)
 ---------------------------------
 Device: cuda:0
 Starting IRL:
-Epoch 1/100 - Time elapsed: 18.16s
-Epoch 2/100 - Time elapsed: 35.45s
-Epoch 3/100 - Time elapsed: 52.77s
-Epoch 4/100 - Time elapsed: 69.57s
-Epoch 5/100 - Time elapsed: 86.31s
-Epoch 6/100 - Time elapsed: 102.72s
-Epoch 7/100 - Time elapsed: 118.93s
-Epoch 8/100 - Time elapsed: 136.07s
-Epoch 9/100 - Time elapsed: 153.15s
-Epoch 10/100 - Time elapsed: 171.07s
-Epoch 11/100 - Time elapsed: 188.91s
-Epoch 12/100 - Time elapsed: 206.30s
-Epoch 13/100 - Time elapsed: 223.40s
-Epoch 14/100 - Time elapsed: 240.95s
-Epoch 15/100 - Time elapsed: 258.21s
-Epoch 16/100 - Time elapsed: 275.64s
-Epoch 17/100 - Time elapsed: 292.90s
-Epoch 18/100 - Time elapsed: 310.35s
-Epoch 19/100 - Time elapsed: 328.06s
-Epoch 20/100 - Time elapsed: 344.97s
-Epoch 21/100 - Time elapsed: 362.46s
-Epoch 22/100 - Time elapsed: 380.11s
-Epoch 23/100 - Time elapsed: 397.34s
-Epoch 24/100 - Time elapsed: 414.61s
-Epoch 25/100 - Time elapsed: 431.53s
-Epoch 26/100 - Time elapsed: 448.85s
-Epoch 27/100 - Time elapsed: 466.19s
-Epoch 28/100 - Time elapsed: 483.83s
-Epoch 29/100 - Time elapsed: 501.25s
-Epoch 30/100 - Time elapsed: 518.70s
-Epoch 31/100 - Time elapsed: 536.39s
-Epoch 32/100 - Time elapsed: 553.72s
-Epoch 33/100 - Time elapsed: 571.46s
-Epoch 34/100 - Time elapsed: 589.02s
-Epoch 35/100 - Time elapsed: 606.71s
-Epoch 36/100 - Time elapsed: 623.90s
-Epoch 37/100 - Time elapsed: 641.09s
-Epoch 38/100 - Time elapsed: 658.41s
-Epoch 39/100 - Time elapsed: 675.77s
-Epoch 40/100 - Time elapsed: 693.10s
-Epoch 41/100 - Time elapsed: 710.40s
-Epoch 42/100 - Time elapsed: 727.78s
-Epoch 43/100 - Time elapsed: 745.51s
-Epoch 44/100 - Time elapsed: 763.11s
-Epoch 45/100 - Time elapsed: 780.52s
-Epoch 46/100 - Time elapsed: 797.98s
-Epoch 47/100 - Time elapsed: 815.61s
-Epoch 48/100 - Time elapsed: 833.44s
-Epoch 49/100 - Time elapsed: 851.16s
-Epoch 50/100 - Time elapsed: 868.51s
-Epoch 51/100 - Time elapsed: 885.87s
-Epoch 52/100 - Time elapsed: 903.42s
-Epoch 53/100 - Time elapsed: 920.81s
-Epoch 54/100 - Time elapsed: 938.42s
-Epoch 55/100 - Time elapsed: 956.10s
-Epoch 56/100 - Time elapsed: 973.58s
-Epoch 57/100 - Time elapsed: 991.19s
-Epoch 58/100 - Time elapsed: 1008.55s
-Epoch 59/100 - Time elapsed: 1026.24s
-Epoch 60/100 - Time elapsed: 1044.01s
-Epoch 61/100 - Time elapsed: 1061.92s
-Epoch 62/100 - Time elapsed: 1079.52s
-Epoch 63/100 - Time elapsed: 1097.05s
-Epoch 64/100 - Time elapsed: 1114.86s
-Epoch 65/100 - Time elapsed: 1132.71s
-Epoch 66/100 - Time elapsed: 1149.67s
-Epoch 67/100 - Time elapsed: 1167.34s
-Epoch 68/100 - Time elapsed: 1184.72s
-Epoch 69/100 - Time elapsed: 1202.15s
-Epoch 70/100 - Time elapsed: 1219.80s
-Epoch 71/100 - Time elapsed: 1236.86s
-Epoch 72/100 - Time elapsed: 1254.25s
-Epoch 73/100 - Time elapsed: 1272.18s
-Epoch 74/100 - Time elapsed: 1289.92s
-Epoch 75/100 - Time elapsed: 1307.64s
-Epoch 76/100 - Time elapsed: 1325.38s
-Epoch 77/100 - Time elapsed: 1343.15s
-Epoch 78/100 - Time elapsed: 1360.92s
-Epoch 79/100 - Time elapsed: 1378.81s
-Epoch 80/100 - Time elapsed: 1396.69s
-Epoch 81/100 - Time elapsed: 1414.27s
-Epoch 82/100 - Time elapsed: 1432.14s
-Epoch 83/100 - Time elapsed: 1450.03s
-Epoch 84/100 - Time elapsed: 1467.80s
-Epoch 85/100 - Time elapsed: 1485.72s
-Epoch 86/100 - Time elapsed: 1503.74s
-Epoch 87/100 - Time elapsed: 1521.16s
-Epoch 88/100 - Time elapsed: 1538.55s
-Epoch 89/100 - Time elapsed: 1555.79s
-Epoch 90/100 - Time elapsed: 1573.35s
-Epoch 91/100 - Time elapsed: 1590.65s
-Epoch 92/100 - Time elapsed: 1608.22s
-Epoch 93/100 - Time elapsed: 1625.94s
-Epoch 94/100 - Time elapsed: 1643.75s
-Epoch 95/100 - Time elapsed: 1661.21s
-Epoch 96/100 - Time elapsed: 1678.17s
-Epoch 97/100 - Time elapsed: 1695.34s
-Epoch 98/100 - Time elapsed: 1711.57s
-Epoch 99/100 - Time elapsed: 1727.87s
-Epoch 100/100 - Time elapsed: 1744.04s
-Inferred Rewards:
-(140, 1)
+Epoch 1/10 - Loss: nan
+Epoch 2/10 - Loss: nan
+Epoch 3/10 - Loss: nan

@@ -77,6 +77,8 @@ def deep_maxent_irl(feature_matrix, transition_probability, discount,
         loss = -torch.sum(rewards * grad_r)  # Negative sign because we want to maximize
         l2_loss = sum(param.pow(2.0).sum() for param in nn_r.parameters())
         loss += l2_loss * 10  # L2 regularization
+        print(f"Epoch {i + 1}/{epochs} - Loss: {loss.cpu().item()}")
+        losses.append(loss.cpu().item())
         loss.backward()
         optimizer.step()
 
@@ -91,7 +93,6 @@ def deep_maxent_irl(feature_matrix, transition_probability, discount,
         plt.savefig(test_folder+'mean_rewards.png')
         plt.close()
         # record the loss
-        losses.append(loss)
         plt.figure(figsize=(10, 8))
         plt.plot(losses)
         plt.xlabel('Epochs')

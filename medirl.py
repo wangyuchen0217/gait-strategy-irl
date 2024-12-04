@@ -26,16 +26,17 @@ class DeepIRLFC(nn.Module):
         return rewards
 
 
-def deep_maxent_irl(feat_map, P_a, gamma, trajs, lr, n_iters, device):
+def deep_maxent_irl(feature_matrix, transition_probability, discount, 
+                    trajectories, learning_rate, epochs, device):
     """
     Maximum Entropy Inverse Reinforcement Learning (Maxent IRL)
     inputs:
-        feat_map    NxD matrix - the features for each state
-        P_a         NxNxN_ACTIONS matrix - P_a[s0, a, s1] is the transition prob of 
+        feature_matrix    NxD matrix - the features for each state
+        transition_probability         NxNxN_ACTIONS matrix - P_a[s0, a, s1] is the transition prob of 
                                         landing at state s1 when taking action 
                                         a at state s0
-        gamma       float - RL discount factor
-        trajs       a list of demonstrations
+        discount       float - RL discount factor
+        trajectories       a list of demonstrations
         lr          float - learning rate
         n_iters     int - number of optimization steps
     returns
@@ -45,26 +46,26 @@ def deep_maxent_irl(feat_map, P_a, gamma, trajs, lr, n_iters, device):
     print("Starting IRL:")
     start_time = time.time()
 
-    N_STATES, N_ACTIONS, _ = P_a.shape
+    N_STATES, N_ACTIONS, _ = transition_probability.shape
 
     # Initialize neural network model
-    nn_r = DeepIRLFC(feat_map.shape[1], 3, 3).to(device)
-    optimizer = optim.SGD(nn_r.parameters(), lr=lr)
+    nn_r = DeepIRLFC(feature_matrix.shape[1], 3, 3).to(device)
+    optimizer = optim.SGD(nn_r.parameters(), lr=learning_rate)
 
     # Find state visitation frequencies using demonstrations
-    mu_D = demo_svf(trajs, N_STATES)
+    mu_D = demo_svf(trajectories, N_STATES)
     mu_D = torch.tensor(mu_D, dtype=torch.float32).to(device)
 
     # Training
-    for i in range(n_iters):
+    for i in range(epochs):
         # Compute the reward matrix
-        rewards = nn_r.get_rewards(feat_map).squeeze()
+        rewards = nn_r.get_rewards(feature_matrix).squeeze()
 
         # Compute policy
-        _, policy = value_iteration(P_a, rewards, gamma, device, error=0.01, deterministic=False)
+        _, policy = value_iteration(transition_probability, rewards, discount, device, error=0.01, deterministic=False)
 
         # Compute expected state visitation frequencies
-        mu_exp = compute_state_visition_freq(P_a, gamma, trajs, policy, device, deterministic=False)
+        mu_exp = compute_state_visition_freq(transition_probability, trajectories, policy, device, deterministic=False)
 
         # Compute gradients on rewards
         grad_r = mu_D - mu_exp
@@ -78,84 +79,84 @@ def deep_maxent_irl(feat_map, P_a, gamma, trajs, lr, n_iters, device):
         optimizer.step()
 
         # Print progress every 10 epochs
-        if (i + 1) % 10 == 0:
+        if (i + 1) % 1 == 0:
             elapsed_time = time.time() - start_time
-            print(f"Epoch {i + 1}/{n_iters} - Time elapsed: {elapsed_time:.2f}s")
+            print(f"Epoch {i + 1}/{epochs} - Time elapsed: {elapsed_time:.2f}s")
 
-    rewards = nn_r.get_rewards(feat_map).cpu().numpy()
+    rewards = nn_r.get_rewards(feature_matrix).cpu().numpy()
     return normalize(rewards)
 
 
-def compute_state_visition_freq(P_a, gamma, trajs, policy, device, deterministic=False):
+def compute_state_visition_freq(transition_probability, trajectories, policy, device, deterministic=False):
     """compute the expected states visition frequency p(s| theta, T) 
     using dynamic programming
     inputs:
-        P_a     NxNxN_ACTIONS matrix - transition dynamics
+        transition_probability     NxNxN_ACTIONS matrix - transition dynamics
         gamma   float - discount factor
-        trajs   list of list of Steps - collected from expert
+        trajectories   list of list of Steps - collected from expert
         policy  Nx1 vector (or NxN_ACTIONS if deterministic=False) - policy
     returns:
         p       Nx1 vector - state visitation frequencies
     """
-    N_STATES, N_ACTIONS, _ = P_a.shape
+    N_STATES, N_ACTIONS, _ = transition_probability.shape
 
-    T = trajs.shape[1]
+    T = trajectories.shape[1]
     mu = torch.zeros([N_STATES, T], dtype=torch.float32, device=device)
 
-    for traj in trajs:
+    for traj in trajectories:
         mu[traj[0, 0], 0] += 1
-    mu[:, 0] = mu[:, 0] / len(trajs)
+    mu[:, 0] = mu[:, 0] / len(trajectories)
 
     for t in range(T - 1):
         if deterministic:
             for s in range(N_STATES):
-                mu[s, t + 1] = torch.sum(mu[:, t] * P_a[:, int(policy[s]), s])
+                mu[s, t + 1] = torch.sum(mu[:, t] * transition_probability[:, int(policy[s]), s])
         else:
             for s in range(N_STATES):
-                mu[s, t + 1] = torch.sum(torch.sum(mu[:, t].unsqueeze(1) * P_a[:, :, s] * policy, dim=1))
+                mu[s, t + 1] = torch.sum(torch.sum(mu[:, t].unsqueeze(1) * transition_probability[:, :, s] * policy, dim=1))
     p = torch.sum(mu, dim=1)
     return p
 
 
-def demo_svf(trajs, n_states):
+def demo_svf(trajectories, n_states):
     """
     compute state visitation frequences from demonstrations
     input:
-        trajs   list of list of Steps - collected from expert
+        trajectories   list of list of Steps - collected from expert
     returns:
         p       Nx1 vector - state visitation frequences   
     """
     p = torch.zeros(n_states, dtype=torch.float32)
-    for traj in trajs:
+    for traj in trajectories:
         for step in traj:
             p[step[0]] += 1
-    p = p / len(trajs)
+    p = p / len(trajectories)
     return p
 
 
-def value_iteration(P_a, rewards, gamma, device, error=0.01, deterministic=False):
+def value_iteration(transition_probability, rewards, discount, device, error=0.01, deterministic=False):
     """
     Static value iteration function.
     """
-    N_STATES, N_ACTIONS, _ = P_a.shape
+    N_STATES, N_ACTIONS, _ = transition_probability.shape
     values = torch.zeros(N_STATES, dtype=torch.float32, device=device)
 
     while True:
         values_tmp = values.clone()
         for s in range(N_STATES):
-            values[s] = torch.max(torch.stack([torch.sum(P_a[s, a, :] * (rewards[s] + gamma * values_tmp)) for a in range(N_ACTIONS)]))
+            values[s] = torch.max(torch.stack([torch.sum(transition_probability[s, a, :] * (rewards[s] + discount * values_tmp)) for a in range(N_ACTIONS)]))
         if torch.max(torch.abs(values - values_tmp)) < error:
             break
 
     if deterministic:
         policy = torch.zeros(N_STATES, dtype=torch.long, device=device)
         for s in range(N_STATES):
-            policy[s] = torch.argmax(torch.stack([torch.sum(P_a[s, a, :] * (rewards[s] + gamma * values)) for a in range(N_ACTIONS)]))
+            policy[s] = torch.argmax(torch.stack([torch.sum(transition_probability[s, a, :] * (rewards[s] + discount * values)) for a in range(N_ACTIONS)]))
         return values, policy
     else:
         policy = torch.zeros([N_STATES, N_ACTIONS], dtype=torch.float32, device=device)
         for s in range(N_STATES):
-            v_s = torch.tensor([torch.sum(P_a[s, a, :] * (rewards[s] + gamma * values)) for a in range(N_ACTIONS)]).to(device)
+            v_s = torch.tensor([torch.sum(transition_probability[s, a, :] * (rewards[s] + discount * values)) for a in range(N_ACTIONS)]).to(device)
             policy[s, :] = v_s / torch.sum(v_s)
         return values, policy
 

@@ -1,0 +1,29 @@
+Logging started at 2024/12/04_19:01:05
+NVIDIA RTX A6000
+Process ID: 2183977
+---------------------------------
+Velocity bins: 28
+Direction bins: 5
+Gait categories: 6
+---------------------------------
+Number of states: 140
+Number of actions: 6
+Dimension of states: 33
+Rewards shape: (140,)
+Feature matrix shape: (140, 33)
+Transition probabilities shape: (140, 6, 140)
+---------------------------------
+Device: cuda:0
+Starting IRL:
+Epoch 10/100 - Time elapsed: 467.67s - Loss: nan
+Epoch 20/100 - Time elapsed: 936.48s - Loss: nan
+Epoch 30/100 - Time elapsed: 1405.21s - Loss: nan
+Epoch 40/100 - Time elapsed: 1869.69s - Loss: nan
+Epoch 50/100 - Time elapsed: 2337.06s - Loss: nan
+Epoch 60/100 - Time elapsed: 2801.72s - Loss: nan
+Epoch 70/100 - Time elapsed: 3266.48s - Loss: nan
+Epoch 80/100 - Time elapsed: 3731.43s - Loss: nan
+Epoch 90/100 - Time elapsed: 4200.32s - Loss: nan
+Epoch 100/100 - Time elapsed: 4672.69s - Loss: nan
+Inferred Rewards:
+torch.Size([140])

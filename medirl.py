@@ -50,7 +50,7 @@ def deep_maxent_irl(feature_matrix, transition_probability, discount,
 
     # Initialize neural network model
     nn_r = DeepIRLFC(feature_matrix.shape[1], 3, 3).to(device)
-    optimizer = optim.SGD(nn_r.parameters(), lr=learning_rate)
+    optimizer = optim.Adam(nn_r.parameters(), lr=learning_rate)  
 
     # Find state visitation frequencies using demonstrations
     svf = demo_svf(trajectories, n_states)
@@ -62,6 +62,8 @@ def deep_maxent_irl(feature_matrix, transition_probability, discount,
     for i in range(epochs):
         # Compute the reward matrix
         rewards = nn_r.get_rewards(feature_matrix).squeeze()
+        rewards = (rewards - rewards.mean()) / (rewards.std() + 1e-8)  # Normalize rewards for stability
+        rewards = torch.clamp(rewards, min=-10, max=10)  # Clipping rewards for stability
 
         # Compute policy
         _, policy = value_iteration(transition_probability, rewards, discount, device, error=0.01, deterministic=False)
@@ -74,7 +76,10 @@ def deep_maxent_irl(feature_matrix, transition_probability, discount,
 
         # Apply gradients to the neural network
         optimizer.zero_grad()
-        loss = -torch.sum(rewards * grad_r)  # Negative sign because we want to maximize
+        # loss = -torch.sum(rewards * grad_r)  # Negative sign because we want to maximize
+        entropy_reg = 0.01
+        entropy = -torch.sum(policy * torch.log(policy + 1e-10))  # Entropy term to encourage exploration
+        loss = -torch.sum(rewards * grad_r) + entropy_reg * entropy  # Negative sign because we want to maximize
         l2_loss = sum(param.pow(2.0).sum() for param in nn_r.parameters())
         loss += l2_loss * 10  # L2 regularization
         losses.append(loss.cpu().item())

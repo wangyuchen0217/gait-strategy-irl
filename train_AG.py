@@ -66,8 +66,8 @@ print(f"Gait Categories: {n_gait_categories}")
 print("---------------------------------")
 
 # Create a feature matrix (n_states, n_dimensions)
-n_states = n_HS_left_bins * n_HS_right_bins * n_SP_left_bins * n_SP_right_bins
-d_states = n_HS_left_bins + n_HS_right_bins + n_SP_left_bins + n_SP_right_bins
+n_states = n_HS_left_bins * n_SP_left_bins * n_HS_right_bins * n_SP_right_bins
+d_states = n_HS_left_bins + n_SP_left_bins + n_HS_right_bins + n_SP_right_bins
 n_actions = n_gait_categories
 feature_matrix = np.zeros((n_states, d_states))
 print(f"Number of states: {n_states}")
@@ -79,23 +79,23 @@ print(f"Feature matrix shape: {feature_matrix.shape}")
 # Populate the feature matrix (one-hot encoding)
 for index, row in data.iterrows():
     # set the row index
-    state_index = int((row['HS left']-1) * n_HS_right_bins * n_SP_left_bins * n_SP_right_bins +
-                        (row['HS right']-1) * n_SP_left_bins * n_SP_right_bins +
-                        (row['SP left']-1) * n_SP_right_bins +
+    state_index = int((row['HS left']-1) * n_SP_left_bins * n_HS_right_bins * n_SP_right_bins +
+                        (row['SP left']-1) * n_HS_right_bins * n_SP_right_bins +
+                        (row['HS right']-1) * n_SP_right_bins +
                         (row['SP right']-1))
     # set the one-hot encoding (column index)
     feature_matrix[state_index, row['HS left']-1] = 1
-    feature_matrix[state_index, n_HS_left_bins + row['HS right']-1] = 1
-    feature_matrix[state_index, n_HS_left_bins + n_HS_right_bins + row['SP left']-1] = 1
-    feature_matrix[state_index, n_HS_left_bins + n_HS_right_bins + n_SP_left_bins + row['SP right']-1] = 1
+    feature_matrix[state_index, n_HS_left_bins + row['SP left']-1] = 1
+    feature_matrix[state_index, n_HS_left_bins + n_SP_left_bins + row['HS right']-1] = 1
+    feature_matrix[state_index, n_HS_left_bins + n_SP_left_bins + n_HS_right_bins + row['SP right']-1] = 1
 
 def generate_trajectory(data, n_HS_right_bins, n_SP_left_bins, n_SP_right_bins):
     trajectories = []
     for index, row in data.iterrows():
         state_index = int(
-            (row['HS left'] - 1) * n_HS_right_bins * n_SP_left_bins * n_SP_right_bins +
-            (row['HS right'] - 1) * n_SP_left_bins * n_SP_right_bins +
-            (row['SP left'] - 1) * n_SP_right_bins +
+            (row['HS left'] - 1) * n_SP_left_bins * n_HS_right_bins * n_SP_right_bins +
+            (row['SP left']-1) * n_HS_right_bins * n_SP_right_bins +
+            (row['HS right']-1) * n_SP_right_bins +
             (row['SP right'] - 1)
         )
         action = int(row['Gait Category'])
@@ -160,13 +160,13 @@ epochs = 100
 learning_rate = 0.01
 discount = 0.9
 n_bin1=n_HS_left_bins
-n_bin2=n_HS_right_bins
-n_bin3=n_SP_left_bins
+n_bin2=n_SP_left_bins
+n_bin3=n_HS_right_bins
 n_bin4=n_SP_right_bins
 n_bins=[n_bin1, n_bin2, n_bin3, n_bin4]
 label_bin1="HS Left Bins"
-label_bin2="HS Right Bins"
-label_bin3="SP Left Bins"
+label_bin2="SP Left Bins"
+label_bin3="HS Right Bins" 
 label_bin4="SP Right Bins"
 labels=[label_bin1, label_bin2, label_bin3, label_bin4]
 
@@ -177,10 +177,10 @@ if mode == 'train':
     feature_matrix = torch.tensor(feature_matrix, device=device, dtype=torch.float32).to(device)
     transition_probabilities = torch.tensor(transition_probabilities, device=device, dtype=torch.float32).to(device)
     trajectories = torch.tensor(trajectories, device=device, dtype=torch.int64).to(device)
-    # rewards = maxentirl_gpu(feature_matrix, n_actions, discount, transition_probabilities, 
-    #                                         trajectories, epochs, learning_rate, n_bins, labels, test_folder, device)
-    rewards = deep_maxent_irl(feature_matrix, transition_probabilities, discount, 
-                                                trajectories, learning_rate, epochs, n_bins, labels, test_folder, device)
+    rewards = maxentirl_gpu(feature_matrix, n_actions, discount, transition_probabilities, 
+                                            trajectories, epochs, learning_rate, n_bins, labels, test_folder, device)
+    # rewards = deep_maxent_irl(feature_matrix, transition_probabilities, discount, 
+    #                                             trajectories, learning_rate, epochs, n_bins, labels, test_folder, device)
     #Output the inferred rewards
     print("Inferred Rewards:", rewards.shape)
     # Save the inferred rewards as a pt file

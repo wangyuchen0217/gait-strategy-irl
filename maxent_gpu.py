@@ -75,7 +75,7 @@ def maxentirl(feature_matrix, n_actions, discount, transition_probability,
         plt.close()
 
         # Print progress every 10 epochs
-        if (i + 1) % 50 == 0:
+        if (i + 1) % 10 == 0:
             elapsed_time = time.time() - start_time
             print(f"Epoch {i + 1}/{epochs} - Time elapsed: {elapsed_time:.2f}s")
             if len(n_bins) == 2:

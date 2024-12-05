@@ -164,7 +164,7 @@ def plot_action_reward_individual(q_values, n_bin1, n_bin2, n_bin3, n_bin4, n_ac
     for action_index in range(n_actions):
         # Set up the figure for subplots for all combinations of bin3 and bin4
         fig, axes = plt.subplots(n_bin3, n_bin4, figsize=(18, 18))
-        fig.suptitle(f"Reward for Action {action_index + 1} in Each State Combination", fontsize=16)
+        fig.suptitle(f"Reward for Action {action_index} in Each State Combination", fontsize=16)
         axes = axes.flatten()
         # Iterate over each combination of `bin3` and `bin4` to create a subplot for each
         for i in range(n_bin3):

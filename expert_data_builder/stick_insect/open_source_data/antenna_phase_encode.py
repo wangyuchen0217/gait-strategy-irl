@@ -146,7 +146,7 @@ def get_antenna_dist(subject:str, bin_step=60):
     return discrete_data
 
 if __name__ == "__main__":
-    subject= "01"
+    subject= "02"
     # Load the antenna data
     antenna_01 = get_data(subject)
     # Smooth the antenna data: detect the contact points

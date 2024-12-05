@@ -19,3 +19,13 @@ Device: cuda:0
 Starting IRL:
 Epoch 10/100 - Time elapsed: 2144.50s - Loss: nan
 Epoch 20/100 - Time elapsed: 4270.19s - Loss: nan
+Epoch 30/100 - Time elapsed: 6382.23s - Loss: nan
+Epoch 40/100 - Time elapsed: 8491.96s - Loss: nan
+Epoch 50/100 - Time elapsed: 10606.10s - Loss: nan
+Epoch 60/100 - Time elapsed: 12714.56s - Loss: nan
+Epoch 70/100 - Time elapsed: 14811.95s - Loss: nan
+Epoch 80/100 - Time elapsed: 16908.37s - Loss: nan
+Epoch 90/100 - Time elapsed: 19037.14s - Loss: nan
+Epoch 100/100 - Time elapsed: 21152.12s - Loss: nan
+Inferred Rewards:
+torch.Size([625])

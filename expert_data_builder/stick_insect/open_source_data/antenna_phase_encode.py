@@ -115,7 +115,7 @@ def plot_time_elapsed_histogram_subplots(data, bin_step, save=False, subject="01
     plt.suptitle('Distribution of Discrete Antenna Time Elapsed Bins')
     plt.tight_layout(rect=[0.05, 0.05, 1, 0.95])
     if save:
-        plt.savefig(f"expert_demonstration/expert/plot/Carausius_T{subject}_antenna_histogram.png")
+        plt.savefig(f"expert_demonstration/expert/plot/Carausius_T{subject}_antenna_histogram_orgl.png")
     else:
         plt.show()
 
@@ -146,13 +146,13 @@ def get_antenna_dist(subject:str, bin_step=60):
     return discrete_data
 
 if __name__ == "__main__":
-    subject= "02"
+    subject= "03"
     # Load the antenna data
     antenna_01 = get_data(subject)
-    # Smooth the antenna data: detect the contact points
-    smoothed_antenna_01 = smooth(antenna_01, damping=3)
+    # # Smooth the antenna data: detect the contact points
+    # smoothed_antenna_01 = smooth(antenna_01, damping=3)
     # Calculate the time elapsed since the last antenna contact (valley)
-    t_elps_antenna_01 = time_eplased_antenna_contact(smoothed_antenna_01)
+    t_elps_antenna_01 = time_eplased_antenna_contact(antenna_01)
 
     # Discretize the data: binning
     min_val = np.min(t_elps_antenna_01)
@@ -166,7 +166,7 @@ if __name__ == "__main__":
     save_discrete_data(subject, discrete_data)
 
     # Visualize the encoded antenna data and the original antenna data
-    antenna_visualization(antenna_01, smoothed_antenna_01, 'smoothed', subject=subject, save=True)
-    antenna_visualization(antenna_01, t_elps_antenna_01, 'time_elapsed', subject=subject, save=True)
-    antenna_visualization(antenna_01, discrete_data, 'discretized', subject=subject, save=True)
+    # antenna_visualization(antenna_01, smoothed_antenna_01, 'smoothed', subject=subject, save=True)
+    antenna_visualization(antenna_01, t_elps_antenna_01, 'time_elapsed_orgl', subject=subject, save=True)
+    antenna_visualization(antenna_01, discrete_data, 'discretized_orgl', subject=subject, save=True)
     plot_time_elapsed_histogram_subplots(discrete_data, bin_step, subject=subject, save=True)

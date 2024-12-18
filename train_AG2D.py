@@ -66,10 +66,26 @@ print(f"Gait Categories: {n_gait_categories}")
 print("---------------------------------")
 
 # Set the number of bins and labels
-n_bin1 = n_HS_left_bins
-n_bin2 = n_SP_left_bins
-label_bin1="HS left"
-label_bin2="SP left"
+# # left
+# n_bin1 = n_HS_left_bins 
+# n_bin2 = n_SP_left_bins
+# label_bin1="HS left"
+# label_bin2="SP left"
+# # right
+# n_bin1 = n_HS_right_bins
+# n_bin2 = n_SP_right_bins
+# label_bin1="HS right"
+# label_bin2="SP right"
+# # HS
+# n_bin1 = n_HS_left_bins
+# n_bin2 = n_HS_right_bins
+# label_bin1="HS left"
+# label_bin2="HS right"
+# SP
+n_bin1 = n_SP_left_bins
+n_bin2 = n_SP_right_bins
+label_bin1="SP left"
+label_bin2="SP right"
 
 # Create a feature matrix (n_states, n_dimensions)
 n_states = n_bin1 * n_bin2

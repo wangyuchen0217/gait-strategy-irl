@@ -1,0 +1,31 @@
+Logging started at 2024/12/18_17:26:48
+NVIDIA RTX A6000
+Process ID: 1010956
+---------------------------------
+HS left bins: 5
+HS right bins: 5
+SP left bins: 5
+SP right bins: 5
+Gait Categories: 6
+---------------------------------
+Number of states: 25
+Number of actions: 6
+Dimension of states: 10
+Rewards shape: (25,)
+Feature matrix shape: (25, 10)
+Transition probabilities shape: (25, 6, 25)
+---------------------------------
+Device: cuda:3
+Starting IRL:
+Epoch 10/100 - Time elapsed: 20.50s
+Epoch 20/100 - Time elapsed: 41.76s
+Epoch 30/100 - Time elapsed: 63.46s
+Epoch 40/100 - Time elapsed: 85.31s
+Epoch 50/100 - Time elapsed: 107.01s
+Epoch 60/100 - Time elapsed: 129.02s
+Epoch 70/100 - Time elapsed: 150.42s
+Epoch 80/100 - Time elapsed: 172.03s
+Epoch 90/100 - Time elapsed: 193.89s
+Epoch 100/100 - Time elapsed: 216.11s
+Inferred Rewards:
+torch.Size([25])

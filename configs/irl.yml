@@ -5,10 +5,10 @@ env:
   horizon: 3000
   
 # irl: maxent
-cuda: 0
-mode: 'test' # [train, evaluate, test]
-data_source: CarausiusC00AGdp2
-test_folder: 'test_folder/maxent/Carausius/ante_gait_dp2/'
+cuda: 4
+mode: 'train' # [train, evaluate, test]
+data_source: CarausiusC00AGdp3
+test_folder: 'test_folder/maxent/Carausius/ante_gait_SP/'
 # CarausiusC00, AretaonC00, MedauroideaC00, C00
 # MedauroideaC00_untrimmed, C00_untrimmed
 # CarausiusC00AG

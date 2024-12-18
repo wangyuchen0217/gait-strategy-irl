@@ -115,7 +115,7 @@ def plot_time_elapsed_histogram_subplots(data, bin_step, save=False, subject="01
     plt.suptitle('Distribution of Discrete Antenna Time Elapsed Bins')
     plt.tight_layout(rect=[0.05, 0.05, 1, 0.95])
     if save:
-        plt.savefig(f"expert_demonstration/expert/plot/Carausius_T{subject}_antenna_histogram_orgl.png")
+        plt.savefig(f"expert_demonstration/expert/plot/Carausius_T{subject}_antenna_histogram_dp1.png")
     else:
         plt.show()
 
@@ -141,7 +141,7 @@ def get_antenna_dist(subject:str, bin_step=60):
     antenna_visualization(antenna_01, smoothed_antenna_01, 'smoothed_dp1', subject=subject, save=True)
     antenna_visualization(antenna_01, t_elps_antenna_01, 'time_elapsed_dp1', subject=subject, save=True)
     antenna_visualization(antenna_01, discrete_data, 'discretized_dp1', subject=subject, save=True)
-    plot_time_elapsed_histogram_subplots(discrete_data, bin_step, subject=subject, save=False)
+    plot_time_elapsed_histogram_subplots(discrete_data, bin_step, subject=subject, save=True)
 
     return discrete_data
 

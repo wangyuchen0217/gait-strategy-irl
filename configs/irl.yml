@@ -7,11 +7,11 @@ env:
 # irl: maxent
 cuda: 0
 mode: 'test' # [train, evaluate, test]
-data_source: CarausiusC00AG
+data_source: CarausiusC00AG_dp0
 test_folder: 'test_folder/maxent/Carausius/ante_gait_dp1/'
 # CarausiusC00, AretaonC00, MedauroideaC00, C00
 # MedauroideaC00_untrimmed, C00_untrimmed
-# CarausiusC00AG
+# CarausiusC00AG_dp0, CarausiusC00AG_dp1, CarausiusC00AG_dp3(first one)
 
 # expert demonstration
 CarausiusC00:

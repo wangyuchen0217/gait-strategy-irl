@@ -123,7 +123,7 @@ def get_antenna_dist(subject:str, bin_step=60):
     # Load the antenna data
     antenna_01 = get_data(subject)
     # Smooth the antenna data: detect the contact points
-    smoothed_antenna_01 = smooth(antenna_01, damping=0)
+    smoothed_antenna_01 = smooth(antenna_01, damping=1)
     # Calculate the time elapsed since the last antenna contact (valley)
     t_elps_antenna_01 = time_eplased_antenna_contact(smoothed_antenna_01)
 
@@ -138,10 +138,10 @@ def get_antenna_dist(subject:str, bin_step=60):
     # save_discrete_data(subject, discrete_data)
 
     # Visualize the encoded antenna data and the original antenna data
-    antenna_visualization(antenna_01, smoothed_antenna_01, 'smoothed_dp0', subject=subject, save=True)
-    antenna_visualization(antenna_01, t_elps_antenna_01, 'time_elapsed_dp0', subject=subject, save=True)
-    antenna_visualization(antenna_01, discrete_data, 'discretized_dp0', subject=subject, save=True)
-    plot_time_elapsed_histogram_subplots(discrete_data, bin_step, 'dp0', subject=subject, save=True)
+    antenna_visualization(antenna_01, smoothed_antenna_01, 'smoothed_dp1', subject=subject, save=True)
+    antenna_visualization(antenna_01, t_elps_antenna_01, 'time_elapsed_dp1', subject=subject, save=True)
+    antenna_visualization(antenna_01, discrete_data, 'discretized_dp1', subject=subject, save=True)
+    plot_time_elapsed_histogram_subplots(discrete_data, bin_step, 'dp1', subject=subject, save=True)
 
     return discrete_data
 

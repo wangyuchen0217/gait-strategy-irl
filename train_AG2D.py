@@ -68,8 +68,8 @@ print("---------------------------------")
 # Set the number of bins and labels
 n_bin1 = n_HS_left_bins
 n_bin2 = n_SP_left_bins
-label_bin1="HS Left Bins"
-label_bin2="SP Left Bins"
+label_bin1="HS left"
+label_bin2="SP left"
 
 # Create a feature matrix (n_states, n_dimensions)
 n_states = n_bin1 * n_bin2
@@ -85,14 +85,14 @@ print(f"Feature matrix shape: {feature_matrix.shape}")
 # Populate the feature matrix (one-hot encoding)
 for index, row in data.iterrows():
     # set the row index
-    state_index = (n_bin1-1)*n_bin2 +(n_bin2-1)
-    feature_matrix[state_index, n_bin1-1] = 1
-    feature_matrix[state_index, n_bin1 + n_bin2-1] = 1
+    state_index = int((row[label_bin1]-1) * n_bin2 + (row[label_bin2]-1))
+    feature_matrix[state_index, (row[label_bin2]-1)] = 1
+    feature_matrix[state_index, n_bin1 + (row[label_bin2]-1)] = 1
 
-def generate_trajectory(data, n_bin1, n_bin2):
+def generate_trajectory(data, n_bin2, label_bin1, label_bin2):
     trajectories = []
     for index, row in data.iterrows():
-        state_index = int((n_bin1-1)*n_bin2 +(n_bin2-1))
+        state_index = int((row[label_bin1]-1) * n_bin2 + (row[label_bin2]-1))
         action = int(row['Gait Category'])
         trajectories.append([(state_index, action)])
     trajectories = np.array(trajectories)
@@ -124,7 +124,7 @@ def build_transition_matrix_from_indices(data, n_states, n_actions):
     return transition_probabilities
 
 # Generate trajectories from the dataset: flatten_traj
-trajectories = generate_trajectory(data, n_bin1, n_bin2)
+trajectories = generate_trajectory(data, n_bin2, label_bin1, label_bin2)
 
 transition_probabilities = build_transition_matrix_from_indices(trajectories[0], n_states, n_actions)
 print(f"Transition probabilities shape: {transition_probabilities.shape}")

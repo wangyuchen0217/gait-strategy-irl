@@ -134,14 +134,14 @@ def get_antenna_dist(subject:str, bin_step=60):
     bin_edges = np.arange(min_val, max_val+bin_step, bin_step)
     discrete_data = np.digitize(t_elps_antenna_01, bin_edges)
 
-    # Save the discrete data
-    save_discrete_data(subject, discrete_data)
+    # # Save the discrete data
+    # save_discrete_data(subject, discrete_data)
 
     # Visualize the encoded antenna data and the original antenna data
     antenna_visualization(antenna_01, smoothed_antenna_01, 'smoothed_dp0', subject=subject, save=True)
     antenna_visualization(antenna_01, t_elps_antenna_01, 'time_elapsed_dp0', subject=subject, save=True)
     antenna_visualization(antenna_01, discrete_data, 'discretized_dp0', subject=subject, save=True)
-    plot_time_elapsed_histogram_subplots(discrete_data, bin_step, 'dp_0', subject=subject, save=True)
+    plot_time_elapsed_histogram_subplots(discrete_data, bin_step, 'dp0', subject=subject, save=True)
 
     return discrete_data
 

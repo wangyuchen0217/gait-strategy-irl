@@ -214,7 +214,7 @@ if mode == 'test':
     actions = expert_trajectory[0, :, 1]
     np.savetxt(test_folder+'trajectories.csv', expert_trajectory[0], delimiter=',')
     # load the q_values
-    q_values = np.loadtxt(test_folder+'q_values_maxent_direction.csv', delimiter=',')
+    q_values = np.loadtxt(test_folder+'q_values_maxent_antenna.csv', delimiter=',')
     # Generate the replicated trajectory
     # Basic one
     replicated_trajectory = []

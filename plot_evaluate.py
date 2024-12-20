@@ -232,10 +232,10 @@ def evaluate_action_distribution_metrics(actions, action_probability, action_of_
     expert_trajectory = np.where(actions == action_of_interest, 1.0, 0.0)
     replicated_action_prob = action_probability[:, action_of_interest]
 
-    print(f"Expert Action Shape: {expert_trajectory.shape}")
-    print(expert_trajectory)
-    print(f"Replicated Action Shape: {replicated_action_prob.shape}")
-    print(replicated_action_prob)
+    # print(f"Expert Action Shape: {expert_trajectory.shape}")
+    # print(expert_trajectory)
+    # print(f"Replicated Action Shape: {replicated_action_prob.shape}")
+    # print(replicated_action_prob)
 
     # Reshape for compatibility with metrics
     expert_trajectory = expert_trajectory.reshape(-1, 1)
@@ -258,6 +258,7 @@ def evaluate_action_distribution_metrics(actions, action_probability, action_of_
 
 
     # Print results
+    print('------')
     print(f"Metrics for Action {action_of_interest}:")
     print(f"Modified Hausdorff Distance (MHD): {mhd}")
     print(f"Sliced Wasserstein Distance (SWD): {swd}")

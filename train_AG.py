@@ -207,26 +207,6 @@ if mode == 'evaluate':
                                   label_bin1, label_bin2, label_bin3, label_bin4, test_folder)
 
 
-def evaluate_trajectory_metrics(expert_trajectory, replicated_trajectory):
-    # Ensure both trajectories are of the same length
-    assert len(expert_trajectory) == len(replicated_trajectory), "Trajectories must be of equal length for comparison."
-    expert_trajectory = expert_trajectory.reshape(-1, 1)
-    replicated_trajectory = replicated_trajectory.reshape(-1, 1)
-    # Modified Hausdorff Distance (MHD)
-    def modified_hausdorff_distance(a, b):
-        forward_hausdorff = directed_hausdorff(a, b)[0]
-        backward_hausdorff = directed_hausdorff(b, a)[0]
-        return max(forward_hausdorff, backward_hausdorff)
-    mhd = modified_hausdorff_distance(expert_trajectory, replicated_trajectory)
-    # Root Mean Square Percentage Error (RMSPE)
-    rmspe = np.sqrt(mean_squared_error(expert_trajectory, replicated_trajectory)) / np.mean(expert_trajectory) * 100
-    # Sliced Wasserstein Distance (SWD)
-    swd = wasserstein_distance(expert_trajectory.flatten(), replicated_trajectory.flatten())
-    print(f"Modified Hausdorff Distance (MHD): {mhd}")
-    print(f"Root Mean Square Percentage Error (RMSPE): {rmspe}%")
-    print(f"Sliced Wasserstein Distance (SWD): {swd}")
-    return mhd, rmspe, swd
-
 if mode == 'test':
     # Use the expert trajectory as the ground truth
     expert_trajectory = trajectories
@@ -247,64 +227,15 @@ if mode == 'test':
         replicated_trajectory.append(action)
     np.savetxt(test_folder+'action_probability.csv', action_probability, delimiter=',')
 
-    # # Policy refinement
-    # replicated_trajectory = []
-    # action_probability = []
-    # max_counts = []
-    # for i in range(len(state_indices)):
-    #     action_probabilities = q_values[state_indices[i]]
-    #     action_probability.append(action_probabilities)
-    #     # check the number of actions with the highest probability
-    #     max_value = np.max(action_probabilities)
-    #     max_count = np.sum(action_probabilities == max_value)
-    #     max_counts.append(max_count)
-    #     # Select the action with the highest probability (greedy policy)
-    #     if max_count > 1:
-    #         # action = np.random.choice(np.where(action_probabilities == max_value)[0])
-    #         action = previous_action if previous_action is not None else np.argmax(action_probabilities)
-    #         if action not in np.where(action_probabilities == max_value)[0]:
-    #             print("Action not in the max values:", i, action)
-    #     else:
-    #         action = np.argmax(action_probabilities)
-    #     previous_action = action
-    #     replicated_trajectory.append(action)
-    # np.savetxt(test_folder+'action_probability.csv', action_probability, delimiter=',')
-    # np.savetxt(test_folder+'max_counts.csv', max_counts, delimiter=',')
-
     # Convert to numpy array
     replicated_trajectory = np.array(replicated_trajectory)
     print("Expert Trajectory Shape: ", actions.shape)
     print("Replicated Trajectory Shape: ", replicated_trajectory.shape)
 
     # Plot a heat map to show the trajectory using imshow
-    plt.figure(figsize=(10, 3))
-    plt.imshow(q_values[state_indices].T, cmap="plasma", aspect='auto')
-    plt.title("Heatmap of Action Probabilities along the Expert Trajectory")
-    plt.xlabel("Trajectory Step Index")
-    plt.ylabel("Action Index")
-    plt.gca().invert_yaxis()
-    plt.colorbar()
-    plt.tight_layout()
-    plt.savefig(test_folder+'actions_probability_trajectory.png')
+    plot_replicated_action_prob(q_values, state_indices, test_folder)
+    argmax_replicated_traj(replicated_trajectory, actions, n_actions, test_folder)
 
-    plt.figure(figsize=(10, 6))
-    plt.subplot(2, 1, 1)
-    plt.eventplot([np.where(replicated_trajectory == i)[0] for i in range(6)], lineoffsets=1, linelengths=0.5, colors=['red', 'blue', 'green', 'orange', 'purple', 'brown'])
-    plt.yticks(range(6), labels=["Action 0", "Action 1", "Action 2", "Action 3", "Action 4", "Action 5"])
-    plt.xlabel("Trajectory Step Index")
-    plt.ylabel("Action")
-    plt.title("Actions along the Replicated Trajectory")
-    plt.subplot(2, 1, 2)
-    if n_actions == 6:
-        plt.eventplot([np.where(actions == i)[0] for i in range(6)], lineoffsets=1, linelengths=0.5, colors=['red', 'blue', 'green', 'orange', 'purple', 'brown'])
-        plt.yticks(range(6), labels=["Action 0", "Action 1", "Action 2", "Action 3", "Action 4", "Action 5"])
-    elif n_actions == 5:
-        plt.eventplot([np.where(actions == i)[0] for i in range(5)], lineoffsets=1, linelengths=0.5, colors=['red', 'blue', 'green', 'orange', 'purple'])
-        plt.yticks(range(5), labels=["Action 0", "Action 1", "Action 2", "Action 3", "Action 4"])
-    plt.xlabel("Trajectory Step Index")
-    plt.ylabel("Action")
-    plt.title("Actions along the Expert Trajectory")
-    plt.tight_layout()
-    plt.savefig(test_folder+'actions_along_trajectories.png')
-
-    mhd, rmspe, swd = evaluate_trajectory_metrics(actions, replicated_trajectory)
+    # Evaluate the action distribution metrics
+    for i in range(n_actions):
+        evaluate_action_distribution_metrics(actions, action_probability, action_of_interest=i)

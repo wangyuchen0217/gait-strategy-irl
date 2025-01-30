@@ -43,7 +43,11 @@ def plot_most_rewarded_action(q_values, n_bin1, n_bin2, label_bin1, label_bin2, 
         most_rewarded_action = most_rewarded_action + 1
     # Plot the heatmap (reshaping if the states are grid-like, otherwise just plot)
     plt.figure(figsize=(10, 8))
-    sns.heatmap(most_rewarded_action.reshape(n_bin2, n_bin1), cmap="YlGnBu", annot=True)
+    ax = sns.heatmap(most_rewarded_action.reshape(n_bin2, n_bin1), cmap="YlGnBu", annot=True)
+
+    cbar = ax.collections[0].colorbar
+    cbar.ax.tick_params(labelsize=14)
+
     plt.title("Most Rewarded Action for Each State", fontsize=20)
     plt.tick_params(axis='both', which='major', labelsize=14)
     plt.xlabel(label_bin1, fontsize=18)
@@ -80,7 +84,8 @@ def plot_action_reward_subplots(q_values, n_bin1, n_bin2, n_actions, label_bin1,
     # Leave the first subplot empty if there are only 5 actions
     if n_actions == 5:
         axes[0].axis('off')  # Hide the first subplot (action 0)
-    fig.colorbar(img, ax=axes, orientation='vertical', fraction=0.02, pad=0.04)
+    cbar = fig.colorbar(img, ax=axes, orientation='vertical', fraction=0.02, pad=0.04)
+    cbar.ax.tick_params(labelsize=16)
     plt.tight_layout(rect=[0, 0, 0.88, 1])
     plt.savefig(test_folder+"action_reward_subplots.png")
 

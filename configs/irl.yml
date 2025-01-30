@@ -7,8 +7,8 @@ env:
 # irl: maxent
 cuda: 4
 mode: 'evaluate' # [train, evaluate, test]
-data_source: AretaonC00
-test_folder: 'test_folder/maxent/Aretaon/accvel_gait/'
+data_source: MedauroideaC00
+test_folder: 'test_folder/maxent/Medauroidea/accvel_gait/'
 # CarausiusC00, AretaonC00, MedauroideaC00, C00
 # MedauroideaC00_untrimmed, C00_untrimmed
 # CarausiusC00AG

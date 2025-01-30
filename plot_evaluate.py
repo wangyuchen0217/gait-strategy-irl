@@ -126,14 +126,15 @@ def plot_most_rewarded_action_4d_subplots(q_values, n_bin1, n_bin2, n_bin3, n_bi
     most_rewarded_action_4d = most_rewarded_action.reshape(n_bin4, n_bin3, n_bin2, n_bin1)
     # Create subplots for different slices of the 4D state space
     fig, axes = plt.subplots(n_bin3, n_bin4, figsize=(15, 15))
-    fig.suptitle("Most Rewarded Action for Each State", fontsize=16)
+    fig.suptitle("Most Rewarded Action for Each State", fontsize=20)
     for i in range(n_bin3):
         for j in range(n_bin4):
             ax = axes[i, j]
             sns.heatmap(most_rewarded_action_4d[j, i, :, :], cmap="YlGnBu", annot=True, ax=ax)
-            ax.set_title(f"{label_bin3}:{i}, {label_bin4}:{j}")
-            ax.set_xlabel(label_bin1)
-            ax.set_ylabel(label_bin2)
+            ax.set_title(f"{label_bin3}:{i}, {label_bin4}:{j}", fontsize=16)
+            ax.tick_params(axis='both', which='major', labelsize=14)
+            ax.set_xlabel(label_bin1, fontsize=18)
+            ax.set_ylabel(label_bin2, fontsize=18)
     plt.tight_layout(rect=[0, 0.03, 1, 0.95])
     plt.savefig(test_folder + 'most_rewarded_action_heatmap_subplots.png')
 

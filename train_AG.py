@@ -194,7 +194,7 @@ if mode == 'evaluate':
     q_values = maxent_gpu.find_policy(n_states, rewards, n_actions, discount, transition_probabilities)
     print("Q-values shape: ", q_values.shape)
     # save the q_values as a CSV file
-    np.savetxt(test_folder+'q_values_maxent_direction.csv', q_values, delimiter=',')
+    np.savetxt(test_folder+'q_values_maxent_antenna.csv', q_values, delimiter=',')
     # plot the most rewarded action
     plot_most_rewarded_action_4d_subplots(q_values, n_bin1, n_bin2, n_bin3, n_bin4, 
                                           label_bin1, label_bin2, label_bin3, label_bin4, test_folder)

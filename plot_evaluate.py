@@ -44,9 +44,10 @@ def plot_most_rewarded_action(q_values, n_bin1, n_bin2, label_bin1, label_bin2, 
     # Plot the heatmap (reshaping if the states are grid-like, otherwise just plot)
     plt.figure(figsize=(10, 8))
     sns.heatmap(most_rewarded_action.reshape(n_bin2, n_bin1), cmap="YlGnBu", annot=True)
-    plt.title("Most Rewarded Action for Each State")
-    plt.xlabel(label_bin1)
-    plt.ylabel(label_bin2)
+    plt.title("Most Rewarded Action for Each State", fontsize=20)
+    plt.tick_params(axis='both', which='major', labelsize=14)
+    plt.xlabel(label_bin1, fontsize=18)
+    plt.ylabel(label_bin2, fontsize=18)
     plt.savefig(test_folder+'most_rewarded_action_heatmap.png')
 
 def plot_action_reward_subplots(q_values, n_bin1, n_bin2, n_actions, label_bin1, label_bin2, test_folder):
@@ -69,11 +70,10 @@ def plot_action_reward_subplots(q_values, n_bin1, n_bin2, n_actions, label_bin1,
         ax = axes[action_index+1 if n_actions==5 else action_index]  # Shift the index for 5 actions        
         img = ax.imshow(reward_grid, cmap='viridis', aspect='auto')
         # ax.set_title(f"Action {action_index}", fontsize=16)
-        ax.set_title(f"Action {action_index+1 if n_actions==5 else action_index}", fontsize=16)
-        # ax.set_xticks(ticks=np.arange(0, n_bin1), labels=np.arange(-20, 5, step=5), fontsize=12)
-        # ax.set_yticks(ticks=np.arange(0, n_bin2)[::3], labels=np.arange(0, 140, step=5)[::3], fontsize=12)
-        ax.set_xlabel(label_bin1, fontsize=14)
-        ax.set_ylabel(label_bin2, fontsize=14)
+        ax.set_title(f"Action {action_index+1 if n_actions==5 else action_index}", fontsize=20)
+        ax.tick_params(axis='both', which='major', labelsize=16)
+        ax.set_xlabel(label_bin1, fontsize=18)
+        ax.set_ylabel(label_bin2, fontsize=18)
     # Add a color bar to the last subplot, shared across all subplots
     # change the ax position
     # cb_ax = fig.add_axes([0.92, 0.15, 0.02, 0.7])

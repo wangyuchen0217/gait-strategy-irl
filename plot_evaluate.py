@@ -200,7 +200,8 @@ def plot_action_reward_individual(q_values, n_bin1, n_bin2, n_bin3, n_bin4, n_ac
 def plot_replicated_action_prob(q_values, state_indices, test_folder):
     plt.figure(figsize=(10, 3))
     plt.imshow(q_values[state_indices].T, cmap="plasma", aspect='auto')
-    plt.title("Heatmap of Action Probabilities along the Expert Trajectory", fontsize=16)
+    # plt.title("Heatmap of Action Probabilities along the Replicated Trajectory", fontsize=16)
+    plt.title("Policy vel-dir: Action Probabilities Distribution along the Trajectory", fontsize=16)
     plt.tick_params(axis='both', which='minor', labelsize=12)
     plt.xlabel("Trajectory Step Index", fontsize=14)
     plt.ylabel("Action Index", fontsize=14)

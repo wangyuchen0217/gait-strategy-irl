@@ -1,3 +1,7 @@
+'''
+This code provides the plotting functions for evaluating the obtained reward function.
+'''
+
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns

@@ -173,7 +173,7 @@ if mode == 'evaluate':
     # evaluate the policy
     rewards = torch.load(test_folder+'inferred_rewards100.pt', map_location=f"cuda:{v['cuda']}")
     rewards = rewards.cpu().clone().numpy()
-    q_values = maxent_gpu.find_policy(n_states, rewards, n_actions, discount, transition_probabilities)
+    q_values = algrithms.maxent_gpu.find_policy(n_states, rewards, n_actions, discount, transition_probabilities)
     print("Q-values shape: ", q_values.shape)
     # save the q_values as a CSV file
     np.savetxt(test_folder+'q_values_maxent_velocity.csv', q_values, delimiter=',')

@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
-import algrithms.maxent_gpu
-from algrithms.maxent_gpu import maxentirl as maxentirl_gpu
+import algorithms.maxent_gpu
+from algorithms.maxent_gpu import maxentirl as maxentirl_gpu
 import matplotlib.pyplot as plt
 import seaborn as sns
 from plot_evaluate import *
@@ -173,7 +173,7 @@ if mode == 'evaluate':
     # evaluate the policy
     rewards = torch.load(test_folder+'inferred_rewards100.pt', map_location=f"cuda:{v['cuda']}")
     rewards = rewards.cpu().clone().numpy()
-    q_values = algrithms.maxent_gpu.find_policy(n_states, rewards, n_actions, discount, transition_probabilities)
+    q_values = algorithms.maxent_gpu.find_policy(n_states, rewards, n_actions, discount, transition_probabilities)
     print("Q-values shape: ", q_values.shape)
     # save the q_values as a CSV file
     np.savetxt(test_folder+'q_values_maxent_velocity.csv', q_values, delimiter=',')

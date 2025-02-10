@@ -1,17 +1,11 @@
-model: Sim-v0 # StickInsect-v0
-exclude_xy: True
-env:
-  seed: 42
-  horizon: 3000
-  
 # irl: maxent
 cuda: 0
 mode: 'test' # [train, evaluate, test]
 data_source: CarausiusC00AG
 test_folder: 'test_folder/maxent/Carausius/ante_gait_dp3/'
-# CarausiusC00, AretaonC00, MedauroideaC00, C00
+# CarausiusC00, AretaonC00, MedauroideaC00, C00: walking dynamic data (velocity, direction, acceleration)
 # MedauroideaC00_untrimmed, C00_untrimmed
-# CarausiusC00AG
+# CarausiusC00AG: antennae data
 
 # expert demonstration
 CarausiusC00:
@@ -74,7 +68,7 @@ CarausiusC00AG:
   No3: "03"
 
 grouped_gait_combinations:
-  # representative noncanonical
+  # wave noncanonical
   '111111': 5
   '111110': 5
   '111101': 5

@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
-import maxent_gpu
-from maxent_gpu import maxentirl as maxentirl_gpu
+import algrithms.maxent_gpu
+from algrithms.maxent_gpu import maxentirl as maxentirl_gpu
 import matplotlib.pyplot as plt
 import seaborn as sns
 from plot_evaluate import *

@@ -2,7 +2,6 @@ import numpy as np
 import pandas as pd
 import maxent_gpu
 from maxent_gpu import maxentirl as maxentirl_gpu
-from medirl import deep_maxent_irl
 import matplotlib.pyplot as plt
 import seaborn as sns
 from plot_evaluate import *
@@ -162,10 +161,8 @@ if mode == 'train':
     feature_matrix = torch.tensor(feature_matrix, device=device, dtype=torch.float32).to(device)
     transition_probabilities = torch.tensor(transition_probabilities, device=device, dtype=torch.float32).to(device)
     trajectories = torch.tensor(trajectories, device=device, dtype=torch.int64).to(device)
-    # rewards = maxentirl_gpu(feature_matrix, n_actions, discount, transition_probabilities, 
-    #                                         trajectories, epochs, learning_rate, n_bins, labels, test_folder, device)
-    rewards = deep_maxent_irl(feature_matrix, transition_probabilities, discount, 
-                                                trajectories, learning_rate, epochs, n_bins, labels, test_folder, device)
+    rewards = maxentirl_gpu(feature_matrix, n_actions, discount, transition_probabilities, 
+                                            trajectories, epochs, learning_rate, n_bins, labels, test_folder, device)
     #Output the inferred rewards
     print("Inferred Rewards:", rewards.shape)
     # Save the inferred rewards as a pt file

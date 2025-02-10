@@ -2,7 +2,6 @@ import numpy as np
 import pandas as pd
 import maxent_gpu
 from maxent_gpu import maxentirl as maxentirl_gpu
-from medirl import deep_maxent_irl
 import matplotlib.pyplot as plt
 import seaborn as sns
 from plot_evaluate import *
@@ -179,8 +178,6 @@ if mode == 'train':
     trajectories = torch.tensor(trajectories, device=device, dtype=torch.int64).to(device)
     rewards = maxentirl_gpu(feature_matrix, n_actions, discount, transition_probabilities, 
                                             trajectories, epochs, learning_rate, n_bins, labels, test_folder, device)
-    # rewards = deep_maxent_irl(feature_matrix, transition_probabilities, discount, 
-    #                                             trajectories, learning_rate, epochs, n_bins, labels, test_folder, device)
     #Output the inferred rewards
     print("Inferred Rewards:", rewards.shape)
     # Save the inferred rewards as a pt file
@@ -201,10 +198,10 @@ if mode == 'evaluate':
     # plot the Q-table
     plot_q_table(q_values, test_folder)
     # plot the action-reward subplots
-    # plot_action_reward_all_combinations(q_values, n_bin1, n_bin2, n_bin3, n_bin4, n_actions, 
-    #                                     label_bin1, label_bin2, label_bin3, label_bin4, test_folder)
-    # plot_action_reward_individual(q_values, n_bin1, n_bin2, n_bin3, n_bin4, n_actions, 
-    #                               label_bin1, label_bin2, label_bin3, label_bin4, test_folder)
+    plot_action_reward_all_combinations(q_values, n_bin1, n_bin2, n_bin3, n_bin4, n_actions, 
+                                        label_bin1, label_bin2, label_bin3, label_bin4, test_folder)
+    plot_action_reward_individual(q_values, n_bin1, n_bin2, n_bin3, n_bin4, n_actions, 
+                                  label_bin1, label_bin2, label_bin3, label_bin4, test_folder)
 
 
 if mode == 'test':

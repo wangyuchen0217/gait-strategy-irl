@@ -7,7 +7,7 @@ The data is
 3. then discretized into bins of 60 seconds.
 4. visualized and saved. 
 
-The visualized plots are saved in the folder 'expert_demonstration/expert/plot/'.
+The visualized plots are saved in the folder 'expert_demonstration/expert/plot/antenna/'.
 If run this code, the data will be saved in the folder e.g. 'expert_data_builder/stick_insect/Carausius/'.
 (But the code was not run in the main function)
 

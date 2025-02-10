@@ -30,6 +30,7 @@ def plot_expert_action_traj(actions, n_actions, test_folder):
     plt.xlabel("Trajectory Step Index", fontsize=14)
     plt.ylabel("Action", fontsize=14)
     plt.title("Actions along the Expert Trajectory", fontsize=16)
+    plt.tight_layout()
     plt.savefig(test_folder+'actions_along_trajectories.png')
 
 def evaluate_action_distribution_metrics(actions, action_probability, action_of_interest):

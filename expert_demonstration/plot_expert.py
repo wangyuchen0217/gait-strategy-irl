@@ -1,3 +1,8 @@
+'''
+This code is used to plot the walking dynamic data (velocity, direction, acceleration)
+including the histogram of the binned data, the curve of the continuous data.
+'''
+
 import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np

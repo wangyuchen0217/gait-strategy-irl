@@ -110,9 +110,6 @@ acc = np.concatenate((acc_01, acc_02, acc_03), axis=0)
 print("length of T"+No1+", T"+No2+", T"+No3+": ", len(acc_01), len(acc_02), len(acc_03))
 print("length of faltten trajectory:", len(acc))
 
-# # save vel and acc
-# plot_histogram(acc, title='Acceleration Data Distribution', xlabel='Acceleration', savename=data_source+'_histogram_acc')
-# plot_histogram(vel, title='Velocity Data Distribution', xlabel='Velocity', savename=data_source+'_histogram_vel')
 
 # bin the data
 vel_start, vel_end, vel_step = v[data_source]['vel_bin_params']

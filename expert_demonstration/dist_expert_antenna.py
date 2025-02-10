@@ -1,3 +1,7 @@
+'''
+This code is used to make a csv file that contains the antenna data and gait pattern.
+'''
+
 import os
 import sys
 sys.path.append("./") # add the root directory to the python path
@@ -8,7 +12,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from plot_expert import *
 import yaml
-import expert_data_builder.stick_insect.open_source_data.antenna_phase_encode as ape
+import expert_data_builder.stick_insect.antenna_phase_encode as ape
 
 
 def get_cont_data(subject:str, trim=False, trim_len:int=0):

@@ -1,5 +1,10 @@
 '''
-This code is used to make a csv file that contains the antenna data and gait pattern.
+This code is used to generate the discrete expert antenna data,
+which includes the antenna data, and the gait pattern.
+
+The data is saved in the folder 'expert_demonstration/expert/' with the name of the data source (-AG).
+The plots of the continuous data and the histogram of the binned data are saved in the folder 
+'expert_demonstration/expert/plot/antenna/'.
 '''
 
 import os

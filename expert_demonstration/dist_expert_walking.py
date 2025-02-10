@@ -1,3 +1,14 @@
+'''
+This code is used to generate the discrete expert walking data,
+which includes the velocity, acceleration, direction, and gait pattern.
+
+The data is saved in the folder 'expert_demonstration/expert/' with the name of the data source.
+The plots of the continuous data and the histogram of the binned data are saved in the folder 
+'expert_demonstration/expert/plot/walking_dynamic_parameters/'.
+
+The data source can be 'all' or 'one insect'.
+'''
+
 import os
 import sys
 sys.path.append("./") # add the root directory to the python path

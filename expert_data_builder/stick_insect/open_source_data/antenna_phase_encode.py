@@ -2,10 +2,16 @@
 This code is used to encode the antenna phase data into discrete bins.
 
 The data is 
-1. firstly smoothed using a Kalman filter
+1. firstly smoothed using a Kalman filter (a proper damping factor: 3)
 2. the time elapsed since the last antenna contact is calculated.
 3. then discretized into bins of 60 seconds.
-4. visualized and saved.
+4. visualized and saved. 
+
+The visualized plots are saved in the folder 'expert_demonstration/expert/plot/'.
+If run this code, the data will be saved in the folder e.g. 'expert_data_builder/stick_insect/Carausius/'.
+(But the code was not run in the main function)
+
+Function: get_antenna_dist() is referred in the file 'expert_demonstration/dist_expert_antenna.py' to encode the antenna data.
 
 '''
 
@@ -31,7 +37,7 @@ def get_data(subject:str):
         antenna = pd.read_csv(antenna_path, header=[0], index_col=None).to_numpy()
     return antenna
 
-def Kalman1D(observations,damping=1):
+def Kalman1D(observations,damping=3):
     # to return the smoothed time series data
     observation_covariance = damping
     initial_value_guess = observations[0]
@@ -48,7 +54,7 @@ def Kalman1D(observations,damping=1):
     pred_state, state_cov = kf.smooth(observations)
     return pred_state
 
-def smooth(data, damping=1):
+def smooth(data, damping=3):
     smoothed_data = np.zeros_like(data, dtype=float)
     for i in range(data.shape[1]):
         smoothed_data[:, i] = Kalman1D(data[:, i], damping=damping).reshape(-1)
@@ -130,11 +136,13 @@ def plot_time_elapsed_histogram_subplots(data, bin_step, label, save=False, subj
     else:
         plt.show()
 
+
+# Referred in the file 'expert_demonstration/dist_expert_antenna.py'
 def get_antenna_dist(subject:str, bin_step=60):
     # Load the antenna data
     antenna_01 = get_data(subject)
     # Smooth the antenna data: detect the contact points
-    smoothed_antenna_01 = smooth(antenna_01, damping=2)
+    smoothed_antenna_01 = smooth(antenna_01, damping=3)
     # Calculate the time elapsed since the last antenna contact (valley)
     t_elps_antenna_01 = time_eplased_antenna_contact(smoothed_antenna_01)
 
@@ -145,9 +153,6 @@ def get_antenna_dist(subject:str, bin_step=60):
     bin_edges = np.arange(min_val, max_val+bin_step, bin_step)
     discrete_data = np.digitize(t_elps_antenna_01, bin_edges)
 
-    # # Save the discrete data
-    # save_discrete_data(subject, discrete_data)
-
     # Visualize the encoded antenna data and the original antenna data
     antenna_visualization(antenna_01, smoothed_antenna_01, 'smoothed_dp2', subject=subject, save=True)
     antenna_visualization(antenna_01, t_elps_antenna_01, 'time_elapsed_dp2', subject=subject, save=True)
@@ -156,12 +161,13 @@ def get_antenna_dist(subject:str, bin_step=60):
 
     return discrete_data
 
+
 if __name__ == "__main__":
     subject= "03"
     # Load the antenna data
     antenna_01 = get_data(subject)
-    # # Smooth the antenna data: detect the contact points
-    # smoothed_antenna_01 = smooth(antenna_01, damping=3)
+    # Smooth the antenna data: detect the contact points
+    smoothed_antenna_01 = smooth(antenna_01, damping=3)
     # Calculate the time elapsed since the last antenna contact (valley)
     t_elps_antenna_01 = time_eplased_antenna_contact(antenna_01)
 
@@ -177,7 +183,7 @@ if __name__ == "__main__":
     save_discrete_data(subject, discrete_data)
 
     # Visualize the encoded antenna data and the original antenna data
-    # antenna_visualization(antenna_01, smoothed_antenna_01, 'smoothed', subject=subject, save=True)
+    antenna_visualization(antenna_01, smoothed_antenna_01, 'smoothed', subject=subject, save=True)
     antenna_visualization(antenna_01, t_elps_antenna_01, 'time_elapsed_orgl', subject=subject, save=True)
     antenna_visualization(antenna_01, discrete_data, 'discretized_orgl', subject=subject, save=True)
     plot_time_elapsed_histogram_subplots(discrete_data, bin_step, subject=subject, save=True)

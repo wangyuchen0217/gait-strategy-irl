@@ -217,7 +217,7 @@ if mode == 'test':
 
     # Plot a heat map to show the trajectory using imshow
     plot_replicated_action_prob(q_values, state_indices, test_folder)
-    argmax_replicated_traj(replicated_trajectory, actions, n_actions, test_folder)
+    plot_expert_action_traj(actions, n_actions, test_folder)
 
     # Evaluate the action distribution metrics
     for i in range(n_actions):

@@ -18,7 +18,7 @@ def plot_replicated_action_prob(q_values, state_indices, test_folder):
     plt.tight_layout()
     plt.savefig(test_folder+'actions_probability_trajectory.png')
 
-def argmax_replicated_traj(actions, n_actions, test_folder):
+def plot_expert_action_traj(actions, n_actions, test_folder):
     plt.figure(figsize=(10, 3))
     if n_actions == 6:
         plt.eventplot([np.where(actions == i)[0] for i in range(6)], lineoffsets=1, linelengths=0.5, colors=['red', 'blue', 'green', 'orange', 'purple', 'brown'])

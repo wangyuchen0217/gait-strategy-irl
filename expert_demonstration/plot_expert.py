@@ -20,7 +20,7 @@ def plot_bins_histogram(data, title, xlabel, bin_step, savename='CarausuisC00_hi
     plt.xlabel(xlabel, fontsize=14)
     plt.ylabel('Count', fontsize=14)
     plt.grid(axis='y', linestyle='--', alpha=0.5)
-    plt.savefig('expert_demonstration/expert/plot/' + savename + '.png')
+    plt.savefig('expert_demonstration/expert/plot/walking_dynamic_parameters/' + savename + '.png')
 
 def plot_data_curve(vel, direction, acc, insect_state_name):
     fig, axes = plt.subplots(3, 1, figsize=(12, 9))
@@ -49,4 +49,4 @@ def plot_data_curve(vel, direction, acc, insect_state_name):
     axes[2].set_xlabel('Time Steps', fontsize=14)
     axes[2].set_ylabel('Acceleration', fontsize=14)
     plt.tight_layout()
-    plt.savefig('expert_demonstration/expert/plot/'+insect_state_name+'_curve.png')
+    plt.savefig('expert_demonstration/expert/plot/walking_dynamic_parameters/'+insect_state_name+'_curve.png')

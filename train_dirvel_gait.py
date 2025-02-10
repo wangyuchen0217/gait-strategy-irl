@@ -5,15 +5,14 @@ from algorithms.maxent_gpu import maxentirl as maxentirl_gpu
 import matplotlib.pyplot as plt
 import seaborn as sns
 from plot_evaluate import *
+from plot_test import *
 import torch
 import os
 import sys
 import yaml
 import logging
 from datetime import datetime
-from scipy.spatial.distance import directed_hausdorff
-from scipy import stats
-from scipy.stats import wasserstein_distance
+from utils import LoggerWriter
 
 # Load the configuration file
 with open('configs/irl.yml') as file:

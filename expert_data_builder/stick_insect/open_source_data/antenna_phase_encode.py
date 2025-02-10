@@ -1,3 +1,14 @@
+'''
+This code is used to encode the antenna phase data into discrete bins.
+
+The data is 
+1. firstly smoothed using a Kalman filter
+2. the time elapsed since the last antenna contact is calculated.
+3. then discretized into bins of 60 seconds.
+4. visualized and saved.
+
+'''
+
 import numpy as np
 import pandas as pd
 import json

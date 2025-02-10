@@ -1,3 +1,16 @@
+'''
+This code is used to read the mat. file of stick insect data and save the data as csv file.
+
+The data includes:
+1. Joint angle of each leg
+2. Velocity
+3. Direction
+4. Gait pattern
+5. Antenna angle
+
+Those data will be saved in the folder e.g. 'expert_data_builder/stick_insect/Carausius/'
+'''
+
 import scipy
 import scipy.io
 import numpy as np

@@ -8,8 +8,8 @@ from scipy.stats import wasserstein_distance
 def plot_replicated_action_prob(q_values, state_indices, test_folder):
     plt.figure(figsize=(10, 3))
     plt.imshow(q_values[state_indices].T, cmap="plasma", aspect='auto')
-    plt.title("Heatmap of Action Probabilities along the Replicated Trajectory", fontsize=16)
-    # plt.title("Policy antenna: Action Probabilities Distribution along the Trajectory", fontsize=16)
+    # plt.title("Heatmap of Action Probabilities along the Replicated Trajectory", fontsize=16)
+    plt.title("Policy antenna: Action Probabilities Distribution along the Trajectory", fontsize=16)
     plt.tick_params(axis='both', which='minor', labelsize=12)
     plt.xlabel("Trajectory Step Index", fontsize=14)
     plt.ylabel("Action Index", fontsize=14)
@@ -18,16 +18,8 @@ def plot_replicated_action_prob(q_values, state_indices, test_folder):
     plt.tight_layout()
     plt.savefig(test_folder+'actions_probability_trajectory.png')
 
-def argmax_replicated_traj(replicated_trajectory, actions, n_actions, test_folder):
-    plt.figure(figsize=(10, 6))
-    plt.subplot(2, 1, 1)
-    plt.eventplot([np.where(replicated_trajectory == i)[0] for i in range(6)], lineoffsets=1, linelengths=0.5, colors=['red', 'blue', 'green', 'orange', 'purple', 'brown'])
-    plt.yticks(range(6), labels=["Action 0", "Action 1", "Action 2", "Action 3", "Action 4", "Action 5"])
-    plt.tick_params(axis='both', which='minor', labelsize=12)
-    plt.xlabel("Trajectory Step Index", fontsize=14)
-    plt.ylabel("Action", fontsize=14)
-    plt.title("Actions along the Replicated Trajectory", fontsize=16)
-    plt.subplot(2, 1, 2)
+def argmax_replicated_traj(actions, n_actions, test_folder):
+    plt.figure(figsize=(10, 3))
     if n_actions == 6:
         plt.eventplot([np.where(actions == i)[0] for i in range(6)], lineoffsets=1, linelengths=0.5, colors=['red', 'blue', 'green', 'orange', 'purple', 'brown'])
         plt.yticks(range(6), labels=["Action 0", "Action 1", "Action 2", "Action 3", "Action 4", "Action 5"])
@@ -38,7 +30,6 @@ def argmax_replicated_traj(replicated_trajectory, actions, n_actions, test_folde
     plt.xlabel("Trajectory Step Index", fontsize=14)
     plt.ylabel("Action", fontsize=14)
     plt.title("Actions along the Expert Trajectory", fontsize=16)
-    plt.tight_layout()
     plt.savefig(test_folder+'actions_along_trajectories.png')
 
 def evaluate_action_distribution_metrics(actions, action_probability, action_of_interest):

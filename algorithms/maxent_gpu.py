@@ -6,15 +6,14 @@ Matthew Alger, 2015
 matthew.alger@anu.edu.au
 """
 
-from itertools import product
-
+import sys
+sys.path.append("./") 
 import numpy as np
-import numpy.random as rn
 import torch
-import value_iteration_gpu
+import algorithms.value_iteration_gpu
 import time
 import matplotlib.pyplot as plt
-from plot_train import *
+from algorithms.plot_train import *
 
 
 def maxentirl(feature_matrix, n_actions, discount, transition_probability,

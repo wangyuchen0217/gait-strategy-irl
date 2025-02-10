@@ -224,19 +224,11 @@ if mode == 'test':
     for i in range(len(state_indices)):
         action_probabilities = q_values[state_indices[i]]
         action_probability.append(action_probabilities)
-        # Select the action with the highest probability (greedy policy)
-        action = np.argmax(action_probabilities)
-        replicated_trajectory.append(action)
     np.savetxt(test_folder+'action_probability.csv', action_probability, delimiter=',')
-
-    # Convert to numpy array
-    replicated_trajectory = np.array(replicated_trajectory)
-    print("Expert Trajectory Shape: ", actions.shape)
-    print("Replicated Trajectory Shape: ", replicated_trajectory.shape)
 
     # Plot a heat map to show the trajectory using imshow
     plot_replicated_action_prob(q_values, state_indices, test_folder)
-    argmax_replicated_traj(replicated_trajectory, actions, n_actions, test_folder)
+    argmax_replicated_traj(actions, n_actions, test_folder)
 
     # Evaluate the action distribution metrics
     for i in range(n_actions):

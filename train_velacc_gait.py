@@ -216,7 +216,7 @@ if mode == 'test':
     print("Replicated Trajectory Shape: ", replicated_trajectory.shape)
 
     # Plot a heat map to show the trajectory using imshow
-    plot_replicated_action_prob(q_values, state_indices, test_folder)
+    plot_replicated_action_prob(q_values, state_indices, test_folder, label="vel-acc")
     plot_expert_action_traj(actions, n_actions, test_folder)
 
     # Evaluate the action distribution metrics

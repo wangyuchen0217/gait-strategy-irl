@@ -5,11 +5,11 @@ from scipy import stats
 from scipy.stats import wasserstein_distance
 
 
-def plot_replicated_action_prob(q_values, state_indices, test_folder):
+def plot_replicated_action_prob(q_values, state_indices, test_folder, label):
     plt.figure(figsize=(10, 3))
     plt.imshow(q_values[state_indices].T, cmap="plasma", aspect='auto')
     # plt.title("Heatmap of Action Probabilities along the Replicated Trajectory", fontsize=16)
-    plt.title("Policy antenna: Action Probabilities Distribution along the Trajectory", fontsize=16)
+    plt.title("Policy "+ label +" : Action Probabilities Distribution along the Trajectory", fontsize=16)
     plt.tick_params(axis='both', which='minor', labelsize=12)
     plt.xlabel("Trajectory Step Index", fontsize=14)
     plt.ylabel("Action Index", fontsize=14)

@@ -1,3 +1,9 @@
+'''
+This code is used to train the MaxEnt IRL algorithm on the velocity-acceleration dataset.
+states: 2D (velocity, acceleration)
+actions: Gait patterns (0-5)
+'''
+
 import numpy as np
 import pandas as pd
 import algorithms.maxent_gpu

@@ -1,6 +1,5 @@
 import numpy as np
 import matplotlib.pyplot as plt
-import seaborn as sns
 from scipy.spatial.distance import directed_hausdorff
 from scipy import stats
 from scipy.stats import wasserstein_distance

@@ -1,5 +1,9 @@
+'''
+This code provides the function to plot the training rewards during IRL training.
+Including the 2D and 4D reward heatmaps.
+'''
+
 import matplotlib.pyplot as plt
-import os
 
 
 def plot_training_rewards_2d(rewards, n_bins, labels, epoch, test_folder):

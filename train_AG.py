@@ -1,3 +1,9 @@
+'''
+This code is used to train the MaxEnt IRL algorithm on the antenna dataset.
+states: 4D-antenna data (HS_left, SP_left, HS_right, SP_right)
+actions: Gait patterns (0-5)
+'''
+
 import numpy as np
 import pandas as pd
 import algorithms.maxent_gpu

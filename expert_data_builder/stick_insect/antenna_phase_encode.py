@@ -109,11 +109,11 @@ def antenna_visualization(original_data, clustered_data, label, save=False, font
         plt.title(titles[i], fontsize=fontsize)
     plt.tight_layout()
     if save:
-        plt.savefig(f"expert_demonstration/expert/plot/Carausius_T{subject}_antenna_{label}.png")
+        plt.savefig(f"expert_demonstration/expert/plot/antenna/Carausius_T{subject}_antenna_{label}.png")
     else:
         plt.show()
 
-def plot_time_elapsed_histogram_subplots(data, bin_step, label, save=False, subject="01"):
+def plot_time_elapsed_histogram_subplots(data, bin_step, save=False, subject="01"):
     column_names=['HS left', 'HS right', 'SP left', 'SP right']
     data = pd.DataFrame(data, columns=column_names)
     num_columns = len(column_names)
@@ -132,7 +132,7 @@ def plot_time_elapsed_histogram_subplots(data, bin_step, label, save=False, subj
     plt.suptitle('Distribution of Discrete Antenna Time Elapsed Bins')
     plt.tight_layout(rect=[0.05, 0.05, 1, 0.95])
     if save:
-        plt.savefig(f"expert_demonstration/expert/plot/Carausius_T{subject}_antenna_histogram_{label}.png")
+        plt.savefig(f"expert_demonstration/expert/plot/antenna/Carausius_T{subject}_antenna_histogram.png")
     else:
         plt.show()
 
@@ -154,10 +154,10 @@ def get_antenna_dist(subject:str, bin_step=60):
     discrete_data = np.digitize(t_elps_antenna_01, bin_edges)
 
     # Visualize the encoded antenna data and the original antenna data
-    antenna_visualization(antenna_01, smoothed_antenna_01, 'smoothed_dp2', subject=subject, save=True)
-    antenna_visualization(antenna_01, t_elps_antenna_01, 'time_elapsed_dp2', subject=subject, save=True)
-    antenna_visualization(antenna_01, discrete_data, 'discretized_dp2', subject=subject, save=True)
-    plot_time_elapsed_histogram_subplots(discrete_data, bin_step, 'dp2', subject=subject, save=True)
+    antenna_visualization(antenna_01, smoothed_antenna_01, 'smoothed', subject=subject, save=True)
+    antenna_visualization(antenna_01, t_elps_antenna_01, 'time_elapsed', subject=subject, save=True)
+    antenna_visualization(antenna_01, discrete_data, 'discretized', subject=subject, save=True)
+    plot_time_elapsed_histogram_subplots(discrete_data, bin_step, subject=subject, save=True)
 
     return discrete_data
 
@@ -184,6 +184,6 @@ if __name__ == "__main__":
 
     # Visualize the encoded antenna data and the original antenna data
     antenna_visualization(antenna_01, smoothed_antenna_01, 'smoothed', subject=subject, save=True)
-    antenna_visualization(antenna_01, t_elps_antenna_01, 'time_elapsed_orgl', subject=subject, save=True)
-    antenna_visualization(antenna_01, discrete_data, 'discretized_orgl', subject=subject, save=True)
+    antenna_visualization(antenna_01, t_elps_antenna_01, 'time_elapsed', subject=subject, save=True)
+    antenna_visualization(antenna_01, discrete_data, 'discretized', subject=subject, save=True)
     plot_time_elapsed_histogram_subplots(discrete_data, bin_step, subject=subject, save=True)

@@ -29,14 +29,19 @@ def plot_most_rewarded_action(q_values, n_bin1, n_bin2, label_bin1, label_bin2, 
     # Plot the heatmap (reshaping if the states are grid-like, otherwise just plot)
     plt.figure(figsize=(10, 8))
     ax = sns.heatmap(most_rewarded_action.reshape(n_bin2, n_bin1), cmap="YlGnBu", annot=True)
+    
+    # xticks = ax.get_xticks()
+    # ax.set_xticks(xticks[::5])
+    yticks = ax.get_yticks() 
+    ax.set_yticks(yticks[::5])
 
     cbar = ax.collections[0].colorbar
-    cbar.ax.tick_params(labelsize=14)
+    cbar.ax.tick_params(labelsize=24)
 
-    plt.title("Most Rewarded Action for Each State", fontsize=20)
-    plt.tick_params(axis='both', which='major', labelsize=14)
-    plt.xlabel(label_bin1, fontsize=18)
-    plt.ylabel(label_bin2, fontsize=18)
+    # plt.title("Most Rewarded Action for Each State", fontsize=26)
+    plt.tick_params(axis='both', which='major', labelsize=24)
+    plt.xlabel(label_bin1, fontsize=26)
+    plt.ylabel(label_bin2, fontsize=26)
     plt.savefig(test_folder+'most_rewarded_action_heatmap.png')
 
 def plot_action_reward_subplots(q_values, n_bin1, n_bin2, n_actions, label_bin1, label_bin2, test_folder):
@@ -59,10 +64,10 @@ def plot_action_reward_subplots(q_values, n_bin1, n_bin2, n_actions, label_bin1,
         ax = axes[action_index+1 if n_actions==5 else action_index]  # Shift the index for 5 actions        
         img = ax.imshow(reward_grid, cmap='viridis', aspect='auto')
         # ax.set_title(f"Action {action_index}", fontsize=16)
-        ax.set_title(f"Action {action_index+1 if n_actions==5 else action_index}", fontsize=20)
-        ax.tick_params(axis='both', which='major', labelsize=16)
-        ax.set_xlabel(label_bin1, fontsize=18)
-        ax.set_ylabel(label_bin2, fontsize=18)
+        ax.set_title(f"Action {action_index+1 if n_actions==5 else action_index}", fontsize=24)
+        ax.tick_params(axis='both', which='major', labelsize=20)
+        ax.set_xlabel(label_bin1, fontsize=22)
+        ax.set_ylabel(label_bin2, fontsize=22)
     # Add a color bar to the last subplot, shared across all subplots
     # change the ax position
     # cb_ax = fig.add_axes([0.92, 0.15, 0.02, 0.7])
@@ -117,10 +122,14 @@ def plot_most_rewarded_action_4d_subplots(q_values, n_bin1, n_bin2, n_bin3, n_bi
         for j in range(n_bin4):
             ax = axes[i, j]
             sns.heatmap(most_rewarded_action_4d[j, i, :, :], cmap="YlGnBu", annot=True, ax=ax)
-            ax.set_title(f"{label_bin3}:{i}, {label_bin4}:{j}", fontsize=12)
-            ax.tick_params(axis='both', which='major', labelsize=10)
-            ax.set_xlabel(label_bin1, fontsize=12)
-            ax.set_ylabel(label_bin2, fontsize=12)
+
+            cbar = ax.collections[0].colorbar
+            cbar.ax.tick_params(labelsize=12)
+
+            ax.set_title(f"{label_bin3[:-5]}:{i}, {label_bin4[:-5]}:{j}", fontsize=16)
+            ax.tick_params(axis='both', which='major', labelsize=14)
+            ax.set_xlabel(label_bin1[:-5], fontsize=16)
+            ax.set_ylabel(label_bin2[:-5], fontsize=16)
     plt.tight_layout(rect=[0, 0.03, 1, 0.95])
     plt.savefig(test_folder + 'most_rewarded_action_heatmap_subplots.png')
 

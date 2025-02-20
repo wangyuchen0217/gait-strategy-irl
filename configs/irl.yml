@@ -1,8 +1,8 @@
 # irl: maxent
 cuda: 0
-mode: 'evaluate' # [train, evaluate, test]
-data_source: CarausiusC00AG
-test_folder: 'test_folder/maxent/Carausius/ante_gait/'
+mode: 'test' # [train, evaluate, test]
+data_source: CarausiusC00
+test_folder: 'test_folder/maxent/Carausius/dirvel_gait/'
 # CarausiusC00, AretaonC00, MedauroideaC00, C00: walking dynamic data (velocity, direction, acceleration)
 # MedauroideaC00_untrimmed, C00_untrimmed
 # CarausiusC00AG: antennae data

@@ -24,17 +24,19 @@ def plot_replicated_action_prob(q_values, state_indices, test_folder, label):
     plt.savefig(test_folder+'actions_probability_trajectory.png')
 
 def plot_expert_action_traj(actions, n_actions, test_folder):
-    plt.figure(figsize=(10, 3))
+    plt.figure(figsize=(8, 3))
     if n_actions == 6:
         plt.eventplot([np.where(actions == i)[0] for i in range(6)], lineoffsets=1, linelengths=0.5, colors=['red', 'blue', 'green', 'orange', 'purple', 'brown'])
-        plt.yticks(range(6), labels=["Action 0", "Action 1", "Action 2", "Action 3", "Action 4", "Action 5"])
+        # plt.yticks(range(6), labels=["Action 0", "Action 1", "Action 2", "Action 3", "Action 4", "Action 5"])
+        plt.yticks(range(6))
     elif n_actions == 5:
         plt.eventplot([np.where(actions == i)[0] for i in range(5)], lineoffsets=1, linelengths=0.5, colors=['red', 'blue', 'green', 'orange', 'purple'])
-        plt.yticks(range(5), labels=["Action 0", "Action 1", "Action 2", "Action 3", "Action 4"])
+        # plt.yticks(range(5), labels=["Action 0", "Action 1", "Action 2", "Action 3", "Action 4"])
+        plt.yticks(range(5))
     plt.tick_params(axis='x', which='major', labelsize=18)
     plt.tick_params(axis='y', which='minor', labelsize=18)
     plt.xlabel("Trajectory Step Index", fontsize=20)
-    plt.ylabel("Action", fontsize=18)
+    plt.ylabel("Action Index", fontsize=20)
     plt.title("Actions along the Expert Trajectory", fontsize=22)
     plt.tight_layout()
     plt.savefig(test_folder+'actions_along_trajectories.png')

@@ -30,8 +30,16 @@ def plot_most_rewarded_action(q_values, n_bin1, n_bin2, label_bin1, label_bin2, 
     plt.figure(figsize=(10, 8))
     ax = sns.heatmap(most_rewarded_action.reshape(n_bin2, n_bin1), cmap="YlGnBu", annot=True)
     
-    # xticks = ax.get_xticks()
-    # ax.set_xticks(xticks[::5])
+    # Set the ticks labels
+    start = 4
+    step = 1
+    end = 17
+    ticklabels = np.arange(start, end, step)
+    ax.set_xticklabels(ticklabels, fontsize=24) 
+
+    # Show less ticks on the axis
+    xticks = ax.get_xticks()
+    ax.set_xticks(xticks[::5])
     yticks = ax.get_yticks() 
     ax.set_yticks(yticks[::5])
 

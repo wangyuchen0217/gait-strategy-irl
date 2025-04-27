@@ -1,9 +1,6 @@
 """
 Find the value function associated with a policy. Based on Sutton & Barto, 1998.
 The GPU version of the value iteration algorithm.
-
-Matthew Alger, 2015
-matthew.alger@anu.edu.au
 """
 
 import numpy as np

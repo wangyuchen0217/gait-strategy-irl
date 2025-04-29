@@ -1,4 +1,4 @@
-# Gait Strategy Inference via Inverse Reinforcement Learning
+# Gait Strategy Encoding via Inverse Reinforcement Learning
 
 This project focuses on modeling and encoding the gait strategies of stick insects using Maximum Entropy Inverse Reinforcement Learning (MaxEnt-IRL). The goal is to infer the underlying reward structures that govern gait pattern selection during walking, based on observed kinematic and sensory information.
 

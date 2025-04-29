@@ -63,3 +63,16 @@ The code supports three modes:
 
 
 Change the mode in the configuration file: `configs/irl.yml`
+
+
+## Dependencies
+
+This project requires the following core Python packages:
+
+- torch >= 2.0
+- tensorflow >= 2.8
+- numpy >= 1.21
+- pandas >= 1.4
+- matplotlib >= 3.5
+- scikit-learn >= 1.0
+- tqdm >= 4.60

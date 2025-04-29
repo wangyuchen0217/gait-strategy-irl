@@ -36,24 +36,6 @@ Key characteristics of MaxEnt-IRL:
 
 After inferring the reward function through MaxEnt-IRL, policy learning is performed using tabular Q-learning.
 
-- **State-Action Value Estimation**:  
-  Q-learning iteratively updates the state-action value function (Q-values) by interacting with the environment modeled through the empirical transition probability matrix.
-
-- **Bellman Equation Update**:  
-  The Q-values are updated to satisfy the Bellman optimality equation, using the inferred reward as the immediate reward signal:
-  \[
-  Q(s, a) \leftarrow Q(s, a) + \alpha \left( r(s, a) + \gamma \sum_{s'} P(s'|s,a) \max_{a'} Q(s',a') - Q(s,a) \right)
-  \]
-  where:
-  - \( \alpha \) is the learning rate
-  - \( \gamma \) is the discount factor
-  - \( P(s'|s,a) \) is the transition probability from state \( s \) to \( s' \) under action \( a \)
-
-- **Policy Extraction**:  
-  Once the Q-values converge, the optimal policy is derived by selecting the action with the highest Q-value for each state:
-  \[
-  \pi^*(s) = \arg\max_a Q(s,a)
-  \]
 
 ## Experiments
 

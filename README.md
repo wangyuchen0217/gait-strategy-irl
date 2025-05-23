@@ -5,7 +5,8 @@ This project focuses on modeling and encoding the gait strategies of stick insec
 Parts of this work will be presented at the:
 - **AMAM2025 (The 12th International Symposium on Adaptive Motion of Animals and Machines and 2nd LokoAssist Symposium)**.  
 
-A related journal submission to **Bioinspiration & Biomimetics** is currently under review.
+A related journal publication is available:
+- **Bioinspiration & Biomimetics**: [Encoding flexible gait strategies in stick insects through data-driven inverse reinforcement learning](https://iopscience.iop.org/article/10.1088/1748-3190/addc26).
 
 ![MaxEnt-IRL framework](configs/MaxEnt-IRL.png)
 

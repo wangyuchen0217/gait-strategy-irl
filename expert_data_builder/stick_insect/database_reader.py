@@ -160,15 +160,15 @@ def mat_reader_joint_angle(subject:str, save=False, visualizaiton=False):
     RF_cox_x, RM_cox_x, RH_cox_x = RF_cox['angle'][0, 0][:,1].reshape(-1,1 ), RM_cox['angle'][0, 0][:,1].reshape(-1,1 ), RH_cox['angle'][0, 0][:,1].reshape(-1,1 )
     RF_cox_y, RM_cox_y, RH_cox_y = RF_cox['angle'][0, 0][:,2].reshape(-1,1 ), RM_cox['angle'][0, 0][:,2].reshape(-1,1 ), RH_cox['angle'][0, 0][:,2].reshape(-1,1 )
 
-    LF_fem, LM_fem, LH_fem = LF['fem'][0, 0], LM['fem'][0, 0], LH['fem'][0, 0]
-    RF_fem, RM_fem, RH_fem = RF['fem'][0, 0], RM['fem'][0, 0], RH['fem'][0, 0]
-    LF_fem, LM_fem, LH_fem = LF_fem['angle'][0, 0].reshape(-1,1 ), LM_fem['angle'][0, 0].reshape(-1,1 ), LH_fem['angle'][0, 0].reshape(-1,1 )
-    RF_fem, RM_fem, RH_fem = RF_fem['angle'][0, 0].reshape(-1,1 ), RM_fem['angle'][0, 0].reshape(-1,1 ), RH_fem['angle'][0, 0].reshape(-1,1 )
+    LF_fem_struct, LM_fem_struct, LH_fem_struct = LF['fem'][0, 0], LM['fem'][0, 0], LH['fem'][0, 0]
+    RF_fem_struct, RM_fem_struct, RH_fem_struct = RF['fem'][0, 0], RM['fem'][0, 0], RH['fem'][0, 0]
+    LF_fem, LM_fem, LH_fem = LF_fem_struct['angle'][0, 0].reshape(-1,1 ), LM_fem_struct['angle'][0, 0].reshape(-1,1 ), LH_fem_struct['angle'][0, 0].reshape(-1,1 )
+    RF_fem, RM_fem, RH_fem = RF_fem_struct['angle'][0, 0].reshape(-1,1 ), RM_fem_struct['angle'][0, 0].reshape(-1,1 ), RH_fem_struct['angle'][0, 0].reshape(-1,1 )
 
-    LF_tib, LM_tib, LH_tib = LF['tib'][0, 0], LM['tib'][0, 0], LH['tib'][0, 0]
-    RF_tib, RM_tib, RH_tib = RF['tib'][0, 0], RM['tib'][0, 0], RH['tib'][0, 0]
-    LF_tib, LM_tib, LH_tib = LF_tib['angle'][0, 0].reshape(-1,1 ), LM_tib['angle'][0, 0].reshape(-1,1 ), LH_tib['angle'][0, 0].reshape(-1,1 )
-    RF_tib, RM_tib, RH_tib = RF_tib['angle'][0, 0].reshape(-1,1 ), RM_tib['angle'][0, 0].reshape(-1,1 ), RH_tib['angle'][0, 0].reshape(-1,1 )
+    LF_tib_struct, LM_tib_struct, LH_tib_struct = LF['tib'][0, 0], LM['tib'][0, 0], LH['tib'][0, 0]
+    RF_tib_struct, RM_tib_struct, RH_tib_struct = RF['tib'][0, 0], RM['tib'][0, 0], RH['tib'][0, 0]
+    LF_tib, LM_tib, LH_tib = LF_tib_struct['angle'][0, 0].reshape(-1,1 ), LM_tib_struct['angle'][0, 0].reshape(-1,1 ), LH_tib_struct['angle'][0, 0].reshape(-1,1 )
+    RF_tib, RM_tib, RH_tib = RF_tib_struct['angle'][0, 0].reshape(-1,1 ), RM_tib_struct['angle'][0, 0].reshape(-1,1 ), RH_tib_struct['angle'][0, 0].reshape(-1,1 )
 
     # Calculate the joint angles
     # Coordinate: X from posterior to anterior; Y from right to left; Z from bottom to top
@@ -197,10 +197,69 @@ def mat_reader_joint_angle(subject:str, save=False, visualizaiton=False):
                                                                                                 "LF_CTr", "LM_CTr", "LH_CTr", "RF_CTr", "RM_CTr", "RH_CTr",
                                                                                                 "LF_ThC", "LM_ThC", "LH_ThC", "RF_ThC", "RM_ThC", "RH_ThC",
                                                                                                 "LF_FTi", "LM_FTi", "LH_FTi", "RF_FTi", "RM_FTi", "RH_FTi"])
+
+    
+    # Extract the foot teajectory
+    LF_tar, LM_tar, LH_tar = LF['tar'][0, 0], LM['tar'][0, 0], LH['tar'][0, 0]
+    RF_tar, RM_tar, RH_tar = RF['tar'][0, 0], RM['tar'][0, 0], RH['tar'][0, 0]
+    LF_tar, LM_tar, LH_tar = LF_tar['pos'][0, 0], LM_tar['pos'][0, 0], LH_tar['pos'][0, 0]
+    RF_tar, RM_tar, RH_tar = RF_tar['pos'][0, 0], RM_tar['pos'][0, 0], RH_tar['pos'][0, 0]
+
+    # Foot Trajectory
+    LF_foot, LM_foot, LH_foot = LF_tar, LM_tar, LH_tar
+    RF_foot, RM_foot, RH_foot = RF_tar, RM_tar, RH_tar
+    print("LF_foot:", LF_foot.shape)
+
+    foot_trajectory = np.concatenate((LF_foot, LM_foot, LH_foot, RF_foot, RM_foot, RH_foot), axis=1)
+    foot_trajectory = pd.DataFrame(foot_trajectory, index=None, columns=["LF_x", "LF_y", "LF_z", "LF_w", 
+                                                                                                    "LM_x", "LM_y", "LM_z", "LM_w",
+                                                                                                    "LH_x", "LH_y", "LH_z", "LH_w",
+                                                                                                    "RF_x", "RF_y", "RF_z", "RF_w",
+                                                                                                    "RM_x", "RM_y", "RM_z", "RM_w",
+                                                                                                    "RH_x", "RH_y", "RH_z", "RH_w"])
+    
+    # # plot foot trajectories
+    # plt.figure(figsize=(15, 6))
+    # plt.plot(LF_foot[:, 0], LF_foot[:, 2], label='LF Foot Trajectory', c="blue")
+    # plt.plot(LM_foot[:, 0], LM_foot[:, 2], label='LM Foot Trajectory', c="orange")
+    # plt.plot(LH_foot[:, 0], LH_foot[:, 2], label='LH Foot Trajectory', c="green")
+    # plt.plot(RF_foot[:, 0], RF_foot[:, 2], label='RF Foot Trajectory', c="red")
+    # plt.plot(RM_foot[:, 0], RM_foot[:, 2], label='RM Foot Trajectory', c="purple")
+    # plt.plot(RH_foot[:, 0], RH_foot[:, 2], label='RH Foot Trajectory', c="brown")
+    # plt.xlabel('X (mm)', fontsize=14)
+    # plt.ylabel('Z (mm)', fontsize=14)
+    # plt.title('Foot Trajectory', fontsize=16)
+    # plt.legend()
+    # plt.grid()
+    # plt.show()
+
+
+    # Extract the morphology data
+    Hd, T1, T2, T3 = mat_contents['Hd'], mat_contents['T1'], mat_contents['T2'], mat_contents['T3']
+    len_HD, len_T1, len_T2, len_T3 = Hd['LENGTH'][0, 0].reshape(-1, 1), T1['LENGTH'][0, 0].reshape(-1, 1), T2['LENGTH'][0, 0].reshape(-1, 1), T3['LENGTH'][0, 0].reshape(-1, 1)
+    len_LF_fem, len_LM_fem, len_LH_fem = LF_fem_struct['LENGTH'][0, 0].reshape(-1, 1), LM_fem_struct['LENGTH'][0, 0].reshape(-1, 1), LH_fem_struct['LENGTH'][0, 0].reshape(-1, 1)
+    len_LF_tib, len_LM_tib, len_LH_tib = LF_tib_struct['LENGTH'][0, 0].reshape(-1, 1), LM_tib_struct['LENGTH'][0, 0].reshape(-1, 1), LH_tib_struct['LENGTH'][0, 0].reshape(-1, 1)
+    len_RF_fem, len_RM_fem, len_RH_fem = RF_fem_struct['LENGTH'][0, 0].reshape(-1, 1), RM_fem_struct['LENGTH'][0, 0].reshape(-1, 1), RH_fem_struct['LENGTH'][0, 0].reshape(-1, 1)
+    len_RF_tib, len_RM_tib, len_RH_tib = RF_tib_struct['LENGTH'][0, 0].reshape(-1, 1), RM_tib_struct['LENGTH'][0, 0].reshape(-1, 1), RH_tib_struct['LENGTH'][0, 0].reshape(-1, 1)
+
+    morphology = np.concatenate((len_HD, len_T1, len_T2, len_T3,
+                                len_LF_fem, len_LM_fem, len_LH_fem, len_RF_fem, len_RM_fem, len_RH_fem,
+                                len_LF_tib, len_LM_tib, len_LH_tib, len_RF_tib, len_RM_tib, len_RH_tib), axis=1)
+    morphology = pd.DataFrame(morphology, index=None, columns=["Hd", "T1", "T2", "T3",
+                                                                "LF_fem", "LM_fem", "LH_fem", "RF_fem", "RM_fem", "RH_fem",
+                                                                "LF_tib", "LM_tib", "LH_tib", "RF_tib", "RM_tib", "RH_tib"])
+    
+
     if save:
-        save_path = 'expert_data_builder/stick_insect/'+ insect_name +'/' + file_name + '.csv'
-        dataset.to_csv(save_path, index=False)
+        save_path_joint = 'expert_data_builder/stick_insect/'+ insect_name +'/' + file_name + '.csv'
+        dataset.to_csv(save_path_joint, index=False)
         print(dataset.shape)
+
+        save_path_foot = 'expert_data_builder/stick_insect/'+ insect_name +'/' + file_name + '_foot.csv'
+        foot_trajectory.to_csv(save_path_foot, index=False)
+
+        save_path_morpho = 'expert_data_builder/stick_insect/'+ insect_name +'/' + file_name + '_morphology.csv'
+        morphology.to_csv(save_path_morpho, index=False)
 
     # write the dataset length to trail_details.json
     trail_details[f"T{subject}"]["length"] = dataset.shape[0]
@@ -232,4 +291,4 @@ if __name__ == '__main__':
         # mat_reader_vel(subject_number, save=True, visualizaiton=True)
         # mat_reader_direction(subject_number, save=True, visualizaiton=True)
         # mat_reader_gait(subject_number, save=True)
-        mat_antenna_reader(subject_number, save=True, visualizaiton=True)
+        # mat_antenna_reader(subject_number, save=True, visualizaiton=True)

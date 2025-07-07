@@ -1,3 +1,8 @@
+'''
+This code plots all joint angles of stick insect legs.
+The plots are saved in the folder 'expert_data_builder/stick_insect/plot_joint_angle/'.
+'''
+
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt

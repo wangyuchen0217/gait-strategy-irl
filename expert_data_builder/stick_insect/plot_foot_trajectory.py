@@ -1,3 +1,8 @@
+'''
+This code plots the foot trajectory of stick insects in the X-Z plane.
+The plots are saved in the folder 'expert_data_builder/stick_insect/morphology/'.
+'''
+
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np

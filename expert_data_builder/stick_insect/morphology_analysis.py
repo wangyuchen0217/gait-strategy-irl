@@ -1,3 +1,8 @@
+'''
+This code analyzes the morphology of stick insects by calculating the limb-to-thorax ratio.
+The results are saved in 'expert_data_builder/stick_insect/morphology'
+'''
+
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np

@@ -218,20 +218,20 @@ def mat_reader_joint_angle(subject:str, save=False, visualizaiton=False):
                                                                                                     "RM_x", "RM_y", "RM_z", "RM_w",
                                                                                                     "RH_x", "RH_y", "RH_z", "RH_w"])
     
-    # # plot foot trajectories
-    # plt.figure(figsize=(15, 6))
-    # plt.plot(LF_foot[:, 0], LF_foot[:, 2], label='LF Foot Trajectory', c="blue")
-    # plt.plot(LM_foot[:, 0], LM_foot[:, 2], label='LM Foot Trajectory', c="orange")
-    # plt.plot(LH_foot[:, 0], LH_foot[:, 2], label='LH Foot Trajectory', c="green")
-    # plt.plot(RF_foot[:, 0], RF_foot[:, 2], label='RF Foot Trajectory', c="red")
-    # plt.plot(RM_foot[:, 0], RM_foot[:, 2], label='RM Foot Trajectory', c="purple")
-    # plt.plot(RH_foot[:, 0], RH_foot[:, 2], label='RH Foot Trajectory', c="brown")
-    # plt.xlabel('X (mm)', fontsize=14)
-    # plt.ylabel('Z (mm)', fontsize=14)
-    # plt.title('Foot Trajectory', fontsize=16)
-    # plt.legend()
-    # plt.grid()
-    # plt.show()
+    # plot foot trajectories
+    plt.figure(figsize=(15, 6))
+    plt.plot(LF_foot[:, 0], LF_foot[:, 2], label='LF Foot Trajectory', c="blue")
+    plt.plot(LM_foot[:, 0], LM_foot[:, 2], label='LM Foot Trajectory', c="orange")
+    plt.plot(LH_foot[:, 0], LH_foot[:, 2], label='LH Foot Trajectory', c="green")
+    plt.plot(RF_foot[:, 0], RF_foot[:, 2], label='RF Foot Trajectory', c="red")
+    plt.plot(RM_foot[:, 0], RM_foot[:, 2], label='RM Foot Trajectory', c="purple")
+    plt.plot(RH_foot[:, 0], RH_foot[:, 2], label='RH Foot Trajectory', c="brown")
+    plt.xlabel('X (mm)', fontsize=14)
+    plt.ylabel('Z (mm)', fontsize=14)
+    plt.title('Foot Trajectory', fontsize=16)
+    plt.legend()
+    plt.grid()
+    plt.show()
 
 
     # Extract the morphology data
@@ -285,9 +285,9 @@ if __name__ == '__main__':
     # input the total number of subjects
     subjects = 3 # 12
     # for i in range(1, subjects + 1):
-    for i in range(1, 4):
+    for i in range(25, 28):
         subject_number = f"{i:02}"
-        mat_reader_joint_angle(subject_number, save=True, visualizaiton=False)
+        mat_reader_joint_angle(subject_number, save=False, visualizaiton=False)
         # mat_reader_vel(subject_number, save=True, visualizaiton=True)
         # mat_reader_direction(subject_number, save=True, visualizaiton=True)
         # mat_reader_gait(subject_number, save=True)

@@ -87,6 +87,7 @@ def plot_swing_stance_duration(path, title, save_name):
     middle_swing = np.concatenate(middle_swing)
     hind_swing = np.concatenate(hind_swing)
     print(f'Front stance: {front_stance}, Middle stance: {len(middle_stance)}, Hind stance: {len(hind_stance)}')
+    print(f'Front swing: {front_swing}, Middle swing: {len(middle_swing)}, Hind swing: {len(hind_swing)}')
 
     # Convert time step to seconds
     front_stance, middle_stance, hind_stance = front_stance / 200, middle_stance / 200, hind_stance / 200

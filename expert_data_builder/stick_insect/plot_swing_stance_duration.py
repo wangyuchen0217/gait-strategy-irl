@@ -1,3 +1,9 @@
+'''
+This code analyzes the gait data of stick insects and plots the stance and swing durations for each leg.
+The plots are generated for three species: Aretaon, Carausius, and Medauroidea,
+ans saved in the 'expert_data_builder/stick_insect/morphology' directory.
+'''
+
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
@@ -95,8 +101,6 @@ def plot_swing_stance_duration(path, title, save_name):
 
     max_duration = max(max(front_stance), max(middle_stance), max(hind_stance),
                           max(front_swing), max(middle_swing), max(hind_swing))
-    min_duration = min(min(front_stance), min(middle_stance), min(hind_stance),
-                            min(front_swing), min(middle_swing), min(hind_swing))
 
     # boxplot
     plt.figure(figsize=(5, 3))

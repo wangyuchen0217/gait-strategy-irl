@@ -15,12 +15,6 @@ Medauroidea_1_path = 'expert_data_builder/stick_insect/Medauroidea/Animal06_1109
 Medauroidea_2_path = 'expert_data_builder/stick_insect/Medauroidea/Animal06_110919_00_16_gait.csv'
 Medauroidea_3_path = 'expert_data_builder/stick_insect/Medauroidea/Animal06_110919_00_31_gait.csv'
 
-def count_stance(data):
-    count = 0
-    for i in range(len(data)):
-        if data[i] == 1:
-            count += 1
-    return count   
 
 def count_stance_swing_per_cycle(data):
     data = np.array(data)
@@ -44,8 +38,6 @@ def count_stance_swing_per_cycle(data):
 
     return stance_durations, swing_durations
     
-
-
 
 def plot_swing_stance_duration(path, title, save_name):
     front_stance, middle_stance, hind_stance = [], [], []
@@ -111,12 +103,12 @@ def plot_swing_stance_duration(path, title, save_name):
     plt.boxplot([front_stance, middle_stance, hind_stance], labels=['Front', 'Middle', 'Hind'])
     plt.title('Stance Duration', fontsize = 12)
     plt.ylabel('Duration (s)', fontsize = 12)
-    plt.ylim(min_duration*1.2, max_duration*1.2)
+    plt.ylim(-0.02, max_duration*1.2)
     plt.subplot(1, 2, 2)
     plt.boxplot([front_swing, middle_swing, hind_swing], labels=['Front', 'Middle', 'Hind'])
     plt.title('Swing Duration', fontsize = 12)
     plt.ylabel('Duration (s)', fontsize = 12)
-    plt.ylim(min_duration*1.2, max_duration*1.2)
+    plt.ylim(-0.02, max_duration*1.2)
     plt.tight_layout(rect=[0, 0, 1, 0.95])
     plt.suptitle(title, fontsize = 14)
     plt.savefig(f'expert_data_builder/stick_insect/morphology/{save_name}.png') 

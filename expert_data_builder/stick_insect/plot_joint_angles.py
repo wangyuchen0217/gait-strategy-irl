@@ -30,6 +30,9 @@ joint_movement[:,-6:] = joint_movement[:,-6:] - 90
 joint_movement = joint_movement[:,6:]
 print("joint_movement:", joint_movement.shape)
 
+# sim
+# joint_movement = joint_movement[1371:2070, :]
+
 # Plot the CTr joint angles [:,0:6] subplots
 fig, axs = plt.subplots(6, 1, figsize=(8, 10))
 labels = ['LF', 'LM', 'LH', 'RF', 'RM', 'RH']

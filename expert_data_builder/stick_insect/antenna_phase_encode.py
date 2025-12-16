@@ -180,7 +180,7 @@ def plot_time_elapsed_histogram_subplots(data, bin_step, save=False, subject="01
     column_names=['HS left', 'HS right', 'SP left', 'SP right']
     data = pd.DataFrame(data, columns=column_names)
     num_columns = len(column_names)
-    fig, axes = plt.subplots(nrows=1, ncols=num_columns, figsize=(10, 3), sharey=True)
+    fig, axes = plt.subplots(nrows=1, ncols=num_columns, figsize=(15, 3), sharey=False)
     for i, col in enumerate(column_names):
         count_per_bin = data[col].value_counts().sort_index()
         axes[i].bar(count_per_bin.index, count_per_bin.values, color='skyblue', edgecolor='black')
@@ -189,11 +189,9 @@ def plot_time_elapsed_histogram_subplots(data, bin_step, save=False, subject="01
         axes[i].set_xticks(x_ticks)
         axes[i].set_xticklabels([int(tick * bin_step) for tick in x_ticks])
         axes[i].set_xlabel('Time Elapsed (t)', fontsize=14)
+        axes[i].set_ylabel('Count', fontsize=14)
         axes[i].grid(axis='y', linestyle='--', alpha=0.5) 
-    # Set common y-axis label
-    fig.text(0.04, 0.5, 'Count', va='center', rotation='vertical', fontsize=14)
-    plt.suptitle('Distribution of Discrete Antenna Time Elapsed Bins')
-    plt.tight_layout(rect=[0.05, 0.05, 1, 0.95])
+    plt.tight_layout()
     if save:
         plt.savefig(f"expert_demonstration/expert/plot/antenna/Carausius_T{subject}_antenna_histogram.png")
     else:

@@ -108,7 +108,7 @@ analysis_df = pd.DataFrame({
         'Gait Category': gait_data['Category']
     })
 
-save = True
+save = False
 if save:
     save_path = 'expert_demonstration/expert/'+data_source+'.csv'
     analysis_df.to_csv(save_path, index=False, header=True)

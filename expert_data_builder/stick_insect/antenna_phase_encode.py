@@ -113,22 +113,85 @@ def antenna_visualization(original_data, clustered_data, label, save=False, font
     else:
         plt.show()
 
+def plot_antenna_smooth(original_data, clustered_data, label, save=False, fontsize=16, subject="01"):
+    original_data = original_data[:500, :]
+    clustered_data = clustered_data[:500, :]
+    titles = ["HS left", "HS right", "SP left", "SP right"]
+    plt.figure(figsize=(5, 8))
+    for i in range(4):
+        plt.subplot(4, 1, i + 1)
+        plt.plot(original_data[:, i], color='tab:blue', label='Original')
+        plt.plot(clustered_data[:, i], color='tab:orange', label=label, linestyle='-.')
+        plt.tick_params(axis='both', labelsize=14)
+        plt.xlabel('Time Steps', fontsize=14)
+        plt.ylabel('rad', fontsize=14)
+        plt.title(titles[i], fontsize=fontsize)
+    plt.tight_layout()
+    if save:
+        plt.savefig(f"expert_demonstration/expert/plot/antenna/Carausius_T{subject}_antenna_{label}.png")
+    else:
+        plt.show()
+
+def plot_antenna_time_elapsed(original_data, clustered_data, label, save=False, fontsize=16, subject="01"):
+    original_data = original_data[:500, :]
+    clustered_data = clustered_data[:500, :]
+    titles = ["HS left", "HS right", "SP left", "SP right"]
+    plt.figure(figsize=(5.5, 8))
+    for i in range(4):
+        plt.subplot(4, 1, i + 1)
+        plt.plot(original_data[:, i], color='tab:blue', label='Original')
+        ax1 = plt.gca()
+        ax2 = ax1.twinx()  # Create a second y-axis for the encoded data
+        ax2.step(range(len(clustered_data)), clustered_data[:, i], where='post', color='tab:orange', label=label, linestyle='-.')
+        ax1.tick_params(axis='both', labelsize=14)
+        ax1.set_xlabel('Time Steps', fontsize=14)
+        ax1.set_ylabel('rad', fontsize=14)
+        ax2.set_ylabel('time elapsed', fontsize=14)
+        plt.title(titles[i], fontsize=fontsize)
+    plt.tight_layout()
+    if save:
+        plt.savefig(f"expert_demonstration/expert/plot/antenna/Carausius_T{subject}_antenna_{label}.png")
+    else:
+        plt.show()
+
+def plot_antenna_discrete(original_data, clustered_data, label, save=False, fontsize=16, subject="01"):
+    original_data = original_data[:500, :]
+    clustered_data = clustered_data[:500, :]
+    titles = ["HS left", "HS right", "SP left", "SP right"]
+    plt.figure(figsize=(5.5, 8))
+    for i in range(4):
+        plt.subplot(4, 1, i + 1)
+        plt.plot(original_data[:, i], color='tab:blue', label='Original')
+        ax1 = plt.gca()
+        ax2 = ax1.twinx()  # Create a second y-axis for the encoded data
+        ax2.step(range(len(clustered_data)), clustered_data[:, i], where='post', color='tab:orange', label=label, linestyle='-.')
+        ax1.tick_params(axis='both', labelsize=14)
+        ax1.set_xlabel('Time Steps', fontsize=14)
+        ax1.set_ylabel('rad', fontsize=14)
+        ax2.set_ylabel('binned data', fontsize=14)
+        plt.title(titles[i], fontsize=fontsize)
+    plt.tight_layout()
+    if save:
+        plt.savefig(f"expert_demonstration/expert/plot/antenna/Carausius_T{subject}_antenna_{label}.png")
+    else:
+        plt.show()
+
 def plot_time_elapsed_histogram_subplots(data, bin_step, save=False, subject="01"):
     column_names=['HS left', 'HS right', 'SP left', 'SP right']
     data = pd.DataFrame(data, columns=column_names)
     num_columns = len(column_names)
-    fig, axes = plt.subplots(nrows=1, ncols=num_columns, figsize=(20, 5), sharey=True)
+    fig, axes = plt.subplots(nrows=1, ncols=num_columns, figsize=(10, 3), sharey=True)
     for i, col in enumerate(column_names):
         count_per_bin = data[col].value_counts().sort_index()
         axes[i].bar(count_per_bin.index, count_per_bin.values, color='skyblue', edgecolor='black')
-        axes[i].set_title(f'Distribution for {col}')
+        axes[i].set_title(f'Distribution for {col}', fontsize=16)
         x_ticks = count_per_bin.index
         axes[i].set_xticks(x_ticks)
         axes[i].set_xticklabels([int(tick * bin_step) for tick in x_ticks])
-        axes[i].set_xlabel('Time Elapsed (t)')
+        axes[i].set_xlabel('Time Elapsed (t)', fontsize=14)
         axes[i].grid(axis='y', linestyle='--', alpha=0.5) 
     # Set common y-axis label
-    fig.text(0.04, 0.5, 'Count', va='center', rotation='vertical')
+    fig.text(0.04, 0.5, 'Count', va='center', rotation='vertical', fontsize=14)
     plt.suptitle('Distribution of Discrete Antenna Time Elapsed Bins')
     plt.tight_layout(rect=[0.05, 0.05, 1, 0.95])
     if save:
@@ -154,9 +217,9 @@ def get_antenna_dist(subject:str, bin_step=60):
     discrete_data = np.digitize(t_elps_antenna_01, bin_edges)
 
     # Visualize the encoded antenna data and the original antenna data
-    antenna_visualization(antenna_01, smoothed_antenna_01, 'smoothed', subject=subject, save=True)
-    antenna_visualization(antenna_01, t_elps_antenna_01, 'time_elapsed', subject=subject, save=True)
-    antenna_visualization(antenna_01, discrete_data, 'discretized', subject=subject, save=True)
+    plot_antenna_smooth(antenna_01, smoothed_antenna_01, 'smoothed', subject=subject, save=True)
+    plot_antenna_time_elapsed(antenna_01, t_elps_antenna_01, 'time_elapsed', subject=subject, save=True)
+    plot_antenna_discrete(antenna_01, discrete_data, 'discretized', subject=subject, save=True)
     plot_time_elapsed_histogram_subplots(discrete_data, bin_step, subject=subject, save=True)
 
     return discrete_data

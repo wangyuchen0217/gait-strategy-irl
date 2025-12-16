@@ -180,7 +180,7 @@ def plot_time_elapsed_histogram_subplots(data, bin_step, save=False, subject="01
     column_names=['HS left', 'HS right', 'SP left', 'SP right']
     data = pd.DataFrame(data, columns=column_names)
     num_columns = len(column_names)
-    fig, axes = plt.subplots(nrows=1, ncols=num_columns, figsize=(15, 3), sharey=False)
+    fig, axes = plt.subplots(nrows=1, ncols=num_columns, figsize=(13, 2), sharey=False)
     for i, col in enumerate(column_names):
         count_per_bin = data[col].value_counts().sort_index()
         axes[i].bar(count_per_bin.index, count_per_bin.values, color='skyblue', edgecolor='black')

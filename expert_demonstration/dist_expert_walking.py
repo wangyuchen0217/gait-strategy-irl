@@ -139,9 +139,9 @@ acc_bin_group = np.unique(acc_binned)
 print("direction binned group: ", direction_bin_group)
 print("vel binned group: ", vel_bin_group)
 print("acc binned group: ", acc_bin_group)
-plot_bins_histogram(vel_binned, title='Discrete Velocity Data Distribution', xlabel='Velocity', bin_step=5, savename=data_source+'_histogram_vel')
-plot_bins_histogram(direction_binned, title='Discrete Direction Data Distribution', xlabel='Direction', bin_step=5, savename=data_source+'_histogram_direction')
-plot_bins_histogram(acc_binned, title='Discrete Acceleration Data Distribution', xlabel='Acceleration', bin_step=250, savename=data_source+'_histogram_acc')
+plot_bins_histogram(vel_binned, title='Discrete Distribution', xlabel='Bin', bin_step=5, savename=data_source+'_histogram_vel')
+plot_bins_histogram(direction_binned, title='Discrete Distribution', xlabel='Bin', bin_step=5, savename=data_source+'_histogram_direction')
+plot_bins_histogram(acc_binned, title='Discrete Distribution', xlabel='Bin', bin_step=250, savename=data_source+'_histogram_acc')
 
 # Load grouped gait combinations (6 types)
 grouped_gait_combinations = v['grouped_gait_combinations']
@@ -161,10 +161,10 @@ analysis_df = pd.DataFrame({
         'Gait Category': gait_data['Category']
     })
 
-save = True
+save = False
 if save:
     save_path = 'expert_demonstration/expert/'+data_source+'.csv'
     analysis_df.to_csv(save_path, index=False, header=True)
 
 # data curve visualization (for slides)
-plot_data_curve(vel_03, direction_03, acc_03, data_source)
+plot_data_curve(vel_01, direction_01, acc_01, data_source, vel_binned, direction_binned, acc_binned)

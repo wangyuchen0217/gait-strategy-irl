@@ -77,3 +77,21 @@ This project requires the following core Python packages:
 - matplotlib >= 3.5
 - scikit-learn >= 1.0
 - tqdm >= 4.60
+
+
+## Citation
+
+If you use this repository in your research or find it helpful for your research or project, please cite:
+
+```bibtex
+@article{wang2025encoding,
+  title={Encoding flexible gait strategies in stick insects through data-driven inverse reinforcement learning},
+  author={Wang, Yuchen and Hayashibe, Mitsuhiro and Owaki, Dai},
+  journal={Bioinspiration \& Biomimetics},
+  volume={20},
+  number={4},
+  pages={046005},
+  year={2025},
+  publisher={IOP Publishing}
+}
+```
